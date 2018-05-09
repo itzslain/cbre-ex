@@ -93,7 +93,7 @@ namespace Sledge.Editor.Documents
 
             try
             {
-                GameData =  GameDataProvider.GetGameDataFromFiles(game.Fgds.Select(f => f.Path));
+                GameData = GameDataProvider.GetGameDataFromFiles(new List<string>());//game.Fgds.Select(f => f.Path));
             }
             catch(ProviderException)
             {

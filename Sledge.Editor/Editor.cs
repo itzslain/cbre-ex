@@ -80,13 +80,7 @@ namespace Sledge.Editor
 
         private static void LoadFile(string fileName)
         {
-            using (var gsd = new GameSelectionForm())
-            {
-                gsd.ShowDialog();
-                if (gsd.SelectedGameID < 0) return;
-                var game = SettingsManager.Games.Single(g => g.ID == gsd.SelectedGameID);
-                LoadFileGame(fileName, game);
-            }
+            LoadFileGame(fileName, Game.Instance);
         }
 
         private void EditorLoad(object sender, EventArgs e)
@@ -427,13 +421,7 @@ namespace Sledge.Editor
 
         public static void FileNew()
         {
-            using (var gsd = new GameSelectionForm())
-            {
-                gsd.ShowDialog();
-                if (gsd.SelectedGameID < 0) return;
-                var game = SettingsManager.Games.Single(g => g.ID == gsd.SelectedGameID);
-                DocumentManager.AddAndSwitch(new Document(null, new Map(), game));
-            }
+            DocumentManager.AddAndSwitch(new Document(null, new Map(), Game.Instance));
         }
 
         private static void FileOpen()

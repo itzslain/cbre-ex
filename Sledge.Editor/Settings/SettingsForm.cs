@@ -25,8 +25,6 @@ namespace Sledge.Editor.Settings
     /// </summary>
     public partial class SettingsForm : Form
     {
-        private List<Game> _games;
-        private List<Build> _builds;
         private List<Hotkey> _hotkeys; 
 
         public SettingsForm()
@@ -194,21 +192,7 @@ namespace Sledge.Editor.Settings
 
         private void AddFileTypeBoxes()
         {
-            AssociationsPanel.Controls.Clear();
-            var supported = FileTypeRegistration.GetSupportedExtensions();
-            var registered = FileTypeRegistration.GetRegisteredDefaultFileTypes().ToList();
-            foreach (var ft in supported)
-            {
-                var def = registered.Contains(ft.Extension);
-                var cb = new CheckBox
-                {
-                    AutoSize = true,
-                    Checked = def,
-                    Text = ft.Extension + " (" + ft.Description + ")",
-                    Tag = ft
-                };
-                AssociationsPanel.Controls.Add(cb);
-            }
+            //TODO: remove?
         }
 
         #endregion
@@ -216,126 +200,7 @@ namespace Sledge.Editor.Settings
         #region Initialisation
         private void BindConfigControls()
         {
-            // Game Configurations
-            SelectedGameName.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.Name = SelectedGameName.Text);
-            SelectedGameEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Engine = (Engine) SelectedGameEngine.SelectedItem);
-            SelectedGameBuild.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BuildID = _builds[SelectedGameBuild.SelectedIndex].ID);
-            SelectedGameSteamInstall.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamInstall = SelectedGameSteamInstall.Checked);
-            SelectedGameWonDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.WonGameDir = SelectedGameWonDir.Text);
-            SelectedGameSteamDir.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamGameDir = SelectedGameSteamDir.Text);
-            SelectedGameMod.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.ModDir = SelectedGameMod.Text);
-            SelectedGameBase.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BaseDir = SelectedGameBase.Text);
-            SelectedGameUseHDModels.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseHDModels = SelectedGameUseHDModels.Checked);
-            SelectedGameExecutable.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Executable = SelectedGameExecutable.Text);
-            SelectedGameRunArguments.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.ExecutableParameters = SelectedGameRunArguments.Text);
-            SelectedGameMapDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.MapDir = SelectedGameMapDir.Text);
-            SelectedGameEnableAutosave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.Autosave = SelectedGameEnableAutosave.Checked);
-            SelectedGameUseDiffAutosaveDir.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseCustomAutosaveDir = SelectedGameUseDiffAutosaveDir.Checked);
-            SelectedGameDiffAutosaveDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveDir = SelectedGameDiffAutosaveDir.Text);
-            SelectedGameAutosaveTime.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveTime = (int) SelectedGameAutosaveTime.Value);
-            SelectedGameAutosaveLimit.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveLimit = (int)SelectedGameAutosaveLimit.Value);
-            SelectedGameAutosaveOnlyOnChange.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveOnlyOnChanged = SelectedGameAutosaveOnlyOnChange.Checked);
-            SelectedGameAutosaveTriggerFileSave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveTriggerFileSave = SelectedGameAutosaveTriggerFileSave.Checked);
-            SelectedGameDefaultPointEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultPointEntity = SelectedGameDefaultPointEnt.Text);
-            SelectedGameDefaultBrushEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultBrushEntity = SelectedGameDefaultBrushEnt.Text);
-            SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
-            SelectedGameLightmapScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultLightmapScale = SelectedGameLightmapScale.Value);
-            SelectedGameBlacklistTextbox.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.PackageBlacklist = SelectedGameBlacklistTextbox.Text.Trim());
-            SelectedGameWhitelistTextbox.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.PackageWhitelist = SelectedGameWhitelistTextbox.Text.Trim());
-            SelectedGameIncludeFgdDirectoriesInEnvironment.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.IncludeFgdDirectoriesInEnvironment = SelectedGameIncludeFgdDirectoriesInEnvironment.Checked);
-            SelectedGameOverrideMapSize.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSize = SelectedGameOverrideMapSize.Checked);
-            var sizes = new[] {4096, 8192, 16384, 32768, 65536};
-            SelectedGameOverrideSizeLow.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeLow = SelectedGameOverrideSizeLow.SelectedIndex < 0 ? 0 : -sizes[SelectedGameOverrideSizeLow.SelectedIndex]);
-            SelectedGameOverrideSizeHigh.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeHigh = SelectedGameOverrideSizeHigh.SelectedIndex < 0 ? 0 : sizes[SelectedGameOverrideSizeHigh.SelectedIndex]);
-
-            // Build Configurations
-            SelectedBuildName.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Name = SelectedBuildName.Text);
-            SelectedBuildEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Engine = (Engine) SelectedBuildEngine.SelectedItem);
-            SelectedBuildDontRedirectOutput.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.DontRedirectOutput = SelectedBuildDontRedirectOutput.Checked);
-            SelectedBuildExeFolder.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Path = SelectedBuildExeFolder.Text);
-            SelectedBuildBsp.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Bsp = SelectedBuildBsp.Text);
-            SelectedBuildCsg.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Csg = SelectedBuildCsg.Text);
-            SelectedBuildVis.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Vis = SelectedBuildVis.Text);
-            SelectedBuildRad.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Rad = SelectedBuildRad.Text);
-            SelectedBuildIncludePathInEnvironment.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.IncludePathInEnvironment = SelectedBuildIncludePathInEnvironment.Checked);
-
-            SelectedBuildWorkingDirTemp.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirTemp.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.TemporaryDirectory); };
-            SelectedBuildWorkingDirSame.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirSame.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.SameDirectory); };
-            SelectedBuildWorkingDirSub.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirSub.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.SubDirectory); };
-
-            SelectedBuildAfterCopyBsp.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterCopyBsp = SelectedBuildAfterCopyBsp.Checked);
-            SelectedBuildAfterRunGame.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterRunGame = SelectedBuildAfterRunGame.Checked);
-            SelectedBuildAskBeforeRun.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterAskBeforeRun = SelectedBuildAskBeforeRun.Checked);
-
-            SelectedBuildCopyBsp.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyBsp = SelectedBuildCopyBsp.Checked);
-            SelectedBuildCopyRes.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyRes = SelectedBuildCopyRes.Checked);
-            SelectedBuildCopyLin.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyLin = SelectedBuildCopyLin.Checked);
-            SelectedBuildCopyMap.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyMap = SelectedBuildCopyMap.Checked);
-            SelectedBuildCopyPts.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyPts = SelectedBuildCopyPts.Checked);
-            SelectedBuildCopyLog.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyLog = SelectedBuildCopyLog.Checked);
-            SelectedBuildCopyErr.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyErr = SelectedBuildCopyErr.Checked);
-
-            // Build Profiles
-            SelectedBuildRunCsgCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.RunCsg = SelectedBuildRunCsgCheckbox.Checked;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildRunBspCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.RunBsp = SelectedBuildRunBspCheckbox.Checked;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildRunVisCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.RunVis = SelectedBuildRunVisCheckbox.Checked;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildRunRadCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.RunRad = SelectedBuildRunRadCheckbox.Checked;
-                UpdateSelectedBuildProfilePreview();
-            });
-
-            SelectedBuildCsgParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.GeneratedCsgParameters = SelectedBuildCsgParameters.GeneratedCommands;
-                x.AdditionalCsgParameters = SelectedBuildCsgParameters.AdditionalCommands;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildBspParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.GeneratedBspParameters = SelectedBuildBspParameters.GeneratedCommands;
-                x.AdditionalBspParameters = SelectedBuildBspParameters.AdditionalCommands;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildVisParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.GeneratedVisParameters = SelectedBuildVisParameters.GeneratedCommands;
-                x.AdditionalVisParameters = SelectedBuildVisParameters.AdditionalCommands;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildRadParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.GeneratedRadParameters = SelectedBuildRadParameters.GeneratedCommands;
-                x.AdditionalRadParameters = SelectedBuildRadParameters.AdditionalCommands;
-                UpdateSelectedBuildProfilePreview();
-            });
-            SelectedBuildSharedParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
-            {
-                if (_pauseProfileUpdates) return;
-                x.GeneratedSharedParameters = SelectedBuildSharedParameters.GeneratedCommands;
-                x.AdditionalSharedParameters = SelectedBuildSharedParameters.AdditionalCommands;
-                UpdateSelectedBuildProfilePreview();
-            });
+            //TODO: remove?
         }
 
         private void BindColourPicker(Control panel)
@@ -361,80 +226,22 @@ namespace Sledge.Editor.Settings
 
         private void UpdateData()
         {
-            _selectedGame = null;
-            UpdateSelectedGame();
-
-            _selectedBuild = null;
-            UpdateSelectedBuild();
-
-            _games = new List<Game>(SettingsManager.Games);
-            _builds = new List<Build>(SettingsManager.Builds);
-
-            ReIndex();
-
-            SelectedGameEngine.Items.Clear();
-            SelectedGameEngine.Items.AddRange(Enum.GetValues(typeof(Engine)).OfType<object>().ToArray());
-
-            SelectedBuildEngine.Items.Clear();
-            SelectedBuildEngine.Items.AddRange(Enum.GetValues(typeof(Engine)).OfType<object>().ToArray());
-
-            SelectedBuildSpecification.Items.Clear();
-            SelectedBuildSpecification.Items.AddRange(CompileSpecification.Specifications.OfType<object>().ToArray());
-
-            UpdateGameTree();
-            UpdateBuildTree();
-            UpdateSteamUsernames();
-            SelectedGameUpdateSteamGames();
-
             _hotkeys = Hotkeys.GetHotkeys().Select(x => new Hotkey { ID = x.ID, HotkeyString = x.HotkeyString }).ToList();
         }
 
         private void ReIndex()
         {
-            for (var i = 0; i < _games.Count; i++)
-            {
-                _games[i].ID = i + 1;
-                _games[i].BuildID = _builds.FindIndex(x => x.ID == _games[i].BuildID) + 1;
-            }
-
-            for (var i = 0; i < _builds.Count; i++)
-            {
-                _builds[i].ID = i + 1;
-            }
+            
         }
 
         private void UpdateBuildTree()
         {
-            BuildTree.Nodes.Clear();
-            foreach (Engine engine in Enum.GetValues(typeof(Engine)))
-            {
-                var node = BuildTree.Nodes.Add(engine.ToString(), engine.ToString());
-                var list = _builds.Where(x => x.Engine == engine).ToList();
-                foreach (var build in list)
-                {
-                    var index = _builds.IndexOf(build);
-                    node.Nodes.Add(index.ToString(CultureInfo.InvariantCulture), build.Name);
-                }
-            }
-            BuildTree.ExpandAll();
-            SelectedGameBuild.Items.Clear();
-            SelectedGameBuild.Items.AddRange(_builds.Select(x => x.Name).ToArray());
+            
         }
 
         private void UpdateGameTree()
         {
-            GameTree.Nodes.Clear();
-            foreach (Engine engine in Enum.GetValues(typeof(Engine)))
-            {
-                var node = GameTree.Nodes.Add(engine.ToString(), engine.ToString());
-                var list = _games.Where(x => x.Engine == engine).ToList();
-                foreach (var game in list)
-                {
-                    var index = _games.IndexOf(game);
-                    node.Nodes.Add(index.ToString(CultureInfo.InvariantCulture), game.Name);
-                }
-            }
-            GameTree.ExpandAll();
+            
         }
 
         #endregion
@@ -682,10 +489,7 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.Select.UndoStackSize, 1, 1000, "Undo stack size (caution: setting too high may result in an out of memory crash!)");
             AddSetting(() => Sledge.Settings.Select.SkipSelectionInUndoStack, "Fast-forward selection operations when performing undo/redo (selection, deselection)");
             AddSetting(() => Sledge.Settings.Select.SkipVisibilityInUndoStack, "Fast-forward visibility operations when performing undo/redo (visgroup visibility, quick show/hide)");
-
-            // Integration
-            SingleInstanceCheckbox.Checked = Sledge.Settings.View.SingleInstance;
-
+            
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             DrawEntityNames.Checked = Sledge.Settings.View.DrawEntityNames;
@@ -740,23 +544,13 @@ namespace Sledge.Editor.Settings
             MouseWheelMoveDistance.Value = Sledge.Settings.View.MouseWheelMoveDistance;
 
             CameraFOV.Value = Sledge.Settings.View.CameraFOV;
-
-            // Game Configurations
-            // Build Programs
-            // Steam
-            SteamInstallDir.Text = Steam.SteamDirectory;
-            SteamUsername.Text = Steam.SteamUsername;
-            UpdateSteamUsernames();
-
+            
             // Hotkeys
             UpdateHotkeyList();
         }
 
         private void Apply()
         {
-            // Integration
-            Sledge.Settings.View.SingleInstance = SingleInstanceCheckbox.Checked;
-
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.View.DrawEntityNames = DrawEntityNames.Checked;
@@ -803,34 +597,14 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.MouseWheelMoveDistance = MouseWheelMoveDistance.Value;
 
             Sledge.Settings.View.CameraFOV = (int) CameraFOV.Value;
-
-            // Game Configurations
-            // Build Programs
-            // Steam
-            Steam.SteamDirectory = SteamInstallDir.Text;
-            Steam.SteamUsername = SteamUsername.Text;
-
+            
             // Hotkeys
             SettingsManager.Hotkeys.Clear();
             SettingsManager.Hotkeys.AddRange(_hotkeys);
             Hotkeys.SetupHotkeys(SettingsManager.Hotkeys);
             
-            // Save settings to database
-            ReIndex();
-            SettingsManager.Builds.Clear();
-            SettingsManager.Builds.AddRange(_builds);
-            SettingsManager.Games.Clear();
-            SettingsManager.Games.AddRange(_games);
-
             SettingsManager.Write();
-
-            // Update associations
-            var assoc = AssociationsPanel.Controls
-                .OfType<CheckBox>().Where(x => x.Checked)
-                .Select(x => x.Tag).OfType<FileType>()
-                .Select(x => x.Extension);
-            FileTypeRegistration.RegisterDefaultFileTypes(assoc);
-
+            
             Mediator.Publish(EditorMediator.SettingsChanged);
         }
 
@@ -872,12 +646,7 @@ namespace Sledge.Editor.Settings
 
         private void TabChanged(object sender, EventArgs e)
         {
-            GameTree.SelectedNode = null;
-            BuildTree.SelectedNode = null;
-            _selectedGame = null;
-            _selectedBuild = null;
-            UpdateSelectedGame();
-            UpdateSelectedBuild();
+            
         }
 
         private void BackClippingPaneChanged(object sender, EventArgs e)
@@ -932,13 +701,7 @@ namespace Sledge.Editor.Settings
 
         private void SteamInstallDirBrowseClicked(object sender, EventArgs e)
         {
-            using (var fbd = new FolderBrowserDialog { SelectedPath = SteamInstallDir.Text })
-            {
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    SteamInstallDir.Text = fbd.SelectedPath;
-                }
-            }
+            
         }
 
         private void SteamUsernameChanged(object sender, EventArgs e)
@@ -954,844 +717,130 @@ namespace Sledge.Editor.Settings
 
         private void UpdateSteamUsernames()
         {
-            SteamUsername.Items.Clear();
-            if (Path.GetInvalidPathChars().Any(x => SteamInstallDir.Text.Contains(x))) return;
-
-            var steamdir = Path.Combine(SteamInstallDir.Text, "steamapps");
-            if (!Directory.Exists(steamdir)) return;
-
-            var usernames = Directory.GetDirectories(steamdir).Select(Path.GetFileName);
-            var ignored = new[] {"common", "downloading", "media", "sourcemods", "temp"};
-            SteamUsername.Items.AddRange(usernames.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray());
-            var idx = SteamUsername.Items.IndexOf(SteamUsername.Text);
-            if (SteamUsername.Items.Count > 0) SteamUsername.SelectedIndex = Math.Max(0, idx);
+            
         }
 
         private void RemoveGameClicked(object sender, EventArgs e)
         {
-            if (_selectedGame != null)
-            {
-                _games.Remove(_selectedGame);
-                _selectedGame = null;
-                UpdateSelectedGame();
-                ReIndex();
-                UpdateGameTree();
-            }
+            
         }
 
         private void AddGameClicked(object sender, EventArgs e)
         {
-            _games.Add(new Game
-            {
-                ID = 0,
-                Engine = Engine.Goldsource,
-                Name = "New Game",
-                BuildID = _builds.Select(x => x.ID).FirstOrDefault(),
-                Autosave = true,
-                MapDir = _games.Select(x => x.MapDir).FirstOrDefault() ?? "",
-                UseHDModels = true,
-                AutosaveDir = _games.Select(x => x.AutosaveDir).FirstOrDefault() ?? "",
-                DefaultLightmapScale = 1,
-                DefaultTextureScale = 1,
-                Fgds = new List<Fgd>(),
-                AdditionalPackages = new List<string>()
-            });
-            ReIndex();
-            UpdateGameTree();
-            var node = GameTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>())
-                .First(x => x.Name == (_games.Count - 1).ToString());
-            GameTree.SelectedNode = node;
+            
         }
 
         private void AddBuildClicked(object sender, EventArgs e)
         {
-            _builds.Add(new Build
-                            {
-                                ID = 0,
-                                Engine = Engine.Goldsource,
-                                Name = "New Build"
-                            });
-            ReIndex();
-            UpdateBuildTree();
-            var node = BuildTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>())
-                .First(x => x.Name == (_builds.Count - 1).ToString());
-            BuildTree.SelectedNode = node;
+           
         }
 
         private void RemoveBuildClicked(object sender, EventArgs e)
         {
-            if (_selectedBuild != null)
-            {
-                _builds.Remove(_selectedBuild);
-                var replacementBuild = _builds.OrderBy(x => x.Engine == _selectedBuild.Engine ? 1 : 2).FirstOrDefault();
-                var replace = replacementBuild == null ? 0 : replacementBuild.ID;
-                _games.Where(x => x.BuildID == _selectedBuild.ID).ToList().ForEach(x => x.BuildID = replace);
-                _selectedBuild = null;
-                UpdateSelectedBuild();
-                ReIndex();
-                UpdateBuildTree();
-            }
+            
         }
 
         #endregion
 
         #region Selected Game
-
-        private Game _selectedGame;
-
+        
         private void GameSelected(object sender, TreeViewEventArgs e)
         {
-            var selection = e.Node;
-            if (selection == null || selection.Parent == null)
-            {
-                // No node selected, or selected node is an engine
-                _selectedGame = null;
-            }
-            else
-            {
-                // Get the selected game by ID
-                _selectedGame = _games[int.Parse(selection.Name)];
-            }
-            UpdateSelectedGame();
+            
         }
 
         private void UpdateSelectedGame()
         {
-            GameSubTabs.Visible = RemoveGame.Enabled = _selectedGame != null;
-            if (_selectedGame == null) return;
-            SelectedGameName.Text = _selectedGame.Name;
-            SelectedGameMapDir.Text = _selectedGame.MapDir;
-            SelectedGameEnableAutosave.Checked = _selectedGame.Autosave;
-            SelectedGameUseDiffAutosaveDir.Checked = _selectedGame.UseCustomAutosaveDir;
-            SelectedGameAutosaveOnlyOnChange.Checked = _selectedGame.AutosaveOnlyOnChanged;
-            SelectedGameAutosaveTriggerFileSave.Checked = _selectedGame.AutosaveTriggerFileSave;
-            SelectedGameDiffAutosaveDir.Text = _selectedGame.AutosaveDir;
-            SelectedGameDiffAutosaveDir.Enabled = SelectedGameUseDiffAutosaveDir.Checked;
-            SelectedGameDefaultPointEnt.SelectedText = _selectedGame.DefaultPointEntity;
-            SelectedGameDefaultBrushEnt.SelectedText = _selectedGame.DefaultBrushEntity;
-            SelectedGameTextureScale.Value = _selectedGame.DefaultTextureScale;
-            SelectedGameLightmapScale.Value = _selectedGame.DefaultLightmapScale;
-            SelectedGameBlacklistTextbox.Text = _selectedGame.PackageBlacklist ?? "";
-            SelectedGameWhitelistTextbox.Text = _selectedGame.PackageWhitelist ?? "";
-            SelectedGameIncludeFgdDirectoriesInEnvironment.Checked = _selectedGame.IncludeFgdDirectoriesInEnvironment;
-            SelectedGameOverrideMapSize.Checked = _selectedGame.OverrideMapSize;
-            var sizes = new[] { 4096, 8192, 16384, 32768, 65536 };
-            SelectedGameOverrideSizeLow.SelectedIndex = Array.IndexOf(sizes, -_selectedGame.OverrideMapSizeLow);
-            SelectedGameOverrideSizeHigh.SelectedIndex = Array.IndexOf(sizes, _selectedGame.OverrideMapSizeHigh);
-
-            SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
-
-            SelectedGameMod.SelectedText = _selectedGame.ModDir;
-            SelectedGameBase.SelectedText = _selectedGame.BaseDir;
-            SelectedGameUseHDModels.Checked = _selectedGame.UseHDModels;
-            SelectedGameExecutable.SelectedText = _selectedGame.Executable;
-            SelectedGameRunArguments.Text = _selectedGame.ExecutableParameters;
-            SelectedGameWonDir.Text = _selectedGame.WonGameDir;
-            SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
-
-            SelectedGameAutosaveLimit.Value = _selectedGame.AutosaveLimit;
-            if (_selectedGame.AutosaveLimit >= SelectedGameAutosaveLimit.Minimum && _selectedGame.AutosaveLimit <= SelectedGameAutosaveLimit.Maximum)
-            {
-                SelectedGameAutosaveLimit.Value = _selectedGame.AutosaveLimit;
-            }
-            else
-            {
-                SelectedGameAutosaveLimit.Value = 5;
-            }
-            if (_selectedGame.AutosaveTime >= SelectedGameAutosaveTime.Minimum && _selectedGame.AutosaveTime <= SelectedGameAutosaveTime.Maximum)
-            {
-                SelectedGameAutosaveTime.Value = _selectedGame.AutosaveTime;
-            }
-            else
-            {
-                SelectedGameAutosaveTime.Value = 5;
-            }
-
-            if (SelectedGameBuild.Items.Count > 0)
-            {
-                SelectedGameBuild.SelectedIndex = Math.Max(0, _builds.FindIndex(x => x.ID == _selectedGame.BuildID));
-            }
-            if (SelectedGameEngine.Items.Count > 0)
-            {
-                SelectedGameEngine.SelectedIndex = Math.Max(0, Enum.GetValues(typeof(Engine)).OfType<Engine>().ToList<Engine>().FindIndex(x => x == _selectedGame.Engine));
-            }
-
-            SelectedGameOverrideSizeHigh.Enabled = SelectedGameOverrideSizeLow.Enabled = SelectedGameOverrideMapSize.Checked;
-
-            SelectedGameEngineChanged(null, null);
-            SelectedGameUpdateSteamGames();
-            SelectedGameUpdateFgds();
-            SelectedGameUpdateAdditionalPackages();
+            
         }
 
         private void SelectedGameUpdateAdditionalPackages()
         {
-            SelectedGameAdditionalPackageList.Items.Clear();
-            foreach (var additionalPackage in _selectedGame.AdditionalPackages)
-            {
-                var item = new ListViewItem(new[]
-                {
-                    Path.GetFileName(additionalPackage),
-                    additionalPackage
-                }) {ToolTipText = additionalPackage};
-                SelectedGameAdditionalPackageList.Items.Add(item);
-            }
-            SelectedGameAdditionalPackageList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            
         }
 
         private void SelectedGameUpdateFgds()
         {
-            SelectedGameFgdList.Items.Clear();
-            foreach (var fgd in _selectedGame.Fgds)
-            {
-                var item = new ListViewItem(new[]
-                {
-                    Path.GetFileName(fgd.Path),
-                    fgd.Path
-                }) { ToolTipText = fgd.Path };
-                SelectedGameFgdList.Items.Add(item);
-            }
-            SelectedGameFgdList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-            SelectedGameDefaultPointEnt.Items.Clear();
-            SelectedGameDefaultBrushEnt.Items.Clear();
-            SelectedGameDetectedSizeHigh.Text = "";
-            SelectedGameDetectedSizeLow.Text = "";
-
-            try
-            {
-                var gd = GameDataProvider.GetGameDataFromFiles(_selectedGame.Fgds.Select(x => x.Path).Where(File.Exists));
-
-                SelectedGameDefaultPointEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Point).Select(x => x.Name).OfType<object>().ToArray());
-                var idx = SelectedGameDefaultPointEnt.Items.IndexOf(_selectedGame.DefaultPointEntity ?? "");
-                if (idx < 0) idx = SelectedGameDefaultPointEnt.Items.IndexOf("info_player_start");
-                if (idx < 0) idx = SelectedGameDefaultPointEnt.Items.IndexOf("light");
-                if (SelectedGameDefaultPointEnt.Items.Count > 0) SelectedGameDefaultPointEnt.SelectedIndex = Math.Max(0, idx);
-
-                SelectedGameDefaultBrushEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Solid).Select(x => x.Name).OfType<object>().ToArray());
-                idx = SelectedGameDefaultBrushEnt.Items.IndexOf(_selectedGame.DefaultBrushEntity ?? "");
-                if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("func_detail");
-                if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("trigger_once");
-                if (SelectedGameDefaultBrushEnt.Items.Count > 0) SelectedGameDefaultBrushEnt.SelectedIndex = Math.Max(0, idx);
-
-                SelectedGameDetectedSizeHigh.Text = gd.MapSizeHigh.ToString(CultureInfo.InvariantCulture);
-                SelectedGameDetectedSizeLow.Text = gd.MapSizeLow.ToString(CultureInfo.InvariantCulture);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "There was an error loading the provided FGDs, please ensure that you have loaded all dependant FGDs and that all FGDs are valid.\n" +
-                    "Check the location in the FGD file specified by the error message for more information.\n\n" +
-                    "Error was: " + ex.Message,
-                    "Error parsing FGD file", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            
         }
 
         private void SelectedGameEngineChanged(object sender, EventArgs e)
         {
-            if (_selectedGame == null || SelectedGameEngine.SelectedIndex < 0) return;
-            var eng = (Engine) SelectedGameEngine.SelectedItem;
-            var change = eng != _selectedGame.Engine;
-            _selectedGame.Engine = eng;
-            SelectedGameSteamInstall.Enabled = eng == Engine.Goldsource;
-            if (eng == Engine.Goldsource && !SelectedGameSteamInstall.Checked)
-            {
-                lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = true;
-                lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = false;
-                SelectedGameWonDir.Enabled = true;
-                SelectedGameDirBrowse.Enabled = true;
-                SelectedGameSteamDir.Enabled = false;
-                SelectedGameWonDirChanged(null, null);
-            }
-            else
-            {
-                lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = false;
-                lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = true;
-                SelectedGameWonDir.Enabled = false;
-                SelectedGameDirBrowse.Enabled = false;
-                SelectedGameSteamDir.Enabled = true;
-                SelectedGameUpdateSteamGames();
-            }
-            if (change)
-            {
-
-                UpdateGameTree();
-                var node = GameTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>())
-                    .First(x => x.Name == _games.IndexOf(_selectedGame).ToString());
-                GameTree.SelectedNode = node;
-            }
+            
         }
 
         private void SelectedGameUpdateSteamGames()
         {
-            if (_selectedGame == null) return;
-            var steamdir = Path.Combine(SteamInstallDir.Text, "steamapps");
-            var commondir = Path.Combine(steamdir, "common");
-            var games = new List<string>();
-            if (Directory.Exists(commondir)) games.AddRange(Directory.GetDirectories(commondir).Select(Path.GetFileName));
-            var includeGoldsource = new[]
-                              {
-                                  "half-life"
-                              };
-            var includeSource = new[]
-                              {
-                                  "alien swarm", "counter-strike global offensive",
-                                  "counter-strike source", "day ofdefeat source",
-                                  "dota 2 beta", "half-life 2", "half-life 2 deathmatch",
-                                  "half-life 2episode one", "half-life 2 episode two",
-                                  "half-life deathmatch source", "left 4 dead 2", "left 4dead", "lostcoast",
-                                  "portal", "portal 2", "team fortress 2"
-                              };
-            SelectedGameSteamDir.Items.Clear();
-            var eng = (Engine) SelectedGameEngine.SelectedItem;
-            var include = eng == Engine.Goldsource ? includeGoldsource : includeSource;
-            SelectedGameSteamDir.Items.AddRange(games.Where(x => include.Contains(x.ToLower())).Distinct().OrderBy(x => x.ToLower()).ToArray<object>());
-            var idx = SelectedGameSteamDir.Items.IndexOf(_selectedGame.SteamGameDir ?? "");
-            if (SelectedGameSteamDir.Items.Count > 0) SelectedGameSteamDir.SelectedIndex = Math.Max(0, idx);
+            
         }
 
         private void SelectedGameWonDirChanged(object sender, EventArgs e)
         {
-            if (SelectedGameEngine.SelectedIndex < 0 || SelectedGameSteamInstall.Checked) return;
-            var eng = (Engine) SelectedGameEngine.SelectedItem;
-            if (eng != Engine.Goldsource || SelectedGameSteamInstall.Checked) return;
-
-            SelectedGameMod.Items.Clear();
-            SelectedGameBase.Items.Clear();
-            SelectedGameExecutable.Items.Clear();
-
-            if (!Directory.Exists(SelectedGameWonDir.Text)) return;
-
-            var mods = Directory.GetDirectories(SelectedGameWonDir.Text).Select(Path.GetFileName);
-            var ignored = new[] { "gldrv", "logos", "logs", "errorlogs", "platform", "config" };
-
-            var range = mods.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
-            SelectedGameMod.Items.AddRange(range);
-            SelectedGameBase.Items.AddRange(range);
-
-            var exes = Directory.GetFiles(SelectedGameWonDir.Text, "*.exe").Select(Path.GetFileName);
-            ignored = new[] { "sxuninst.exe", "utdel32.exe", "upd.exe", "hlds.exe", "hltv.exe" };
-            range = exes.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
-            SelectedGameExecutable.Items.AddRange(range);
-
-            var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
-            if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
-
-            idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
-            if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
-
-            idx = SelectedGameExecutable.Items.IndexOf(_selectedGame.Executable ?? "");
-            if (SelectedGameExecutable.Items.Count > 0) SelectedGameExecutable.SelectedIndex = Math.Max(0, idx);
+            
         }
 
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
         {
-            if (SelectedGameEngine.SelectedIndex < 0 || !SelectedGameSteamInstall.Checked) return;
-            var eng = (Engine) SelectedGameEngine.SelectedItem;
-            if (eng == Engine.Goldsource && !SelectedGameSteamInstall.Checked) return;
-
-            SelectedGameMod.Items.Clear();
-            SelectedGameBase.Items.Clear();
-            SelectedGameExecutable.Items.Clear();
-
-            var dir = Path.Combine(SteamInstallDir.Text, "steamapps", "common", SelectedGameSteamDir.Text);
-            if (!Directory.Exists(dir)) return;
-
-            var mods = Directory.GetDirectories(dir).Select(Path.GetFileName);
-            var ignored = new[] {"gldrv", "logos", "logs", "errorlogs", "platform", "config", "bin"};
-
-            var range = mods.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray();
-            SelectedGameMod.Items.AddRange(range);
-            SelectedGameBase.Items.AddRange(range);
-
-            var exes = Directory.GetFiles(dir, "*.exe").Select(Path.GetFileName);
-            ignored = new[] { "sxuninst.exe", "utdel32.exe", "upd.exe", "hlds.exe", "hltv.exe" };
-            range = exes.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
-            SelectedGameExecutable.Items.AddRange(range);
-
-            var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
-            if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
-
-            idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
-            if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
-
-            idx = SelectedGameExecutable.Items.IndexOf(_selectedGame.Executable ?? "");
-            if (SelectedGameExecutable.Items.Count > 0) SelectedGameExecutable.SelectedIndex = Math.Max(0, idx);
+            
         }
 
         private void SelectedGameNameChanged(object sender, EventArgs e)
         {
-            if (_selectedGame == null) return;
-            var idx = _games.IndexOf(_selectedGame).ToString(CultureInfo.InvariantCulture);
-            var node = GameTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).First(x => x.Name == idx);
-            node.Text = SelectedGameName.Text;
+            
         }
 
         private void SelectedGameUseDiffAutosaveDirChanged(object sender, EventArgs e)
         {
-            SelectedGameDiffAutosaveDir.Enabled = SelectedGameUseDiffAutosaveDir.Checked;
+            
         }
 
         private void SelectedGameDirBrowseClicked(object sender, EventArgs e)
         {
-            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedGameWonDir.Text })
-            {
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    SelectedGameWonDir.Text = fbd.SelectedPath;
-                }
-            }
+            
         }
 
         private void SelectedGameMapDirBrowseClicked(object sender, EventArgs e)
         {
-            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedGameMapDir.Text })
-            {
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    SelectedGameMapDir.Text = fbd.SelectedPath;
-                }
-            }
+            
         }
 
         private void SelectedGameDiffAutosaveDirBrowseClicked(object sender, EventArgs e)
         {
-            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedGameDiffAutosaveDir.Text })
-            {
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    SelectedGameDiffAutosaveDir.Text = fbd.SelectedPath;
-                }
-            }
+            
         }
 
         private void SelectedGameAddFgdClicked(object sender, EventArgs e)
         {
-            using (var ofd = new OpenFileDialog { Filter = "Forge Game Data files (*.fgd)|*.fgd", Multiselect = true })
-            {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    foreach (var fileName in ofd.FileNames)
-                    {
-                        _selectedGame.Fgds.Add(new Fgd { Path = fileName });
-                    }
-                    SelectedGameUpdateFgds();
-                }
-            }
+            
         }
 
         private void SelectedGameRemoveFgdClicked(object sender, EventArgs e)
         {
-            if (SelectedGameFgdList.SelectedIndices.Count > 0)
-            {
-                foreach (var idx in SelectedGameFgdList.SelectedIndices.OfType<int>().OrderByDescending(x => x).ToArray())
-                {
-                    _selectedGame.Fgds.RemoveAt(idx);
-                }
-                SelectedGameUpdateFgds();
-            }
+            
         }
 
         private void SelectedGameOverrideMapSizeChanged(object sender, EventArgs e)
         {
-            SelectedGameOverrideSizeHigh.Enabled = SelectedGameOverrideSizeLow.Enabled = SelectedGameOverrideMapSize.Checked;
+            
         }
 
         private void SelectedGameAddAdditionalPackageFileClicked(object sender, EventArgs e)
         {
-            using (var ofd = new OpenFileDialog { Filter = "WAD files (*.wad)|*.wad", Multiselect = true })
-            {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    foreach (var fileName in ofd.FileNames)
-                    {
-                        _selectedGame.AdditionalPackages.Add(fileName);
-                    }
-                    SelectedGameUpdateAdditionalPackages();
-                }
-            }
+            
         }
 
         private void SelectedGameAddAdditionalPackageFolderClicked(object sender, EventArgs e)
         {
-            using (var ofd = new FolderBrowserDialog())
-            {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    _selectedGame.AdditionalPackages.Add(ofd.SelectedPath);
-                    SelectedGameUpdateAdditionalPackages();
-                }
-            }
+            
         }
 
         private void SelectedGameRemoveAdditionalPackageClicked(object sender, EventArgs e)
         {
-            if (SelectedGameAdditionalPackageList.SelectedIndices.Count > 0)
-            {
-                foreach (var idx in SelectedGameAdditionalPackageList.SelectedIndices.OfType<int>().OrderByDescending(x => x).ToArray())
-                {
-                    _selectedGame.AdditionalPackages.RemoveAt(idx);
-                }
-                SelectedGameUpdateAdditionalPackages();
-            }
+            
         }
 
         #endregion
-
-        #region Selected Build
-
-        private Build _selectedBuild;
-        private BuildProfile _selectedProfile;
-
-        private void BuildSelected(object sender, TreeViewEventArgs e)
-        {
-            var selection = e.Node;
-            if (selection == null || selection.Parent == null)
-            {
-                // No node selected, or selected node is an engine
-                _selectedBuild = null;
-            }
-            else
-            {
-                // Get the selected build by ID
-                _selectedBuild = _builds[int.Parse(selection.Name)];
-            }
-            UpdateSelectedBuild();
-        }
-
-        private void SelectedBuildExeFolderBrowseClicked(object sender, EventArgs e)
-        {
-            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedBuildExeFolder.Text })
-            {
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    SelectedBuildExeFolder.Text = fbd.SelectedPath;
-                }
-            }
-        }
-
-        private void SelectedBuildNameChanged(object sender, EventArgs e)
-        {
-            if (_selectedBuild == null) return;
-            var idx = _builds.IndexOf(_selectedBuild).ToString();
-            var node = BuildTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).First(x => x.Name == idx);
-            node.Text = SelectedBuildName.Text;
-        }
-
-        private void SelectedBuildEngineChanged(object sender, EventArgs e)
-        {
-            if (_selectedBuild == null) return;
-            var eng = (Engine) SelectedBuildEngine.SelectedItem;
-            var change = eng != _selectedBuild.Engine;
-            _selectedBuild.Engine = eng;
-            var gs = eng == Engine.Goldsource;
-            SelectedBuildCsg.Enabled = gs;
-            if (change)
-            {
-
-                UpdateBuildTree();
-                var node = BuildTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>())
-                    .First(x => x.Name == _builds.IndexOf(_selectedBuild).ToString());
-                BuildTree.SelectedNode = node;
-            }
-        }
-
-        private void SelectedBuildSpecificationChanged(object sender, EventArgs e)
-        {
-            var spec = SelectedBuildSpecification.SelectedItem as CompileSpecification;
-
-            _selectedBuild.Specification = spec == null ? "" : spec.ID;
-
-            SelectedBuildUpdateProfiles();
-        }
-
-        private bool _pauseProfileUpdates;
-
-        private void SelectedBuildProfileChanged(object sender, EventArgs e)
-        {
-            if (_pauseProfileUpdates) return;
-            _selectedProfile = SelectedBuildProfile.SelectedItem as BuildProfile;
-            SelectedBuildUpdateCompileParameters(true);
-        }
-
-        private void SelectedBuildUpdateProfiles(bool addNew = false, string newName = "Default")
-        {
-            _pauseProfileUpdates = true;
-            var setDefault = false;
-            if (!_selectedBuild.Profiles.Any() || addNew)
-            {
-                _selectedProfile = new BuildProfile {ID = 1, BuildID = _selectedBuild.ID, Name = newName};
-                _selectedBuild.Profiles.Add(_selectedProfile);
-                setDefault = true;
-            }
-
-            SelectedBuildProfile.Items.Clear();
-            foreach (var prof in _selectedBuild.Profiles)
-            {
-                SelectedBuildProfile.Items.Add(prof);
-            }
-
-            var idx = _selectedBuild.Profiles.IndexOf(_selectedProfile);
-            if (idx < 0)
-            {
-                _selectedProfile = _selectedBuild.Profiles[0];
-                idx = 0;
-            }
-
-            SelectedBuildProfile.SelectedIndex = idx;
-
-            SelectedBuildUpdateCompileParameters(!setDefault);
-
-            if (setDefault)
-            {
-                _selectedProfile.RunCsg = SelectedBuildRunCsgCheckbox.Checked;
-                _selectedProfile.RunBsp = SelectedBuildRunBspCheckbox.Checked;
-                _selectedProfile.RunVis = SelectedBuildRunVisCheckbox.Checked;
-                _selectedProfile.RunRad = SelectedBuildRunRadCheckbox.Checked;
-                _selectedProfile.GeneratedCsgParameters = SelectedBuildCsgParameters.GeneratedCommands;
-                _selectedProfile.AdditionalCsgParameters = SelectedBuildCsgParameters.AdditionalCommands;
-                _selectedProfile.GeneratedBspParameters = SelectedBuildBspParameters.GeneratedCommands;
-                _selectedProfile.GeneratedBspParameters = SelectedBuildBspParameters.AdditionalCommands;
-                _selectedProfile.GeneratedVisParameters = SelectedBuildVisParameters.GeneratedCommands;
-                _selectedProfile.GeneratedVisParameters = SelectedBuildVisParameters.AdditionalCommands;
-                _selectedProfile.GeneratedRadParameters = SelectedBuildRadParameters.GeneratedCommands;
-                _selectedProfile.GeneratedRadParameters = SelectedBuildRadParameters.AdditionalCommands;
-                _selectedProfile.GeneratedSharedParameters = SelectedBuildSharedParameters.GeneratedCommands;
-                _selectedProfile.GeneratedSharedParameters = SelectedBuildSharedParameters.AdditionalCommands;
-            }
-            _pauseProfileUpdates = false;
-        }
-
-        private void UpdateSelectedBuild()
-        {
-            BuildSubTabs.Visible = RemoveBuild.Enabled = _selectedBuild != null;
-            if (_selectedBuild == null) return;
-            if (!_selectedBuild.Profiles.Contains(_selectedProfile))
-            {
-                _selectedProfile = _selectedBuild.Profiles.FirstOrDefault();
-            }
-            SelectedBuildName.Text = _selectedBuild.Name;
-            SelectedBuildEngine.SelectedIndex = Math.Max(0, Enum.GetValues(typeof(Engine)).OfType<Engine>().ToList<Engine>().FindIndex(x => x == _selectedBuild.Engine));
-            SelectedBuildSpecification.SelectedIndex = Math.Max(0, CompileSpecification.Specifications.FindIndex(x => x.ID == _selectedBuild.Specification));
-            SelectedBuildDontRedirectOutput.Checked = _selectedBuild.DontRedirectOutput;
-            SelectedBuildExeFolder.Text = _selectedBuild.Path;
-            SelectedBuildBsp.SelectedText = _selectedBuild.Bsp;
-            SelectedBuildCsg.SelectedText = _selectedBuild.Csg;
-            SelectedBuildVis.SelectedText = _selectedBuild.Vis;
-            SelectedBuildRad.SelectedText = _selectedBuild.Rad;
-            SelectedBuildIncludePathInEnvironment.Checked = _selectedBuild.IncludePathInEnvironment;
-
-            SelectedBuildWorkingDirTemp.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.TemporaryDirectory;
-            SelectedBuildWorkingDirSame.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.SameDirectory;
-            SelectedBuildWorkingDirSub.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.SubDirectory;
-
-            SelectedBuildAfterCopyBsp.Checked = _selectedBuild.AfterCopyBsp;
-            SelectedBuildAfterRunGame.Checked = _selectedBuild.AfterRunGame;
-            SelectedBuildAskBeforeRun.Checked = _selectedBuild.AfterAskBeforeRun;
-
-            SelectedBuildCopyBsp.Checked = _selectedBuild.CopyBsp;
-            SelectedBuildCopyRes.Checked = _selectedBuild.CopyRes;
-            SelectedBuildCopyLin.Checked = _selectedBuild.CopyLin;
-            SelectedBuildCopyMap.Checked = _selectedBuild.CopyMap;
-            SelectedBuildCopyPts.Checked = _selectedBuild.CopyPts;
-            SelectedBuildCopyLog.Checked = _selectedBuild.CopyLog;
-            SelectedBuildCopyErr.Checked = _selectedBuild.CopyErr;
-        }
-
-        private void SelectedBuildPathChanged(object sender, EventArgs e)
-        {
-            var selBsp = _selectedBuild.Bsp;
-            var selCsg = _selectedBuild.Csg;
-            var selVis = _selectedBuild.Vis;
-            var selRad = _selectedBuild.Rad;
-
-            SelectedBuildBsp.Items.Clear();
-            SelectedBuildCsg.Items.Clear();
-            SelectedBuildVis.Items.Clear();
-            SelectedBuildRad.Items.Clear();
-
-            if (!Directory.Exists(SelectedBuildExeFolder.Text)) return;
-            var dirs = Directory.GetFiles(SelectedBuildExeFolder.Text, "*.exe").Select(Path.GetFileName).ToList();
-            if (dirs.Count == 0) return;
-            var dira = dirs.ToArray();
-
-            SelectedBuildBsp.Items.AddRange(dira);
-            SelectedBuildCsg.Items.AddRange(dira);
-            SelectedBuildVis.Items.AddRange(dira);
-            SelectedBuildRad.Items.AddRange(dira);
-
-            SelectedBuildBsp.SelectedIndex = dirs.IndexOf(selBsp);
-            SelectedBuildCsg.SelectedIndex = dirs.IndexOf(selCsg);
-            SelectedBuildVis.SelectedIndex = dirs.IndexOf(selVis);
-            SelectedBuildRad.SelectedIndex = dirs.IndexOf(selRad);
-
-            if (SelectedBuildBsp.SelectedIndex < 0) SelectedBuildBsp.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("bsp")));
-            if (SelectedBuildCsg.SelectedIndex < 0) SelectedBuildCsg.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("csg")));
-            if (SelectedBuildVis.SelectedIndex < 0) SelectedBuildVis.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("vis")));
-            if (SelectedBuildRad.SelectedIndex < 0) SelectedBuildRad.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("rad")));
-        }
-
-        private void SelectedBuildUpdateCompileParameters(bool setValues)
-        {
-            SelectedBuildCsgParameters.ClearParameters();
-            SelectedBuildBspParameters.ClearParameters();
-            SelectedBuildVisParameters.ClearParameters();
-            SelectedBuildRadParameters.ClearParameters();
-            SelectedBuildSharedParameters.ClearParameters();
-            SelectedBuildRunCsgCheckbox.Checked = SelectedBuildRunBspCheckbox.Checked = SelectedBuildRunVisCheckbox.Checked = SelectedBuildRunRadCheckbox.Checked = false;
-
-            var spec = CompileSpecification.Specifications.FirstOrDefault(x => x.ID == _selectedBuild.Specification);
-            if (spec == null) return;
-
-            var prof = SelectedBuildProfile.SelectedItem as BuildProfile;
-            if (prof == null) return;
-
-            SelectedBuildRunCsgCheckbox.Checked = spec.GetDefaultRun("csg");
-            SelectedBuildRunBspCheckbox.Checked = spec.GetDefaultRun("bsp");
-            SelectedBuildRunVisCheckbox.Checked = spec.GetDefaultRun("vis");
-            SelectedBuildRunRadCheckbox.Checked = spec.GetDefaultRun("rad");
-
-            var csg = spec.GetTool("csg");
-            if (csg != null)
-            {
-                SelectedBuildCsgParameters.AddParameters(csg.Parameters);
-                SelectedBuildCsgParameters.SetDescription(csg.Description);
-            }
-
-            var bsp = spec.GetTool("bsp");
-            if (bsp != null)
-            {
-                SelectedBuildBspParameters.AddParameters(bsp.Parameters);
-                SelectedBuildBspParameters.SetDescription(bsp.Description);
-            }
-
-            var vis = spec.GetTool("vis");
-            if (vis != null)
-            {
-                SelectedBuildVisParameters.AddParameters(vis.Parameters);
-                SelectedBuildVisParameters.SetDescription(vis.Description);
-            }
-
-            var rad = spec.GetTool("rad");
-            if (rad != null)
-            {
-                SelectedBuildRadParameters.AddParameters(rad.Parameters);
-                SelectedBuildRadParameters.SetDescription(rad.Description);
-            }
-
-            var shared = spec.GetTool("shared");
-            if (shared != null)
-            {
-                SelectedBuildSharedParameters.AddParameters(shared.Parameters);
-                SelectedBuildSharedParameters.SetDescription(shared.Description);
-            }
-
-            if (setValues)
-            {
-                SelectedBuildCsgParameters.SetCommands(prof.GeneratedCsgParameters ?? "", prof.AdditionalCsgParameters ?? "");
-                SelectedBuildBspParameters.SetCommands(prof.GeneratedBspParameters ?? "", prof.AdditionalBspParameters ?? "");
-                SelectedBuildVisParameters.SetCommands(prof.GeneratedVisParameters ?? "", prof.AdditionalVisParameters ?? "");
-                SelectedBuildRadParameters.SetCommands(prof.GeneratedRadParameters ?? "", prof.AdditionalRadParameters ?? "");
-                SelectedBuildSharedParameters.SetCommands(prof.GeneratedSharedParameters ?? "", prof.AdditionalSharedParameters ?? "");
-                SelectedBuildRunCsgCheckbox.Checked = prof.RunCsg;
-                SelectedBuildRunBspCheckbox.Checked = prof.RunBsp;
-                SelectedBuildRunVisCheckbox.Checked = prof.RunVis;
-                SelectedBuildRunRadCheckbox.Checked = prof.RunRad;
-            }
-        }
-
-        private void SelectedBuildRenameProfileButtonClicked(object sender, EventArgs e)
-        {
-            if (_selectedBuild == null || _selectedProfile == null) return;
-            using (var qf = new QuickForm("Rename Build Profile").TextBox("Name", _selectedProfile.Name).OkCancel())
-            {
-                if (qf.ShowDialog() == DialogResult.OK)
-                {
-                    var name = qf.String("Name");
-                    if (_selectedBuild.Profiles.Any(x => String.Equals(name, x.Name, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        MessageBox.Show("There is already a profile with that name, please type a unique name.", "Cannot rename profile");
-                        name = null;
-                    }
-                    if (!String.IsNullOrWhiteSpace(name) && _selectedProfile.Name != name)
-                    {
-                        _selectedProfile.Name = name;
-                        SelectedBuildUpdateProfiles();
-                    }
-                }
-            }
-        }
-
-        private void SelectedBuildDeleteProfileButtonClicked(object sender, EventArgs e)
-        {
-            if (_selectedProfile == null) return;
-            if (MessageBox.Show("Are you sure you want to delete the '" + _selectedProfile.Name + "' profile?",
-                    "Delete Build Profile", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                _selectedBuild.Profiles.Remove(_selectedProfile);
-                SelectedBuildUpdateProfiles();
-            }
-        }
-
-        private void SelectedBuildNewProfileButtonClicked(object sender, EventArgs e)
-        {
-            if (_selectedBuild == null) return;
-            using (var qf = new QuickForm("New Build Profile").TextBox("Name").OkCancel())
-            {
-                if (qf.ShowDialog() == DialogResult.OK)
-                {
-                    var name = qf.String("Name");
-                    if (_selectedBuild.Profiles.Any(x => String.Equals(name, x.Name, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        MessageBox.Show("There is already a profile with that name, please type a unique name.", "Cannot create profile");
-                        name = null;
-                    }
-                    if (!String.IsNullOrWhiteSpace(name))
-                    {
-                        SelectedBuildUpdateProfiles(true, name);
-                    }
-                }
-            }
-        }
-
-        private void UpdateSelectedBuildProfilePreview()
-        {
-            SelectedBuildProfilePreview.Text = "";
-            if (_selectedProfile == null || _selectedBuild == null) return;
-            var str = "";
-            if (SelectedBuildRunCsgCheckbox.Checked)
-            {
-                str += _selectedBuild.Csg + ' ' + (_selectedProfile.GeneratedCsgParameters
-                                                   + ' ' + _selectedProfile.AdditionalCsgParameters
-                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
-                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
-            }
-            if (SelectedBuildRunBspCheckbox.Checked)
-            {
-                str += _selectedBuild.Bsp + ' ' + (_selectedProfile.GeneratedBspParameters
-                                                   + ' ' + _selectedProfile.AdditionalBspParameters
-                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
-                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
-            }
-            if (SelectedBuildRunVisCheckbox.Checked)
-            {
-                str += _selectedBuild.Vis + ' ' + (_selectedProfile.GeneratedVisParameters
-                                                   + ' ' + _selectedProfile.AdditionalVisParameters
-                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
-                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
-            }
-            if (SelectedBuildRunRadCheckbox.Checked)
-            {
-                str += _selectedBuild.Rad + ' ' + (_selectedProfile.GeneratedRadParameters
-                                                   + ' ' + _selectedProfile.AdditionalRadParameters
-                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
-                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
-            }
-            SelectedBuildProfilePreview.Text = str;
-        }
-
-        #endregion
-
+        
         #region Hotkeys
 
         private class HotkeyQuickFormItem : QuickForms.Items.QuickFormTextBox

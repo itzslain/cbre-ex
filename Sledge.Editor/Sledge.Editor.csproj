@@ -268,12 +268,6 @@
     <Compile Include="EditorMediator.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
-    <Compile Include="GameSelectionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GameSelectionForm.Designer.cs">
-      <DependentUpon>GameSelectionForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="History\HistoryAction.cs" />
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
@@ -653,9 +647,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GameSelectionForm.resx">
-      <DependentUpon>GameSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logging\ExceptionWindow.resx">
       <DependentUpon>ExceptionWindow.cs</DependentUpon>

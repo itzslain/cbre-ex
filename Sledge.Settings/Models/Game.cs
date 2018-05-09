@@ -9,6 +9,8 @@ namespace Sledge.Settings.Models
 {
     public class Game
     {
+        public static readonly Game Instance = new Game();
+
         public int ID { get; set; }
         public string Name { get; set; }
         public Engine Engine { get; set; }
@@ -46,7 +48,7 @@ namespace Sledge.Settings.Models
 
         public Game()
         {
-            Fgds = new List<Fgd>();
+            //Fgds = new List<Fgd>();
             AdditionalPackages = new List<string>();
             AutosaveTime = 5;
             AutosaveLimit = 5;
