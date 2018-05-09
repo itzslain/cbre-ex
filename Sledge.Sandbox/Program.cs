@@ -8,7 +8,6 @@ using System.Threading;
 using System.Windows.Forms;
 using OpenTK;
 using Sledge.Settings;
-using Sledge.Settings.GameDetection;
 
 namespace Sledge.Sandbox
 {
@@ -27,15 +26,12 @@ namespace Sledge.Sandbox
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new MainForm());
-
-            var wd = new WonDetector();
-            wd.Detect();
-
+            
             //return;
 
             QuickStartBootstrap.MapFile = @"D:\Github\sledge\_Resources\RMF\entities.rmf";
             SettingsManager.Read();
-            QuickStartBootstrap.Game = SettingsManager.Games.Single(x => x.ID == 1);
+            QuickStartBootstrap.Game = SettingsManager.Game;
             QuickStartBootstrap.Start();
         }
 

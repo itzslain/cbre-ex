@@ -44,10 +44,6 @@
   <ItemGroup>
     <Compile Include="DoubleClick3DAction.cs" />
     <Compile Include="FavouriteTextureFolder.cs" />
-    <Compile Include="GameDetection\GameFiles\SteamGame.cs" />
-    <Compile Include="GameDetection\GameFiles\SteamGames.cs" />
-    <Compile Include="GameDetection\IGameDetector.cs" />
-    <Compile Include="GameDetection\WonDetector.cs" />
     <Compile Include="HotkeyDefinition.cs" />
     <Compile Include="HotkeyImplementation.cs" />
     <Compile Include="Hotkeys.cs" />

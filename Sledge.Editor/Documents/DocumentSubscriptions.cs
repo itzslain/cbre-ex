@@ -253,7 +253,7 @@ namespace Sledge.Editor.Documents
             _document.SaveFile();
             if (_document.MapFile == null) return;
             
-            var build = SettingsManager.Builds.FirstOrDefault(x => x.ID == _document.Game.BuildID);
+            var build = SettingsManager.Build;
             if (build == null)
             {
                 if (MessageBox.Show("Please set up the build tools for this game profile.\n\nWould you like to open the settings page now?", "No build configuration", MessageBoxButtons.YesNo) == DialogResult.Yes)

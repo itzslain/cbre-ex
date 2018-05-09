@@ -91,15 +91,7 @@ namespace Sledge.Editor.Documents
                 Map.GridSpacing = Grid.DefaultSize;
             }
 
-            try
-            {
-                GameData = GameDataProvider.GetGameDataFromFiles(new List<string>());//game.Fgds.Select(f => f.Path));
-            }
-            catch(ProviderException)
-            {
-                // TODO: Error logging
-                GameData = new GameData();
-            }
+            GameData = new GameData();
 
             if (game.OverrideMapSize)
             {

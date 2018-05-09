@@ -80,7 +80,7 @@ namespace Sledge.Editor
 
         private static void LoadFile(string fileName)
         {
-            LoadFileGame(fileName, Game.Instance);
+            LoadFileGame(fileName, SettingsManager.Game);
         }
 
         private void EditorLoad(object sender, EventArgs e)
@@ -157,7 +157,7 @@ namespace Sledge.Editor
             {
                 foreach (var session in SettingsManager.LoadSession())
                 {
-                    LoadFileGame(session.Item1, session.Item2);
+                    LoadFileGame(session, SettingsManager.Game);
                 }
             }
 
@@ -421,7 +421,7 @@ namespace Sledge.Editor
 
         public static void FileNew()
         {
-            DocumentManager.AddAndSwitch(new Document(null, new Map(), Game.Instance));
+            DocumentManager.AddAndSwitch(new Document(null, new Map(), SettingsManager.Game));
         }
 
         private static void FileOpen()

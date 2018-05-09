@@ -11,8 +11,8 @@ namespace Sledge.Settings
 {
     public static class SettingsManager
     {
-        public static List<Build> Builds { get; set; }
-        public static List<Game> Games { get; set; }
+        public static Build Build { get; private set; }
+        public static Game Game { get; private set; }
         public static List<RecentFile> RecentFiles { get; set; }
         public static List<Setting> Settings { get; set; }
         public static List<Hotkey> Hotkeys { get; set; }
@@ -23,8 +23,8 @@ namespace Sledge.Settings
 
         static SettingsManager()
         {
-            Builds = new List<Build>();
-            Games = new List<Game>();
+            Build = new Build();
+            Game = new Game();
             RecentFiles = new List<RecentFile>();
             Settings = new List<Setting>();
             Hotkeys = new List<Hotkey>();
@@ -84,8 +84,6 @@ namespace Sledge.Settings
 
         public static void Read()
         {
-            Builds.Clear();
-            Games.Clear();
             RecentFiles.Clear();
             Settings.Clear();
             Hotkeys.Clear();
@@ -115,20 +113,6 @@ namespace Sledge.Settings
                         RecentFiles.Add(new RecentFile {Location = recents[key], Order = i});
                     }
                 }
-            }
-            var games = root.Children.Where(x => x.Name == "Game");
-            foreach (var game in games)
-            {
-                var g = new Game();
-                g.Read(game);
-                Games.Add(g);
-            }
-            var builds = root.Children.Where(x => x.Name == "Build");
-            foreach (var build in builds)
-            {
-                var b = new Build();
-                b.Read(build);
-                Builds.Add(b);
             }
             var hotkeys = root.Children.FirstOrDefault(x => x.Name == "Hotkeys");
             if (hotkeys != null)
@@ -212,23 +196,7 @@ namespace Sledge.Settings
                 i++;
             }
             root.Children.Add(recents);
-
-            // Games > Fgds/Wads
-            foreach (var game in Games)
-            {
-                var g = new GenericStructure("Game");
-                game.Write(g);
-                root.Children.Add(g);
-            }
-
-            // Builds
-            foreach (var build in Builds)
-            {
-                var b = new GenericStructure("Build");
-                build.Write(b);
-                root.Children.Add(b);
-            }
-
+            
             // Hotkeys
             Hotkeys = Sledge.Settings.Hotkeys.GetHotkeys().ToList();
             var hotkeys = new GenericStructure("Hotkeys");
@@ -274,10 +242,10 @@ namespace Sledge.Settings
             File.WriteAllLines(GetSessionFile(), files.Select(x => x.Item1 + ":" + x.Item2.ID));
         }
 
-        public static IEnumerable<Tuple<string, Game>> LoadSession()
+        public static IEnumerable<string> LoadSession()
         {
             var sf = GetSessionFile();
-            if (!File.Exists(sf)) return new List<Tuple<string, Game>>();
+            if (!File.Exists(sf)) return new List<string>();
             return File.ReadAllLines(sf)
                 .Select(x =>
                             {
@@ -286,9 +254,9 @@ namespace Sledge.Settings
                                 var num = x.Substring(i + 1);
                                 int id;
                                 int.TryParse(num, out id);
-                                return Tuple.Create(file, Games.FirstOrDefault(g => g.ID == id));
+                                return file;
                             })
-                .Where(x => File.Exists(x.Item1) && x.Item2 != null);
+                .Where(x => File.Exists(x));
         }
 
         public static T GetAdditionalData<T>(string key)

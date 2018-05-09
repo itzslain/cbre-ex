@@ -17,7 +17,7 @@ namespace Sledge.Editor.Environment
         {
             get
             {
-                return SettingsManager.Builds.FirstOrDefault(x => x.ID == Game.BuildID);
+                return SettingsManager.Build;
             }
         }
 
@@ -49,12 +49,7 @@ namespace Sledge.Editor.Environment
             {
                 yield return b.Path;
             }
-
-            if (Game.IncludeFgdDirectoriesInEnvironment)
-            {
-                foreach (var d in Game.GetFgdDirectories()) yield return d;
-            }
-
+            
             // Editor location to the path, for sprites and the like
             yield return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         }

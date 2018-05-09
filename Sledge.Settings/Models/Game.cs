@@ -9,8 +9,6 @@ namespace Sledge.Settings.Models
 {
     public class Game
     {
-        public static readonly Game Instance = new Game();
-
         public int ID { get; set; }
         public string Name { get; set; }
         public Engine Engine { get; set; }
@@ -41,7 +39,7 @@ namespace Sledge.Settings.Models
         public int OverrideMapSizeLow { get; set; }
         public int OverrideMapSizeHigh { get; set; }
 
-        public List<Fgd> Fgds { get; set; }
+        //public List<Fgd> Fgds { get; set; }
         public List<string> AdditionalPackages { get; set; }
         public string PackageBlacklist { get; set; }
         public string PackageWhitelist { get; set; }
@@ -55,113 +53,7 @@ namespace Sledge.Settings.Models
             AutosaveOnlyOnChanged = true;
             AutosaveTriggerFileSave = true;
         }
-
-        public void Read(GenericStructure gs)
-        {
-            ID = gs.PropertyInteger("ID");
-            Name = gs["Name"];
-            Engine = (Engine) Enum.Parse(typeof(Engine), gs["EngineID"]);
-            BuildID = gs.PropertyInteger("BuildID");
-            SteamInstall = gs.PropertyBoolean("SteamInstall");
-            WonGameDir = gs["WonGameDir"];
-            SteamGameDir = gs["SteamGameDir"];
-            ModDir = gs["ModDir"];
-            UseHDModels = gs.PropertyBoolean("UseHDModels", true);
-            BaseDir = gs["BaseDir"];
-            Executable = gs["Executable"];
-            ExecutableParameters = gs["ExecutableParameters"];
-            MapDir = gs["MapDir"];
-            Autosave = gs.PropertyBoolean("Autosave");
-            UseCustomAutosaveDir = gs.PropertyBoolean("UseCustomAutosaveDir");
-            AutosaveDir = gs["AutosaveDir"];
-            AutosaveTime = gs.PropertyInteger("AutosaveTime");
-            AutosaveLimit = gs.PropertyInteger("AutosaveLimit");
-            AutosaveOnlyOnChanged = gs.PropertyBoolean("AutosaveOnlyOnChanged", true);
-            AutosaveTriggerFileSave = gs.PropertyBoolean("AutosaveTriggerFileChange", true);
-            DefaultPointEntity = gs["DefaultPointEntity"];
-            DefaultBrushEntity = gs["DefaultBrushEntity"];
-            DefaultTextureScale = gs.PropertyDecimal("DefaultTextureScale");
-            DefaultLightmapScale = gs.PropertyDecimal("DefaultLightmapScale");
-            IncludeFgdDirectoriesInEnvironment = gs.PropertyBoolean("IncludeFgdDirectoriesInEnvironment", true);
-            OverrideMapSize = gs.PropertyBoolean("OverrideMapSize");
-            OverrideMapSizeLow = gs.PropertyInteger("OverrideMapSizeLow");
-            OverrideMapSizeHigh = gs.PropertyInteger("OverrideMapSizeHigh");
-
-            var additional = gs.Children.FirstOrDefault(x => x.Name == "AdditionalPackages");
-            if (additional != null)
-            {
-                foreach (var key in additional.GetPropertyKeys())
-                {
-                    AdditionalPackages.Add(additional[key]);
-                }
-            }
-
-            PackageBlacklist = (gs["PackageBlacklist"] ?? "").Replace(";", "\r\n");
-            PackageWhitelist = (gs["PackageWhitelist"] ?? "").Replace(";", "\r\n");
-
-            var fgds = gs.Children.FirstOrDefault(x => x.Name == "Fgds");
-            if (fgds != null)
-            {
-                foreach (var key in fgds.GetPropertyKeys())
-                {
-                    Fgds.Add(new Fgd { Path = fgds[key] });
-                }
-            }
-        }
-
-        public void Write(GenericStructure gs)
-        {
-            gs["ID"] = ID.ToString(CultureInfo.InvariantCulture);
-            gs["Name"] = Name;
-            gs["EngineID"] = Engine.ToString();
-            gs["BuildID"] = BuildID.ToString(CultureInfo.InvariantCulture);
-            gs["SteamInstall"] = SteamInstall.ToString(CultureInfo.InvariantCulture);
-            gs["WonGameDir"] = WonGameDir;
-            gs["SteamGameDir"] = SteamGameDir;
-            gs["ModDir"] = ModDir;
-            gs["UseHDModels"] = UseHDModels.ToString(CultureInfo.InvariantCulture);
-            gs["BaseDir"] = BaseDir;
-            gs["Executable"] = Executable;
-            gs["ExecutableParameters"] = ExecutableParameters;
-            gs["MapDir"] = MapDir;
-            gs["Autosave"] = Autosave.ToString(CultureInfo.InvariantCulture);
-            gs["UseCustomAutosaveDir"] = UseCustomAutosaveDir.ToString(CultureInfo.InvariantCulture);
-            gs["AutosaveDir"] = AutosaveDir;
-            gs["AutosaveTime"] = AutosaveTime.ToString(CultureInfo.InvariantCulture);
-            gs["AutosaveLimit"] = AutosaveLimit.ToString(CultureInfo.InvariantCulture);
-            gs["AutosaveOnlyOnChanged"] = AutosaveOnlyOnChanged.ToString(CultureInfo.InvariantCulture);
-            gs["AutosaveTriggerFileChange"] = AutosaveTriggerFileSave.ToString(CultureInfo.InvariantCulture);
-            gs["DefaultPointEntity"] = DefaultPointEntity;
-            gs["DefaultBrushEntity"] = DefaultBrushEntity;
-            gs["DefaultTextureScale"] = DefaultTextureScale.ToString(CultureInfo.InvariantCulture);
-            gs["DefaultLightmapScale"] = DefaultLightmapScale.ToString(CultureInfo.InvariantCulture);
-            gs["IncludeFgdDirectoriesInEnvironment"] = IncludeFgdDirectoriesInEnvironment.ToString(CultureInfo.InvariantCulture);
-            gs["OverrideMapSize"] = OverrideMapSize.ToString(CultureInfo.InvariantCulture);
-            gs["OverrideMapSizeLow"] = OverrideMapSizeLow.ToString(CultureInfo.InvariantCulture);
-            gs["OverrideMapSizeHigh"] = OverrideMapSizeHigh.ToString(CultureInfo.InvariantCulture);
-
-            var additional = new GenericStructure("AdditionalPackages");
-            var i = 1;
-            foreach (var add in AdditionalPackages)
-            {
-                additional.AddProperty(i.ToString(CultureInfo.InvariantCulture), add);
-                i++;
-            }
-            gs.Children.Add(additional);
-
-            gs["PackageBlacklist"] = (PackageBlacklist ?? "").Replace("\r", "").Replace('\n', ';');
-            gs["PackageWhitelist"] = (PackageWhitelist ?? "").Replace("\r", "").Replace('\n', ';');
-
-            var fgds = new GenericStructure("Fgds");
-            i = 1;
-            foreach (var fgd in Fgds)
-            {
-                fgds.AddProperty(i.ToString(CultureInfo.InvariantCulture), fgd.Path);
-                i++;
-            }
-            gs.Children.Add(fgds);
-        }
-
+        
         public string GetMapDirectory()
         {
             return Path.Combine(GetModDirectory(), "maps");
@@ -180,12 +72,7 @@ namespace Sledge.Settings.Models
                 ? Path.Combine(Steam.SteamDirectory, "steamapps", "common", SteamGameDir, BaseDir)
                 : Path.Combine(WonGameDir, BaseDir);
         }
-
-        public IEnumerable<string> GetFgdDirectories()
-        {
-            return Fgds.Select(x => Path.GetDirectoryName(Path.GetFullPath(x.Path))).Distinct();
-        }
-
+        
         public string GetExecutable()
         {
             return SteamInstall
