@@ -21,14 +21,7 @@ namespace Sledge.Providers.Texture
             IndexAlpha = 2, // R/G/B = Palette index 255, A = (R+G+B)/3
             AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
         }
-
-        private static Size GetSize(string file)
-        {
-            Image myImage = Image.FromFile(file);
-
-            return new Size(myImage.Width, myImage.Height);
-        }
-
+        
         static Dictionary<string, Image> loadedImages = new Dictionary<string, Image>();
         private static Bitmap Parse(string file)
         {
@@ -59,8 +52,6 @@ namespace Sledge.Providers.Texture
         {
             // Sprite provider ignores the black/whitelists
             var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
-            //string asd = ""; //dirs.ForEach(d => asd += d + "\n");
-            //throw new Exception(asd);
             
             foreach (var dir in dirs)
             {
@@ -68,22 +59,20 @@ namespace Sledge.Providers.Texture
                 var tp = new TexturePackage(dir, dir.Remove(0,slashInd), this);
 
                 var sprs = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".png"));
-                //sprs.ToList().ForEach(s => asd += s + "\n");
-                //throw new Exception(asd);
                 if (!sprs.Any()) continue;
 
                 foreach (var spr in sprs)
                 {
-                    var size = GetSize(spr);
                     var rel = Path.GetFullPath(spr).Substring(dir.Length).TrimStart('/', '\\').Replace('\\', '/');
-                    rel = rel.Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "");
+                    rel = rel.Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "").ToLower();
 
-                    if (!loadedImages.ContainsKey(rel.ToLower()))
+                    if (!loadedImages.ContainsKey(rel))
                     {
                         Image myImage = Image.FromFile(spr);
-                        loadedImages.Add(rel.ToLower(), myImage);
+                        loadedImages.Add(rel, myImage);
                     }
-                    
+                    var size = new Size(loadedImages[rel].Width, loadedImages[rel].Height);
+
                     tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), TextureFlags.None, size.Width, size.Height));
                 }
 

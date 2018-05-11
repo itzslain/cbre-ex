@@ -295,12 +295,20 @@ namespace Sledge.Editor.UI
             Viewports.OfType<Viewport2D>().Where(v => v != null && v.Direction == dir).ToList().ForEach(v => v.RenderContext.Remove(r));
         }
 
-        public static void RefreshClearColour()
+        public static void RefreshClearColour(bool disabled = false)
         {
             foreach (var vp in Viewports)
             {
                 vp.MakeCurrent();
-                GL.ClearColor(vp is Viewport3D ? Sledge.Settings.View.ViewportBackground : Sledge.Settings.Grid.Background);
+                if (!disabled)
+                {
+                    GL.ClearColor(vp is Viewport3D ? Sledge.Settings.View.ViewportBackground : Sledge.Settings.Grid.Background);
+                }
+                else
+                {
+                    Color gray = Color.FromArgb(150, 150, 150);
+                    GL.ClearColor(gray);
+                }
             }
         }
 

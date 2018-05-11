@@ -170,6 +170,20 @@ namespace Sledge.Editor.Documents
         public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)
         {
             path = forceOverride ? path : path ?? MapFile;
+            
+            if (path != null)
+            {
+                IEnumerable<string> nonPrimaryExtensions = FileTypeRegistration.GetSupportedExtensions().Where(x => !x.IsPrimaryFormat).Select(x => x.Extension);
+                foreach (string ext in nonPrimaryExtensions)
+                {
+                    if (path.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        path = null;
+                        break;
+                    }
+                }
+            }
+
             if (path == null)
             {
                 using (var sfd = new SaveFileDialog())

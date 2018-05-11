@@ -164,6 +164,8 @@ namespace Sledge.Editor
             }
 
             ProcessArguments(System.Environment.GetCommandLineArgs());
+
+            ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
         }
 
         #region Updates
@@ -488,7 +490,7 @@ namespace Sledge.Editor
                 vp.Camera.FOV = Sledge.Settings.View.CameraFOV;
                 vp.Camera.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
-            ViewportManager.RefreshClearColour();
+            ViewportManager.RefreshClearColour(Instance.DocumentTabs.TabPages.Count == 0);
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
@@ -541,6 +543,7 @@ namespace Sledge.Editor
                 var si = DocumentManager.Documents.IndexOf(DocumentManager.CurrentDocument);
                 if (si >= 0 && si != DocumentTabs.SelectedIndex) DocumentTabs.SelectedIndex = si;
             }
+            ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
         }
 
         private void HistoryChanged()
