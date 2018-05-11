@@ -57,7 +57,6 @@ namespace Sledge.Providers.Map
             }
 
             //now we can parse the object table
-            //List<Tuple<string, int>> objects = new List<Tuple<string, int>>();
             List<string> materials = new List<string>();
             br.BaseStream.Seek(objectOffset, SeekOrigin.Begin);
             for (int i=0;i<objectCount;i++)
@@ -69,8 +68,8 @@ namespace Sledge.Providers.Map
                     throw new Exception(i.ToString() + " " + index.ToString());
                 }
                 string name = names[index];
-                //objects.Add(new Tuple<string, int>(name, size));
                 
+                //TODO: parse models
                 if (name == "material")
                 {
                     byte materialFlags = br.ReadByte();
@@ -110,7 +109,7 @@ namespace Sledge.Providers.Map
                     {
                         byte faceFlags = br.ReadByte();
 
-                        //TODO: figure out how to interpret the unused bits
+                        //TODO: maybe we need these unused bits for something idk
                         decimal planeEq0 = (decimal)br.ReadSingle(); decimal planeEq1 = (decimal)br.ReadSingle(); decimal planeEq2 = (decimal)br.ReadSingle(); decimal planeEq3 = (decimal)br.ReadSingle();
                         
                         decimal texPosX = (decimal)br.ReadSingle(); decimal texPosY = (decimal)br.ReadSingle();
@@ -133,20 +132,13 @@ namespace Sledge.Providers.Map
                         
                         byte indexCount = br.ReadByte();
                         List<byte> vertsInFace = new List<byte>();
-                        //string asd = "";
                         for (int k=0;k<indexCount;k++)
                         {
                             byte vertIndex = br.ReadByte();
                             vertsInFace.Add(vertIndex);
-
-                            /*if (k == 2)
-                            {
-                                newFace.Plane = new Plane(newFace.Vertices[0].Location, newFace.Vertices[1].Location, newFace.Vertices[2].Location);
-                            }*/
                             
                             float texCoordX = br.ReadSingle(); float texCoordY = br.ReadSingle();
-                            //asd += texCoordX.ToString() + " " + texCoordY.ToString() + "\n";
-
+                            
                             float lmCoordX = 0.0f; float lmCoordY = 0.0f;
                             if ((faceFlags & 16) != 0)
                             {
@@ -178,8 +170,7 @@ namespace Sledge.Providers.Map
                             newFace.Texture.Name = (faceFlags & 4) != 0 ? "tooltextures/remove_face" : materials[materialInd];
                             newFace.AlignTextureToWorld();
                             if (texRotY != texRotX) throw new Exception((texRotX - texRotY).ToString());
-
-                            //TODO: don't hack the u/v axes, set the rotation instead
+                            
                             newFace.Texture.UAxis = uNorm * (decimal)Math.Cos(-texRotY * Math.PI / 180.0) + vNorm * (decimal)Math.Sin(-texRotY * Math.PI / 180.0);
                             newFace.Texture.VAxis = vNorm * (decimal)Math.Cos(-texRotY * Math.PI / 180.0) - uNorm * (decimal)Math.Sin(-texRotY * Math.PI / 180.0);
                             newFace.Texture.XScale = texScaleX/2;
