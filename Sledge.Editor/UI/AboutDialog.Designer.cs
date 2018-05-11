@@ -46,6 +46,7 @@
             this.TWHLLink = new System.Windows.Forms.LinkLabel();
             this.label10 = new System.Windows.Forms.Label();
             this.AJLink = new System.Windows.Forms.LinkLabel();
+            this.label11 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -224,11 +225,21 @@
             this.AJLink.TabStop = true;
             this.AJLink.Text = "scrub-studios.com";
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(286, 79);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(204, 13);
+            this.label11.TabIndex = 9;
+            this.label11.Text = "Modded by juanjp600 for use with SCPCB";
+            // 
             // AboutDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(535, 305);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -282,5 +293,6 @@
         private System.Windows.Forms.LinkLabel TWHLLink;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.LinkLabel AJLink;
+        private System.Windows.Forms.Label label11;
     }
 }
