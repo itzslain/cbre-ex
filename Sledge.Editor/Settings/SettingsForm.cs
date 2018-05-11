@@ -17,6 +17,7 @@ using Sledge.Settings;
 using System.Linq;
 using Sledge.Settings.Models;
 using Sledge.UI;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Sledge.Editor.Settings
 {
@@ -547,6 +548,10 @@ namespace Sledge.Editor.Settings
             
             // Hotkeys
             UpdateHotkeyList();
+
+            //Directories
+            texturePath.Text = Sledge.Settings.Directories.TextureDir;
+            modelPath.Text = Sledge.Settings.Directories.ModelDir;
         }
 
         private void Apply()
@@ -1010,5 +1015,37 @@ namespace Sledge.Editor.Settings
             UpdateHotkeyList();
         }
         #endregion
+
+        private void browseTextures_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                texturePath.Text = dialog.FileName;
+                Directories.TextureDir = dialog.FileName;
+            }
+        }
+
+        private void browseModels_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                modelPath.Text = dialog.FileName;
+                Directories.ModelDir = dialog.FileName;
+            }
+        }
+
+        private void texturePath_TextChanged(object sender, EventArgs e)
+        {
+            Directories.TextureDir = texturePath.Text;
+        }
+
+        private void modelPath_TextChanged(object sender, EventArgs e)
+        {
+            Directories.ModelDir = modelPath.Text;
+        }
     }
 }

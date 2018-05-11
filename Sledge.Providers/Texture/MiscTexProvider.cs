@@ -22,12 +22,12 @@ namespace Sledge.Providers.Texture
             AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
         }
         
-        static Dictionary<string, Image> loadedImages = new Dictionary<string, Image>();
+        static Dictionary<string, Tuple<Bitmap, TextureFlags>> loadedImages = new Dictionary<string, Tuple<Bitmap, TextureFlags>>();
         private static Bitmap Parse(string file)
         {
             if (loadedImages.ContainsKey(file.ToLower()))
             {
-                return new Bitmap(loadedImages[file]);
+                return new Bitmap(loadedImages[file].Item1);
             }
 
             return null;
@@ -68,12 +68,29 @@ namespace Sledge.Providers.Texture
 
                     if (!loadedImages.ContainsKey(rel))
                     {
-                        Image myImage = Image.FromFile(spr);
-                        loadedImages.Add(rel, myImage);
+                        using (Image img = Image.FromFile(spr))
+                        {
+                            Bitmap bmp = new Bitmap(img);
+                            TextureFlags flags = TextureFlags.None;
+                            for (int x=0;x<4;x++)
+                            {
+                                for (int y=0;y<4;y++)
+                                {
+                                    int mX = x * (bmp.Width-1) / 3;
+                                    int mY = y * (bmp.Height-1) / 3;
+                                    if (bmp.GetPixel(mX,mY).A != 255)
+                                    {
+                                        flags = TextureFlags.Transparent;
+                                        break;
+                                    }
+                                }
+                            }
+                            loadedImages.Add(rel, new Tuple<Bitmap, TextureFlags>(bmp, flags));
+                        }
                     }
-                    var size = new Size(loadedImages[rel].Width, loadedImages[rel].Height);
+                    var size = new Size(loadedImages[rel].Item1.Width, loadedImages[rel].Item1.Height);
 
-                    tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), TextureFlags.None, size.Width, size.Height));
+                    tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), loadedImages[rel].Item2, size.Width, size.Height));
                 }
 
                 if (tp.Items.Any()) yield return tp;

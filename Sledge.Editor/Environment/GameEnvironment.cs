@@ -44,7 +44,7 @@ namespace Sledge.Editor.Environment
 
         public IEnumerable<string> GetGameDirectories()
         {
-            yield return "D:/Repos/scpcb/scpcb/GFX/map"; //TODO: dont hardcode
+            if (!string.IsNullOrWhiteSpace(Sledge.Settings.Directories.TextureDir)) yield return Sledge.Settings.Directories.TextureDir;
 
             var b = Build;
             if (b != null && b.IncludePathInEnvironment)

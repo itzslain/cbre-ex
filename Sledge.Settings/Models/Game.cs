@@ -11,11 +11,9 @@ namespace Sledge.Settings.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public bool SteamInstall { get; set; }
         public string GameDir { get; set; }
         public string BaseDir { get; set; }
         public string ModDir { get; set; }
-        public bool UseHDModels { get; set; }
         public string Executable { get; set; }
         public string ExecutableParameters { get; set; }
         public string MapDir { get; set; }
@@ -48,7 +46,7 @@ namespace Sledge.Settings.Models
             AutosaveTriggerFileSave = true;
 
             DefaultBrushEntity = "";
-            DefaultPointEntity = "pointlight";
+            DefaultPointEntity = "light";
         }
         
         public string GetMapDirectory()

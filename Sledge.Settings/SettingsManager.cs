@@ -38,6 +38,7 @@ namespace Sledge.Settings
                                               {"hint", 0.5f},
                                               {"origin", 0.5f},
                                               {"skip", 0.5f},
+                                              {"tooltextures/remove_face", 0.5f},
                                           };
             AdditionalSettings = new Dictionary<string, GenericStructure>();
             FavouriteTextureFolders = new List<FavouriteTextureFolder>();

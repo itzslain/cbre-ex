@@ -20,7 +20,7 @@ namespace Sledge.DataStructures.GameData
             MapSizeLow = -4096;
             Classes = new List<GameDataObject>();
 
-            Classes.Add(new GameDataObject("pointlight", "Self-explanatory.", ClassType.Point));
+            Classes.Add(new GameDataObject("light", "Point light source.", ClassType.Point));
             Classes.Add(new GameDataObject("waypoint", "AI waypoint.", ClassType.Point));
 
             Includes = new List<string>();
