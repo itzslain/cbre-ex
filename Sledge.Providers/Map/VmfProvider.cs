@@ -643,7 +643,7 @@ namespace Sledge.Providers.Map
 
             var fvi = FileVersionInfo.GetVersionInfo(typeof (VmfProvider).Assembly.Location);
             var versioninfo = new GenericStructure("versioninfo");
-            versioninfo.AddProperty("editorname", "Sledge");
+            versioninfo.AddProperty("editorname", "Sledge-CB");
             versioninfo.AddProperty("editorversion", fvi.ProductMajorPart.ToString(CultureInfo.InvariantCulture) + "." + fvi.ProductMinorPart.ToString(CultureInfo.InvariantCulture));
             versioninfo.AddProperty("editorbuild", fvi.ProductBuildPart.ToString(CultureInfo.InvariantCulture));
             versioninfo.AddProperty("mapversion", map.Version.ToString(CultureInfo.InvariantCulture));

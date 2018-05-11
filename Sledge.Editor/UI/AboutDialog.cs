@@ -25,5 +25,20 @@ namespace Sledge.Editor.UI
             AJLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://scrub-studios.com");
             TWHLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://twhl.info");
         }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AboutDialog_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

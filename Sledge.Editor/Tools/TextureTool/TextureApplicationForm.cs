@@ -181,7 +181,7 @@ namespace Sledge.Editor.Tools.TextureTool
             set
             {
                 _document = value;
-                var precision = _document != null && _document.Game != null && _document.Game.Engine == Engine.Goldsource ? 2 : 4;
+                var precision = 4;
                 ScaleXValue.DecimalPlaces = ScaleYValue.DecimalPlaces = precision;
             }
         }

@@ -592,7 +592,7 @@ namespace Sledge.Editor
             this.KeyPreview = true;
             this.MainMenuStrip = this.mnuMain;
             this.Name = "Editor";
-            this.Text = "Sledge";
+            this.Text = "Sledge-CB";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditorClosing);
             this.Load += new System.EventHandler(this.EditorLoad);

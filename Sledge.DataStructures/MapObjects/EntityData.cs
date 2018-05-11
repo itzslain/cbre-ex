@@ -18,6 +18,7 @@ namespace Sledge.DataStructures.MapObjects
         {
             Properties = new List<Property>();
             Outputs = new List<Output>();
+            Name = "";
         }
 
         public EntityData(GameData.GameDataObject gd)

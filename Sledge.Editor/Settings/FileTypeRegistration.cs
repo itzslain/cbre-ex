@@ -18,6 +18,7 @@ namespace Sledge.Editor.Settings
                 new FileType(".rmf", "Worldcraft RMF", true),
                 new FileType(".map", "Quake MAP Format", true),
                 new FileType(".obj", "Wavefront Model Format", true),
+                new FileType(".3dw", "Leadwerks 3D World Studio File", true),
 
                 new FileType(".rmx", "Worldcraft RMF (Hammer Backup)", false),
                 new FileType(".max", "Quake MAP Format (Hammer Backup)", false),

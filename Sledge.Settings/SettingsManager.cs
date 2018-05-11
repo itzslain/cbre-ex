@@ -43,7 +43,7 @@ namespace Sledge.Settings
             FavouriteTextureFolders = new List<FavouriteTextureFolder>();
 
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var sledge = Path.Combine(appdata, "Sledge");
+            var sledge = Path.Combine(appdata, "Sledge-CB");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             SettingsFile = Path.Combine(sledge, "Settings.vdf");
         }
@@ -51,7 +51,7 @@ namespace Sledge.Settings
         public static string GetTextureCachePath()
         {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var sledge = Path.Combine(appdata, "Sledge");
+            var sledge = Path.Combine(appdata, "Sledge-CB");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             var cache = Path.Combine(sledge, "TextureCache");
             if (!Directory.Exists(cache)) Directory.CreateDirectory(cache);
@@ -177,7 +177,7 @@ namespace Sledge.Settings
             Settings.Clear();
             Settings.AddRange(newSettings);
 
-            var root = new GenericStructure("Sledge");
+            var root = new GenericStructure("Sledge-CB");
 
             // Settings
             var settings = new GenericStructure("Settings");
@@ -232,7 +232,7 @@ namespace Sledge.Settings
         private static string GetSessionFile()
         {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var sledge = Path.Combine(appdata, "Sledge");
+            var sledge = Path.Combine(appdata, "Sledge-CB");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             return Path.Combine(sledge, "session");
         }

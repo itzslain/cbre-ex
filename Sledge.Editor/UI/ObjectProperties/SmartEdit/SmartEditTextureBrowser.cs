@@ -48,31 +48,18 @@ namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 
         private IEnumerable<TextureItem> GetTextureList()
         {
-            switch (Property.VariableType)
-            {
-                case VariableType.Decal:
-                    // TODO goldsource/source
-                    if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => x.PackageRelativePath.Contains("decal")).SelectMany(x => x.Items.Values);
-                    else return Document.TextureCollection.GetAllBrowsableItems();
-                case VariableType.Sprite:
-                    // TODO goldsource/source
-                    if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => !x.IsBrowsable).SelectMany(x => x.Items.Values);
-                    else return Document.TextureCollection.GetAllItems();
-                default:
-                    return Document.TextureCollection.GetAllBrowsableItems();
-            }
+            return Document.TextureCollection.GetAllBrowsableItems();
         }
 
         private string GetFilterText()
         {
+            //TODO: probably not going to be used
             switch (Property.VariableType)
             {
                 case VariableType.Sprite:
                     return "sprites/";
                 case VariableType.Decal:
-                    // TODO goldsource/source
-                    if (Document.Game.Engine == Engine.Goldsource) return "{";
-                    else return "decals/";
+                    return "decals/";
                 default:
                     return null;
             }

@@ -56,7 +56,7 @@
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Location = new System.Drawing.Point(213, 278);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(113, 23);
+            this.button1.Size = new System.Drawing.Size(106, 23);
             this.button1.TabIndex = 1;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
@@ -75,16 +75,17 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Georgia", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(316, 12);
+            this.label1.Location = new System.Drawing.Point(274, 20);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 46);
+            this.label1.Size = new System.Drawing.Size(201, 46);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Sledge";
+            this.label1.Text = "Sledge-CB";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // VersionLabel
             // 
             this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(459, 38);
+            this.VersionLabel.Location = new System.Drawing.Point(470, 38);
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(47, 13);
             this.VersionLabel.TabIndex = 4;
@@ -93,16 +94,17 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(288, 79);
+            this.label2.Location = new System.Drawing.Point(286, 66);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(137, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Created by Daniel Walder - ";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // LTLink
             // 
             this.LTLink.AutoSize = true;
-            this.LTLink.Location = new System.Drawing.Point(420, 79);
+            this.LTLink.Location = new System.Drawing.Point(416, 66);
             this.LTLink.Name = "LTLink";
             this.LTLink.Size = new System.Drawing.Size(96, 13);
             this.LTLink.TabIndex = 6;
@@ -226,7 +228,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(542, 305);
+            this.ClientSize = new System.Drawing.Size(535, 305);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -253,6 +255,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About Sledge";
+            this.Load += new System.EventHandler(this.AboutDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -332,19 +332,10 @@ namespace Sledge.Editor.UI.ObjectProperties
 
             if (!Tabs.TabPages.Contains(ClassInfoTab)) Tabs.TabPages.Insert(0, ClassInfoTab);
             if (!Tabs.TabPages.Contains(FlagsTab)) Tabs.TabPages.Insert(Tabs.TabPages.Count - 1, FlagsTab);
-
-            if (Document.Game.Engine == Engine.Goldsource)
-            {
-                // Goldsource
-                Tabs.TabPages.Remove(InputsTab);
-                Tabs.TabPages.Remove(OutputsTab);
-            }
-            else
-            {
-                // Source
-                if (!Tabs.TabPages.Contains(InputsTab)) Tabs.TabPages.Insert(1, InputsTab);
-                if (!Tabs.TabPages.Contains(OutputsTab)) Tabs.TabPages.Insert(2, OutputsTab);
-            }
+            
+            // TODO: don't even add these tabs in the first place
+            Tabs.TabPages.Remove(InputsTab);
+            Tabs.TabPages.Remove(OutputsTab);
 
             var afterTabs = Tabs.TabPages.OfType<TabPage>().ToArray();
 

@@ -138,9 +138,11 @@ namespace Sledge.Editor
             MapProvider.Register(new MapFormatProvider());
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new ObjProvider());
+            MapProvider.Register(new L3DWProvider());
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
             TextureProvider.Register(new SprProvider());
+            TextureProvider.Register(new MiscTexProvider());
             TextureProvider.Register(new VmtProvider());
             ModelProvider.Register(new MdlProvider());
 
@@ -644,11 +646,11 @@ namespace Sledge.Editor
             if (DocumentManager.CurrentDocument != null)
             {
                 var doc = DocumentManager.CurrentDocument;
-                Text = "Sledge - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
+                Text = "Sledge-CB - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
             }
             else
             {
-                Text = "Sledge";
+                Text = "Sledge-CB";
             }
         }
 
@@ -665,7 +667,7 @@ namespace Sledge.Editor
             StatusZoomLabel.Text = "";
             StatusSnapLabel.Text = "";
             StatusTextLabel.Text = "";
-            Text = "Sledge";
+            Text = "Sledge-CB";
         }
 
         private void MouseCoordinatesChanged(Coordinate coord)

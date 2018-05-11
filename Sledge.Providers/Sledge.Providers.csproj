@@ -50,6 +50,7 @@
     <Compile Include="GameData\GameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />
     <Compile Include="BinaryExtensions.cs" />
+    <Compile Include="Map\L3DWProvider.cs" />
     <Compile Include="Map\MapFormatProvider.cs" />
     <Compile Include="Map\MapProvider.cs" />
     <Compile Include="Map\ObjProvider.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="Map\RmfProvider.cs" />
+    <Compile Include="Texture\MiscTexProvider.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
     <Compile Include="Texture\VmtProvider.cs" />

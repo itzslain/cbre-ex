@@ -865,6 +865,9 @@
     <Content Include="Networking\NetworkingPlan.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
+    <Content Include="ToolTextures\REMOVE_FACE.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Logo\Logo.svg" />
     <None Include="Resources\Logo\Sledge Render 128.png" />
     <None Include="Resources\Logo\Sledge Render 16.png" />

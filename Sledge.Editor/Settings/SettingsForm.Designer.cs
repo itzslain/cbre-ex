@@ -1603,7 +1603,7 @@ namespace Sledge.Editor.Settings
             this.Name = "SettingsForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Sledge Settings";
+            this.Text = "Sledge-CB Settings";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsFormClosed);
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.groupBox10.ResumeLayout(false);

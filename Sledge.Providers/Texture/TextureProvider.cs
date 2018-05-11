@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sledge.Graphics.Helpers;
+using System;
 
 namespace Sledge.Providers.Texture
 {
@@ -84,7 +85,7 @@ namespace Sledge.Providers.Texture
         public static void LoadTextureItems(IEnumerable<TextureItem> items)
         {
             var list = items.ToList();
-
+            
             foreach (var g in list.GroupBy(x => x.Package.Provider))
             {
                 LoadTextures(g.Key, g);
