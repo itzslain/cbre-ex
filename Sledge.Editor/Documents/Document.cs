@@ -173,8 +173,8 @@ namespace Sledge.Editor.Documents
             
             if (path != null)
             {
-                IEnumerable<string> nonPrimaryExtensions = FileTypeRegistration.GetSupportedExtensions().Where(x => !x.IsPrimaryFormat).Select(x => x.Extension);
-                foreach (string ext in nonPrimaryExtensions)
+                IEnumerable<string> noSaveExtensions = FileTypeRegistration.GetSupportedExtensions().Where(x => !x.CanSave).Select(x => x.Extension);
+                foreach (string ext in noSaveExtensions)
                 {
                     if (path.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -189,8 +189,8 @@ namespace Sledge.Editor.Documents
                 using (var sfd = new SaveFileDialog())
                 {
                     var filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions()
-                        .Where(x => x.IsPrimaryFormat).Select(x => x.Description + " (*" + x.Extension + ")|*" + x.Extension));
-                    var all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.IsPrimaryFormat).Select(x => "*" + x.Extension).ToArray();
+                        .Where(x => x.CanSave).Select(x => x.Description + " (*" + x.Extension + ")|*" + x.Extension));
+                    var all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanSave).Select(x => "*" + x.Extension).ToArray();
                     sfd.Filter = "All supported formats (" + String.Join(", ", all) + ")|" + String.Join(";", all) + "|" + filter;
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {

@@ -84,6 +84,7 @@ namespace Sledge.Providers.Texture
                                         break;
                                     }
                                 }
+                                if (flags != TextureFlags.None) break;
                             }
                             loadedImages.Add(rel, new Tuple<Bitmap, TextureFlags>(bmp, flags));
                         }

@@ -14,15 +14,15 @@ namespace Sledge.Editor.Settings
         {
             return new[]
             {
-                new FileType(".vmf", "Valve Map File", true),
-                new FileType(".rmf", "Worldcraft RMF", true),
-                new FileType(".map", "Quake MAP Format", true),
-                new FileType(".obj", "Wavefront Model Format", true),
-                new FileType(".3dw", "Leadwerks 3D World Studio File", false),
+                new FileType(".vmf", "Valve Map File", true, true),
+                new FileType(".rmf", "Worldcraft RMF", true, true),
+                new FileType(".map", "Quake MAP Format", true, true),
+                new FileType(".obj", "Wavefront Model Format", true, true),
+                new FileType(".3dw", "Leadwerks 3D World Studio File", false, true),
 
-                new FileType(".rmx", "Worldcraft RMF (Hammer Backup)", false),
-                new FileType(".max", "Quake MAP Format (Hammer Backup)", false),
-                new FileType(".vmx", "Valve Map File (Hammer Backup)", false),
+                new FileType(".rmx", "Worldcraft RMF (Hammer Backup)", false, true),
+                new FileType(".max", "Quake MAP Format (Hammer Backup)", false, true),
+                new FileType(".vmx", "Valve Map File (Hammer Backup)", false, true)
             };
         }
 

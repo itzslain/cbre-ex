@@ -432,9 +432,9 @@ namespace Sledge.Editor
         {
             using (var ofd = new OpenFileDialog())
             {
-                var filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions()
+                var filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanLoad)
                         .Select(x => x.Description + " (*" + x.Extension + ")|*" + x.Extension));
-                var all = FileTypeRegistration.GetSupportedExtensions().Select(x => "*" + x.Extension).ToArray();
+                var all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanLoad).Select(x => "*" + x.Extension).ToArray();
                 ofd.Filter = "All supported formats (" + String.Join(", ", all) + ")|" + String.Join(";", all) + "|" + filter;
 
                 if (ofd.ShowDialog() != DialogResult.OK) return;

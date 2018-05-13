@@ -159,7 +159,7 @@ namespace Sledge.Providers.Map
                                 newFace.Vertices.Insert(0,new Vertex(vertices[vertInd], newFace));
                             }
 
-                            newFace.Plane = new Plane(norm, planeEq3);
+                            newFace.Plane = new Plane(newFace.Vertices[0].Location, newFace.Vertices[1].Location, newFace.Vertices[2].Location);
 
                             newFace.UpdateBoundingBox();
 

@@ -34,6 +34,8 @@ using Sledge.QuickForms;
 using Sledge.QuickForms.Items;
 using Sledge.Settings;
 using Sledge.UI;
+using Sledge.Providers;
+using Sledge.Providers.Map;
 using Path = System.IO.Path;
 using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
@@ -250,25 +252,25 @@ namespace Sledge.Editor.Documents
 
         public void FileCompile()
         {
+            RM2Provider.SaveToFile("test.rm2", _document.Map);
+            return;
+
             _document.SaveFile();
             if (_document.MapFile == null) return;
             
             var build = SettingsManager.Build;
             if (build == null)
             {
-                if (MessageBox.Show("Please set up the build tools for this game profile.\n\nWould you like to open the settings page now?", "No build configuration", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    Mediator.Publish(EditorMediator.OpenSettings);
-                }
-                return;
+                throw new Exception("Build == null");
             }
-
-            using (var cd = new CompileDialog(build))
+            
+            using (var cd = new SaveFileDialog())
             {
+                var filter = "SCP - Containment Breach RoomMesh 2 (*.rm2)";
+                cd.Filter = filter;
                 if (cd.ShowDialog() == DialogResult.OK)
                 {
-                    var batch = new Batch(_document, build, cd.GetProfile());
-                    batch.Compile();
+
                 }
             }
         }

@@ -4,13 +4,15 @@
     {
         public string Extension { get; set; }
         public string Description { get; set; }
-        public bool IsPrimaryFormat { get; set; }
+        public bool CanSave { get; set; }
+        public bool CanLoad { get; set; }
 
-        public FileType(string extension, string description, bool isPrimaryFormat)
+        public FileType(string extension, string description, bool canSave, bool canLoad)
         {
             Extension = extension;
             Description = description;
-            IsPrimaryFormat = isPrimaryFormat;
+            CanSave = canSave;
+            CanLoad = canLoad;
         }
     }
 }
