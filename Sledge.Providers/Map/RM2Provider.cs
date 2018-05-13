@@ -170,7 +170,6 @@ namespace Sledge.Providers.Map
                 writeX += (int)(maxTotalX - minTotalX)/downscaleFactor + 1;
                 if ((int)(maxTotalY - minTotalY)/downscaleFactor + 1 > writeMaxY) writeMaxY = (int)(maxTotalY - minTotalY) / downscaleFactor + 1;
             }
-            bitmap.Save("D:/Repos/gay.bmp");
         }
     }
 }
