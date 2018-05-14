@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Sledge.Providers.Map
 {
@@ -72,6 +74,9 @@ namespace Sledge.Providers.Map
             return null;
         }
 
+
+        private const int downscaleFactor = 10;
+
         public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
         {
             List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
@@ -135,10 +140,6 @@ namespace Sledge.Providers.Map
             
             //put the faces into a file
             Bitmap bitmap = new Bitmap(2048, 2048, PixelFormat.Format24bppRgb);
-
-            const int downscaleFactor = 10;
-
-            //BitmapData data = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
             
             coplanarFaces.Sort((x, y) =>
             {
@@ -149,6 +150,15 @@ namespace Sledge.Providers.Map
             });
 
             int writeX = 0; int writeY = 0; int writeMaxX = 0;
+
+            var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8];
+
+            List<Thread> threads = new List<Thread>();
+
+            List<Entity> lightEntities = map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>().ToList();
+
+            List<Face> allFaces = coplanarFaces.Select(q => q.Faces).SelectMany(q => q).ToList();
+
             foreach (LightmapGroup group in coplanarFaces)
             {
                 var direction = group.Plane.GetClosestAxisToNormal();
@@ -194,38 +204,136 @@ namespace Sledge.Providers.Map
 
                 foreach (Face face in group.Faces)
                 {
-                    decimal? minX = null; decimal? maxX = null;
-                    decimal? minY = null; decimal? maxY = null;
-
-                    foreach (Coordinate coord in face.Vertices.Select(x => x.Location))
-                    {
-                        decimal x = coord.Dot(uAxis);
-                        decimal y = coord.Dot(vAxis);
-                        
-                        if (minX == null || x < minX) minX = x;
-                        if (minY == null || y < minY) minY = y;
-                        if (maxX == null || x > maxX) maxX = x;
-                        if (maxY == null || y > maxY) maxY = y;
-                    }
-                    
-                    for (int y = 0; y < (maxY - minY) / downscaleFactor; y++)
-                    {
-                        for (int x = 0; x < (maxX - minX) / downscaleFactor; x++)
-                        {
-                            int tX = writeX + x + (int)(minX - minTotalX) / downscaleFactor;
-                            int tY = writeY + y + (int)(minY - minTotalY) / downscaleFactor;
-                            if (tX>=0 && tY>=0 && tX < 2048 && tY < 2048)
-                            {
-                                bitmap.SetPixel(tX, tY, face.Colour);
-                            }
-                        }
-                    }
+                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, face, allFaces);
+                    threads.Add(newThread);
                 }
-
+                
                 writeY += (int)(maxTotalY - minTotalY)/downscaleFactor + 3;
                 if ((int)(maxTotalX - minTotalX)/downscaleFactor + 3 > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / downscaleFactor + 3;
             }
-            bitmap.Save("D:/repos/asd.bmp");
+
+            int a = 0;
+            while (threads.Count > 0)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (i >= threads.Count) break;
+                    if (threads[i].ThreadState == ThreadState.Unstarted)
+                    {
+                        threads[i].Start();
+                    }
+                    else if (threads[i].ThreadState == ThreadState.Stopped)
+                    {
+                        threads.RemoveAt(i);
+                        i--;
+                    }
+                }
+                a++; Thread.Sleep(100);
+
+                if (a>=10)
+                {
+                    a -= 10;
+
+                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+                    Marshal.Copy(buffer, 0, bitmapData.Scan0, buffer.Length);
+                    bitmap.UnlockBits(bitmapData);
+
+                    try
+                    {
+                        bitmap.Save("D:/repos/asd.bmp");
+                    }
+                    catch
+                    {
+                        //i don't care about this exception
+                    }
+                }
+            }
+
+        }
+
+        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<Entity> lights, Coordinate uAxis, Coordinate vAxis, int writeX, int writeY, decimal minTotalX, decimal minTotalY, Face targetFace, List<Face> blockerFaces)
+        {
+            return new Thread(() => RenderLightOntoFace(bitmapData, lights, uAxis, vAxis, writeX, writeY, minTotalX, minTotalY, targetFace, blockerFaces));
+        }
+
+        private static void RenderLightOntoFace(byte[] bitmapData, List<Entity> lights, Coordinate uAxis, Coordinate vAxis, int writeX, int writeY, decimal minTotalX, decimal minTotalY, Face targetFace,List<Face> blockerFaces)
+        {
+            decimal? minX = null; decimal? maxX = null;
+            decimal? minY = null; decimal? maxY = null;
+
+            foreach (Coordinate coord in targetFace.Vertices.Select(x => x.Location))
+            {
+                decimal x = coord.Dot(uAxis);
+                decimal y = coord.Dot(vAxis);
+
+                if (minX == null || x < minX) minX = x;
+                if (minY == null || y < minY) minY = y;
+                if (maxX == null || x > maxX) maxX = x;
+                if (maxY == null || y > maxY) maxY = y;
+            }
+
+            decimal centerX = (maxX.Value + minX.Value) / 2;
+            decimal centerY = (maxY.Value + minY.Value) / 2;
+
+            for (int y = 0; y < (maxY - minY) / downscaleFactor; y++)
+            {
+                for (int x = 0; x < (maxX - minX) / downscaleFactor; x++)
+                {
+                    decimal ttX = minX.Value + (x * downscaleFactor);
+                    decimal ttY = minY.Value + (y * downscaleFactor);
+                    Coordinate pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;
+                    
+                    Color luxelColor = Color.Black;
+
+                    foreach (Entity light in lights)
+                    {
+                        Coordinate lightPos = light.Origin;
+                        decimal lightRange = decimal.Parse(light.EntityData.GetPropertyValue("range"));
+                        Coordinate lightColor = light.EntityData.GetPropertyCoordinate("color", new Coordinate(255, 255, 255));
+
+                        decimal dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
+                        bool illuminated = false;
+                        if (dotToLight > 0.0m && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
+                        {
+                            Line lineTester = new Line(lightPos, pointOnPlane);
+                            illuminated = true;
+                            foreach (Face otherFace in blockerFaces)
+                            {
+                                Coordinate hit = otherFace.GetIntersectionPoint(lineTester);
+                                if (hit != null && (hit - pointOnPlane).LengthSquared() > 5.0m)
+                                {
+                                    illuminated = false;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (illuminated)
+                        {
+                            int r = luxelColor.R;
+                            int g = luxelColor.G;
+                            int b = luxelColor.B;
+
+                            decimal brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
+
+                            r += (int)(lightColor.X * brightness); if (r > 255) r = 255;
+                            g += (int)(lightColor.Y * brightness); if (g > 255) g = 255;
+                            b += (int)(lightColor.Z * brightness); if (b > 255) b = 255;
+
+                            luxelColor = Color.FromArgb(r, g, b);
+                        }
+                    }
+
+                    int tX = writeX + x + (int)(minX - minTotalX) / downscaleFactor;
+                    int tY = writeY + y + (int)(minY - minTotalY) / downscaleFactor;
+                    if (tX >= 0 && tY >= 0 && tX < 2048 && tY < 2048)
+                    {
+                        bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8] = luxelColor.R;
+                        bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 1] = luxelColor.G;
+                        bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 2] = luxelColor.B;
+                    }
+                }
+            }
         }
     }
 }

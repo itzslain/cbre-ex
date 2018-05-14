@@ -541,15 +541,16 @@ namespace Sledge.DataStructures.MapObjects
                 var v1 = coordinates[i1] - intersect;
                 var v2 = coordinates[i2] - intersect;
 
-                var m1 = v1.VectorMagnitude();
-                var m2 = v2.VectorMagnitude();
+                var m1 = (double)v1.LengthSquared();
+                var m2 = (double)v2.LengthSquared();
                 var nom = m1 * m2;
-                if (nom < 0.001m)
+                if (nom < 0.00001d)
                 {
                     // intersection is at a vertex
                     return intersect;
                 }
-                sum += Math.Acos((double)(v1.Dot(v2) / nom));
+                nom = Math.Sqrt(nom);
+                sum += Math.Acos((double)(v1.Dot(v2)) / nom);
             }
 
             var delta = Math.Abs(sum - Math.PI * 2);
