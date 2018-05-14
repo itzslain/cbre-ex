@@ -68,9 +68,44 @@ namespace Sledge.Providers.Map
                     throw new Exception(i.ToString() + " " + index.ToString());
                 }
                 string name = names[index];
-                
+
                 //TODO: parse models
-                if (name == "material")
+                if (name == "entity")
+                {
+                    byte flags = br.ReadByte();
+                    float x = br.ReadSingle();
+                    float z = br.ReadSingle();
+                    float y = br.ReadSingle();
+
+                    Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
+                    entity.Colour = Colour.GetDefaultEntityColour();
+                    entity.Origin = new Coordinate((decimal)x, (decimal)y, (decimal)z);
+
+                    Int32 keyCount = br.ReadInt32();
+                    for (int j=0;j<keyCount;j++)
+                    {
+                        Int32 keyNameInd = br.ReadInt32()-1;
+                        Int32 keyValueInd = br.ReadInt32()-1;
+                        if (names[keyNameInd] == "classname")
+                        {
+                            entity.ClassName = names[keyValueInd];
+                            entity.EntityData.Name = names[keyValueInd];
+                        }
+                        else
+                        {
+                            Property newProperty = new Property();
+                            newProperty.Key = names[keyNameInd];
+                            newProperty.Value = names[keyValueInd];
+                            entity.EntityData.Properties.Add(newProperty);
+                        }
+                    }
+                    Int32 group = br.ReadInt32();
+                    Int32 visgroup = br.ReadInt32();
+
+                    entity.UpdateBoundingBox();
+                    entity.SetParent(map.WorldSpawn);
+                }
+                else if (name == "material")
                 {
                     byte materialFlags = br.ReadByte();
                     Int32 groupIndex = br.ReadInt32();

@@ -21,7 +21,9 @@ namespace Sledge.DataStructures.GameData
             Classes = new List<GameDataObject>();
 
             Classes.Add(new GameDataObject("light", "Point light source.", ClassType.Point));
+            Classes.Add(new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point));
             Classes.Add(new GameDataObject("waypoint", "AI waypoint.", ClassType.Point));
+            Classes.Add(new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point));
 
             Includes = new List<string>();
             MaterialExclusions = new List<string>();
