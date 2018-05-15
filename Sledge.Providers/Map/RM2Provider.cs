@@ -282,8 +282,8 @@ namespace Sledge.Providers.Map
             decimal centerX = (maxX.Value + minX.Value) / 2;
             decimal centerY = (maxY.Value + minY.Value) / 2;
 
-            int iterX = (int)((maxX - minX) / downscaleFactor);
-            int iterY = (int)((maxY - minY) / downscaleFactor);
+            int iterX = (int)Math.Ceiling((maxX.Value - minX.Value) / downscaleFactor);
+            int iterY = (int)Math.Ceiling((maxY.Value - minY.Value) / downscaleFactor);
 
             int[,] r = new int[iterX, iterY];
             int[,] g = new int[iterX, iterY];
@@ -297,6 +297,7 @@ namespace Sledge.Providers.Map
 
                 List<Face> applicableBlockerFaces = blockerFaces.FindAll(x =>
                 {
+                    if ((lightPos - x.BoundingBox.Center).Dot(targetFace.Plane.Normal) < 0.0m) return false;
                     if ((x.BoundingBox.Center - lightPos).Dot(targetFace.BoundingBox.Center - lightPos) > 0.0m) return true;
                     return false;
                 });
