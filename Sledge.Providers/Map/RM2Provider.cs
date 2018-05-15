@@ -258,6 +258,13 @@ namespace Sledge.Providers.Map
 
         private static void RenderLightOntoFace(byte[] bitmapData, List<Entity> lights, Coordinate uAxis, Coordinate vAxis, int writeX, int writeY, decimal minTotalX, decimal minTotalY, Face targetFace,List<Face> blockerFaces)
         {
+            lights = lights.FindAll(x =>
+            {
+                decimal range = decimal.Parse(x.EntityData.GetPropertyValue("range"));
+                Box lightBox = new Box(x.Origin - new Coordinate(range, range, range), x.Origin + new Coordinate(range, range, range));
+                return lightBox.IntersectsWith(targetFace.BoundingBox);
+            });
+
             decimal? minX = null; decimal? maxX = null;
             decimal? minY = null; decimal? maxY = null;
 
@@ -275,21 +282,37 @@ namespace Sledge.Providers.Map
             decimal centerX = (maxX.Value + minX.Value) / 2;
             decimal centerY = (maxY.Value + minY.Value) / 2;
 
-            for (int y = 0; y < (maxY - minY) / downscaleFactor; y++)
-            {
-                for (int x = 0; x < (maxX - minX) / downscaleFactor; x++)
-                {
-                    decimal ttX = minX.Value + (x * downscaleFactor);
-                    decimal ttY = minY.Value + (y * downscaleFactor);
-                    Coordinate pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;
-                    
-                    Color luxelColor = Color.Black;
+            int iterX = (int)((maxX - minX) / downscaleFactor);
+            int iterY = (int)((maxY - minY) / downscaleFactor);
 
-                    foreach (Entity light in lights)
+            int[,] r = new int[iterX, iterY];
+            int[,] g = new int[iterX, iterY];
+            int[,] b = new int[iterX, iterY];
+
+            foreach (Entity light in lights)
+            {
+                Coordinate lightPos = light.Origin;
+                decimal lightRange = decimal.Parse(light.EntityData.GetPropertyValue("range"));
+                Coordinate lightColor = light.EntityData.GetPropertyCoordinate("color", new Coordinate(255, 255, 255));
+
+                List<Face> applicableBlockerFaces = blockerFaces.FindAll(x =>
+                {
+                    if ((x.BoundingBox.Center - lightPos).Dot(targetFace.BoundingBox.Center - lightPos) > 0.0m) return true;
+                    return false;
+                });
+
+                for (int y = 0; y < iterY; y++)
+                {
+                    for (int x = 0; x < iterX; x++)
                     {
-                        Coordinate lightPos = light.Origin;
-                        decimal lightRange = decimal.Parse(light.EntityData.GetPropertyValue("range"));
-                        Coordinate lightColor = light.EntityData.GetPropertyCoordinate("color", new Coordinate(255, 255, 255));
+                        decimal ttX = minX.Value + (x * downscaleFactor);
+                        decimal ttY = minY.Value + (y * downscaleFactor);
+                        Coordinate pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;
+                        
+                        int tX = writeX + x + (int)(minX - minTotalX) / downscaleFactor;
+                        int tY = writeY + y + (int)(minY - minTotalY) / downscaleFactor;
+                        
+                        Color luxelColor = Color.FromArgb(r[x,y],g[x,y],b[x, y]);
 
                         decimal dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
                         bool illuminated = false;
@@ -297,7 +320,7 @@ namespace Sledge.Providers.Map
                         {
                             Line lineTester = new Line(lightPos, pointOnPlane);
                             illuminated = true;
-                            foreach (Face otherFace in blockerFaces)
+                            foreach (Face otherFace in applicableBlockerFaces)
                             {
                                 Coordinate hit = otherFace.GetIntersectionPoint(lineTester);
                                 if (hit != null && (hit - pointOnPlane).LengthSquared() > 5.0m)
@@ -307,30 +330,24 @@ namespace Sledge.Providers.Map
                                 }
                             }
                         }
-                        
+
                         if (illuminated)
                         {
-                            int r = luxelColor.R;
-                            int g = luxelColor.G;
-                            int b = luxelColor.B;
-
                             decimal brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
 
-                            r += (int)(lightColor.X * brightness); if (r > 255) r = 255;
-                            g += (int)(lightColor.Y * brightness); if (g > 255) g = 255;
-                            b += (int)(lightColor.Z * brightness); if (b > 255) b = 255;
+                            r[x, y] += (int)(lightColor.X * brightness); if (r[x, y] > 255) r[x, y] = 255;
+                            g[x, y] += (int)(lightColor.Y * brightness); if (g[x, y] > 255) g[x, y] = 255;
+                            b[x, y] += (int)(lightColor.Z * brightness); if (b[x, y] > 255) b[x, y] = 255;
 
-                            luxelColor = Color.FromArgb(r, g, b);
+                            luxelColor = Color.FromArgb(r[x, y], g[x, y], b[x, y]);
+
+                            if (tX >= 0 && tY >= 0 && tX < 2048 && tY < 2048)
+                            {
+                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8] = luxelColor.R;
+                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 1] = luxelColor.G;
+                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 2] = luxelColor.B;
+                            }
                         }
-                    }
-
-                    int tX = writeX + x + (int)(minX - minTotalX) / downscaleFactor;
-                    int tY = writeY + y + (int)(minY - minTotalY) / downscaleFactor;
-                    if (tX >= 0 && tY >= 0 && tX < 2048 && tY < 2048)
-                    {
-                        bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8] = luxelColor.R;
-                        bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 1] = luxelColor.G;
-                        bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 2] = luxelColor.B;
                     }
                 }
             }
