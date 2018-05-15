@@ -17,7 +17,14 @@ namespace Sledge.DataStructures.Geometric
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
-        
+
+        public CoordinateF(Coordinate c)
+        {
+            X = (float)c.X;
+            Y = (float)c.Y;
+            Z = (float)c.Z;
+        }
+
         public CoordinateF(float x, float y, float z)
         {
             X = x;
@@ -99,6 +106,11 @@ namespace Sledge.DataStructures.Geometric
                 (float) Math.Round(X / snapTo) * snapTo,
                 (float) Math.Round(Y / snapTo) * snapTo,
                 (float) Math.Round(Z / snapTo) * snapTo);
+        }
+
+        public float LengthSquared()
+        {
+            return (float)(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2));
         }
 
         public float VectorMagnitude()

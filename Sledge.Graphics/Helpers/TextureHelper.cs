@@ -124,8 +124,34 @@ namespace Sledge.Graphics.Helpers
             {
                 actualBitmap.Dispose();
             }
-            var texobj = new GLTexture(tex, name, flags) { Width = width, Height = height };
+            var texobj = new GLTexture(tex, name, flags, 0) { Width = width, Height = height };
             Textures.Add(name, texobj);
+            return texobj;
+        }
+
+        private static int LastRenderTargetID = 0;
+        public static GLTexture CreateRenderTarget(int width, int height)
+        {
+            TextureFlags flags = TextureFlags.None;
+
+            byte[] tempBuffer = new byte[width * height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb)];
+
+            var tex = CreateAndBindTexture();
+            SetTextureParameters();
+            GL.TexImage2D(
+                TextureTarget.Texture2D,
+                0,
+                PixelInternalFormat,
+                width,
+                height,
+                0,
+                PixelFormat.Bgra,
+                PixelType.UnsignedByte,
+                tempBuffer
+                );
+            var fbo = CreateFrameBuffer();
+            var texobj = new GLTexture(tex, "RENDERTARGET"+LastRenderTargetID.ToString(), flags, fbo) { Width = width, Height = height };
+            Textures.Add("RENDERTARGET" + LastRenderTargetID.ToString(), texobj); LastRenderTargetID++;
             return texobj;
         }
 
@@ -134,6 +160,12 @@ namespace Sledge.Graphics.Helpers
             var tex = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, tex);
             return tex;
+        }
+
+        private static int CreateFrameBuffer()
+        {
+            var fbo = GL.GenFramebuffer();
+            return fbo;
         }
 
         private static void SetTextureParameters()
@@ -166,6 +198,17 @@ namespace Sledge.Graphics.Helpers
         public static void Unbind()
         {
             GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
+        public static void SetRenderTarget(GLTexture target)
+        {
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, target.FrameBufferObject);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, target.Reference, 0);
+        }
+
+        public static void ResetRenderTarget()
+        {
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
         #endregion

@@ -85,15 +85,15 @@ namespace Sledge.DataStructures.Geometric
             }
         }
         #endregion
-        
+
         public Coordinate(decimal x, decimal y, decimal z)
         {
             _x = x;
             _y = y;
             _z = z;
-            _dx = (double) x;
-            _dy = (double) y;
-            _dz = (double) z;
+            _dx = (double)x;
+            _dy = (double)y;
+            _dz = (double)z;
         }
 
         protected Coordinate(SerializationInfo info, StreamingContext context)
@@ -129,7 +129,7 @@ namespace Sledge.DataStructures.Geometric
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == typeof (Coordinate) && Equals((Coordinate) obj);
+            return obj.GetType() == typeof(Coordinate) && Equals((Coordinate)obj);
         }
 
         public override int GetHashCode()
@@ -137,8 +137,8 @@ namespace Sledge.DataStructures.Geometric
             unchecked
             {
                 var result = _x.GetHashCode();
-                result = (result*397) ^ _y.GetHashCode();
-                result = (result*397) ^ _z.GetHashCode();
+                result = (result * 397) ^ _y.GetHashCode();
+                result = (result * 397) ^ _z.GetHashCode();
                 return result;
             }
         }
@@ -177,7 +177,7 @@ namespace Sledge.DataStructures.Geometric
 
         public decimal LengthSquared()
         {
-            return (decimal) (Math.Pow(_dx, 2) + Math.Pow(_dy, 2) + Math.Pow(_dz, 2));
+            return (decimal)(Math.Pow(_dx, 2) + Math.Pow(_dy, 2) + Math.Pow(_dz, 2));
         }
 
         public Coordinate Normalise()
@@ -274,7 +274,9 @@ namespace Sledge.DataStructures.Geometric
 
         public CoordinateF ToCoordinateF()
         {
-            return new CoordinateF((float) _dx, (float) _dy, (float) _dz);
+            return new CoordinateF((float)_dx, (float)_dy, (float)_dz);
         }
     }
+
+
 }

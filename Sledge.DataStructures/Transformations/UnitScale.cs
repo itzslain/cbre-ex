@@ -32,5 +32,10 @@ namespace Sledge.DataStructures.Transformations
         {
             return (c - Origin).ComponentMultiply(Scalar) + Origin;
         }
+
+        public CoordinateF Transform(CoordinateF c)
+        {
+            return (c - new CoordinateF(Origin)).ComponentMultiply(new CoordinateF(Scalar)) + new CoordinateF(Origin);
+        }
     }
 }

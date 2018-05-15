@@ -28,5 +28,10 @@ namespace Sledge.DataStructures.Transformations
         {
             return c + Translation;
         }
+
+        public CoordinateF Transform(CoordinateF c)
+        {
+            return c + new CoordinateF(Translation);
+        }
     }
 }

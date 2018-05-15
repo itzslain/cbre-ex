@@ -7,17 +7,17 @@ namespace Sledge.DataStructures.Geometric
     /// Defines a plane in the form Ax + By + Cz + D = 0
     /// </summary>
     [Serializable]
-    public class Plane : ISerializable
+    public class PlaneF : ISerializable
     {
-        public Coordinate Normal { get; private set; }
-        public decimal DistanceFromOrigin { get; private set; }
-        public decimal A { get; private set; }
-        public decimal B { get; private set; }
-        public decimal C { get; private set; }
-        public decimal D { get; private set; }
-        public Coordinate PointOnPlane { get; private set; }
+        public CoordinateF Normal { get; private set; }
+        public float DistanceFromOrigin { get; private set; }
+        public float A { get; private set; }
+        public float B { get; private set; }
+        public float C { get; private set; }
+        public float D { get; private set; }
+        public CoordinateF PointOnPlane { get; private set; }
 
-        public Plane(Coordinate p1, Coordinate p2, Coordinate p3)
+        public PlaneF(CoordinateF p1, CoordinateF p2, CoordinateF p3)
         {
             var ab = p2 - p1;
             var ac = p3 - p1;
@@ -32,7 +32,19 @@ namespace Sledge.DataStructures.Geometric
             D = -DistanceFromOrigin;
         }
 
-        public Plane(Coordinate norm, Coordinate pointOnPlane)
+        public PlaneF(Plane p)
+        {
+            Normal = new CoordinateF(p.Normal);
+            DistanceFromOrigin = (float)p.DistanceFromOrigin;
+            PointOnPlane = new CoordinateF(p.PointOnPlane);
+
+            A = Normal.X;
+            B = Normal.Y;
+            C = Normal.Z;
+            D = -DistanceFromOrigin;
+        }
+
+        public PlaneF(CoordinateF norm, CoordinateF pointOnPlane)
         {
             Normal = norm.Normalise();
             DistanceFromOrigin = Normal.Dot(pointOnPlane);
@@ -44,7 +56,7 @@ namespace Sledge.DataStructures.Geometric
             D = -DistanceFromOrigin;
         }
 
-        public Plane(Coordinate norm, decimal distanceFromOrigin)
+        public PlaneF(CoordinateF norm, float distanceFromOrigin)
         {
             Normal = norm.Normalise();
             DistanceFromOrigin = distanceFromOrigin;
@@ -56,7 +68,7 @@ namespace Sledge.DataStructures.Geometric
             D = -DistanceFromOrigin;
         }
 
-        protected Plane(SerializationInfo info, StreamingContext context) : this((Coordinate)info.GetValue("Normal", typeof(Coordinate)), info.GetDecimal("DistanceFromOrigin"))
+        protected PlaneF(SerializationInfo info, StreamingContext context) : this((CoordinateF)info.GetValue("Normal", typeof(CoordinateF)), info.GetSingle("DistanceFromOrigin"))
         {
 
         }
@@ -75,7 +87,7 @@ namespace Sledge.DataStructures.Geometric
         ///  value == 1 if coordinate is above the plane<br />
         ///  value == 0 if coordinate is on the plane.
         /// </returns>
-        public int OnPlane(Coordinate co, decimal epsilon = 0.5m)
+        public int OnPlane(CoordinateF co, float epsilon = 0.5f)
         {
             //eval (s = Ax + By + Cz + D) at point (x,y,z)
             //if s > 0 then point is "above" the plane (same side as normal)
@@ -96,7 +108,7 @@ namespace Sledge.DataStructures.Geometric
         /// <param name="ignoreSegment">Set to true to ignore the start and
         /// end points of the line in the intersection. Defaults to false.</param>
         /// <returns>The point of intersection, or null if the line does not intersect</returns>
-        public Coordinate GetIntersectionPoint(Line line, bool ignoreDirection = false, bool ignoreSegment = false)
+        public CoordinateF GetIntersectionPoint(LineF line, bool ignoreDirection = false, bool ignoreSegment = false)
         {
             // http://softsurfer.com/Archive/algorithm_0104/algorithm_0104B.htm#Line%20Intersections
             // http://paulbourke.net/geometry/planeline/
@@ -104,7 +116,7 @@ namespace Sledge.DataStructures.Geometric
             var dir = line.End - line.Start;
             var denominator = -Normal.Dot(dir);
             var numerator = Normal.Dot(line.Start - Normal * DistanceFromOrigin);
-            if (Math.Abs(denominator) < 0.00001m || (!ignoreDirection && denominator < 0)) return null;
+            if (Math.Abs(denominator) < 0.00001f || (!ignoreDirection && denominator < 0)) return null;
             var u = numerator / denominator;
             if (!ignoreSegment && (u < 0 || u > 1)) return null;
             return line.Start + u * dir;
@@ -116,14 +128,14 @@ namespace Sledge.DataStructures.Geometric
         /// </summary>
         /// <param name="point">The point to project</param>
         /// <returns>The point projected onto this plane</returns>
-        public Coordinate Project(Coordinate point)
+        public CoordinateF Project(CoordinateF point)
         {
             // http://www.gamedev.net/topic/262196-projecting-vector-onto-a-plane/
             // Projected = Point - ((Point - PointOnPlane) . Normal) * Normal
             return point - ((point - PointOnPlane).Dot(Normal)) * Normal;
         }
 
-        public decimal EvalAtPoint(Coordinate co)
+        public float EvalAtPoint(CoordinateF co)
         {
             return A * co.X + B * co.Y + C * co.Z + D;
         }
@@ -131,27 +143,27 @@ namespace Sledge.DataStructures.Geometric
         /// <summary>
         /// Gets the axis closest to the normal of this plane
         /// </summary>
-        /// <returns>Coordinate.UnitX, Coordinate.UnitY, or Coordinate.UnitZ depending on the plane's normal</returns>
-        public Coordinate GetClosestAxisToNormal()
+        /// <returns>CoordinateF.UnitX, CoordinateF.UnitY, or CoordinateF.UnitZ depending on the plane's normal</returns>
+        public CoordinateF GetClosestAxisToNormal()
         {
             // VHE prioritises the axes in order of X, Y, Z.
             var norm = Normal.Absolute();
 
-            if (norm.X >= norm.Y && norm.X >= norm.Z) return Coordinate.UnitX;
-            if (norm.Y >= norm.Z) return Coordinate.UnitY;
-            return Coordinate.UnitZ;
+            if (norm.X >= norm.Y && norm.X >= norm.Z) return CoordinateF.UnitX;
+            if (norm.Y >= norm.Z) return CoordinateF.UnitY;
+            return CoordinateF.UnitZ;
         }
 
-        public Plane Clone()
+        public PlaneF Clone()
         {
-            return new Plane(Normal, DistanceFromOrigin);
+            return new PlaneF(Normal, DistanceFromOrigin);
         }
 
         /// <summary>
         /// Intersects three planes and gets the point of their intersection.
         /// </summary>
         /// <returns>The point that the planes intersect at, or null if they do not intersect at a point.</returns>
-        public static Coordinate Intersect(Plane p1, Plane p2, Plane p3)
+        public static CoordinateF Intersect(PlaneF p1, PlaneF p2, PlaneF p3)
         {
             // http://paulbourke.net/geometry/3planes/
 
@@ -160,19 +172,19 @@ namespace Sledge.DataStructures.Geometric
             var c3 = p1.Normal.Cross(p2.Normal);
 
             var denom = p1.Normal.Dot(c1);
-            if (denom < 0.00001m) return null; // No intersection, planes must be parallel
+            if (denom < 0.00001f) return null; // No intersection, planes must be parallel
 
             var numer = (-p1.D * c1) + (-p2.D * c2) + (-p3.D * c3);
             return numer / denom;
         }
 
-        public bool EquivalentTo(Plane other, decimal delta = 0.0001m)
+        public bool EquivalentTo(PlaneF other, float delta = 0.0001f)
         {
             return Normal.EquivalentTo(other.Normal, delta)
                    && Math.Abs(DistanceFromOrigin - other.DistanceFromOrigin) < delta;
         }
 
-        public bool Equals(Plane other)
+        public bool Equals(PlaneF other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -183,8 +195,8 @@ namespace Sledge.DataStructures.Geometric
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Plane)) return false;
-            return Equals((Plane)obj);
+            if (obj.GetType() != typeof(PlaneF)) return false;
+            return Equals((PlaneF)obj);
         }
 
         public override int GetHashCode()
@@ -195,12 +207,12 @@ namespace Sledge.DataStructures.Geometric
             }
         }
 
-        public static bool operator ==(Plane left, Plane right)
+        public static bool operator ==(PlaneF left, PlaneF right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Plane left, Plane right)
+        public static bool operator !=(PlaneF left, PlaneF right)
         {
             return !Equals(left, right);
         }

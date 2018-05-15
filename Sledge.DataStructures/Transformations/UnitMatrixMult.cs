@@ -48,5 +48,13 @@ namespace Sledge.DataStructures.Transformations
             var z = Matrix[8] * c.X + Matrix[9] * c.Y + Matrix[10] * c.Z + Matrix[11];
             return new Coordinate(x, y, z);
         }
+
+        public CoordinateF Transform(CoordinateF c)
+        {
+            var x = (float)Matrix[0] * c.X + (float)Matrix[1] * c.Y + (float)Matrix[2] * c.Z + (float)Matrix[3];
+            var y = (float)Matrix[4] * c.X + (float)Matrix[5] * c.Y + (float)Matrix[6] * c.Z + (float)Matrix[7];
+            var z = (float)Matrix[8] * c.X + (float)Matrix[9] * c.Y + (float)Matrix[10] * c.Z + (float)Matrix[11];
+            return new CoordinateF(x, y, z);
+        }
     }
 }

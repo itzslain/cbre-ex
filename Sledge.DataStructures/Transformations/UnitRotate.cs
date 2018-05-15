@@ -56,5 +56,30 @@ namespace Sledge.DataStructures.Transformations
 
             return new Coordinate(x, y, z) + Axis.Start;
         }
+
+        public CoordinateF Transform(CoordinateF c)
+        {
+            var p = c - new CoordinateF(Axis.Start);
+            var r = new CoordinateF((Axis.End - Axis.Start).Normalise());
+
+            var costheta = (float)Math.Cos((float)Rotation);
+            var sintheta = (float)Math.Sin((float)Rotation);
+
+            float x = 0, y = 0, z = 0;
+
+            x += (costheta + (1 - costheta) * r.X * r.X) * p.X;
+            x += ((1 - costheta) * r.X * r.Y - r.Z * sintheta) * p.Y;
+            x += ((1 - costheta) * r.X * r.Z + r.Y * sintheta) * p.Z;
+
+            y += ((1 - costheta) * r.X * r.Y + r.Z * sintheta) * p.X;
+            y += (costheta + (1 - costheta) * r.Y * r.Y) * p.Y;
+            y += ((1 - costheta) * r.Y * r.Z - r.X * sintheta) * p.Z;
+
+            z += ((1 - costheta) * r.X * r.Z - r.Y * sintheta) * p.X;
+            z += ((1 - costheta) * r.Y * r.Z + r.X * sintheta) * p.Y;
+            z += (costheta + (1 - costheta) * r.Z * r.Z) * p.Z;
+
+            return new CoordinateF(x, y, z) + new CoordinateF(Axis.Start);
+        }
     }
 }

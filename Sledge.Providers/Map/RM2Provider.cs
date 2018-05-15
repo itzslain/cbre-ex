@@ -8,35 +8,176 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Sledge.DataStructures.Transformations;
+using System.IO;
 
 namespace Sledge.Providers.Map
 {
     public class RM2Provider
     {
-        private class LightmapGroup
+        private class LMLight
         {
-            public Plane Plane;
-            public Box BoundingBox;
-            public List<Face> Faces;
+            public CoordinateF Color;
+            public CoordinateF Origin;
+            public float Range;
         }
 
-        private static decimal GetGroupTextureWidth(LightmapGroup group)
+        private class LMFace
+        {
+            public PlaneF Plane { get; set; }
+            
+            public List<CoordinateF> Vertices { get; set; }
+            
+            public BoxF BoundingBox { get; set; }
+
+            public LMFace(Face face)
+            {
+                Plane = new PlaneF(face.Plane);
+
+                Vertices = face.Vertices.Select(x => new CoordinateF(x.Location)).ToList();
+
+                UpdateBoundingBox();
+            }
+
+            public virtual IEnumerable<LineF> GetLines()
+            {
+                return GetEdges();
+            }
+
+            public virtual IEnumerable<LineF> GetEdges()
+            {
+                for (var i = 0; i < Vertices.Count; i++)
+                {
+                    yield return new LineF(Vertices[i], Vertices[(i + 1) % Vertices.Count]);
+                }
+            }
+
+            public virtual IEnumerable<CoordinateF> GetIndexedVertices()
+            {
+                return Vertices;
+            }
+
+            public virtual IEnumerable<uint> GetTriangleIndices()
+            {
+                for (uint i = 1; i < Vertices.Count - 1; i++)
+                {
+                    yield return 0;
+                    yield return i;
+                    yield return i + 1;
+                }
+            }
+
+            public virtual IEnumerable<CoordinateF[]> GetTriangles()
+            {
+                for (var i = 1; i < Vertices.Count - 1; i++)
+                {
+                    yield return new[]
+                                     {
+                                     Vertices[0],
+                                     Vertices[i],
+                                     Vertices[i + 1]
+                                 };
+                }
+            }
+            
+            public virtual void UpdateBoundingBox()
+            {
+                BoundingBox = new BoxF(Vertices);
+            }
+            
+            /// <summary>
+            /// Returns the point that this line intersects with this face.
+            /// </summary>
+            /// <param name="line">The intersection line</param>
+            /// <returns>The point of intersection between the face and the line.
+            /// Returns null if the line does not intersect this face.</returns>
+            public virtual CoordinateF GetIntersectionPoint(LineF line)
+            {
+                return GetIntersectionPoint(Vertices, line);
+            }
+
+            /// <summary>
+            /// Test all the edges of this face against a bounding box to see if they intersect.
+            /// </summary>
+            /// <param name="box">The box to intersect</param>
+            /// <returns>True if one of the face's edges intersects with the box.</returns>
+            public bool IntersectsWithLine(BoxF box)
+            {
+                // Shortcut through the bounding box to avoid the line computations if they aren't needed
+                return BoundingBox.IntersectsWith(box) && GetLines().Any(box.IntersectsWith);
+            }
+
+            /// <summary>
+            /// Test this face to see if the given bounding box intersects with it
+            /// </summary>
+            /// <param name="box">The box to test against</param>
+            /// <returns>True if the box intersects</returns>
+            public bool IntersectsWithBox(BoxF box)
+            {
+                var verts = Vertices.ToList();
+                return box.GetBoxLines().Any(x => GetIntersectionPoint(verts, x, true) != null);
+            }
+            
+            protected static CoordinateF GetIntersectionPoint(IList<CoordinateF> coordinates, LineF line, bool ignoreDirection = false)
+            {
+                var plane = new PlaneF(coordinates[0], coordinates[1], coordinates[2]);
+                var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
+                if (intersect == null) return null;
+
+                // http://paulbourke.net/geometry/insidepoly/
+
+                // The angle sum will be 2 * PI if the point is inside the face
+                double sum = 0;
+                for (var i = 0; i < coordinates.Count; i++)
+                {
+                    var i1 = i;
+                    var i2 = (i + 1) % coordinates.Count;
+
+                    // Translate the vertices so that the intersect point is on the origin
+                    var v1 = coordinates[i1] - intersect;
+                    var v2 = coordinates[i2] - intersect;
+
+                    var m1 = (double)v1.LengthSquared();
+                    var m2 = (double)v2.LengthSquared();
+                    var nom = m1 * m2;
+                    if (nom < 0.00001d)
+                    {
+                        // intersection is at a vertex
+                        return intersect;
+                    }
+                    nom = Math.Sqrt(nom);
+                    sum += Math.Acos((double)(v1.Dot(v2)) / nom);
+                }
+
+                var delta = Math.Abs(sum - Math.PI * 2);
+                return (delta < 0.001d) ? intersect : null;
+            }
+        }
+
+        private class LightmapGroup
+        {
+            public PlaneF Plane;
+            public BoxF BoundingBox;
+            public List<LMFace> Faces;
+        }
+
+        private static float GetGroupTextureWidth(LightmapGroup group)
         {
             var direction = group.Plane.GetClosestAxisToNormal();
 
-            var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+            var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
             var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
             var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
 
-            decimal? minTotalX = null; decimal? maxTotalX = null;
-            decimal? minTotalY = null; decimal? maxTotalY = null;
+            float? minTotalX = null; float? maxTotalX = null;
+            float? minTotalY = null; float? maxTotalY = null;
 
-            foreach (Face face in group.Faces)
+            foreach (LMFace face in group.Faces)
             {
-                foreach (Coordinate coord in face.Vertices.Select(x => x.Location))
+                foreach (CoordinateF coord in face.Vertices)
                 {
-                    decimal x = coord.Dot(uAxis);
-                    decimal y = coord.Dot(vAxis);
+                    float x = coord.Dot(uAxis);
+                    float y = coord.Dot(vAxis);
 
                     if (minTotalX == null || x < minTotalX) minTotalX = x;
                     if (minTotalY == null || y < minTotalY) minTotalY = y;
@@ -47,11 +188,11 @@ namespace Sledge.Providers.Map
 
             if ((maxTotalX - minTotalX) < (maxTotalY - minTotalY))
             {
-                decimal maxSwap = maxTotalX.Value; decimal minSwap = minTotalX.Value;
+                float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
                 maxTotalX = maxTotalY; minTotalX = minTotalY;
                 maxTotalY = maxSwap; minTotalY = minSwap;
 
-                Coordinate swapAxis = uAxis;
+                CoordinateF swapAxis = uAxis;
                 uAxis = vAxis;
                 vAxis = swapAxis;
             }
@@ -59,15 +200,15 @@ namespace Sledge.Providers.Map
             return (maxTotalY - minTotalY).Value;
         }
 
-        private static LightmapGroup FindCoplanar(List<LightmapGroup> coplanarFaces, Face otherFace)
+        private static LightmapGroup FindCoplanar(List<LightmapGroup> coplanarFaces, LMFace otherFace)
         {
             foreach (LightmapGroup group in coplanarFaces)
             {
-                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.1m)
+                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.1f)
                 {
-                    Plane plane2 = new Plane(otherFace.Plane.Normal, otherFace.Vertices[0].Location);
-                    if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0m) continue;
-                    Box faceBox = new Box(otherFace.BoundingBox.Start - new Coordinate(3, 3, 3), otherFace.BoundingBox.End + new Coordinate(3, 3, 3));
+                    PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0]);
+                    if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;
+                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(3, 3, 3), otherFace.BoundingBox.End + new CoordinateF(3, 3, 3));
                     if (faceBox.IntersectsWith(group.BoundingBox)) return group;
                 }
             }
@@ -84,23 +225,70 @@ namespace Sledge.Providers.Map
             //get faces
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
             {
-                foreach (Face face in solid.Faces)
+                foreach (Face tface in solid.Faces)
                 {
-                    face.UpdateBoundingBox();
-                    if (face.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
+                    tface.UpdateBoundingBox();
+                    if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
+                    LMFace face = new LMFace(tface);
                     LightmapGroup group = FindCoplanar(coplanarFaces, face);
-                    Box faceBox = new Box(face.BoundingBox.Start - new Coordinate(3, 3, 3), face.BoundingBox.End + new Coordinate(3, 3, 3));
+                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3, 3, 3), face.BoundingBox.End + new CoordinateF(3, 3, 3));
                     if (group == null)
                     {
                         group = new LightmapGroup();
                         group.BoundingBox = faceBox;
-                        group.Faces = new List<Face>();
-                        group.Plane = new Plane(face.Plane.Normal,face.Vertices[0].Location);
+                        group.Faces = new List<LMFace>();
+                        group.Plane = new PlaneF(face.Plane.Normal, face.Vertices[0]);
                         coplanarFaces.Add(group);
                     }
                     group.Faces.Add(face);
-                    group.Plane = new Plane(group.Plane.Normal, (face.Vertices[0].Location+group.Plane.PointOnPlane)/2);
-                    group.BoundingBox = new Box(new Box[] { group.BoundingBox, faceBox });
+                    group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0] + group.Plane.PointOnPlane) / 2);
+                    group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
+                }
+            }
+
+            for (int i = 0; i < coplanarFaces.Count; i++)
+            {
+                for (int j = i + 1; j < coplanarFaces.Count; j++)
+                {
+                    if ((coplanarFaces[i].Plane.Normal - coplanarFaces[j].Plane.Normal).LengthSquared() < 0.1f &&
+                        coplanarFaces[i].BoundingBox.IntersectsWith(coplanarFaces[j].BoundingBox))
+                    {
+                        coplanarFaces[i].Faces.AddRange(coplanarFaces[j].Faces);
+                        coplanarFaces[i].BoundingBox = new BoxF(new BoxF[] { coplanarFaces[i].BoundingBox, coplanarFaces[j].BoundingBox });
+                        coplanarFaces.RemoveAt(j);
+                        j = i + 1;
+                    }
+                }
+            }
+
+            Bitmap bitmap = new Bitmap(2048, 2048, PixelFormat.Format32bppArgb);
+        }
+
+        public static void SaveToFile_Old(string filename, Sledge.DataStructures.MapObjects.Map map)
+        {
+            List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
+
+            //get faces
+            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+            {
+                foreach (Face tface in solid.Faces)
+                {
+                    tface.UpdateBoundingBox();
+                    if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
+                    LMFace face = new LMFace(tface);
+                    LightmapGroup group = FindCoplanar(coplanarFaces, face);
+                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3, 3, 3), face.BoundingBox.End + new CoordinateF(3, 3, 3));
+                    if (group == null)
+                    {
+                        group = new LightmapGroup();
+                        group.BoundingBox = faceBox;
+                        group.Faces = new List<LMFace>();
+                        group.Plane = new PlaneF(face.Plane.Normal,face.Vertices[0]);
+                        coplanarFaces.Add(group);
+                    }
+                    group.Faces.Add(face);
+                    group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0]+group.Plane.PointOnPlane)/2);
+                    group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
                 }
             }
 
@@ -108,35 +296,35 @@ namespace Sledge.Providers.Map
             {
                 for (int j=i+1;j<coplanarFaces.Count;j++)
                 {
-                    if ((coplanarFaces[i].Plane.Normal - coplanarFaces[j].Plane.Normal).LengthSquared() < 0.1m &&
+                    if ((coplanarFaces[i].Plane.Normal - coplanarFaces[j].Plane.Normal).LengthSquared() < 0.1f &&
                         coplanarFaces[i].BoundingBox.IntersectsWith(coplanarFaces[j].BoundingBox))
                     {
                         coplanarFaces[i].Faces.AddRange(coplanarFaces[j].Faces);
-                        coplanarFaces[i].BoundingBox = new Box(new Box[] { coplanarFaces[i].BoundingBox, coplanarFaces[j].BoundingBox });
+                        coplanarFaces[i].BoundingBox = new BoxF(new BoxF[] { coplanarFaces[i].BoundingBox, coplanarFaces[j].BoundingBox });
                         coplanarFaces.RemoveAt(j);
                         j = i+1;
                     }
                 }
             }
 
-            Random rand = new Random();
+            //Random rand = new Random();
 
             //sort faces
-            foreach (LightmapGroup group in coplanarFaces)
+            /*foreach (LightmapGroup group in coplanarFaces)
             {
                 var direction = group.Plane.GetClosestAxisToNormal();
 
-                var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+                var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
                 var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
                 var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
                 
                 System.Drawing.Color color = System.Drawing.Color.FromArgb(rand.Next() % 60+20, rand.Next() % 60+20, rand.Next() % 60+20);
 
-                foreach (Face face in group.Faces)
+                foreach (LMFace face in group.Faces)
                 {
                     face.Colour = color;
                 }
-            }
+            }*/
             
             //put the faces into a file
             Bitmap bitmap = new Bitmap(2048, 2048, PixelFormat.Format24bppRgb);
@@ -155,27 +343,34 @@ namespace Sledge.Providers.Map
 
             List<Thread> threads = new List<Thread>();
 
-            List<Entity> lightEntities = map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>().ToList();
+            List<LMLight> lightEntities = map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
+                .Select(x => new LMLight() {
+                    Origin = new CoordinateF(x.Origin),
+                    Range = float.Parse(x.EntityData.GetPropertyValue("range")),
+                    Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color"))
+                }).ToList();
 
-            List<Face> allFaces = coplanarFaces.Select(q => q.Faces).SelectMany(q => q).ToList();
+            List<LMFace> allFaces = coplanarFaces.Select(q => q.Faces).SelectMany(q => q).ToList();
 
+            Stream meshStream = new FileStream("D:/repos/asd.mesh", FileMode.Create);
+            BinaryWriter meshWriter = new BinaryWriter(meshStream);
             foreach (LightmapGroup group in coplanarFaces)
             {
                 var direction = group.Plane.GetClosestAxisToNormal();
 
-                var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+                var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
                 var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
                 var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
 
-                decimal? minTotalX = null; decimal? maxTotalX = null;
-                decimal? minTotalY = null; decimal? maxTotalY = null;
+                float? minTotalX = null; float? maxTotalX = null;
+                float? minTotalY = null; float? maxTotalY = null;
 
-                foreach (Face face in group.Faces)
+                foreach (LMFace face in group.Faces)
                 {
-                    foreach (Coordinate coord in face.Vertices.Select(x => x.Location))
+                    foreach (CoordinateF coord in face.Vertices)
                     {
-                        decimal x = coord.Dot(uAxis);
-                        decimal y = coord.Dot(vAxis);
+                        float x = coord.Dot(uAxis);
+                        float y = coord.Dot(vAxis);
 
                         if (minTotalX == null || x < minTotalX) minTotalX = x;
                         if (minTotalY == null || y < minTotalY) minTotalY = y;
@@ -186,11 +381,11 @@ namespace Sledge.Providers.Map
 
                 if ((maxTotalX-minTotalX)>(maxTotalY-minTotalY))
                 {
-                    decimal maxSwap = maxTotalX.Value; decimal minSwap = minTotalX.Value;
+                    float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
                     maxTotalX = maxTotalY; minTotalX = minTotalY;
                     maxTotalY = maxSwap; minTotalY = minSwap;
 
-                    Coordinate swapAxis = uAxis;
+                    CoordinateF swapAxis = uAxis;
                     uAxis = vAxis;
                     vAxis = swapAxis;
                 }
@@ -202,15 +397,32 @@ namespace Sledge.Providers.Map
                     writeMaxX = 0;
                 }
 
-                foreach (Face face in group.Faces)
+                foreach (LMFace face in group.Faces)
                 {
-                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, face, allFaces);
-                    threads.Add(newThread);
+                    /*meshWriter.Write((Int32)face.Vertices.Count);
+                    foreach (CoordinateF vert in face.Vertices)
+                    {
+                        meshWriter.Write(vert.X);
+                        meshWriter.Write(vert.Y);
+                        meshWriter.Write(vert.Z);
+
+                        meshWriter.Write((short)(writeX + (vert.Dot(uAxis) - minTotalX.Value) / downscaleFactor));
+                        meshWriter.Write((short)(writeY + (vert.Dot(vAxis) - minTotalY.Value) / downscaleFactor));
+                    }
+                    List<uint> indices = face.GetTriangleIndices().ToList();
+                    meshWriter.Write((Int32)indices.Count);
+                    foreach (uint ind in indices)
+                    {
+                        meshWriter.Write((Int16)ind);
+                    }*/
+                    //Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, face, allFaces);
+                    //threads.Add(newThread);
                 }
                 
                 writeY += (int)(maxTotalY - minTotalY)/downscaleFactor + 3;
                 if ((int)(maxTotalX - minTotalX)/downscaleFactor + 3 > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / downscaleFactor + 3;
             }
+            meshWriter.Dispose(); meshStream.Dispose();
 
             int a = 0;
             while (threads.Count > 0)
@@ -251,27 +463,27 @@ namespace Sledge.Providers.Map
 
         }
 
-        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<Entity> lights, Coordinate uAxis, Coordinate vAxis, int writeX, int writeY, decimal minTotalX, decimal minTotalY, Face targetFace, List<Face> blockerFaces)
+        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LMFace targetFace, List<LMFace> blockerFaces)
         {
             return new Thread(() => RenderLightOntoFace(bitmapData, lights, uAxis, vAxis, writeX, writeY, minTotalX, minTotalY, targetFace, blockerFaces));
         }
 
-        private static void RenderLightOntoFace(byte[] bitmapData, List<Entity> lights, Coordinate uAxis, Coordinate vAxis, int writeX, int writeY, decimal minTotalX, decimal minTotalY, Face targetFace,List<Face> blockerFaces)
+        private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LMFace targetFace,List<LMFace> blockerFaces)
         {
             lights = lights.FindAll(x =>
             {
-                decimal range = decimal.Parse(x.EntityData.GetPropertyValue("range"));
-                Box lightBox = new Box(x.Origin - new Coordinate(range, range, range), x.Origin + new Coordinate(range, range, range));
+                float range = x.Range;
+                BoxF lightBox = new BoxF(x.Origin - new CoordinateF(range, range, range), x.Origin + new CoordinateF(range, range, range));
                 return lightBox.IntersectsWith(targetFace.BoundingBox);
             });
 
-            decimal? minX = null; decimal? maxX = null;
-            decimal? minY = null; decimal? maxY = null;
+            float? minX = null; float? maxX = null;
+            float? minY = null; float? maxY = null;
 
-            foreach (Coordinate coord in targetFace.Vertices.Select(x => x.Location))
+            foreach (CoordinateF coord in targetFace.Vertices)
             {
-                decimal x = coord.Dot(uAxis);
-                decimal y = coord.Dot(vAxis);
+                float x = coord.Dot(uAxis);
+                float y = coord.Dot(vAxis);
 
                 if (minX == null || x < minX) minX = x;
                 if (minY == null || y < minY) minY = y;
@@ -279,8 +491,8 @@ namespace Sledge.Providers.Map
                 if (maxY == null || y > maxY) maxY = y;
             }
 
-            decimal centerX = (maxX.Value + minX.Value) / 2;
-            decimal centerY = (maxY.Value + minY.Value) / 2;
+            float centerX = (maxX.Value + minX.Value) / 2;
+            float centerY = (maxY.Value + minY.Value) / 2;
 
             int iterX = (int)Math.Ceiling((maxX.Value - minX.Value) / downscaleFactor);
             int iterY = (int)Math.Ceiling((maxY.Value - minY.Value) / downscaleFactor);
@@ -289,16 +501,16 @@ namespace Sledge.Providers.Map
             int[,] g = new int[iterX, iterY];
             int[,] b = new int[iterX, iterY];
 
-            foreach (Entity light in lights)
+            foreach (LMLight light in lights)
             {
-                Coordinate lightPos = light.Origin;
-                decimal lightRange = decimal.Parse(light.EntityData.GetPropertyValue("range"));
-                Coordinate lightColor = light.EntityData.GetPropertyCoordinate("color", new Coordinate(255, 255, 255));
+                CoordinateF lightPos = light.Origin;
+                float lightRange = light.Range;
+                CoordinateF lightColor = light.Color;
 
-                List<Face> applicableBlockerFaces = blockerFaces.FindAll(x =>
+                List<LMFace> applicableBlockerFaces = blockerFaces.FindAll(x =>
                 {
-                    if ((lightPos - x.BoundingBox.Center).Dot(targetFace.Plane.Normal) < 0.0m) return false;
-                    if ((x.BoundingBox.Center - lightPos).Dot(targetFace.BoundingBox.Center - lightPos) > 0.0m) return true;
+                    if ((lightPos - x.BoundingBox.Center).Dot(targetFace.Plane.Normal) < 0.0f) return false;
+                    if ((x.BoundingBox.Center - lightPos).Dot(targetFace.BoundingBox.Center - lightPos) > 0.0f) return true;
                     return false;
                 });
 
@@ -306,25 +518,25 @@ namespace Sledge.Providers.Map
                 {
                     for (int x = 0; x < iterX; x++)
                     {
-                        decimal ttX = minX.Value + (x * downscaleFactor);
-                        decimal ttY = minY.Value + (y * downscaleFactor);
-                        Coordinate pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;
+                        float ttX = minX.Value + (x * downscaleFactor);
+                        float ttY = minY.Value + (y * downscaleFactor);
+                        CoordinateF pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;
                         
                         int tX = writeX + x + (int)(minX - minTotalX) / downscaleFactor;
                         int tY = writeY + y + (int)(minY - minTotalY) / downscaleFactor;
                         
                         Color luxelColor = Color.FromArgb(r[x,y],g[x,y],b[x, y]);
 
-                        decimal dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
+                        float dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
                         bool illuminated = false;
-                        if (dotToLight > 0.0m && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
+                        if (dotToLight > 0.0f && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
                         {
-                            Line lineTester = new Line(lightPos, pointOnPlane);
+                            LineF lineTester = new LineF(lightPos, pointOnPlane);
                             illuminated = true;
-                            foreach (Face otherFace in applicableBlockerFaces)
+                            foreach (LMFace otherFace in applicableBlockerFaces)
                             {
-                                Coordinate hit = otherFace.GetIntersectionPoint(lineTester);
-                                if (hit != null && (hit - pointOnPlane).LengthSquared() > 5.0m)
+                                CoordinateF hit = otherFace.GetIntersectionPoint(lineTester);
+                                if (hit != null && (hit - pointOnPlane).LengthSquared() > 5.0f)
                                 {
                                     illuminated = false;
                                     break;
@@ -334,7 +546,7 @@ namespace Sledge.Providers.Map
 
                         if (illuminated)
                         {
-                            decimal brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
+                            float brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
 
                             r[x, y] += (int)(lightColor.X * brightness); if (r[x, y] > 255) r[x, y] = 255;
                             g[x, y] += (int)(lightColor.Y * brightness); if (g[x, y] > 255) g[x, y] = 255;
