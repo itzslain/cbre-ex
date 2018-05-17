@@ -252,7 +252,7 @@ namespace Sledge.Editor.Documents
 
         public void FileCompile()
         {
-            RM2Provider.SaveToFile_Old("test.rm2", _document.Map);
+            RM2Provider.SaveToFile_New("test.rm2", _document.Map);
             return;
 
             _document.SaveFile();

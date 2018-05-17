@@ -160,8 +160,11 @@ namespace Sledge.Providers.Map
             public PlaneF Plane;
             public BoxF BoundingBox;
             public List<LMFace> Faces;
-        }
 
+            public float[] vertexData;
+            public int GLVertexBuffer;
+        }
+        
         private static float GetGroupTextureWidth(LightmapGroup group)
         {
             var direction = group.Plane.GetClosestAxisToNormal();
@@ -260,27 +263,144 @@ namespace Sledge.Providers.Map
                     }
                 }
             }
+            
+            foreach (LightmapGroup group in coplanarFaces)
+            {
+                group.GLVertexBuffer = GL.GenBuffer();
 
-            Bitmap bitmap = new Bitmap(2048, 2048, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, group.GLVertexBuffer);
+
+                List<float> dataList = new List<float>();
+                foreach (CoordinateF[] tri in group.Faces.SelectMany(x => x.GetTriangles()))
+                {
+                    dataList.Add(tri[0].X);
+                    dataList.Add(tri[0].Z);
+                    dataList.Add(tri[0].Y);
+                    dataList.Add(tri[1].X);
+                    dataList.Add(tri[1].Z);
+                    dataList.Add(tri[1].Y);
+                    dataList.Add(tri[2].X);
+                    dataList.Add(tri[2].Z);
+                    dataList.Add(tri[2].Y);
+                }
+                float[] data = dataList.ToArray();
+                group.vertexData = data;
+
+                GL.BufferData<float>(BufferTarget.ArrayBuffer, new IntPtr(sizeof(float) * data.Length), data, BufferUsageHint.StaticDraw);
+            }
+
+            Bitmap bitmap = new Bitmap(2048, 2048, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
             int[] shadowMapTextures = new int[6];
             GL.GenTextures(6, shadowMapTextures);
-            int[] shadowMapFramebuffers = new int[6];
-            GL.GenFramebuffers(6, shadowMapFramebuffers);
+            int[] shadowMapFrameBuffers = new int[6];
+            GL.GenFramebuffers(6, shadowMapFrameBuffers);
             int[] shadowMapDepthBuffers = new int[6];
             GL.GenRenderbuffers(6, shadowMapDepthBuffers);
 
-            for (int i=0;i<6;i++)
+            string vertexShaderCode;
+            using (var r = new StreamReader("D:/Repos/depthToTexture.vert"))
             {
+                vertexShaderCode = r.ReadToEnd();
+            }
+            int vertexShader = GL.CreateShader(ShaderType.VertexShader);
+            GL.ShaderSource(vertexShader, vertexShaderCode);
+            GL.CompileShader(vertexShader);
+
+            int status;
+            GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out status);
+            if (status != 1)
+            {
+                throw new Exception(GL.GetShaderInfoLog(vertexShader));
+            }
+
+            string fragmentShaderCode;
+            using (var r = new StreamReader("D:/Repos/depthToTexture.frag"))
+            {
+                fragmentShaderCode = r.ReadToEnd();
+            }
+            int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+            GL.ShaderSource(fragmentShader, fragmentShaderCode);
+            GL.CompileShader(fragmentShader);
+            GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out status);
+            if (status != 1)
+            {
+                throw new Exception(GL.GetShaderInfoLog(fragmentShader));
+            }
+
+            int shaderProgram = GL.CreateProgram();
+            GL.AttachShader(shaderProgram, vertexShader);
+            GL.AttachShader(shaderProgram, fragmentShader);
+
+            GL.BindFragDataLocation(shaderProgram, 0, "outColor");
+
+            GL.LinkProgram(shaderProgram);
+            GL.UseProgram(shaderProgram);
+
+            int posAttrib = GL.GetAttribLocation(shaderProgram, "pos");
+            GL.EnableVertexAttribArray(posAttrib);
+            GL.VertexAttribPointer(posAttrib, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+            GL.Enable(EnableCap.DepthTest);
+
+            List<LMLight> lightEntities = map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
+                .Select(x => new LMLight()
+                {
+                    Origin = new CoordinateF(x.Origin),
+                    Range = float.Parse(x.EntityData.GetPropertyValue("range")),
+                    Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color"))
+                }).ToList();
+
+            OpenTK.Matrix4 projectionMatrix = OpenTK.Matrix4.CreatePerspectiveFieldOfView(100.0f*(float)Math.PI/180.0f,1.0f,5.0f,50000.0f);
+            OpenTK.Matrix4 worldMatrix = OpenTK.Matrix4.Identity;
+
+            OpenTK.Vector3 eye = new OpenTK.Vector3(lightEntities[12].Origin.X, lightEntities[12].Origin.Z, lightEntities[12].Origin.Y);
+            
+            OpenTK.Matrix4 viewMatrix = OpenTK.Matrix4.LookAt(eye, eye+new OpenTK.Vector3(1.0f, 0.0f, 0.0f), new OpenTK.Vector3(0.0f, 1.0f, 0.0f));
+
+            int viewUniform = GL.GetUniformLocation(shaderProgram, "viewMatrix");
+            GL.UniformMatrix4(viewUniform, false, ref viewMatrix);
+            int worldUniform = GL.GetUniformLocation(shaderProgram, "worldMatrix");
+            GL.UniformMatrix4(worldUniform, false, ref worldMatrix);
+            int projectionUniform = GL.GetUniformLocation(shaderProgram, "projectionMatrix");
+            GL.UniformMatrix4(projectionUniform, false, ref projectionMatrix);
+
+            for (int i = 0; i < 6; i++)
+            {
+                GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, shadowMapTextures[i]);
                 GL.TexImage2D(
-                    TextureTarget.Texture2D, 0, PixelInternalFormat.R32f, 2048, 2048, 0, OpenTK.Graphics.OpenGL.PixelFormat.Red, PixelType.Float, IntPtr.Zero
+                    TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 2048, 2048, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero
                 );
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, shadowMapFramebuffers[i]);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, shadowMapFrameBuffers[i]);
                 GL.FramebufferTexture2D(
                     FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, shadowMapTextures[i], 0
                 );
+                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, shadowMapDepthBuffers[i]);
+                GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent32, 2048, 2048);
+                GL.FramebufferRenderbuffer(
+                    FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, shadowMapDepthBuffers[i]
+                );
+                GL.ClearColor(Color.FromArgb(0, 100, 100));
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                foreach (LightmapGroup group in coplanarFaces)
+                {
+                    GL.UseProgram(shaderProgram);
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, group.GLVertexBuffer);
+                    
+                    GL.DrawArrays(PrimitiveType.Triangles, 0, group.vertexData.Count());
+                }
+                BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                GL.ReadPixels(0, 0, 2048, 2048, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.UnsignedByte, bmpData.Scan0);
+                bitmap.UnlockBits(bmpData);
+                bitmap.Save("D:/Repos/qwe_" + i.ToString() + ".bmp");
             }
+
+            GL.DeleteRenderbuffers(6, shadowMapDepthBuffers);
+            GL.DeleteFramebuffers(6, shadowMapFrameBuffers);
+            GL.DeleteTextures(6, shadowMapTextures);
         }
 
         public static void SaveToFile_Old(string filename, Sledge.DataStructures.MapObjects.Map map)
@@ -461,9 +581,9 @@ namespace Sledge.Providers.Map
                 }
                 a++; Thread.Sleep(100);
 
-                if (a>=50)
+                if (a>=20)
                 {
-                    a -= 50;
+                    a -= 20;
 
                     BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                     Marshal.Copy(buffer, 0, bitmapData.Scan0, buffer.Length);
