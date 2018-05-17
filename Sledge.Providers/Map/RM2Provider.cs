@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Sledge.DataStructures.Transformations;
 using System.IO;
+using OpenTK.Graphics.OpenGL;
 
 namespace Sledge.Providers.Map
 {
@@ -72,11 +73,11 @@ namespace Sledge.Providers.Map
                 for (var i = 1; i < Vertices.Count - 1; i++)
                 {
                     yield return new[]
-                                     {
-                                     Vertices[0],
-                                     Vertices[i],
-                                     Vertices[i + 1]
-                                 };
+                    {
+                        Vertices[0],
+                        Vertices[i],
+                        Vertices[i + 1]
+                    };
                 }
             }
             
@@ -208,17 +209,16 @@ namespace Sledge.Providers.Map
                 {
                     PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0]);
                     if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;
-                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(3, 3, 3), otherFace.BoundingBox.End + new CoordinateF(3, 3, 3));
+                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(0.75f, 0.75f, 0.75f), otherFace.BoundingBox.End + new CoordinateF(0.75f, 0.75f, 0.75f));
                     if (faceBox.IntersectsWith(group.BoundingBox)) return group;
                 }
             }
             return null;
         }
-
-
+        
         private const int downscaleFactor = 10;
 
-        public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
+        public static void SaveToFile_New(string filename, Sledge.DataStructures.MapObjects.Map map)
         {
             List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
 
@@ -231,7 +231,7 @@ namespace Sledge.Providers.Map
                     if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
                     LMFace face = new LMFace(tface);
                     LightmapGroup group = FindCoplanar(coplanarFaces, face);
-                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3, 3, 3), face.BoundingBox.End + new CoordinateF(3, 3, 3));
+                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(0.75f, 0.75f, 0.75f), face.BoundingBox.End + new CoordinateF(0.75f, 0.75f, 0.75f));
                     if (group == null)
                     {
                         group = new LightmapGroup();
@@ -261,7 +261,26 @@ namespace Sledge.Providers.Map
                 }
             }
 
-            Bitmap bitmap = new Bitmap(2048, 2048, PixelFormat.Format32bppArgb);
+            Bitmap bitmap = new Bitmap(2048, 2048, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            int[] shadowMapTextures = new int[6];
+            GL.GenTextures(6, shadowMapTextures);
+            int[] shadowMapFramebuffers = new int[6];
+            GL.GenFramebuffers(6, shadowMapFramebuffers);
+            int[] shadowMapDepthBuffers = new int[6];
+            GL.GenRenderbuffers(6, shadowMapDepthBuffers);
+
+            for (int i=0;i<6;i++)
+            {
+                GL.BindTexture(TextureTarget.Texture2D, shadowMapTextures[i]);
+                GL.TexImage2D(
+                    TextureTarget.Texture2D, 0, PixelInternalFormat.R32f, 2048, 2048, 0, OpenTK.Graphics.OpenGL.PixelFormat.Red, PixelType.Float, IntPtr.Zero
+                );
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, shadowMapFramebuffers[i]);
+                GL.FramebufferTexture2D(
+                    FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, shadowMapTextures[i], 0
+                );
+            }
         }
 
         public static void SaveToFile_Old(string filename, Sledge.DataStructures.MapObjects.Map map)
@@ -277,7 +296,7 @@ namespace Sledge.Providers.Map
                     if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
                     LMFace face = new LMFace(tface);
                     LightmapGroup group = FindCoplanar(coplanarFaces, face);
-                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3, 3, 3), face.BoundingBox.End + new CoordinateF(3, 3, 3));
+                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(0.75f, 0.75f, 0.75f), face.BoundingBox.End + new CoordinateF(0.75f, 0.75f, 0.75f));
                     if (group == null)
                     {
                         group = new LightmapGroup();
@@ -327,7 +346,7 @@ namespace Sledge.Providers.Map
             }*/
             
             //put the faces into a file
-            Bitmap bitmap = new Bitmap(2048, 2048, PixelFormat.Format24bppRgb);
+            Bitmap bitmap = new Bitmap(2048, 2048, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             
             coplanarFaces.Sort((x, y) =>
             {
@@ -339,7 +358,7 @@ namespace Sledge.Providers.Map
 
             int writeX = 0; int writeY = 0; int writeMaxX = 0;
 
-            var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8];
+            var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8];
 
             List<Thread> threads = new List<Thread>();
 
@@ -399,7 +418,7 @@ namespace Sledge.Providers.Map
 
                 foreach (LMFace face in group.Faces)
                 {
-                    /*meshWriter.Write((Int32)face.Vertices.Count);
+                    meshWriter.Write((Int32)face.Vertices.Count);
                     foreach (CoordinateF vert in face.Vertices)
                     {
                         meshWriter.Write(vert.X);
@@ -414,9 +433,9 @@ namespace Sledge.Providers.Map
                     foreach (uint ind in indices)
                     {
                         meshWriter.Write((Int16)ind);
-                    }*/
-                    //Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, face, allFaces);
-                    //threads.Add(newThread);
+                    }
+                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, face, allFaces);
+                    threads.Add(newThread);
                 }
                 
                 writeY += (int)(maxTotalY - minTotalY)/downscaleFactor + 3;
@@ -442,11 +461,11 @@ namespace Sledge.Providers.Map
                 }
                 a++; Thread.Sleep(100);
 
-                if (a>=10)
+                if (a>=50)
                 {
-                    a -= 10;
+                    a -= 50;
 
-                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                     Marshal.Copy(buffer, 0, bitmapData.Scan0, buffer.Length);
                     bitmap.UnlockBits(bitmapData);
 
@@ -507,12 +526,139 @@ namespace Sledge.Providers.Map
                 float lightRange = light.Range;
                 CoordinateF lightColor = light.Color;
 
+                BoxF lightBox = new BoxF(new BoxF[] { targetFace.BoundingBox, new BoxF(light.Origin,light.Origin) });
                 List<LMFace> applicableBlockerFaces = blockerFaces.FindAll(x =>
                 {
-                    if ((lightPos - x.BoundingBox.Center).Dot(targetFace.Plane.Normal) < 0.0f) return false;
-                    if ((x.BoundingBox.Center - lightPos).Dot(targetFace.BoundingBox.Center - lightPos) > 0.0f) return true;
+                    if (x == targetFace) return false;
+                    //return true;
+                    if (lightBox.IntersectsWith(x.BoundingBox)) return true;
                     return false;
                 });
+
+                bool[,] illuminated = new bool[iterX, iterY];
+
+                for (int y = 0; y < iterY; y++)
+                {
+                    for (int x = 0; x < iterX; x++)
+                    {
+                        illuminated[x, y] = true;
+                    }
+                }
+
+#if FALSE
+                foreach (LMFace face in applicableBlockerFaces)
+                {
+                    List<Tuple<int,int>> projectedVertices = new List<Tuple<int, int>>();
+                    foreach (CoordinateF vertex in face.Vertices)
+                    {
+                        LineF lineTester = new LineF(lightPos, vertex);
+
+                        CoordinateF hit = targetFace.Plane.GetIntersectionPoint(lineTester,false,true);
+
+                        if (hit==null)
+                        {
+                            projectedVertices.Clear();
+                            break;
+                        }
+                        int x = (int)((hit.Dot(uAxis)-minX.Value)/downscaleFactor);
+                        int y = (int)((hit.Dot(vAxis)-minY.Value)/downscaleFactor);
+
+                        projectedVertices.Add(new Tuple<int,int>(x,y));
+                    }
+
+                    if (projectedVertices.Count == 0) continue;
+                    
+                    List<uint> indices = face.GetTriangleIndices().ToList();
+                    for (int i=0;i<indices.Count;i+=3)
+                    {
+                        int vert0 = (int)indices[i + 0];
+                        int vert1 = (int)indices[i + 1];
+                        int vert2 = (int)indices[i + 2];
+
+                        CoordinateF coord0 = face.Vertices[vert0];
+                        CoordinateF coord1 = face.Vertices[vert1];
+                        CoordinateF coord2 = face.Vertices[vert2];
+                        
+                        int leftX = projectedVertices[vert0].Item1;
+                        if (projectedVertices[vert1].Item1 < leftX)
+                        {
+                            leftX = projectedVertices[vert1].Item1;
+                        }
+                        if (projectedVertices[vert2].Item1 < leftX)
+                        {
+                            leftX = projectedVertices[vert2].Item1;
+                        }
+                        if (leftX < 0) leftX = 0; if (leftX >= iterX) leftX = iterX - 1;
+                        
+                        int rightX = projectedVertices[vert0].Item1;
+                        if (projectedVertices[vert1].Item1 > rightX)
+                        {
+                            rightX = projectedVertices[vert1].Item1;
+                        }
+                        if (projectedVertices[vert2].Item1 > rightX)
+                        {
+                            rightX = projectedVertices[vert2].Item1;
+                        }
+                        if (rightX < 0) rightX = 0; if (rightX >= iterX) rightX = iterX - 1;
+
+                        int topY = projectedVertices[vert0].Item2;
+                        if (projectedVertices[vert1].Item2 < topY)
+                        {
+                            topY = projectedVertices[vert1].Item2;
+                        }
+                        if (projectedVertices[vert2].Item2 < topY)
+                        {
+                            topY = projectedVertices[vert2].Item2;
+                        }
+                        if (topY < 0) topY = 0; if (topY >= iterY) topY = iterY - 1;
+
+                        int bottomY = projectedVertices[vert0].Item2;
+                        if (projectedVertices[vert1].Item2 > bottomY)
+                        {
+                            bottomY = projectedVertices[vert1].Item2;
+                        }
+                        if (projectedVertices[vert2].Item2 > bottomY)
+                        {
+                            bottomY = projectedVertices[vert2].Item2;
+                        }
+                        if (bottomY < 0) bottomY = 0; if (bottomY >= iterY) bottomY = iterY - 1;
+
+                        //http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+                        /* spanning vectors of edge (v1,v2) and (v1,v3) */
+                        Tuple<int, int> vs1 = new Tuple<int, int>(projectedVertices[vert1].Item1 - projectedVertices[vert0].Item1, projectedVertices[vert1].Item2 - projectedVertices[vert0].Item2);
+                        Tuple<int, int> vs2 = new Tuple<int, int>(projectedVertices[vert2].Item1 - projectedVertices[vert0].Item1, projectedVertices[vert2].Item2 - projectedVertices[vert0].Item2);
+
+                        CoordinateF vsCoord1 = coord1 - coord0;
+                        CoordinateF vsCoord2 = coord2 - coord0;
+                        
+                        for (int x = leftX; x <= rightX; x++)
+                        {
+                            for (int y = topY; y <= bottomY; y++)
+                            {
+                                Tuple<int, int> q = new Tuple<int, int>(x - projectedVertices[vert0].Item1, y - projectedVertices[vert0].Item2);
+
+                                float s = (float)(q.Item1*vs2.Item2-q.Item2*vs2.Item1) / (float)(vs1.Item1 * vs2.Item2 - vs1.Item2 * vs2.Item1);
+                                float t = (float)(q.Item2*vs1.Item1-q.Item1*vs1.Item2) / (float)(vs1.Item1 * vs2.Item2 - vs1.Item2 * vs2.Item1);
+
+                                /*CoordinateF targetPoint = s*vsCoord1 + t*vsCoord2 + coord0;
+                                float ttX = minX.Value + (x * downscaleFactor);
+                                float ttY = minY.Value + (y * downscaleFactor);
+                                CoordinateF pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;*/
+
+                                if ((s >= 0) && (t >= 0) && (s + t <= 1))
+                                { /* inside triangle */
+                                    illuminated[x, y] = false;
+                                }
+
+                                /*if ((targetPoint-lightPos).LengthSquared() < (pointOnPlane-lightPos).LengthSquared()-1.0f)
+                                {
+                                    
+                                }*/
+                            }
+                        }
+                    }
+                }
+#endif
 
                 for (int y = 0; y < iterY; y++)
                 {
@@ -528,37 +674,44 @@ namespace Sledge.Providers.Map
                         Color luxelColor = Color.FromArgb(r[x,y],g[x,y],b[x, y]);
 
                         float dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
-                        bool illuminated = false;
+                        /*if (dotToLight < 0.0f || (pointOnPlane - lightPos).LengthSquared() > lightRange * lightRange)
+                        {
+                            illuminated[x, y] = false;
+                        }*/
+                        illuminated[x, y] = false;
                         if (dotToLight > 0.0f && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
                         {
                             LineF lineTester = new LineF(lightPos, pointOnPlane);
-                            illuminated = true;
-                            foreach (LMFace otherFace in applicableBlockerFaces)
+                            illuminated[x, y] = true;
+                            for (int i=0;i<applicableBlockerFaces.Count;i++)
                             {
+                                LMFace otherFace = applicableBlockerFaces[i];
                                 CoordinateF hit = otherFace.GetIntersectionPoint(lineTester);
                                 if (hit != null && (hit - pointOnPlane).LengthSquared() > 5.0f)
                                 {
-                                    illuminated = false;
+                                    illuminated[x, y] = false;
+                                    applicableBlockerFaces.RemoveAt(i);
+                                    applicableBlockerFaces.Insert(0, otherFace);
                                     break;
                                 }
                             }
                         }
 
-                        if (illuminated)
+                        if (illuminated[x, y])
                         {
                             float brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
 
-                            r[x, y] += (int)(lightColor.X * brightness); if (r[x, y] > 255) r[x, y] = 255;
+                            r[x, y] += (int)(lightColor.Z * brightness); if (r[x, y] > 255) r[x, y] = 255;
                             g[x, y] += (int)(lightColor.Y * brightness); if (g[x, y] > 255) g[x, y] = 255;
-                            b[x, y] += (int)(lightColor.Z * brightness); if (b[x, y] > 255) b[x, y] = 255;
+                            b[x, y] += (int)(lightColor.X * brightness); if (b[x, y] > 255) b[x, y] = 255;
 
                             luxelColor = Color.FromArgb(r[x, y], g[x, y], b[x, y]);
 
                             if (tX >= 0 && tY >= 0 && tX < 2048 && tY < 2048)
                             {
-                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8] = luxelColor.R;
-                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 1] = luxelColor.G;
-                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(PixelFormat.Format24bppRgb) / 8 + 2] = luxelColor.B;
+                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8] = luxelColor.R;
+                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8 + 1] = luxelColor.G;
+                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8 + 2] = luxelColor.B;
                             }
                         }
                     }
