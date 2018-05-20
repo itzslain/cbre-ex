@@ -97,7 +97,7 @@ namespace Sledge.Providers.Map
             /// Returns null if the line does not intersect this face.</returns>
             public virtual CoordinateF GetIntersectionPoint(LineF line)
             {
-                return GetIntersectionPoint(Vertices, line);
+                return GetIntersectionPoint(this, line);
             }
 
             /// <summary>
@@ -119,14 +119,37 @@ namespace Sledge.Providers.Map
             public bool IntersectsWithBox(BoxF box)
             {
                 var verts = Vertices.ToList();
-                return box.GetBoxLines().Any(x => GetIntersectionPoint(verts, x, true) != null);
+                return box.GetBoxLines().Any(x => GetIntersectionPoint(this, x, true) != null);
             }
             
-            protected static CoordinateF GetIntersectionPoint(IList<CoordinateF> coordinates, LineF line, bool ignoreDirection = false)
+            protected static CoordinateF GetIntersectionPoint(LMFace face, LineF line, bool ignoreDirection = false)
             {
-                var plane = new PlaneF(coordinates[0], coordinates[1], coordinates[2]);
+                var plane = face.Plane;
                 var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
+                List<CoordinateF> coordinates = face.Vertices;
                 if (intersect == null) return null;
+                BoxF bbox = new BoxF(face.BoundingBox.Start - new CoordinateF(0.5f, 0.5f, 0.5f), face.BoundingBox.End + new CoordinateF(0.5f, 0.5f, 0.5f));
+                if (!bbox.CoordinateIsInside(intersect)) return null;
+
+                CoordinateF centerPoint = face.BoundingBox.Center;
+                for (var i = 0; i < coordinates.Count; i++)
+                {
+                    var i1 = i;
+                    var i2 = (i + 1) % coordinates.Count;
+
+                    var lineMiddle = (coordinates[i1] + coordinates[i2]) * 0.5f;
+                    var middleToCenter = centerPoint - lineMiddle;
+                    var v = coordinates[i1]-coordinates[i2];
+                    var lineNormal = face.Plane.Normal.Cross(v);
+
+                    if ((middleToCenter - lineNormal).LengthSquared() > (middleToCenter + lineNormal).LengthSquared())
+                    {
+                        lineNormal = -lineNormal;
+                    }
+
+                    if (lineNormal.Dot(intersect - lineMiddle) < 0.0f) return null;
+                }
+                return intersect;
 
                 // http://paulbourke.net/geometry/insidepoly/
 
