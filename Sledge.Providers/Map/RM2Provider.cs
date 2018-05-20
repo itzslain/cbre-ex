@@ -10,8 +10,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Sledge.DataStructures.Transformations;
 using System.IO;
-using OpenTK.Graphics.OpenGL;
-using OpenTK;
 
 namespace Sledge.Providers.Map
 {
@@ -150,34 +148,6 @@ namespace Sledge.Providers.Map
                     if (lineNormal.Dot(intersect - lineMiddle) < 0.0f) return null;
                 }
                 return intersect;
-
-                // http://paulbourke.net/geometry/insidepoly/
-
-                // The angle sum will be 2 * PI if the point is inside the face
-                double sum = 0;
-                for (var i = 0; i < coordinates.Count; i++)
-                {
-                    var i1 = i;
-                    var i2 = (i + 1) % coordinates.Count;
-
-                    // Translate the vertices so that the intersect point is on the origin
-                    var v1 = coordinates[i1] - intersect;
-                    var v2 = coordinates[i2] - intersect;
-
-                    var m1 = (double)v1.LengthSquared();
-                    var m2 = (double)v2.LengthSquared();
-                    var nom = m1 * m2;
-                    if (nom < 0.00001d)
-                    {
-                        // intersection is at a vertex
-                        return intersect;
-                    }
-                    nom = Math.Sqrt(nom);
-                    sum += Math.Acos((double)(v1.Dot(v2)) / nom);
-                }
-
-                var delta = Math.Abs(sum - Math.PI * 2);
-                return (delta < 0.001d) ? intersect : null;
             }
         }
 
@@ -186,9 +156,6 @@ namespace Sledge.Providers.Map
             public PlaneF Plane;
             public BoxF BoundingBox;
             public List<LMFace> Faces;
-
-            public float[] vertexData;
-            public int GLVertexBuffer;
         }
         
         private static float GetGroupTextureWidth(LightmapGroup group)
