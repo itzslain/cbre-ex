@@ -476,17 +476,26 @@ namespace Sledge.Providers.Map
                     }
                 }
 
-#if FALSE
-                foreach (LMFace face in applicableBlockerFaces)
+#if TRUE
+                for (int ind=0;ind<applicableBlockerFaces.Count;ind++)
                 {
+                    LMFace face = applicableBlockerFaces[ind];
                     List<Tuple<int,int>> projectedVertices = new List<Tuple<int, int>>();
                     foreach (CoordinateF vertex in face.Vertices)
                     {
                         LineF lineTester = new LineF(lightPos, vertex);
 
+                        float denominator = -face.Plane.Normal.Dot(vertex - lightPos);
+
+                        if (denominator < 0.0f)
+                        {
+                            projectedVertices.Clear();
+                            break;
+                        }
+
                         CoordinateF hit = targetFace.Plane.GetIntersectionPoint(lineTester,false,true);
 
-                        if (hit==null)
+                        if (hit == null || (hit-lightPos).LengthSquared()<(vertex-lightPos).LengthSquared())
                         {
                             projectedVertices.Clear();
                             break;
@@ -498,7 +507,9 @@ namespace Sledge.Providers.Map
                     }
 
                     if (projectedVertices.Count == 0) continue;
-                    
+                    applicableBlockerFaces.RemoveAt(ind);
+                    ind--;
+
                     List<uint> indices = face.GetTriangleIndices().ToList();
                     for (int i=0;i<indices.Count;i+=3)
                     {
@@ -605,15 +616,10 @@ namespace Sledge.Providers.Map
                         Color luxelColor = Color.FromArgb(r[x,y],g[x,y],b[x, y]);
 
                         float dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
-                        /*if (dotToLight < 0.0f || (pointOnPlane - lightPos).LengthSquared() > lightRange * lightRange)
-                        {
-                            illuminated[x, y] = false;
-                        }*/
-                        illuminated[x, y] = false;
-                        if (dotToLight > 0.0f && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
+                        
+                        if (illuminated[x, y] && dotToLight > 0.0f && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
                         {
                             LineF lineTester = new LineF(lightPos, pointOnPlane);
-                            illuminated[x, y] = true;
                             for (int i=0;i<applicableBlockerFaces.Count;i++)
                             {
                                 LMFace otherFace = applicableBlockerFaces[i];
@@ -626,6 +632,10 @@ namespace Sledge.Providers.Map
                                     break;
                                 }
                             }
+                        }
+                        else
+                        {
+                            illuminated[x, y] = false;
                         }
 
                         if (illuminated[x, y])
