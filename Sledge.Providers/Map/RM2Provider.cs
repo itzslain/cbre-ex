@@ -11,11 +11,14 @@ using System.Threading;
 using Sledge.DataStructures.Transformations;
 using System.IO;
 using OpenTK.Graphics.OpenGL;
+using OpenTK;
 
 namespace Sledge.Providers.Map
 {
     public class RM2Provider
     {
+        public const string hackyPath = "C:/Users/Admin/Desktop/sledge/";
+
         private class LMLight
         {
             public CoordinateF Color;
@@ -220,190 +223,8 @@ namespace Sledge.Providers.Map
         }
         
         private const int downscaleFactor = 10;
-
-        public static void SaveToFile_New(string filename, Sledge.DataStructures.MapObjects.Map map)
-        {
-            List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
-
-            //get faces
-            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
-            {
-                foreach (Face tface in solid.Faces)
-                {
-                    tface.UpdateBoundingBox();
-                    if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
-                    LMFace face = new LMFace(tface);
-                    LightmapGroup group = FindCoplanar(coplanarFaces, face);
-                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(0.75f, 0.75f, 0.75f), face.BoundingBox.End + new CoordinateF(0.75f, 0.75f, 0.75f));
-                    if (group == null)
-                    {
-                        group = new LightmapGroup();
-                        group.BoundingBox = faceBox;
-                        group.Faces = new List<LMFace>();
-                        group.Plane = new PlaneF(face.Plane.Normal, face.Vertices[0]);
-                        coplanarFaces.Add(group);
-                    }
-                    group.Faces.Add(face);
-                    group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0] + group.Plane.PointOnPlane) / 2);
-                    group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
-                }
-            }
-
-            for (int i = 0; i < coplanarFaces.Count; i++)
-            {
-                for (int j = i + 1; j < coplanarFaces.Count; j++)
-                {
-                    if ((coplanarFaces[i].Plane.Normal - coplanarFaces[j].Plane.Normal).LengthSquared() < 0.1f &&
-                        coplanarFaces[i].BoundingBox.IntersectsWith(coplanarFaces[j].BoundingBox))
-                    {
-                        coplanarFaces[i].Faces.AddRange(coplanarFaces[j].Faces);
-                        coplanarFaces[i].BoundingBox = new BoxF(new BoxF[] { coplanarFaces[i].BoundingBox, coplanarFaces[j].BoundingBox });
-                        coplanarFaces.RemoveAt(j);
-                        j = i + 1;
-                    }
-                }
-            }
-            
-            foreach (LightmapGroup group in coplanarFaces)
-            {
-                group.GLVertexBuffer = GL.GenBuffer();
-
-                GL.BindBuffer(BufferTarget.ArrayBuffer, group.GLVertexBuffer);
-
-                List<float> dataList = new List<float>();
-                foreach (CoordinateF[] tri in group.Faces.SelectMany(x => x.GetTriangles()))
-                {
-                    dataList.Add(tri[0].X);
-                    dataList.Add(tri[0].Z);
-                    dataList.Add(tri[0].Y);
-                    dataList.Add(tri[1].X);
-                    dataList.Add(tri[1].Z);
-                    dataList.Add(tri[1].Y);
-                    dataList.Add(tri[2].X);
-                    dataList.Add(tri[2].Z);
-                    dataList.Add(tri[2].Y);
-                }
-                float[] data = dataList.ToArray();
-                group.vertexData = data;
-
-                GL.BufferData<float>(BufferTarget.ArrayBuffer, new IntPtr(sizeof(float) * data.Length), data, BufferUsageHint.StaticDraw);
-            }
-
-            Bitmap bitmap = new Bitmap(2048, 2048, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-            int[] shadowMapTextures = new int[6];
-            GL.GenTextures(6, shadowMapTextures);
-            int[] shadowMapFrameBuffers = new int[6];
-            GL.GenFramebuffers(6, shadowMapFrameBuffers);
-            int[] shadowMapDepthBuffers = new int[6];
-            GL.GenRenderbuffers(6, shadowMapDepthBuffers);
-
-            string vertexShaderCode;
-            using (var r = new StreamReader("D:/Repos/depthToTexture.vert"))
-            {
-                vertexShaderCode = r.ReadToEnd();
-            }
-            int vertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(vertexShader, vertexShaderCode);
-            GL.CompileShader(vertexShader);
-
-            int status;
-            GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out status);
-            if (status != 1)
-            {
-                throw new Exception(GL.GetShaderInfoLog(vertexShader));
-            }
-
-            string fragmentShaderCode;
-            using (var r = new StreamReader("D:/Repos/depthToTexture.frag"))
-            {
-                fragmentShaderCode = r.ReadToEnd();
-            }
-            int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShader, fragmentShaderCode);
-            GL.CompileShader(fragmentShader);
-            GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out status);
-            if (status != 1)
-            {
-                throw new Exception(GL.GetShaderInfoLog(fragmentShader));
-            }
-
-            int shaderProgram = GL.CreateProgram();
-            GL.AttachShader(shaderProgram, vertexShader);
-            GL.AttachShader(shaderProgram, fragmentShader);
-
-            GL.BindFragDataLocation(shaderProgram, 0, "outColor");
-
-            GL.LinkProgram(shaderProgram);
-            GL.UseProgram(shaderProgram);
-
-            int posAttrib = GL.GetAttribLocation(shaderProgram, "pos");
-            GL.EnableVertexAttribArray(posAttrib);
-            GL.VertexAttribPointer(posAttrib, 3, VertexAttribPointerType.Float, false, 0, 0);
-
-            GL.Enable(EnableCap.DepthTest);
-
-            List<LMLight> lightEntities = map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
-                .Select(x => new LMLight()
-                {
-                    Origin = new CoordinateF(x.Origin),
-                    Range = float.Parse(x.EntityData.GetPropertyValue("range")),
-                    Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color"))
-                }).ToList();
-
-            OpenTK.Matrix4 projectionMatrix = OpenTK.Matrix4.CreatePerspectiveFieldOfView(100.0f*(float)Math.PI/180.0f,1.0f,5.0f,50000.0f);
-            OpenTK.Matrix4 worldMatrix = OpenTK.Matrix4.Identity;
-
-            OpenTK.Vector3 eye = new OpenTK.Vector3(lightEntities[12].Origin.X, lightEntities[12].Origin.Z, lightEntities[12].Origin.Y);
-            
-            OpenTK.Matrix4 viewMatrix = OpenTK.Matrix4.LookAt(eye, eye+new OpenTK.Vector3(1.0f, 0.0f, 0.0f), new OpenTK.Vector3(0.0f, 1.0f, 0.0f));
-
-            int viewUniform = GL.GetUniformLocation(shaderProgram, "viewMatrix");
-            GL.UniformMatrix4(viewUniform, false, ref viewMatrix);
-            int worldUniform = GL.GetUniformLocation(shaderProgram, "worldMatrix");
-            GL.UniformMatrix4(worldUniform, false, ref worldMatrix);
-            int projectionUniform = GL.GetUniformLocation(shaderProgram, "projectionMatrix");
-            GL.UniformMatrix4(projectionUniform, false, ref projectionMatrix);
-
-            for (int i = 0; i < 6; i++)
-            {
-                GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.Texture2D, shadowMapTextures[i]);
-                GL.TexImage2D(
-                    TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 2048, 2048, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero
-                );
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, shadowMapFrameBuffers[i]);
-                GL.FramebufferTexture2D(
-                    FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, shadowMapTextures[i], 0
-                );
-                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, shadowMapDepthBuffers[i]);
-                GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent32, 2048, 2048);
-                GL.FramebufferRenderbuffer(
-                    FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, shadowMapDepthBuffers[i]
-                );
-                GL.ClearColor(Color.FromArgb(0, 100, 100));
-
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-                foreach (LightmapGroup group in coplanarFaces)
-                {
-                    GL.UseProgram(shaderProgram);
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, group.GLVertexBuffer);
-                    
-                    GL.DrawArrays(PrimitiveType.Triangles, 0, group.vertexData.Count());
-                }
-                BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                GL.ReadPixels(0, 0, 2048, 2048, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.UnsignedByte, bmpData.Scan0);
-                bitmap.UnlockBits(bmpData);
-                bitmap.Save("D:/Repos/qwe_" + i.ToString() + ".bmp");
-            }
-
-            GL.DeleteRenderbuffers(6, shadowMapDepthBuffers);
-            GL.DeleteFramebuffers(6, shadowMapFrameBuffers);
-            GL.DeleteTextures(6, shadowMapTextures);
-        }
-
-        public static void SaveToFile_Old(string filename, Sledge.DataStructures.MapObjects.Map map)
+        
+        public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
         {
             List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
 
@@ -491,7 +312,7 @@ namespace Sledge.Providers.Map
 
             List<LMFace> allFaces = coplanarFaces.Select(q => q.Faces).SelectMany(q => q).ToList();
 
-            Stream meshStream = new FileStream("D:/repos/asd.mesh", FileMode.Create);
+            Stream meshStream = new FileStream(hackyPath+"asd.mesh", FileMode.Create);
             BinaryWriter meshWriter = new BinaryWriter(meshStream);
             foreach (LightmapGroup group in coplanarFaces)
             {
@@ -591,7 +412,7 @@ namespace Sledge.Providers.Map
 
                     try
                     {
-                        bitmap.Save("D:/repos/asd.bmp");
+                        bitmap.Save(hackyPath+"asd.bmp");
                     }
                     catch
                     {
