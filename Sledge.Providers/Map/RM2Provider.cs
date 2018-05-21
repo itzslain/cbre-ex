@@ -15,7 +15,7 @@ namespace Sledge.Providers.Map
 {
     public class RM2Provider
     {
-        public const string hackyPath = "C:/Users/Admin/Desktop/sledge/";
+        public const string hackyPath = "D:/Repos/";
 
         private class LMLight
         {
@@ -411,6 +411,18 @@ namespace Sledge.Providers.Map
                 }
             }
 
+            BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            Marshal.Copy(buffer, 0, bitmapData2.Scan0, buffer.Length);
+            bitmap.UnlockBits(bitmapData2);
+
+            try
+            {
+                bitmap.Save(hackyPath + "asd.bmp");
+            }
+            catch
+            {
+                //i don't care about this exception
+            }
         }
 
         private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LMFace targetFace, List<LMFace> blockerFaces)
@@ -520,7 +532,11 @@ namespace Sledge.Providers.Map
                         CoordinateF coord0 = face.Vertices[vert0];
                         CoordinateF coord1 = face.Vertices[vert1];
                         CoordinateF coord2 = face.Vertices[vert2];
-                        
+
+                        Tuple<int, int> topCoord = null;
+                        Tuple<int, int> middleCoord = null;
+                        Tuple<int, int> bottomCoord = null;
+
                         int leftX = projectedVertices[vert0].Item1;
                         if (projectedVertices[vert1].Item1 < leftX)
                         {
@@ -543,59 +559,95 @@ namespace Sledge.Providers.Map
                         }
                         if (rightX < 0) rightX = 0; if (rightX >= iterX) rightX = iterX - 1;
 
-                        int topY = projectedVertices[vert0].Item2;
+                        int topY = projectedVertices[vert0].Item2; topCoord = projectedVertices[vert0];
                         if (projectedVertices[vert1].Item2 < topY)
                         {
-                            topY = projectedVertices[vert1].Item2;
+                            topY = projectedVertices[vert1].Item2; topCoord = projectedVertices[vert1];
                         }
                         if (projectedVertices[vert2].Item2 < topY)
                         {
-                            topY = projectedVertices[vert2].Item2;
+                            topY = projectedVertices[vert2].Item2; topCoord = projectedVertices[vert2];
                         }
-                        if (topY < 0) topY = 0; if (topY >= iterY) topY = iterY - 1;
-
-                        int bottomY = projectedVertices[vert0].Item2;
+                        
+                        int bottomY = projectedVertices[vert0].Item2; bottomCoord = projectedVertices[vert0];
                         if (projectedVertices[vert1].Item2 > bottomY)
                         {
-                            bottomY = projectedVertices[vert1].Item2;
+                            bottomY = projectedVertices[vert1].Item2; bottomCoord = projectedVertices[vert1];
                         }
                         if (projectedVertices[vert2].Item2 > bottomY)
                         {
-                            bottomY = projectedVertices[vert2].Item2;
+                            bottomY = projectedVertices[vert2].Item2; bottomCoord = projectedVertices[vert2];
                         }
-                        if (bottomY < 0) bottomY = 0; if (bottomY >= iterY) bottomY = iterY - 1;
-
-                        //http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
-                        /* spanning vectors of edge (v1,v2) and (v1,v3) */
-                        Tuple<int, int> vs1 = new Tuple<int, int>(projectedVertices[vert1].Item1 - projectedVertices[vert0].Item1, projectedVertices[vert1].Item2 - projectedVertices[vert0].Item2);
-                        Tuple<int, int> vs2 = new Tuple<int, int>(projectedVertices[vert2].Item1 - projectedVertices[vert0].Item1, projectedVertices[vert2].Item2 - projectedVertices[vert0].Item2);
-
-                        CoordinateF vsCoord1 = coord1 - coord0;
-                        CoordinateF vsCoord2 = coord2 - coord0;
                         
-                        for (int x = leftX; x <= rightX; x++)
+                        if (topCoord != projectedVertices[vert0] && bottomCoord != projectedVertices[vert0])
                         {
-                            for (int y = topY; y <= bottomY; y++)
+                            middleCoord = projectedVertices[vert0];
+                        }
+                        else if (topCoord != projectedVertices[vert1] && bottomCoord != projectedVertices[vert1])
+                        {
+                            middleCoord = projectedVertices[vert1];
+                        }
+                        else
+                        {
+                            middleCoord = projectedVertices[vert2];
+                        }
+
+                        if (topCoord.Item2 != bottomCoord.Item2)
+                        {
+                            Tuple<int, int> splitterCoord = new Tuple<int, int>(
+                                (int)(topCoord.Item1 + ((float)(middleCoord.Item2 - topCoord.Item2) / (float)(bottomCoord.Item2 - topCoord.Item2)) * (bottomCoord.Item1 - topCoord.Item1)), middleCoord.Item2);
+
+                            if (splitterCoord.Item1 < middleCoord.Item1)
                             {
-                                Tuple<int, int> q = new Tuple<int, int>(x - projectedVertices[vert0].Item1, y - projectedVertices[vert0].Item2);
+                                Tuple<int, int> temp = splitterCoord;
+                                splitterCoord = middleCoord;
+                                middleCoord = temp;
+                            }
+                            
+                            if (topCoord.Item2 != middleCoord.Item2)
+                            {
+                                float invslope1 = (float)(middleCoord.Item1 - topCoord.Item1) / (float)(middleCoord.Item2 - topCoord.Item2);
+                                float invslope2 = (float)(splitterCoord.Item1 - topCoord.Item1) / (float)(splitterCoord.Item2 - topCoord.Item2);
 
-                                float s = (float)(q.Item1*vs2.Item2-q.Item2*vs2.Item1) / (float)(vs1.Item1 * vs2.Item2 - vs1.Item2 * vs2.Item1);
-                                float t = (float)(q.Item2*vs1.Item1-q.Item1*vs1.Item2) / (float)(vs1.Item1 * vs2.Item2 - vs1.Item2 * vs2.Item1);
+                                float curx1 = topCoord.Item1;
+                                float curx2 = topCoord.Item1;
 
-                                /*CoordinateF targetPoint = s*vsCoord1 + t*vsCoord2 + coord0;
-                                float ttX = minX.Value + (x * downscaleFactor);
-                                float ttY = minY.Value + (y * downscaleFactor);
-                                CoordinateF pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;*/
-
-                                if ((s >= 0) && (t >= 0) && (s + t <= 1))
-                                { /* inside triangle */
-                                    illuminated[x, y] = false;
-                                }
-
-                                /*if ((targetPoint-lightPos).LengthSquared() < (pointOnPlane-lightPos).LengthSquared()-1.0f)
+                                for (int scanlineY = topCoord.Item2; scanlineY <= middleCoord.Item2; scanlineY++)
                                 {
-                                    
-                                }*/
+                                    for (int scanlineX = (int)Math.Floor(curx1); scanlineX <= (int)Math.Ceiling(curx2); scanlineX++)
+                                    {
+                                        if (scanlineY > iterY - 1) break;
+                                        if (scanlineY < 0) break;
+                                        if (scanlineX > iterX - 1) break;
+                                        if (scanlineX < 0) continue;
+                                        illuminated[scanlineX, scanlineY] = false;
+                                    }
+                                    curx1 += invslope1;
+                                    curx2 += invslope2;
+                                }
+                            }
+
+                            if (bottomCoord.Item2 != middleCoord.Item2)
+                            {
+                                float invslope1 = (float)(bottomCoord.Item1 - middleCoord.Item1) / (float)(bottomCoord.Item2 - middleCoord.Item2);
+                                float invslope2 = (float)(bottomCoord.Item1 - splitterCoord.Item1) / (float)(bottomCoord.Item2 - splitterCoord.Item2);
+
+                                float curx1 = bottomCoord.Item1;
+                                float curx2 = bottomCoord.Item1;
+
+                                for (int scanlineY = bottomCoord.Item2; scanlineY > middleCoord.Item2; scanlineY--)
+                                {
+                                    for (int scanlineX = (int)Math.Floor(curx1); scanlineX <= (int)Math.Ceiling(curx2); scanlineX++)
+                                    {
+                                        if (scanlineY > iterY - 1) break;
+                                        if (scanlineY < 0) break;
+                                        if (scanlineX > iterX - 1) break;
+                                        if (scanlineX < 0) continue;
+                                        illuminated[scanlineX, scanlineY] = false;
+                                    }
+                                    curx1 -= invslope1;
+                                    curx2 -= invslope2;
+                                }
                             }
                         }
                     }
@@ -619,6 +671,7 @@ namespace Sledge.Providers.Map
                         
                         if (illuminated[x, y] && dotToLight > 0.0f && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
                         {
+#if TRUE
                             LineF lineTester = new LineF(lightPos, pointOnPlane);
                             for (int i=0;i<applicableBlockerFaces.Count;i++)
                             {
@@ -632,6 +685,7 @@ namespace Sledge.Providers.Map
                                     break;
                                 }
                             }
+#endif
                         }
                         else
                         {
