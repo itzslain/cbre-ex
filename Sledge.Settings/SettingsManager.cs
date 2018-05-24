@@ -39,6 +39,8 @@ namespace Sledge.Settings
                                               {"origin", 0.5f},
                                               {"skip", 0.5f},
                                               {"tooltextures/remove_face", 0.5f},
+                                              {"tooltextures/invisible_collision", 0.5f},
+                                              {"tooltextures/block_light", 0.5f},
                                           };
             AdditionalSettings = new Dictionary<string, GenericStructure>();
             FavouriteTextureFolders = new List<FavouriteTextureFolder>();

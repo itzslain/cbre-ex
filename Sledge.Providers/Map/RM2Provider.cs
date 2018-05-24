@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Sledge.DataStructures.Transformations;
 using System.IO;
+using Sledge.Common;
 
 namespace Sledge.Providers.Map
 {
@@ -205,7 +206,7 @@ namespace Sledge.Providers.Map
                 {
                     PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0]);
                     if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;
-                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(0.75f, 0.75f, 0.75f), otherFace.BoundingBox.End + new CoordinateF(0.75f, 0.75f, 0.75f));
+                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), otherFace.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
                     if (faceBox.IntersectsWith(group.BoundingBox)) return group;
                 }
             }
@@ -213,10 +214,14 @@ namespace Sledge.Providers.Map
         }
         
         private const int downscaleFactor = 10;
+        private const int planeMargin = 5;
+        private const int textureDims = 2048;
         
+        //TODO: make this method not a complete trainwreck
         public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
         {
             List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
+            List<LMFace> exclusiveBlockers = new List<LMFace>();
 
             //get faces
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
@@ -224,10 +229,12 @@ namespace Sledge.Providers.Map
                 foreach (Face tface in solid.Faces)
                 {
                     tface.UpdateBoundingBox();
+                    if (tface.Texture.Name.ToLower() == "tooltextures/invisible_collision") continue;
                     if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
+                    if (tface.Texture.Texture.HasTransparency()) continue;
                     LMFace face = new LMFace(tface);
                     LightmapGroup group = FindCoplanar(coplanarFaces, face);
-                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(0.75f, 0.75f, 0.75f), face.BoundingBox.End + new CoordinateF(0.75f, 0.75f, 0.75f));
+                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), face.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
                     if (group == null)
                     {
                         group = new LightmapGroup();
@@ -239,6 +246,16 @@ namespace Sledge.Providers.Map
                     group.Faces.Add(face);
                     group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0]+group.Plane.PointOnPlane)/2);
                     group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
+                }
+            }
+
+            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+            {
+                foreach (Face tface in solid.Faces)
+                {
+                    LMFace face = new LMFace(tface);
+                    if (tface.Texture.Name.ToLower() != "tooltextures/block_light") continue;
+                    exclusiveBlockers.Add(face);
                 }
             }
 
@@ -277,7 +294,7 @@ namespace Sledge.Providers.Map
             }*/
             
             //put the faces into a file
-            Bitmap bitmap = new Bitmap(2048, 2048, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            Bitmap bitmap = new Bitmap(textureDims, textureDims, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             
             coplanarFaces.Sort((x, y) =>
             {
@@ -287,7 +304,7 @@ namespace Sledge.Providers.Map
                 return -1;
             });
 
-            int writeX = 0; int writeY = 0; int writeMaxX = 0;
+            int writeX = 1; int writeY = 1; int writeMaxX = 0;
 
             var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8];
 
@@ -300,7 +317,7 @@ namespace Sledge.Providers.Map
                     Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color"))
                 }).ToList();
 
-            List<LMFace> allFaces = coplanarFaces.Select(q => q.Faces).SelectMany(q => q).ToList();
+            List<LMFace> allFaces = coplanarFaces.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
 
             Stream meshStream = new FileStream(hackyPath+"asd.mesh", FileMode.Create);
             BinaryWriter meshWriter = new BinaryWriter(meshStream);
@@ -328,6 +345,13 @@ namespace Sledge.Providers.Map
                         if (maxTotalY == null || y > maxTotalY) maxTotalY = y;
                     }
                 }
+                minTotalX -= downscaleFactor; minTotalY -= downscaleFactor;
+                maxTotalX += downscaleFactor; maxTotalY += downscaleFactor;
+
+                minTotalX /= downscaleFactor; minTotalX = (float)Math.Ceiling(minTotalX.Value); minTotalX *= downscaleFactor;
+                minTotalY /= downscaleFactor; minTotalY = (float)Math.Ceiling(minTotalY.Value); minTotalY *= downscaleFactor;
+                maxTotalX /= downscaleFactor; maxTotalX = (float)Math.Ceiling(maxTotalX.Value); maxTotalX *= downscaleFactor;
+                maxTotalY /= downscaleFactor; maxTotalY = (float)Math.Ceiling(maxTotalY.Value); maxTotalY *= downscaleFactor;
 
                 if ((maxTotalX-minTotalX)>(maxTotalY-minTotalY))
                 {
@@ -340,7 +364,7 @@ namespace Sledge.Providers.Map
                     vAxis = swapAxis;
                 }
 
-                if (writeY + (int)(maxTotalY-minTotalY) / downscaleFactor + 3 >= 2048)
+                if (writeY + (int)(maxTotalY-minTotalY) / downscaleFactor + planeMargin >= textureDims)
                 {
                     writeY = 0;
                     writeX += writeMaxX;
@@ -356,8 +380,8 @@ namespace Sledge.Providers.Map
                         meshWriter.Write(vert.Y);
                         meshWriter.Write(vert.Z);
 
-                        meshWriter.Write((short)(writeX + (vert.Dot(uAxis) - minTotalX.Value) / downscaleFactor));
-                        meshWriter.Write((short)(writeY + (vert.Dot(vAxis) - minTotalY.Value) / downscaleFactor));
+                        meshWriter.Write((short)(writeX + (int)((vert.Dot(uAxis) - minTotalX.Value) / downscaleFactor)));
+                        meshWriter.Write((short)(writeY + (int)((vert.Dot(vAxis) - minTotalY.Value) / downscaleFactor)));
                     }
                     List<uint> indices = face.GetTriangleIndices().ToList();
                     meshWriter.Write((Int32)indices.Count);
@@ -365,12 +389,12 @@ namespace Sledge.Providers.Map
                     {
                         meshWriter.Write((Int16)ind);
                     }
-                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, face, allFaces);
+                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, group, face, allFaces);
                     threads.Add(newThread);
                 }
                 
-                writeY += (int)(maxTotalY - minTotalY)/downscaleFactor + 3;
-                if ((int)(maxTotalX - minTotalX)/downscaleFactor + 3 > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / downscaleFactor + 3;
+                writeY += (int)(maxTotalY - minTotalY)/downscaleFactor + planeMargin;
+                if ((int)(maxTotalX - minTotalX)/downscaleFactor + planeMargin > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / downscaleFactor + planeMargin;
             }
             meshWriter.Dispose(); meshStream.Dispose();
 
@@ -390,13 +414,13 @@ namespace Sledge.Providers.Map
                         i--;
                     }
                 }
-                a++; Thread.Sleep(100);
+                a++; Thread.Yield();
 
-                if (a>=20)
+                if (a>=2000)
                 {
-                    a -= 20;
+                    a -= 2000;
 
-                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, textureDims, textureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                     Marshal.Copy(buffer, 0, bitmapData.Scan0, buffer.Length);
                     bitmap.UnlockBits(bitmapData);
 
@@ -411,7 +435,7 @@ namespace Sledge.Providers.Map
                 }
             }
 
-            BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, 2048, 2048), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, textureDims, textureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             Marshal.Copy(buffer, 0, bitmapData2.Scan0, buffer.Length);
             bitmap.UnlockBits(bitmapData2);
 
@@ -425,13 +449,15 @@ namespace Sledge.Providers.Map
             }
         }
 
-        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LMFace targetFace, List<LMFace> blockerFaces)
+        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
         {
-            return new Thread(() => RenderLightOntoFace(bitmapData, lights, uAxis, vAxis, writeX, writeY, minTotalX, minTotalY, targetFace, blockerFaces));
+            return new Thread(() => RenderLightOntoFace(bitmapData, lights, uAxis, vAxis, writeX, writeY, minTotalX, minTotalY, group, targetFace, blockerFaces));
         }
 
-        private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LMFace targetFace,List<LMFace> blockerFaces)
+        private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LightmapGroup group, LMFace targetFace,List<LMFace> blockerFaces)
         {
+            Random rand = new Random();
+
             lights = lights.FindAll(x =>
             {
                 float range = x.Range;
@@ -453,6 +479,14 @@ namespace Sledge.Providers.Map
                 if (maxY == null || y > maxY) maxY = y;
             }
 
+            minX -= downscaleFactor; minY -= downscaleFactor;
+            maxX += downscaleFactor; maxY += downscaleFactor;
+
+            minX /= downscaleFactor; minX = (float)Math.Ceiling(minX.Value); minX *= downscaleFactor;
+            minY /= downscaleFactor; minY = (float)Math.Ceiling(minY.Value); minY *= downscaleFactor;
+            maxX /= downscaleFactor; maxX = (float)Math.Ceiling(maxX.Value); maxX *= downscaleFactor;
+            maxY /= downscaleFactor; maxY = (float)Math.Ceiling(maxY.Value); maxY *= downscaleFactor;
+
             float centerX = (maxX.Value + minX.Value) / 2;
             float centerY = (maxY.Value + minY.Value) / 2;
 
@@ -473,6 +507,7 @@ namespace Sledge.Providers.Map
                 List<LMFace> applicableBlockerFaces = blockerFaces.FindAll(x =>
                 {
                     if (x == targetFace) return false;
+                    if (group.Faces.Contains(x)) return false;
                     //return true;
                     if (lightBox.IntersectsWith(x.BoundingBox)) return true;
                     return false;
@@ -488,7 +523,7 @@ namespace Sledge.Providers.Map
                     }
                 }
 
-#if TRUE
+#if FALSE
                 for (int ind=0;ind<applicableBlockerFaces.Count;ind++)
                 {
                     LMFace face = applicableBlockerFaces[ind];
@@ -507,7 +542,7 @@ namespace Sledge.Providers.Map
 
                         CoordinateF hit = targetFace.Plane.GetIntersectionPoint(lineTester,false,true);
 
-                        if (hit == null || (hit-lightPos).LengthSquared()<(vertex-lightPos).LengthSquared())
+                        if (hit == null || (hit-lightPos).LengthSquared()-36<(vertex-lightPos).LengthSquared())
                         {
                             projectedVertices.Clear();
                             break;
@@ -591,63 +626,60 @@ namespace Sledge.Providers.Map
                         {
                             middleCoord = projectedVertices[vert2];
                         }
+                        
+                        Tuple<int, int> splitterCoord = new Tuple<int, int>(
+                            (int)(topCoord.Item1 + ((float)(middleCoord.Item2 - topCoord.Item2) / (float)(bottomCoord.Item2 - topCoord.Item2)) * (bottomCoord.Item1 - topCoord.Item1)), middleCoord.Item2);
 
-                        if (topCoord.Item2 != bottomCoord.Item2)
+                        if (splitterCoord.Item1 < middleCoord.Item1)
                         {
-                            Tuple<int, int> splitterCoord = new Tuple<int, int>(
-                                (int)(topCoord.Item1 + ((float)(middleCoord.Item2 - topCoord.Item2) / (float)(bottomCoord.Item2 - topCoord.Item2)) * (bottomCoord.Item1 - topCoord.Item1)), middleCoord.Item2);
-
-                            if (splitterCoord.Item1 < middleCoord.Item1)
-                            {
-                                Tuple<int, int> temp = splitterCoord;
-                                splitterCoord = middleCoord;
-                                middleCoord = temp;
-                            }
+                            Tuple<int, int> temp = splitterCoord;
+                            splitterCoord = middleCoord;
+                            middleCoord = temp;
+                        }
                             
-                            if (topCoord.Item2 != middleCoord.Item2)
+                        if (topCoord.Item2 != middleCoord.Item2)
+                        {
+                            float invslope1 = (float)(middleCoord.Item1 - topCoord.Item1) / (float)(middleCoord.Item2 - topCoord.Item2);
+                            float invslope2 = (float)(splitterCoord.Item1 - topCoord.Item1) / (float)(splitterCoord.Item2 - topCoord.Item2);
+
+                            float curx1 = topCoord.Item1;
+                            float curx2 = topCoord.Item1;
+
+                            for (int scanlineY = topCoord.Item2; scanlineY <= middleCoord.Item2; scanlineY++)
                             {
-                                float invslope1 = (float)(middleCoord.Item1 - topCoord.Item1) / (float)(middleCoord.Item2 - topCoord.Item2);
-                                float invslope2 = (float)(splitterCoord.Item1 - topCoord.Item1) / (float)(splitterCoord.Item2 - topCoord.Item2);
-
-                                float curx1 = topCoord.Item1;
-                                float curx2 = topCoord.Item1;
-
-                                for (int scanlineY = topCoord.Item2; scanlineY <= middleCoord.Item2; scanlineY++)
+                                for (int scanlineX = (int)Math.Floor(curx1); scanlineX <= (int)Math.Ceiling(curx2); scanlineX++)
                                 {
-                                    for (int scanlineX = (int)Math.Floor(curx1); scanlineX <= (int)Math.Ceiling(curx2); scanlineX++)
-                                    {
-                                        if (scanlineY > iterY - 1) break;
-                                        if (scanlineY < 0) break;
-                                        if (scanlineX > iterX - 1) break;
-                                        if (scanlineX < 0) continue;
-                                        illuminated[scanlineX, scanlineY] = false;
-                                    }
-                                    curx1 += invslope1;
-                                    curx2 += invslope2;
+                                    if (scanlineY > iterY - 1) break;
+                                    if (scanlineY < 0) break;
+                                    if (scanlineX > iterX - 1) break;
+                                    if (scanlineX < 0) continue;
+                                    illuminated[scanlineX, scanlineY] = false;
                                 }
+                                curx1 += invslope1;
+                                curx2 += invslope2;
                             }
+                        }
 
-                            if (bottomCoord.Item2 != middleCoord.Item2)
+                        if (bottomCoord.Item2 != middleCoord.Item2)
+                        {
+                            float invslope1 = (float)(bottomCoord.Item1 - middleCoord.Item1) / (float)(bottomCoord.Item2 - middleCoord.Item2);
+                            float invslope2 = (float)(bottomCoord.Item1 - splitterCoord.Item1) / (float)(bottomCoord.Item2 - splitterCoord.Item2);
+
+                            float curx1 = bottomCoord.Item1;
+                            float curx2 = bottomCoord.Item1;
+
+                            for (int scanlineY = bottomCoord.Item2; scanlineY > middleCoord.Item2; scanlineY--)
                             {
-                                float invslope1 = (float)(bottomCoord.Item1 - middleCoord.Item1) / (float)(bottomCoord.Item2 - middleCoord.Item2);
-                                float invslope2 = (float)(bottomCoord.Item1 - splitterCoord.Item1) / (float)(bottomCoord.Item2 - splitterCoord.Item2);
-
-                                float curx1 = bottomCoord.Item1;
-                                float curx2 = bottomCoord.Item1;
-
-                                for (int scanlineY = bottomCoord.Item2; scanlineY > middleCoord.Item2; scanlineY--)
+                                for (int scanlineX = (int)Math.Floor(curx1); scanlineX <= (int)Math.Ceiling(curx2); scanlineX++)
                                 {
-                                    for (int scanlineX = (int)Math.Floor(curx1); scanlineX <= (int)Math.Ceiling(curx2); scanlineX++)
-                                    {
-                                        if (scanlineY > iterY - 1) break;
-                                        if (scanlineY < 0) break;
-                                        if (scanlineX > iterX - 1) break;
-                                        if (scanlineX < 0) continue;
-                                        illuminated[scanlineX, scanlineY] = false;
-                                    }
-                                    curx1 -= invslope1;
-                                    curx2 -= invslope2;
+                                    if (scanlineY > iterY - 1) break;
+                                    if (scanlineY < 0) break;
+                                    if (scanlineX > iterX - 1) break;
+                                    if (scanlineX < 0) continue;
+                                    illuminated[scanlineX, scanlineY] = false;
                                 }
+                                curx1 -= invslope1;
+                                curx2 -= invslope2;
                             }
                         }
                     }
@@ -677,12 +709,16 @@ namespace Sledge.Providers.Map
                             {
                                 LMFace otherFace = applicableBlockerFaces[i];
                                 CoordinateF hit = otherFace.GetIntersectionPoint(lineTester);
-                                if (hit != null && (hit - pointOnPlane).LengthSquared() > 5.0f)
+                                if (hit != null)
                                 {
-                                    illuminated[x, y] = false;
                                     applicableBlockerFaces.RemoveAt(i);
                                     applicableBlockerFaces.Insert(0, otherFace);
-                                    break;
+                                    if (Math.Abs(targetFace.Plane.EvalAtPoint(hit)) > 10.0f + (20.0f * Math.Abs(targetFace.Plane.Normal.Dot(otherFace.Plane.Normal))))
+                                    {
+                                        illuminated[x, y] = false;
+                                        i++;
+                                        break;
+                                    }
                                 }
                             }
 #endif
@@ -695,18 +731,23 @@ namespace Sledge.Providers.Map
                         if (illuminated[x, y])
                         {
                             float brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
+                            brightness += ((float)rand.NextDouble() - 0.5f) * 0.005f;
 
-                            r[x, y] += (int)(lightColor.Z * brightness); if (r[x, y] > 255) r[x, y] = 255;
-                            g[x, y] += (int)(lightColor.Y * brightness); if (g[x, y] > 255) g[x, y] = 255;
-                            b[x, y] += (int)(lightColor.X * brightness); if (b[x, y] > 255) b[x, y] = 255;
+                            r[x, y] += (int)(lightColor.Z * brightness); if (r[x, y] > 255) r[x, y] = 255; if (r[x, y] < 0) r[x, y] = 0;
+                            g[x, y] += (int)(lightColor.Y * brightness); if (g[x, y] > 255) g[x, y] = 255; if (g[x, y] < 0) g[x, y] = 0;
+                            b[x, y] += (int)(lightColor.X * brightness); if (b[x, y] > 255) b[x, y] = 255; if (b[x, y] < 0) b[x, y] = 0;
 
                             luxelColor = Color.FromArgb(r[x, y], g[x, y], b[x, y]);
 
-                            if (tX >= 0 && tY >= 0 && tX < 2048 && tY < 2048)
+                            if (tX >= 0 && tY >= 0 && tX < textureDims && tY < textureDims)
                             {
-                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8] = luxelColor.R;
-                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8 + 1] = luxelColor.G;
-                                bitmapData[(tX + tY * 2048) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8 + 2] = luxelColor.B;
+                                int offset = (tX + tY * textureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8;
+                                if (luxelColor.R + luxelColor.G + luxelColor.B > bitmapData[offset] + bitmapData[offset+1] + bitmapData[offset+2])
+                                {
+                                    bitmapData[offset] = luxelColor.R;
+                                    bitmapData[offset + 1] = luxelColor.G;
+                                    bitmapData[offset + 2] = luxelColor.B;
+                                }
                             }
                         }
                     }
