@@ -231,6 +231,7 @@ namespace Sledge.Providers.Map
                     tface.UpdateBoundingBox();
                     if (tface.Texture.Name.ToLower() == "tooltextures/invisible_collision") continue;
                     if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
+                    if (tface.Texture.Name.ToLower() == "tooltextures/block_light") continue;
                     if (tface.Texture.Texture.HasTransparency()) continue;
                     LMFace face = new LMFace(tface);
                     LightmapGroup group = FindCoplanar(coplanarFaces, face);
