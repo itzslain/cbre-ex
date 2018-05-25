@@ -157,45 +157,72 @@ namespace Sledge.Providers.Map
             public PlaneF Plane;
             public BoxF BoundingBox;
             public List<LMFace> Faces;
+
+            public CoordinateF uAxis;
+            public CoordinateF vAxis;
+            public float? minTotalX;
+            public float? minTotalY;
+            public float? maxTotalX;
+            public float? maxTotalY;
+            public int writeX;
+            public int writeY;
         }
         
         private static float GetGroupTextureWidth(LightmapGroup group)
         {
-            var direction = group.Plane.GetClosestAxisToNormal();
-
-            var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
-            var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
-            var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
-
-            float? minTotalX = null; float? maxTotalX = null;
-            float? minTotalY = null; float? maxTotalY = null;
-
-            foreach (LMFace face in group.Faces)
+            if (group.uAxis == null || group.vAxis == null)
             {
-                foreach (CoordinateF coord in face.Vertices)
+                var direction = group.Plane.GetClosestAxisToNormal();
+                var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
+                var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
+                var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
+
+                group.uAxis = uAxis; group.vAxis = vAxis;
+            }
+
+            if (group.minTotalX==null || group.minTotalY==null || group.maxTotalX==null || group.maxTotalY==null)
+            {
+                float? minTotalX = null; float? maxTotalX = null;
+                float? minTotalY = null; float? maxTotalY = null;
+
+                foreach (LMFace face in group.Faces)
                 {
-                    float x = coord.Dot(uAxis);
-                    float y = coord.Dot(vAxis);
+                    foreach (CoordinateF coord in face.Vertices)
+                    {
+                        float x = coord.Dot(group.uAxis);
+                        float y = coord.Dot(group.vAxis);
 
-                    if (minTotalX == null || x < minTotalX) minTotalX = x;
-                    if (minTotalY == null || y < minTotalY) minTotalY = y;
-                    if (maxTotalX == null || x > maxTotalX) maxTotalX = x;
-                    if (maxTotalY == null || y > maxTotalY) maxTotalY = y;
+                        if (minTotalX == null || x < minTotalX) minTotalX = x;
+                        if (minTotalY == null || y < minTotalY) minTotalY = y;
+                        if (maxTotalX == null || x > maxTotalX) maxTotalX = x;
+                        if (maxTotalY == null || y > maxTotalY) maxTotalY = y;
+                    }
                 }
+
+                minTotalX -= downscaleFactor; minTotalY -= downscaleFactor;
+                maxTotalX += downscaleFactor; maxTotalY += downscaleFactor;
+
+                minTotalX /= downscaleFactor; minTotalX = (float)Math.Ceiling(minTotalX.Value); minTotalX *= downscaleFactor;
+                minTotalY /= downscaleFactor; minTotalY = (float)Math.Ceiling(minTotalY.Value); minTotalY *= downscaleFactor;
+                maxTotalX /= downscaleFactor; maxTotalX = (float)Math.Ceiling(maxTotalX.Value); maxTotalX *= downscaleFactor;
+                maxTotalY /= downscaleFactor; maxTotalY = (float)Math.Ceiling(maxTotalY.Value); maxTotalY *= downscaleFactor;
+
+                if ((maxTotalX - minTotalX) > (maxTotalY - minTotalY))
+                {
+                    float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
+                    maxTotalX = maxTotalY; minTotalX = minTotalY;
+                    maxTotalY = maxSwap; minTotalY = minSwap;
+
+                    CoordinateF swapAxis = group.uAxis;
+                    group.uAxis = group.vAxis;
+                    group.vAxis = swapAxis;
+                }
+
+                group.minTotalX = minTotalX; group.minTotalY = minTotalY;
+                group.maxTotalX = maxTotalX; group.maxTotalY = maxTotalY;
             }
 
-            if ((maxTotalX - minTotalX) < (maxTotalY - minTotalY))
-            {
-                float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
-                maxTotalX = maxTotalY; minTotalX = minTotalY;
-                maxTotalY = maxSwap; minTotalY = minSwap;
-
-                CoordinateF swapAxis = uAxis;
-                uAxis = vAxis;
-                vAxis = swapAxis;
-            }
-
-            return (maxTotalY - minTotalY).Value;
+            return (group.maxTotalX - group.minTotalX).Value;
         }
 
         private static LightmapGroup FindCoplanar(List<LightmapGroup> coplanarFaces, LMFace otherFace)
@@ -216,6 +243,7 @@ namespace Sledge.Providers.Map
         private const int downscaleFactor = 10;
         private const int planeMargin = 5;
         private const int textureDims = 2048;
+        private const int blurRadius = 2;
         
         //TODO: make this method not a complete trainwreck
         public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
@@ -295,7 +323,7 @@ namespace Sledge.Providers.Map
             }*/
             
             //put the faces into a file
-            Bitmap bitmap = new Bitmap(textureDims, textureDims, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            Bitmap bitmap = new Bitmap(textureDims, textureDims, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             
             coplanarFaces.Sort((x, y) =>
             {
@@ -307,7 +335,7 @@ namespace Sledge.Providers.Map
 
             int writeX = 1; int writeY = 1; int writeMaxX = 0;
 
-            var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8];
+            var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8];
 
             List<Thread> threads = new List<Thread>();
 
@@ -324,46 +352,13 @@ namespace Sledge.Providers.Map
             BinaryWriter meshWriter = new BinaryWriter(meshStream);
             foreach (LightmapGroup group in coplanarFaces)
             {
-                var direction = group.Plane.GetClosestAxisToNormal();
+                var uAxis = group.uAxis;
+                var vAxis = group.vAxis;
 
-                var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
-                var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
-                var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
-
-                float? minTotalX = null; float? maxTotalX = null;
-                float? minTotalY = null; float? maxTotalY = null;
-
-                foreach (LMFace face in group.Faces)
-                {
-                    foreach (CoordinateF coord in face.Vertices)
-                    {
-                        float x = coord.Dot(uAxis);
-                        float y = coord.Dot(vAxis);
-
-                        if (minTotalX == null || x < minTotalX) minTotalX = x;
-                        if (minTotalY == null || y < minTotalY) minTotalY = y;
-                        if (maxTotalX == null || x > maxTotalX) maxTotalX = x;
-                        if (maxTotalY == null || y > maxTotalY) maxTotalY = y;
-                    }
-                }
-                minTotalX -= downscaleFactor; minTotalY -= downscaleFactor;
-                maxTotalX += downscaleFactor; maxTotalY += downscaleFactor;
-
-                minTotalX /= downscaleFactor; minTotalX = (float)Math.Ceiling(minTotalX.Value); minTotalX *= downscaleFactor;
-                minTotalY /= downscaleFactor; minTotalY = (float)Math.Ceiling(minTotalY.Value); minTotalY *= downscaleFactor;
-                maxTotalX /= downscaleFactor; maxTotalX = (float)Math.Ceiling(maxTotalX.Value); maxTotalX *= downscaleFactor;
-                maxTotalY /= downscaleFactor; maxTotalY = (float)Math.Ceiling(maxTotalY.Value); maxTotalY *= downscaleFactor;
-
-                if ((maxTotalX-minTotalX)>(maxTotalY-minTotalY))
-                {
-                    float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
-                    maxTotalX = maxTotalY; minTotalX = minTotalY;
-                    maxTotalY = maxSwap; minTotalY = minSwap;
-
-                    CoordinateF swapAxis = uAxis;
-                    uAxis = vAxis;
-                    vAxis = swapAxis;
-                }
+                float minTotalX = group.minTotalX.Value;
+                float maxTotalX = group.maxTotalX.Value;
+                float minTotalY = group.minTotalY.Value;
+                float maxTotalY = group.maxTotalY.Value;
 
                 if (writeY + (int)(maxTotalY-minTotalY) / downscaleFactor + planeMargin >= textureDims)
                 {
@@ -381,8 +376,8 @@ namespace Sledge.Providers.Map
                         meshWriter.Write(vert.Y);
                         meshWriter.Write(vert.Z);
 
-                        meshWriter.Write((short)(writeX + (int)((vert.Dot(uAxis) - minTotalX.Value) / downscaleFactor)));
-                        meshWriter.Write((short)(writeY + (int)((vert.Dot(vAxis) - minTotalY.Value) / downscaleFactor)));
+                        meshWriter.Write((short)(writeX + (int)((vert.Dot(uAxis) - minTotalX) / downscaleFactor)));
+                        meshWriter.Write((short)(writeY + (int)((vert.Dot(vAxis) - minTotalY) / downscaleFactor)));
                     }
                     List<uint> indices = face.GetTriangleIndices().ToList();
                     meshWriter.Write((Int32)indices.Count);
@@ -390,9 +385,11 @@ namespace Sledge.Providers.Map
                     {
                         meshWriter.Write((Int16)ind);
                     }
-                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, uAxis, vAxis, writeX, writeY, minTotalX.Value, minTotalY.Value, group, face, allFaces);
+                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, writeX, writeY, group, face, allFaces);
                     threads.Add(newThread);
                 }
+                group.writeX = writeX;
+                group.writeY = writeY;
                 
                 writeY += (int)(maxTotalY - minTotalY)/downscaleFactor + planeMargin;
                 if ((int)(maxTotalX - minTotalX)/downscaleFactor + planeMargin > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / downscaleFactor + planeMargin;
@@ -417,17 +414,17 @@ namespace Sledge.Providers.Map
                 }
                 a++; Thread.Yield();
 
-                if (a>=2000)
+                if (a>=200000)
                 {
-                    a -= 2000;
+                    a -= 200000;
 
-                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, textureDims, textureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                    BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, textureDims, textureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     Marshal.Copy(buffer, 0, bitmapData.Scan0, buffer.Length);
                     bitmap.UnlockBits(bitmapData);
 
                     try
                     {
-                        bitmap.Save(hackyPath+"asd.bmp");
+                        bitmap.Save(hackyPath+"asd.png");
                     }
                     catch
                     {
@@ -436,13 +433,58 @@ namespace Sledge.Providers.Map
                 }
             }
 
-            BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, textureDims, textureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            Marshal.Copy(buffer, 0, bitmapData2.Scan0, buffer.Length);
-            bitmap.UnlockBits(bitmapData2);
+            byte[] blurBuffer = new byte[buffer.Length];
+            foreach (LightmapGroup group in coplanarFaces)
+            {
+                for (int y=group.writeY;y<group.writeY+(group.maxTotalY-group.minTotalY)/downscaleFactor;y++)
+                {
+                    if (y < 0 || y >= textureDims) continue;
+                    for (int x = group.writeX; x < group.writeX + (group.maxTotalX - group.minTotalX) / downscaleFactor; x++)
+                    {
+                        if (x < 0 || x >= textureDims) continue;
+                        int offset = (x + y * textureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
 
+                        int accumRed = 0;
+                        int accumGreen = 0;
+                        int accumBlue = 0;
+                        int sampleCount = 0;
+                        for (int j = -blurRadius; j <= blurRadius; j++)
+                        {
+                            if (y + j < 0 || y + j >= textureDims) continue;
+                            if (y + j < group.writeY || y + j >= group.writeY + (group.maxTotalY - group.minTotalY)) continue;
+                            for (int i = -blurRadius; i <= blurRadius; i++)
+                            {
+                                if (i * i + j * j > blurRadius * blurRadius) continue;
+                                if (x+i < 0 || x+i >= textureDims) continue;
+                                if (x+i < group.writeX || x+i >= group.writeX + (group.maxTotalX - group.minTotalX)) continue;
+                                int sampleOffset = ((x+i) + (y+j) * textureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+                                if (buffer[sampleOffset+3] < 255) continue;
+                                sampleCount++;
+                                accumRed += buffer[sampleOffset + 0];
+                                accumGreen += buffer[sampleOffset + 1];
+                                accumBlue += buffer[sampleOffset + 2];
+                            }
+                        }
+
+                        if (sampleCount < 1) sampleCount = 1;
+                        accumRed /= sampleCount; if (accumRed > 255) accumRed = 255;
+                        accumGreen /= sampleCount; if (accumGreen > 255) accumGreen = 255;
+                        accumBlue /= sampleCount; if (accumBlue > 255) accumBlue = 255;
+                        
+                        blurBuffer[offset + 0] = (byte)accumRed;
+                        blurBuffer[offset + 1] = (byte)accumGreen;
+                        blurBuffer[offset + 2] = (byte)accumBlue;
+                        blurBuffer[offset + 3] = 255;
+                    }
+                }
+            }
+
+            BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, textureDims, textureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Marshal.Copy(blurBuffer, 0, bitmapData2.Scan0, blurBuffer.Length);
+            bitmap.UnlockBits(bitmapData2);
             try
             {
-                bitmap.Save(hackyPath + "asd.bmp");
+                bitmap.Save(hackyPath + "asd.png");
             }
             catch
             {
@@ -450,12 +492,12 @@ namespace Sledge.Providers.Map
             }
         }
 
-        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
+        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
         {
-            return new Thread(() => RenderLightOntoFace(bitmapData, lights, uAxis, vAxis, writeX, writeY, minTotalX, minTotalY, group, targetFace, blockerFaces));
+            return new Thread(() => RenderLightOntoFace(bitmapData, lights, writeX, writeY, group, targetFace, blockerFaces));
         }
 
-        private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, CoordinateF uAxis, CoordinateF vAxis, int writeX, int writeY, float minTotalX, float minTotalY, LightmapGroup group, LMFace targetFace,List<LMFace> blockerFaces)
+        private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace,List<LMFace> blockerFaces)
         {
             Random rand = new Random();
 
@@ -471,8 +513,8 @@ namespace Sledge.Providers.Map
 
             foreach (CoordinateF coord in targetFace.Vertices)
             {
-                float x = coord.Dot(uAxis);
-                float y = coord.Dot(vAxis);
+                float x = coord.Dot(group.uAxis);
+                float y = coord.Dot(group.vAxis);
 
                 if (minX == null || x < minX) minX = x;
                 if (minY == null || y < minY) minY = y;
@@ -691,12 +733,27 @@ namespace Sledge.Providers.Map
                 {
                     for (int x = 0; x < iterX; x++)
                     {
+                        int tX = writeX + x + (int)(minX - group.minTotalX) / downscaleFactor;
+                        int tY = writeY + y + (int)(minY - group.minTotalY) / downscaleFactor;
+
+                        if (tX >= 0 && tY >= 0 && tX < textureDims && tY < textureDims)
+                        {
+                            int offset = (tX + tY * textureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
+                            bitmapData[offset + 3] = 255;
+                        }
+                    }
+                }
+
+                for (int y = 0; y < iterY; y++)
+                {
+                    for (int x = 0; x < iterX; x++)
+                    {
                         float ttX = minX.Value + (x * downscaleFactor);
                         float ttY = minY.Value + (y * downscaleFactor);
-                        CoordinateF pointOnPlane = (ttX - centerX) * uAxis + (ttY - centerY) * vAxis + targetFace.BoundingBox.Center;
+                        CoordinateF pointOnPlane = (ttX - centerX) * group.uAxis + (ttY - centerY) * group.vAxis + targetFace.BoundingBox.Center;
                         
-                        int tX = writeX + x + (int)(minX - minTotalX) / downscaleFactor;
-                        int tY = writeY + y + (int)(minY - minTotalY) / downscaleFactor;
+                        int tX = writeX + x + (int)(minX - group.minTotalX) / downscaleFactor;
+                        int tY = writeY + y + (int)(minY - group.minTotalY) / downscaleFactor;
                         
                         Color luxelColor = Color.FromArgb(r[x,y],g[x,y],b[x, y]);
 
@@ -714,7 +771,7 @@ namespace Sledge.Providers.Map
                                 {
                                     applicableBlockerFaces.RemoveAt(i);
                                     applicableBlockerFaces.Insert(0, otherFace);
-                                    if (Math.Abs(targetFace.Plane.EvalAtPoint(hit)) > 10.0f + (20.0f * Math.Abs(targetFace.Plane.Normal.Dot(otherFace.Plane.Normal))))
+                                    if ((hit - pointOnPlane).LengthSquared()>25.0f && Math.Abs((hit-pointOnPlane).Dot(targetFace.Plane.Normal))>15.0f)
                                     {
                                         illuminated[x, y] = false;
                                         i++;
@@ -742,10 +799,10 @@ namespace Sledge.Providers.Map
 
                             if (tX >= 0 && tY >= 0 && tX < textureDims && tY < textureDims)
                             {
-                                int offset = (tX + tY * textureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format24bppRgb) / 8;
-                                if (luxelColor.R + luxelColor.G + luxelColor.B > bitmapData[offset] + bitmapData[offset+1] + bitmapData[offset+2])
+                                int offset = (tX + tY * textureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
+                                if (luxelColor.R + luxelColor.G + luxelColor.B > bitmapData[offset+2] + bitmapData[offset+1] + bitmapData[offset+0])
                                 {
-                                    bitmapData[offset] = luxelColor.R;
+                                    bitmapData[offset + 0] = luxelColor.R;
                                     bitmapData[offset + 1] = luxelColor.G;
                                     bitmapData[offset + 2] = luxelColor.B;
                                 }
