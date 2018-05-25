@@ -3,6 +3,7 @@ Sledge-CB
 
 This is a hacked-up fork of Sledge meant for room creation for SCP - Containment Breach.
 
-The Editor is licensed under the GNU General Public License, version 2.0. All other components are licensed under the Lesser GNU General Public License, version 2.1, unless otherwise specified.
+The Editor is licensed under the GNU General Public License, version 2.0.
+All other components are licensed under the GNU Lesser General Public License, version 2.1, unless otherwise stated.
 
 You can find the original source code at https://github.com/LogicAndTrick/sledge

@@ -244,10 +244,16 @@ namespace Sledge.Providers.Map
         private const int planeMargin = 5;
         private const int textureDims = 2048;
         private const int blurRadius = 2;
+
+        private static Color ambientColor;
+        private static CoordinateF ambientNormal;
         
         //TODO: make this method not a complete trainwreck
         public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
         {
+            ambientColor = Color.FromArgb(45, 45, 45);
+            ambientNormal = new CoordinateF(1.0f,2.0f,3.0f).Normalise();
+
             List<LightmapGroup> coplanarFaces = new List<LightmapGroup>();
             List<LMFace> exclusiveBlockers = new List<LMFace>();
 
@@ -433,9 +439,14 @@ namespace Sledge.Providers.Map
                 }
             }
 
+            //blur the lightmap so it doesn't look too pixellated
             byte[] blurBuffer = new byte[buffer.Length];
             foreach (LightmapGroup group in coplanarFaces)
             {
+                float ambientMultiplier = (group.Plane.Normal.Dot(ambientNormal) + 1.5f) * 0.4f;
+                Color mAmbientColor = Color.FromArgb((int)(ambientColor.R * ambientMultiplier),
+                                                     (int)(ambientColor.G * ambientMultiplier),
+                                                     (int)(ambientColor.B * ambientMultiplier));
                 for (int y=group.writeY;y<group.writeY+(group.maxTotalY-group.minTotalY)/downscaleFactor;y++)
                 {
                     if (y < 0 || y >= textureDims) continue;
@@ -467,10 +478,18 @@ namespace Sledge.Providers.Map
                         }
 
                         if (sampleCount < 1) sampleCount = 1;
-                        accumRed /= sampleCount; if (accumRed > 255) accumRed = 255;
-                        accumGreen /= sampleCount; if (accumGreen > 255) accumGreen = 255;
-                        accumBlue /= sampleCount; if (accumBlue > 255) accumBlue = 255;
-                        
+                        accumRed /= sampleCount;
+                        accumGreen /= sampleCount;
+                        accumBlue /= sampleCount;
+
+                        accumRed = mAmbientColor.R + (accumRed * (255 - mAmbientColor.R) / 255);
+                        accumGreen = mAmbientColor.G + (accumGreen * (255 - mAmbientColor.G) / 255);
+                        accumBlue = mAmbientColor.B + (accumBlue * (255 - mAmbientColor.B) / 255);
+
+                        if (accumRed > 255) accumRed = 255;
+                        if (accumGreen > 255) accumGreen = 255;
+                        if (accumBlue > 255) accumBlue = 255;
+
                         blurBuffer[offset + 0] = (byte)accumRed;
                         blurBuffer[offset + 1] = (byte)accumGreen;
                         blurBuffer[offset + 2] = (byte)accumBlue;
