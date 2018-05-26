@@ -6,6 +6,7 @@ using System;
 using System.Globalization;
 using Sledge.DataStructures.Geometric;
 using Sledge.Common;
+using Sledge.DataStructures.Transformations;
 
 namespace Sledge.Providers.Map
 {
@@ -213,6 +214,8 @@ namespace Sledge.Providers.Map
                             newFace.Texture.XShift = -texPosX*2/texScaleX;
                             newFace.Texture.YShift = texPosY*2/texScaleY;
                             newFace.Texture.Rotation = (decimal)texRotY;
+                            
+                            newFace.Transform(new UnitScale(Coordinate.One, newFace.BoundingBox.Center), TransformFlags.None);
 
                             faces.Add(newFace);
                         }
@@ -227,6 +230,8 @@ namespace Sledge.Providers.Map
                     newSolid.Colour = Colour.GetRandomBrushColour();
                     newSolid.SetParent(map.WorldSpawn);
                     newSolid.UpdateBoundingBox();
+
+                    newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
                 }
                 else
                 {

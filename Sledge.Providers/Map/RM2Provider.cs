@@ -247,10 +247,26 @@ namespace Sledge.Providers.Map
 
         private static Color ambientColor;
         private static CoordinateF ambientNormal;
+
+        struct LMThreadException
+        {
+            public LMThreadException(Exception e)
+            {
+                Message = e.Message;
+                StackTrace = e.StackTrace;
+            }
+
+            public string Message;
+            public string StackTrace;
+        }
+
+        private static List<LMThreadException> threadExceptions;
         
         //TODO: make this method not a complete trainwreck
         public static void SaveToFile(string filename, Sledge.DataStructures.MapObjects.Map map)
         {
+            threadExceptions = new List<LMThreadException>();
+
             ambientColor = Color.FromArgb(45, 45, 45);
             ambientNormal = new CoordinateF(1.0f,2.0f,3.0f).Normalise();
 
@@ -418,6 +434,11 @@ namespace Sledge.Providers.Map
                         i--;
                     }
                 }
+
+                if (threadExceptions.Count>0)
+                {
+                    throw new Exception("Error in thread: "+threadExceptions[0].Message+"\n"+threadExceptions[0].StackTrace);
+                }
                 a++; Thread.Yield();
 
                 if (a>=200000)
@@ -438,7 +459,7 @@ namespace Sledge.Providers.Map
                     }
                 }
             }
-
+            
             //blur the lightmap so it doesn't look too pixellated
             byte[] blurBuffer = new byte[buffer.Length];
             foreach (LightmapGroup group in coplanarFaces)
@@ -513,7 +534,16 @@ namespace Sledge.Providers.Map
 
         private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
         {
-            return new Thread(() => RenderLightOntoFace(bitmapData, lights, writeX, writeY, group, targetFace, blockerFaces));
+            return new Thread(() => {
+                try
+                {
+                    RenderLightOntoFace(bitmapData, lights, writeX, writeY, group, targetFace, blockerFaces);
+                }
+                catch (Exception e)
+                {
+                    threadExceptions.Add(new LMThreadException(e));
+                }
+            });
         }
 
         private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace,List<LMFace> blockerFaces)
@@ -565,7 +595,7 @@ namespace Sledge.Providers.Map
                 float lightRange = light.Range;
                 CoordinateF lightColor = light.Color;
 
-                BoxF lightBox = new BoxF(new BoxF[] { targetFace.BoundingBox, new BoxF(light.Origin,light.Origin) });
+                BoxF lightBox = new BoxF(new BoxF[] { targetFace.BoundingBox, new BoxF(light.Origin-new CoordinateF(30.0f, 30.0f, 30.0f),light.Origin+new CoordinateF(30.0f, 30.0f, 30.0f)) });
                 List<LMFace> applicableBlockerFaces = blockerFaces.FindAll(x =>
                 {
                     if (x == targetFace) return false;
