@@ -16,7 +16,7 @@ namespace Sledge.Editor.Compiling
 {
     class Lightmapper
     {
-        private class LMLight
+        public class LMLight
         {
             public CoordinateF Color;
             public CoordinateF Origin;
@@ -274,16 +274,18 @@ namespace Sledge.Editor.Compiling
             public string StackTrace;
         }
 
+        public static List<Thread> FaceRenderThreads;
         private static List<LMThreadException> threadExceptions;
         
-        public static void Render(Map map,out Bitmap bmp,out List<LMFace> faces)
+        public static IEnumerable<Tuple<string, float>> Render(Map map,Bitmap bitmap,List<LMFace> faces,List<LMLight> lightEntities)
         {
             threadExceptions = new List<LMThreadException>();
             
             List<LightmapGroup> lmGroups = new List<LightmapGroup>();
             List<LMFace> exclusiveBlockers = new List<LMFace>();
-
+            
             //get faces
+            yield return new Tuple<string,float>("Determining UV coordinates...",0);
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
             {
                 foreach (Face tface in solid.Faces)
@@ -334,29 +336,8 @@ namespace Sledge.Editor.Compiling
                     }
                 }
             }
-
-            //Random rand = new Random();
-
-            //sort faces
-            /*foreach (LightmapGroup group in lmGroups)
-            {
-                var direction = group.Plane.GetClosestAxisToNormal();
-
-                var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
-                var uAxis = group.Plane.Normal.Cross(tempV).Normalise();
-                var vAxis = uAxis.Cross(group.Plane.Normal).Normalise();
-                
-                System.Drawing.Color color = System.Drawing.Color.FromArgb(rand.Next() % 60+20, rand.Next() % 60+20, rand.Next() % 60+20);
-
-                foreach (LMFace face in group.Faces)
-                {
-                    face.Colour = color;
-                }
-            }*/
-
-            //put the faces into a file
-            Bitmap bitmap = new Bitmap(TextureDims, TextureDims, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
+            
+            //put the faces into the bitmap
             lmGroups.Sort((x, y) =>
             {
                 if (x == y) return 0;
@@ -369,18 +350,18 @@ namespace Sledge.Editor.Compiling
 
             var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8];
 
-            List<Thread> threads = new List<Thread>();
+            FaceRenderThreads = new List<Thread>();
 
-            List<LMLight> lightEntities = map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
+            lightEntities.Clear(); lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
                 .Select(x => new LMLight()
                 {
                     Origin = new CoordinateF(x.Origin),
                     Range = float.Parse(x.EntityData.GetPropertyValue("range")),
                     Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color"))
-                }).ToList();
+                }));
 
             List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
-
+            int faceCount = 0;
             foreach (LightmapGroup group in lmGroups)
             {
                 var uAxis = group.uAxis;
@@ -400,8 +381,9 @@ namespace Sledge.Editor.Compiling
 
                 foreach (LMFace face in group.Faces)
                 {
+                    faceCount++;
                     Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, writeX, writeY, group, face, allFaces);
-                    threads.Add(newThread);
+                    FaceRenderThreads.Add(newThread);
                 }
                 group.writeX = writeX;
                 group.writeY = writeY;
@@ -410,31 +392,42 @@ namespace Sledge.Editor.Compiling
                 if ((int)(maxTotalX - minTotalX) / DownscaleFactor + PlaneMargin > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / DownscaleFactor + PlaneMargin;
             }
 
-            int a = 0;
-            while (threads.Count > 0)
+            int faceNum = 0;
+            yield return new Tuple<string, float>("Started calculating brightness levels...",0.05f);
+            while (FaceRenderThreads.Count > 0)
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    if (i >= threads.Count) break;
-                    if (threads[i].ThreadState == ThreadState.Unstarted)
+                    if (i >= FaceRenderThreads.Count) break;
+                    if (FaceRenderThreads[i].ThreadState == ThreadState.Unstarted)
                     {
-                        threads[i].Start();
+                        FaceRenderThreads[i].Start();
                     }
-                    else if (threads[i].ThreadState == ThreadState.Stopped)
+                    else if (!FaceRenderThreads[i].IsAlive)
                     {
-                        threads.RemoveAt(i);
+                        FaceRenderThreads.RemoveAt(i);
                         i--;
+                        faceNum++;
+                        yield return new Tuple<string, float>(faceNum.ToString() + "/" + faceCount.ToString() + " faces complete",0.05f + ((float)faceNum/(float)faceCount)*0.85f);
                     }
                 }
 
                 if (threadExceptions.Count > 0)
                 {
-                    throw new Exception("Error in thread: " + threadExceptions[0].Message + "\n" + threadExceptions[0].StackTrace);
+                    for (int i = 0; i < FaceRenderThreads.Count; i++)
+                    {
+                        if (FaceRenderThreads[i].IsAlive)
+                        {
+                            FaceRenderThreads[i].Abort();
+                        }
+                    }
+                    throw new Exception(threadExceptions[0].Message);// + "\n" + threadExceptions[0].StackTrace);
                 }
                 Thread.Yield();
             }
 
             //blur the lightmap so it doesn't look too pixellated
+            yield return new Tuple<string, float>("Blurring lightmap...",0.95f);
             byte[] blurBuffer = new byte[buffer.Length];
             foreach (LightmapGroup group in lmGroups)
             {
@@ -493,12 +486,14 @@ namespace Sledge.Editor.Compiling
                 }
             }
 
+            yield return new Tuple<string, float>("Copying bitmap data...",0.99f);
             BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, TextureDims, TextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             Marshal.Copy(blurBuffer, 0, bitmapData2.Scan0, blurBuffer.Length);
             bitmap.UnlockBits(bitmapData2);
 
-            bmp = bitmap;
-            faces = lmGroups.SelectMany(g => g.Faces).ToList();
+            faces.Clear();
+            faces.AddRange(lmGroups.SelectMany(g => g.Faces));
+            yield return new Tuple<string, float>("Lightmapping complete!",1.0f);
         }
 
         private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
@@ -507,6 +502,10 @@ namespace Sledge.Editor.Compiling
                 try
                 {
                     RenderLightOntoFace(bitmapData, lights, writeX, writeY, group, targetFace, blockerFaces);
+                }
+                catch (ThreadAbortException e)
+                {
+                    //do nothing
                 }
                 catch (Exception e)
                 {

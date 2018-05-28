@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Sledge.Editor.Compiling
@@ -63,6 +64,7 @@ namespace Sledge.Editor.Compiling
             }
         }
 
+        private string SaveFileName = "";
         private void export_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog save = new SaveFileDialog())
@@ -71,6 +73,7 @@ namespace Sledge.Editor.Compiling
                 save.Filter = filter;
                 if (save.ShowDialog() == DialogResult.OK)
                 {
+                    SaveFileName = save.FileName;
                     textureDims.Enabled = false;
                     downscaleFactor.Enabled = false;
                     blurRadius.Enabled = false;
@@ -82,9 +85,11 @@ namespace Sledge.Editor.Compiling
                     export.Enabled = false;
                     cancel.Enabled = true;
 
-                    progressLabel.Text = "0%";
+                    ProgressLabel.Text = "Starting...";
+                    ProgressBar.Enabled = true;
 
-                    RM2Export.SaveToFile(save.FileName, Document.Map, this);
+                    exportThread = new Thread(PerformExport);
+                    exportThread.Start();
                 }
             }
         }
@@ -176,6 +181,70 @@ namespace Sledge.Editor.Compiling
                         ambientBlue.Text = Lightmapper.AmbientColor.B.ToString();
                     }
                 }
+            }
+        }
+
+        Thread exportThread = null;
+        private void PerformExport()
+        {
+            try
+            {
+                RM2Export.SaveToFile(SaveFileName, Document.Map, this);
+            }
+            catch (ThreadAbortException e)
+            {
+                if (Lightmapper.FaceRenderThreads != null)
+                {
+                    foreach (Thread thread in Lightmapper.FaceRenderThreads)
+                    {
+                        if (thread.IsAlive)
+                        {
+                            thread.Abort();
+                        }
+                    }
+                }
+                
+                ProgressLabel.Invoke((MethodInvoker)(() => ProgressLabel.Text = "Cancelled by the user"));
+                ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
+            }
+            catch (Exception e)
+            {
+                ProgressLabel.Invoke((MethodInvoker)(() => ProgressLabel.Text = "Error: " + e.Message));
+                ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
+            }
+            finally
+            {
+                Invoke((MethodInvoker)(() =>
+                {
+                    textureDims.Enabled = true;
+                    downscaleFactor.Enabled = true;
+                    blurRadius.Enabled = true;
+
+                    ambientRed.Enabled = true;
+                    ambientGreen.Enabled = true;
+                    ambientBlue.Enabled = true;
+
+                    export.Enabled = true;
+                    cancel.Enabled = false;
+
+                    ProgressBar.Enabled = false;
+                }));
+            }
+        }
+
+        private void formClosing(object sender,FormClosingEventArgs args)
+        {
+            if (exportThread!=null && exportThread.IsAlive)
+            {
+                args.Cancel = true;
+            }
+        }
+
+        private void cancel_Click(object sender, EventArgs e)
+        {
+            if (exportThread != null && exportThread.IsAlive)
+            {
+                exportThread.Abort();
             }
         }
     }

@@ -41,8 +41,8 @@
             this.ambientBlue = new System.Windows.Forms.TextBox();
             this.export = new System.Windows.Forms.Button();
             this.cancel = new System.Windows.Forms.Button();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.progressLabel = new System.Windows.Forms.Label();
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
+            this.ProgressLabel = new System.Windows.Forms.Label();
             this.ambientColorBox = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
@@ -88,7 +88,7 @@
             this.textureDims.Name = "textureDims";
             this.textureDims.Size = new System.Drawing.Size(179, 20);
             this.textureDims.TabIndex = 4;
-            this.textureDims.Text = Lightmapper.TextureDims.ToString();
+            this.textureDims.Text = "2048";
             this.textureDims.LostFocus += new System.EventHandler(this.textureDims_LostFocus);
             // 
             // downscaleFactor
@@ -106,7 +106,7 @@
             this.blurRadius.Name = "blurRadius";
             this.blurRadius.Size = new System.Drawing.Size(179, 20);
             this.blurRadius.TabIndex = 6;
-            this.blurRadius.Text = Lightmapper.BlurRadius.ToString();
+            this.blurRadius.Text = "2";
             this.blurRadius.LostFocus += new System.EventHandler(this.blurRadius_LostFocus);
             // 
             // label5
@@ -124,7 +124,7 @@
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
-            this.ambientRed.Text = Lightmapper.AmbientColor.R.ToString();
+            this.ambientRed.Text = "45";
             this.ambientRed.TextChanged += new System.EventHandler(this.ambientRed_TextChanged);
             this.ambientRed.LostFocus += new System.EventHandler(this.ambientRed_LostFocus);
             // 
@@ -134,7 +134,7 @@
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
-            this.ambientGreen.Text = Lightmapper.AmbientColor.G.ToString();
+            this.ambientGreen.Text = "45";
             this.ambientGreen.TextChanged += new System.EventHandler(this.ambientGreen_TextChanged);
             this.ambientGreen.LostFocus += new System.EventHandler(this.ambientGreen_LostFocus);
             // 
@@ -144,7 +144,7 @@
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
-            this.ambientBlue.Text = Lightmapper.AmbientColor.B.ToString();
+            this.ambientBlue.Text = "45";
             this.ambientBlue.TextChanged += new System.EventHandler(this.ambientBlue_TextChanged);
             this.ambientBlue.LostFocus += new System.EventHandler(this.ambientBlue_LostFocus);
             // 
@@ -167,27 +167,29 @@
             this.cancel.TabIndex = 13;
             this.cancel.Text = "Cancel";
             this.cancel.UseVisualStyleBackColor = true;
+            this.cancel.Click += new System.EventHandler(this.cancel_Click);
             // 
-            // progressBar
+            // ProgressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(16, 168);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(295, 23);
-            this.progressBar.TabIndex = 14;
+            this.ProgressBar.Enabled = false;
+            this.ProgressBar.Location = new System.Drawing.Point(16, 168);
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(295, 23);
+            this.ProgressBar.TabIndex = 14;
             // 
-            // progressLabel
+            // ProgressLabel
             // 
-            this.progressLabel.AutoSize = true;
-            this.progressLabel.Location = new System.Drawing.Point(17, 197);
-            this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(16, 13);
-            this.progressLabel.TabIndex = 15;
-            this.progressLabel.Text = "...";
-            this.progressLabel.Click += new System.EventHandler(this.label6_Click);
+            this.ProgressLabel.AutoSize = true;
+            this.ProgressLabel.Location = new System.Drawing.Point(17, 197);
+            this.ProgressLabel.Name = "ProgressLabel";
+            this.ProgressLabel.Size = new System.Drawing.Size(16, 13);
+            this.ProgressLabel.TabIndex = 15;
+            this.ProgressLabel.Text = "...";
+            this.ProgressLabel.Click += new System.EventHandler(this.label6_Click);
             // 
             // ambientColorBox
             // 
-            this.ambientColorBox.BackColor = Lightmapper.AmbientColor;
+            this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.ambientColorBox.Location = new System.Drawing.Point(263, 131);
             this.ambientColorBox.Name = "ambientColorBox";
             this.ambientColorBox.Size = new System.Drawing.Size(37, 20);
@@ -200,8 +202,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(404, 232);
             this.Controls.Add(this.ambientColorBox);
-            this.Controls.Add(this.progressLabel);
-            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.ProgressLabel);
+            this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.export);
             this.Controls.Add(this.ambientBlue);
@@ -223,6 +225,7 @@
             this.Name = "RM2ExportForm";
             this.ShowIcon = false;
             this.Text = "RM2ExportForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,8 +246,8 @@
         private System.Windows.Forms.TextBox ambientBlue;
         private System.Windows.Forms.Button export;
         private System.Windows.Forms.Button cancel;
-        private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label progressLabel;
+        public System.Windows.Forms.ProgressBar ProgressBar;
+        public System.Windows.Forms.Label ProgressLabel;
         private System.Windows.Forms.Panel ambientColorBox;
     }
 }
