@@ -259,8 +259,8 @@ namespace Sledge.Editor.Compiling
         public static int TextureDims = 2048;
         public static int BlurRadius = 2;
 
-        public static Color AmbientColor;
-        public static CoordinateF AmbientNormal;
+        public static Color AmbientColor = Color.FromArgb(45,45,45);
+        public static CoordinateF AmbientNormal = new CoordinateF(1.0f, 2.0f, 3.0f).Normalise();
 
         struct LMThreadException
         {
@@ -279,10 +279,7 @@ namespace Sledge.Editor.Compiling
         public static void Render(Map map,out Bitmap bmp,out List<LMFace> faces)
         {
             threadExceptions = new List<LMThreadException>();
-
-            AmbientColor = Color.FromArgb(45, 45, 45);
-            AmbientNormal = new CoordinateF(1.0f, 2.0f, 3.0f).Normalise();
-
+            
             List<LightmapGroup> lmGroups = new List<LightmapGroup>();
             List<LMFace> exclusiveBlockers = new List<LMFace>();
 
