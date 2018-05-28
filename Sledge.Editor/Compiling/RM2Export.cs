@@ -12,12 +12,13 @@ using Sledge.DataStructures.Transformations;
 using System.IO;
 using Sledge.Common;
 
-namespace Sledge.Providers.Map
+namespace Sledge.Editor.Compiling
 {
-    public class RM2Provider
+    public class RM2Export
     {
-        public const string hackyPath = "D:/Repos/";
+        public static void SaveToFile(string filename,Map map,RM2ExportForm form)
+        {
 
-
+        }
     }
 }

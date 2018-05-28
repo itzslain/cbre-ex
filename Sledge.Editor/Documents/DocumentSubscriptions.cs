@@ -252,7 +252,9 @@ namespace Sledge.Editor.Documents
 
         public void FileCompile()
         {
-            RM2Provider.SaveToFile("test.rm2", _document.Map);
+            RM2ExportForm form = new RM2ExportForm();
+            form.Document = _document;
+            form.ShowDialog();
             return;
 
             _document.SaveFile();
