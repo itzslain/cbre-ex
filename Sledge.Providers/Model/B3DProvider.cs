@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Sledge.Providers.Model
 {
-    public class B3DProvider : public ModelProvider
+    public class B3DProvider : ModelProvider
     {
         protected override bool IsValidForFile(IFile file)
         {

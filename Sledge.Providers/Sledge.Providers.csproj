@@ -56,6 +56,7 @@
     <Compile Include="Map\ObjProvider.cs" />
     <Compile Include="Map\RM2Provider.cs" />
     <Compile Include="Map\VmfProvider.cs" />
+    <Compile Include="Model\B3DProvider.cs" />
     <Compile Include="Model\MdlProvider.cs" />
     <Compile Include="Model\ModelProvider.cs" />
     <Compile Include="Model\ModelReference.cs" />
