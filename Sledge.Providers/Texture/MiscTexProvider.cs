@@ -14,14 +14,6 @@ namespace Sledge.Providers.Texture
 {
     public class MiscTexProvider : TextureProvider
     {
-        private enum SpriteRenderMode
-        {
-            Normal = 0,     // No transparency
-            Additive = 1,   // R/G/B = R/G/B, A = (R+G+B)/3
-            IndexAlpha = 2, // R/G/B = Palette index 255, A = (R+G+B)/3
-            AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
-        }
-        
         static Dictionary<string, Tuple<Bitmap, TextureFlags>> loadedImages = new Dictionary<string, Tuple<Bitmap, TextureFlags>>();
         private static Bitmap Parse(string file)
         {
@@ -68,32 +60,27 @@ namespace Sledge.Providers.Texture
 
                     if (!loadedImages.ContainsKey(rel))
                     {
-                        using (Image img = Image.FromFile(spr))
+                        Bitmap bmp = new Bitmap(spr);
+                        TextureFlags flags = TextureFlags.None;
+                        for (int x=0;x<4;x++)
                         {
-                            Bitmap bmp = new Bitmap(img);
-                            TextureFlags flags = TextureFlags.None;
-                            for (int x=0;x<4;x++)
+                            for (int y=0;y<4;y++)
                             {
-                                for (int y=0;y<4;y++)
+                                int mX = x * (bmp.Width-1) / 3;
+                                int mY = y * (bmp.Height-1) / 3;
+                                if (bmp.GetPixel(mX,mY).A != 255)
                                 {
-                                    int mX = x * (bmp.Width-1) / 3;
-                                    int mY = y * (bmp.Height-1) / 3;
-                                    if (bmp.GetPixel(mX,mY).A != 255)
-                                    {
-                                        flags = TextureFlags.Transparent;
-                                        break;
-                                    }
+                                    flags = TextureFlags.Transparent;
+                                    break;
                                 }
-                                if (flags != TextureFlags.None) break;
                             }
-                            loadedImages.Add(rel, new Tuple<Bitmap, TextureFlags>(bmp, flags));
+                            if (flags != TextureFlags.None) break;
                         }
+                        loadedImages.Add(rel, new Tuple<Bitmap, TextureFlags>(bmp, flags));
                     }
-                    var size = new Size(loadedImages[rel].Item1.Width, loadedImages[rel].Item1.Height);
 
-                    tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), loadedImages[rel].Item2, size.Width, size.Height));
+                    tp.AddTexture(new TextureItem(tp, rel.ToLower(), loadedImages[rel].Item2, loadedImages[rel].Item1.Width, loadedImages[rel].Item1.Height));
                 }
-
                 if (tp.Items.Any()) yield return tp;
             }
         }
