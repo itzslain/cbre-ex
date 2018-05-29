@@ -45,6 +45,7 @@ namespace Sledge.Editor.Environment
         public IEnumerable<string> GetGameDirectories()
         {
             if (!string.IsNullOrWhiteSpace(Sledge.Settings.Directories.TextureDir)) yield return Sledge.Settings.Directories.TextureDir;
+            if (!string.IsNullOrWhiteSpace(Sledge.Settings.Directories.ModelDir)) yield return Sledge.Settings.Directories.ModelDir;
 
             var b = Build;
             if (b != null && b.IncludePathInEnvironment)

@@ -67,8 +67,8 @@ namespace Sledge.Editor.Compiling
         
         public static void SaveToFile(string filename,Map map,RM2ExportForm form)
         {
-            if (!filename.ToLower().Contains(".rm2")) filename += ".rm2";
-            string lmPath = filename.Replace(".rm2", "_lm.png");
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rm2";
+            string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
             List<Lightmapper.LMFace> faces = new List<Lightmapper.LMFace>();
             List<Lightmapper.LMLight> lights = new List<Lightmapper.LMLight>();
@@ -82,7 +82,7 @@ namespace Sledge.Editor.Compiling
 
             string dir = Sledge.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
-            bitmap.Save(lmPath);
+            bitmap.Save(lmPath+".png");
             lmPath = System.IO.Path.GetFileName(lmPath);
 
             List <Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
@@ -108,23 +108,7 @@ namespace Sledge.Editor.Compiling
             br.Write((byte)textures.Count);
             foreach (string tex in textures)
             {
-                string texturePath = tex;
-                if (tex != lmPath)
-                {
-                    if (File.Exists(dir + tex + ".png"))
-                    {
-                        texturePath += ".png";
-                    }
-                    else if (File.Exists(dir + tex + ".jpg"))
-                    {
-                        texturePath += ".jpg";
-                    }
-                    else
-                    {
-                        throw new Exception("Could not find texture: " + dir + tex);
-                    }
-                }
-                WriteByteString(br, texturePath);
+                WriteByteString(br, tex);
                 if (tex == lmPath)
                 {
                     br.Write((byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.LM));
