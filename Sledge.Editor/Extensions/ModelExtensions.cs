@@ -105,6 +105,12 @@ namespace Sledge.Editor.Extensions
         private static string GetModelName(Entity entity)
         {
             if (entity.GameData == null) return null;
+
+            if (entity.ClassName == "model")
+            {
+                return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
+            }
+
             var studio = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase))
                          ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
             if (studio == null) return null;

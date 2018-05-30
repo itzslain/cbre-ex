@@ -59,10 +59,12 @@ namespace Sledge.Providers.Map
 
             //now we can parse the object table
             List<string> materials = new List<string>();
+            List<Tuple<int,string>> meshReferences = new List<Tuple<int, string>>();
             br.BaseStream.Seek(objectOffset, SeekOrigin.Begin);
-            for (int i=0;i<objectCount;i++)
+            long objectStartPos = br.BaseStream.Position;
+            for (int i = 0; i < objectCount; i++)
             {
-                int index = br.ReadInt32()-1;
+                int index = br.ReadInt32() - 1;
                 int size = br.ReadInt32();
                 if (index < 0 || index >= names.Count)
                 {
@@ -70,8 +72,121 @@ namespace Sledge.Providers.Map
                 }
                 string name = names[index];
 
-                //TODO: parse models
-                if (name == "entity")
+                if (name == "meshreference")
+                {
+                    byte flags = br.ReadByte();
+
+                    Int32 groupNameInd = br.ReadInt32()-1;
+                    Int32 objectNameInd = br.ReadInt32()-1;
+
+                    byte limbCount = br.ReadByte();
+
+                    meshReferences.Add(new Tuple<int, string>(i,names[objectNameInd]));
+                }
+                else if (name == "material")
+                {
+                    byte materialFlags = br.ReadByte();
+                    Int32 groupIndex = br.ReadInt32();
+                    string objectName = names[br.ReadInt32() - 1];
+                    Int32 extensionNameIndex = -1;
+                    if ((materialFlags & 2) != 0)
+                    {
+                        extensionNameIndex = br.ReadInt32(); //TODO: what the heck is this
+                    }
+                    materials.Add(objectName);
+                }
+                else
+                {
+                    br.BaseStream.Seek(size, SeekOrigin.Current);
+                }
+            }
+            br.BaseStream.Position = objectStartPos;
+            for (int i = 0; i < objectCount; i++)
+            {
+                int index = br.ReadInt32() - 1;
+                int size = br.ReadInt32();
+                if (index < 0 || index >= names.Count)
+                {
+                    throw new Exception(i.ToString() + " " + index.ToString());
+                }
+                string name = names[index];
+                if (name == "mesh")
+                {
+                    long startPos = br.BaseStream.Position;
+
+                    byte flags = br.ReadByte();
+
+                    Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
+                    entity.ClassName = "model";
+                    entity.Colour = Colour.GetDefaultEntityColour();
+                    
+                    Int32 keyCount = br.ReadInt32();
+                    for (int j = 0; j < keyCount; j++)
+                    {
+                        Int32 keyNameInd = br.ReadInt32() - 1;
+                        Int32 keyValueInd = br.ReadInt32() - 1;
+                        if (names[keyNameInd] == "classname")
+                        {
+                            //entity.ClassName = names[keyValueInd];
+                            //entity.EntityData.Name = names[keyValueInd];
+                        }
+                        else
+                        {
+                            Property newProperty = new Property();
+                            newProperty.Key = names[keyNameInd];
+                            newProperty.Value = names[keyValueInd];
+
+                            if (newProperty.Key == "file")
+                            {
+                                newProperty.Value = System.IO.Path.GetFileNameWithoutExtension(newProperty.Value);
+                            }
+
+                            entity.EntityData.Properties.Add(newProperty);
+                        }
+                    }
+                    Int32 group = br.ReadInt32();
+                    Int32 visgroup = br.ReadInt32();
+
+                    byte red = br.ReadByte(); byte green = br.ReadByte(); byte blue = br.ReadByte();
+
+                    Int32 meshRefIndex = br.ReadInt32()-1;
+                    
+                    float x = br.ReadSingle();
+                    float z = br.ReadSingle();
+                    float y = br.ReadSingle();
+                    if (entity!=null) entity.Origin = new Coordinate((decimal)x, (decimal)y, (decimal)z);
+                    
+                    if (entity.EntityData.GetPropertyValue("file") == null)
+                    {
+                        Property newProperty = new Property();
+                        newProperty.Key = "file";
+                        newProperty.Value = meshReferences.Find(q => q.Item1 == meshRefIndex).Item2;
+
+                        entity.EntityData.Properties.Add(newProperty);
+                    }
+
+                    //TODO: figure out rotation, wtf
+                    float pitch = br.ReadSingle();
+                    float yaw = br.ReadSingle();
+                    float roll = br.ReadSingle();
+
+                    //TODO: figure out scale as well wtf
+                    if ((flags&1)==0)
+                    {
+                        float xScale = br.ReadSingle();
+                        float yScale = br.ReadSingle();
+                        float zScale = br.ReadSingle();
+                    }
+
+                    br.BaseStream.Position += size - (br.BaseStream.Position-startPos);
+
+                    if (entity != null)
+                    {
+                        entity.UpdateBoundingBox();
+                        entity.SetParent(map.WorldSpawn);
+                    }
+                }
+                else if (name == "entity")
                 {
                     byte flags = br.ReadByte();
                     float x = br.ReadSingle();
@@ -105,18 +220,6 @@ namespace Sledge.Providers.Map
 
                     entity.UpdateBoundingBox();
                     entity.SetParent(map.WorldSpawn);
-                }
-                else if (name == "material")
-                {
-                    byte materialFlags = br.ReadByte();
-                    Int32 groupIndex = br.ReadInt32();
-                    string objectName = names[br.ReadInt32()-1];
-                    Int32 extensionNameIndex = -1;
-                    if ((materialFlags & 2) != 0)
-                    {
-                        extensionNameIndex = br.ReadInt32(); //TODO: what the heck is this
-                    }
-                    materials.Add(objectName);
                 }
                 else if (name == "brush")
                 {
