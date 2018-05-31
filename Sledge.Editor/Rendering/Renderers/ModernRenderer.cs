@@ -189,6 +189,7 @@ namespace Sledge.Editor.Rendering.Renderers
                         var origin = tuple.Item1.Origin;
                         if (tuple.Item1.HideDistance() <= (location - origin).VectorMagnitude()) continue;
 
+                        var scale = tuple.Item1.EntityData.GetPropertyCoordinate("scale", Coordinate.One);
                         var angles = tuple.Item1.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
                         angles = new Coordinate(-DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X),
                                                 -DMath.DegreesToRadians(angles.Y));
@@ -197,7 +198,7 @@ namespace Sledge.Editor.Rendering.Renderers
                             origin *= _selectionTransformMat;
                             // TODO: rotation/angles
                         }
-                        var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(origin);
+                        var tform = (Matrix.Scale(scale)*Matrix.Rotation(Quaternion.EulerAngles(angles))).Translate(origin);
                         _mapObject3DShader.Transformation = tform.ToGLSLMatrix4();
                         arr.RenderTextured(context.Context);
                     }

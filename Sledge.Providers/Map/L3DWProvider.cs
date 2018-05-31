@@ -112,6 +112,8 @@ namespace Sledge.Providers.Map
                 string name = names[index];
                 if (name == "mesh")
                 {
+                    Property newProperty;
+
                     long startPos = br.BaseStream.Position;
 
                     byte flags = br.ReadByte();
@@ -132,7 +134,7 @@ namespace Sledge.Providers.Map
                         }
                         else
                         {
-                            Property newProperty = new Property();
+                            newProperty = new Property();
                             newProperty.Key = names[keyNameInd];
                             newProperty.Value = names[keyValueInd];
 
@@ -155,28 +157,41 @@ namespace Sledge.Providers.Map
                     float z = br.ReadSingle();
                     float y = br.ReadSingle();
                     if (entity!=null) entity.Origin = new Coordinate((decimal)x, (decimal)y, (decimal)z);
-                    
+
                     if (entity.EntityData.GetPropertyValue("file") == null)
                     {
-                        Property newProperty = new Property();
+                        newProperty = new Property();
                         newProperty.Key = "file";
                         newProperty.Value = meshReferences.Find(q => q.Item1 == meshRefIndex).Item2;
 
                         entity.EntityData.Properties.Add(newProperty);
                     }
-
-                    //TODO: figure out rotation, wtf
+                    
                     float pitch = br.ReadSingle();
                     float yaw = br.ReadSingle();
                     float roll = br.ReadSingle();
+                    newProperty = new Property();
+                    newProperty.Key = "angles";
+                    newProperty.Value = pitch.ToString()+" "+yaw.ToString()+" "+roll.ToString();
 
-                    //TODO: figure out scale as well wtf
+                    entity.EntityData.Properties.Add(newProperty);
+
+                    float xScale = 1.0f;
+                    float yScale = 1.0f;
+                    float zScale = 1.0f;
+
                     if ((flags&1)==0)
                     {
-                        float xScale = br.ReadSingle();
-                        float yScale = br.ReadSingle();
-                        float zScale = br.ReadSingle();
+                        xScale = br.ReadSingle();
+                        zScale = br.ReadSingle();
+                        yScale = br.ReadSingle();
                     }
+
+                    newProperty = new Property();
+                    newProperty.Key = "scale";
+                    newProperty.Value = xScale.ToString() + " " + yScale.ToString() + " " + zScale.ToString();
+
+                    entity.EntityData.Properties.Add(newProperty);
 
                     br.BaseStream.Position += size - (br.BaseStream.Position-startPos);
 

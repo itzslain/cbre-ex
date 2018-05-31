@@ -17,8 +17,9 @@ namespace Sledge.Providers.Model
             return file.Extension.ToLowerInvariant() == "b3d";
         }
 
-        protected static string ReadChunk(BinaryReader reader, DataStructures.Models.Model model)
+        protected static string ReadChunk(BinaryReader reader, DataStructures.Models.Model model, CoordinateF relative = null)
         {
+            if (relative == null) relative = CoordinateF.Zero;
             string header = reader.ReadFixedLengthString(Encoding.ASCII,4);
             int size = reader.ReadInt32();
             int initialPos = (int)reader.BaseStream.Position;
@@ -26,11 +27,11 @@ namespace Sledge.Providers.Model
             if (header == "NODE")
             {
                 string name = reader.ReadNullTerminatedString();
-                float posX = reader.ReadSingle(); float posY = reader.ReadSingle(); float posZ = reader.ReadSingle();
-                float scaleX = reader.ReadSingle(); float scaleY = reader.ReadSingle(); float scaleZ = reader.ReadSingle();
+                float posX = reader.ReadSingle(); float posZ = reader.ReadSingle(); float posY = reader.ReadSingle();
+                float scaleX = reader.ReadSingle(); float scaleZ = reader.ReadSingle(); float scaleY = reader.ReadSingle();
                 float rotX = reader.ReadSingle(); float rotY = reader.ReadSingle(); float rotZ = reader.ReadSingle(); float rotW = reader.ReadSingle();
 
-                ReadChunk(reader, model);
+                ReadChunk(reader, model, relative+new CoordinateF(posX,posY,posZ));
 
                 reader.ReadBytes(size - ((int)reader.BaseStream.Position - initialPos));
             }
@@ -52,7 +53,7 @@ namespace Sledge.Providers.Model
 
                 while (reader.BaseStream.Position - initialVertPos < vertsSize)
                 {
-                    float x = reader.ReadSingle(); float z = reader.ReadSingle(); float y = reader.ReadSingle();
+                    float x = reader.ReadSingle()+relative.X; float z = reader.ReadSingle() + relative.Z; float y = reader.ReadSingle() + relative.Y;
                     float normalX = 0.0f; float normalY = 1.0f; float normalZ = 0.0f;
                     if ((vertFlags&1) != 0)
                     {
@@ -113,7 +114,7 @@ namespace Sledge.Providers.Model
         protected override DataStructures.Models.Model LoadFromFile(IFile file)
         {
             DataStructures.Models.Model model = new DataStructures.Models.Model();
-            Bone bone = new Bone(0, -1, null, "rootBone", CoordinateF.Zero, CoordinateF.Zero, CoordinateF.One, CoordinateF.One*1000.0f);
+            Bone bone = new Bone(0, -1, null, "rootBone", CoordinateF.Zero, CoordinateF.Zero, CoordinateF.One, CoordinateF.One);
             model.Bones.Add(bone);
 
             FileStream stream = new FileStream(file.FullPathName, FileMode.Open);
@@ -145,7 +146,7 @@ namespace Sledge.Providers.Model
             {
                 for (int j=0;j<64;j++)
                 {
-                    bmp.SetPixel(i, j, Color.White);
+                    bmp.SetPixel(i, j, Color.DarkGray);
                 }
             }
             var tex = new DataStructures.Models.Texture
