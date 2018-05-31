@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Sledge.Providers.Model
 {
@@ -51,11 +52,11 @@ namespace Sledge.Providers.Model
 
                 while (reader.BaseStream.Position - initialVertPos < vertsSize)
                 {
-                    float x = reader.ReadSingle(); float y = reader.ReadSingle(); float z = reader.ReadSingle();
+                    float x = reader.ReadSingle(); float z = reader.ReadSingle(); float y = reader.ReadSingle();
                     float normalX = 0.0f; float normalY = 1.0f; float normalZ = 0.0f;
                     if ((vertFlags&1) != 0)
                     {
-                        normalX = reader.ReadSingle(); normalY = reader.ReadSingle(); normalZ = reader.ReadSingle();
+                        normalX = reader.ReadSingle(); normalZ = reader.ReadSingle(); normalY = reader.ReadSingle();
                     }
                     float r; float g; float b; float a;
                     if ((vertFlags&2) != 0)
@@ -98,6 +99,7 @@ namespace Sledge.Providers.Model
                         mesh.Vertices.Add(new MeshVertex(vertices[ind].Location, vertices[ind].Normal, vertices[ind].BoneWeightings, vertices[ind].TextureU, vertices[ind].TextureV));
                     }
                 }
+
                 model.AddMesh("mesh", 0, mesh);
             }
             else
@@ -111,7 +113,7 @@ namespace Sledge.Providers.Model
         protected override DataStructures.Models.Model LoadFromFile(IFile file)
         {
             DataStructures.Models.Model model = new DataStructures.Models.Model();
-            Bone bone = new Bone(0, -1, null, "rootBone", CoordinateF.Zero, CoordinateF.Zero, CoordinateF.One, CoordinateF.One);
+            Bone bone = new Bone(0, -1, null, "rootBone", CoordinateF.Zero, CoordinateF.Zero, CoordinateF.One, CoordinateF.One*1000.0f);
             model.Bones.Add(bone);
 
             FileStream stream = new FileStream(file.FullPathName, FileMode.Open);
@@ -136,6 +138,26 @@ namespace Sledge.Providers.Model
 
             reader.Dispose();
             stream.Dispose();
+
+
+            Bitmap bmp = new Bitmap(64, 64);
+            for (int i=0;i<64;i++)
+            {
+                for (int j=0;j<64;j++)
+                {
+                    bmp.SetPixel(i, j, Color.White);
+                }
+            }
+            var tex = new DataStructures.Models.Texture
+            {
+                Name = "blank",
+                Index = 0,
+                Width = 64,
+                Height = 64,
+                Flags = 0,
+                Image = bmp
+            };
+            model.Textures.Add(tex);
 
             return model;
         }

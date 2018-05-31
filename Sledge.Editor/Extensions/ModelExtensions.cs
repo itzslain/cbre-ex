@@ -7,6 +7,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.FileSystem;
 using Sledge.Providers.Model;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Extensions
 {
@@ -72,7 +73,7 @@ namespace Sledge.Editor.Extensions
             }
             else
             {
-                var file = document.Environment.Root.TraversePath(model);
+                var file = new NativeFile(Directories.ModelDir+"/"+model); //TODO: try to understand how this originall worked? //document.Environment.Root.TraversePath(model);
                 if (file == null || !ModelProvider.CanLoad(file))
                 {
                     // Model not valid, get rid of it
@@ -104,12 +105,12 @@ namespace Sledge.Editor.Extensions
 
         private static string GetModelName(Entity entity)
         {
-            if (entity.GameData == null) return null;
-
             if (entity.ClassName == "model")
             {
-                return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
+                return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"))+".b3d";
             }
+
+            if (entity.GameData == null) return null;
 
             var studio = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase))
                          ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
