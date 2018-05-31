@@ -16,14 +16,15 @@ namespace Sledge.DataStructures.GameData
 
         public GameData()
         {
-            MapSizeHigh = 4096;
-            MapSizeLow = -4096;
+            MapSizeHigh = 16384;
+            MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
 
             Classes.Add(new GameDataObject("light", "Point light source.", ClassType.Point));
             Classes.Add(new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point));
             Classes.Add(new GameDataObject("waypoint", "AI waypoint.", ClassType.Point));
             Classes.Add(new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point));
+            Classes.Add(new GameDataObject("model", "Self-explanatory.", ClassType.Point));
 
             Includes = new List<string>();
             MaterialExclusions = new List<string>();

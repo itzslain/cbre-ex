@@ -38,6 +38,7 @@ namespace Sledge.Providers.Map
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)
         {
             var map = new DataStructures.MapObjects.Map();
+            map.CordonBounds = new Box(Coordinate.One * -16384, Coordinate.One * 16384);
             BinaryReader br = new BinaryReader(stream);
 
             //header
