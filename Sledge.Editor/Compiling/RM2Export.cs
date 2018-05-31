@@ -85,7 +85,7 @@ namespace Sledge.Editor.Compiling
             bitmap.Save(lmPath+".png");
             lmPath = System.IO.Path.GetFileName(lmPath);
 
-            List <Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
+            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
 
             FileStream stream = new FileStream(filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
@@ -95,6 +95,9 @@ namespace Sledge.Editor.Compiling
             br.Write((byte)'R');
             br.Write((byte)'M');
             br.Write((byte)'2');
+
+            //non-lightmapped faces
+            IEnumerable<Face> nonLMFaces = map.WorldSpawn.Find(x => x is Face).OfType<Face>();
 
             //textures
             List<string> textures = new List<string>();
