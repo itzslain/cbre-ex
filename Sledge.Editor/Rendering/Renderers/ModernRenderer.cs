@@ -198,7 +198,7 @@ namespace Sledge.Editor.Rendering.Renderers
                             origin *= _selectionTransformMat;
                             // TODO: rotation/angles
                         }
-                        var tform = (Matrix.Scale(scale)*Matrix.Rotation(Quaternion.EulerAngles(angles))).Translate(origin);
+                        var tform = (Matrix.Rotation(Quaternion.EulerAngles(angles))*Matrix.Scale(scale)).Translate(origin);
                         _mapObject3DShader.Transformation = tform.ToGLSLMatrix4();
                         arr.RenderTextured(context.Context);
                     }
