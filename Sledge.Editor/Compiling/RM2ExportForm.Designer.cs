@@ -124,7 +124,7 @@
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
-            this.ambientRed.Text = "45";
+            this.ambientRed.Text = Lightmapper.AmbientColor.R.ToString();
             this.ambientRed.TextChanged += new System.EventHandler(this.ambientRed_TextChanged);
             this.ambientRed.LostFocus += new System.EventHandler(this.ambientRed_LostFocus);
             // 
@@ -134,7 +134,7 @@
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
-            this.ambientGreen.Text = "45";
+            this.ambientGreen.Text = Lightmapper.AmbientColor.G.ToString();
             this.ambientGreen.TextChanged += new System.EventHandler(this.ambientGreen_TextChanged);
             this.ambientGreen.LostFocus += new System.EventHandler(this.ambientGreen_LostFocus);
             // 
@@ -144,7 +144,7 @@
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
-            this.ambientBlue.Text = "45";
+            this.ambientBlue.Text = Lightmapper.AmbientColor.B.ToString();
             this.ambientBlue.TextChanged += new System.EventHandler(this.ambientBlue_TextChanged);
             this.ambientBlue.LostFocus += new System.EventHandler(this.ambientBlue_LostFocus);
             // 
@@ -189,7 +189,7 @@
             // 
             // ambientColorBox
             // 
-            this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.ambientColorBox.BackColor = Lightmapper.AmbientColor;
             this.ambientColorBox.Location = new System.Drawing.Point(263, 131);
             this.ambientColorBox.Name = "ambientColorBox";
             this.ambientColorBox.Size = new System.Drawing.Size(37, 20);

@@ -121,6 +121,7 @@ namespace Sledge.Providers.Map
 
                     Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
                     entity.ClassName = "model";
+                    entity.EntityData.Name = "model";
                     entity.Colour = Colour.GetDefaultEntityColour();
                     
                     Int32 keyCount = br.ReadInt32();

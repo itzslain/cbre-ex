@@ -259,7 +259,7 @@ namespace Sledge.Editor.Compiling
         public static int TextureDims = 2048;
         public static int BlurRadius = 2;
 
-        public static Color AmbientColor = Color.FromArgb(45,45,45);
+        public static Color AmbientColor = Color.FromArgb(30,30,30);
         public static CoordinateF AmbientNormal = new CoordinateF(1.0f, 2.0f, 3.0f).Normalise();
 
         struct LMThreadException
@@ -816,7 +816,8 @@ namespace Sledge.Editor.Compiling
 
                         if (illuminated[x, y])
                         {
-                            float brightness = dotToLight * (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
+                            float brightness = (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
+                            brightness *= dotToLight * brightness;
                             brightness += ((float)rand.NextDouble() - 0.5f) * 0.005f;
 
                             r[x, y] += (int)(lightColor.Z * brightness); if (r[x, y] > 255) r[x, y] = 255; if (r[x, y] < 0) r[x, y] = 0;

@@ -67,6 +67,8 @@ namespace Sledge.Editor.Compiling
         
         public static void SaveToFile(string filename,Map map,RM2ExportForm form)
         {
+            string filepath = System.IO.Path.GetDirectoryName(filename);
+            filename = System.IO.Path.GetFileName(filename);
             filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rm2";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
@@ -80,14 +82,60 @@ namespace Sledge.Editor.Compiling
                 form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = (int)(progress.Item2 * 9000)));
             }
 
+            IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x =>
+            {
+                if (!x.Texture.Texture.HasTransparency()) return false;
+                if (x.Texture.Name.Contains("tooltextures")) return false;
+
+                return true;
+            });
+
+            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name=="tooltextures/invisible_collision");
+
             string dir = Sledge.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
-            bitmap.Save(lmPath+".png");
+            bitmap.Save(filepath + "/" + lmPath +".png");
             lmPath = System.IO.Path.GetFileName(lmPath);
 
             List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
 
-            FileStream stream = new FileStream(filename, FileMode.Create);
+            IEnumerable<Entity> soundEmitters = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "soundemitter").OfType<Entity>();
+
+            IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
+
+            form.ProgressLabel.Invoke((MethodInvoker)(() => form.ProgressLabel.Text = "Determining waypoint visibility..."));
+            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 9100));
+
+            for (int i = 0; i < waypoints.Count; i++)
+            {
+                for (int j = 0; j < waypoints.Count; j++)
+                {
+                    if (j > i)
+                    {
+                        waypoints[i].Connections.Add(j);
+                    }
+                    else if (j < i)
+                    {
+                        if (waypoints[j].Connections.Contains(i)) waypoints[i].Connections.Add(j);
+                    }
+                }
+                foreach (Lightmapper.LMFace face in faces)
+                {
+                    for (int j = 0; j < waypoints[i].Connections.Count; j++)
+                    {
+                        int connection = waypoints[i].Connections[j];
+                        if (connection < i) continue;
+                        LineF line1 = new LineF(waypoints[i].Location, waypoints[connection].Location);
+                        LineF line2 = new LineF(waypoints[connection].Location, waypoints[i].Location);
+                        if (face.GetIntersectionPoint(line1) != null || face.GetIntersectionPoint(line2) != null) {
+                            waypoints[i].Connections.RemoveAt(j);
+                            j--;
+                        }
+                    }
+                }
+            }
+
+            FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
 
             //header
@@ -96,65 +144,240 @@ namespace Sledge.Editor.Compiling
             br.Write((byte)'M');
             br.Write((byte)'2');
 
-            //non-lightmapped faces
-            IEnumerable<Face> nonLMFaces = map.WorldSpawn.Find(x => x is Face).OfType<Face>();
-
             //textures
-            List<string> textures = new List<string>();
+            List<Tuple<string, byte, byte>> textures = new List<Tuple<string, byte, byte>>();
+            byte flag = (byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.DIFFUSE);
             foreach (Lightmapper.LMFace face in faces)
             {
-                if (!textures.Contains(face.Texture)) textures.Add(face.Texture);
+                if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte, byte>(face.Texture,flag,0));
             }
-            textures.Add(lmPath);
+            flag = (byte)(((int)(RM2LoadFlags.ALPHA) << 4) | (int)RM2BlendFlags.NORMAL);
+            foreach (Face face in transparentFaces)
+            {
+                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte, byte>(face.Texture.Name,flag,0));
+            }
+            flag = (byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.LM);
+            textures.Add(new Tuple<string, byte, byte>(lmPath,flag,1));
 
             br.Write((byte)RM2Parts.TEXTURES);
             br.Write((byte)textures.Count);
-            foreach (string tex in textures)
+            foreach (Tuple<string, byte, byte> tex in textures)
             {
-                WriteByteString(br, tex);
-                if (tex == lmPath)
-                {
-                    br.Write((byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.LM));
-                    br.Write((byte)1);
-                }
-                else
-                {
-                    br.Write((byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.DIFFUSE));
-                    br.Write((byte)0);
-                }
+                WriteByteString(br, tex.Item1);
+                br.Write(tex.Item2);
+                br.Write(tex.Item3);
             }
 
             //mesh
-            foreach (Lightmapper.LMFace face in faces)
+
+            int vertCount;
+            int vertOffset;
+            int triCount;
+
+            //TODO: find a clever way of splitting up meshes with the same texture
+            //into several for collision optimization.
+            //Making each face its own collision object is too slow, and merging all of
+            //them together is not optimal either.
+            for (int i=0;i<textures.Count-1;i++)
             {
-                br.Write((byte)RM2Parts.OPAQUE);
-                int texInd = textures.FindIndex(x => x==face.Texture);
-                br.Write((byte)textures.Count);
-                br.Write((byte)(texInd + 1));
+                IEnumerable<Lightmapper.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
+                vertCount = 0;
+                vertOffset = 0;
+                triCount = 0;
 
-                br.Write((short)face.Vertices.Count);
-                for (int i=0;i<face.Vertices.Count;i++)
+                if (tLmFaces.Count() > 0)
                 {
-                    br.Write(face.Vertices[i].Location.X);
-                    br.Write(face.Vertices[i].Location.Z);
-                    br.Write(face.Vertices[i].Location.Y);
+                    foreach (Lightmapper.LMFace face in tLmFaces)
+                    {
+                        vertCount += face.Vertices.Count;
+                        triCount += face.GetTriangleIndices().Count() / 3;
+                    }
 
-                    br.Write((byte)255); //r
-                    br.Write((byte)255); //g
-                    br.Write((byte)255); //b
+                    br.Write((byte)RM2Parts.OPAQUE);
+                    br.Write((byte)textures.Count);
+                    br.Write((byte)(i + 1));
 
-                    br.Write(face.Vertices[i].DiffU);
-                    br.Write(face.Vertices[i].DiffV);
-                    br.Write(face.Vertices[i].LMU);
-                    br.Write(face.Vertices[i].LMV);
+                    if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                    br.Write((short)vertCount);
+                    foreach (Lightmapper.LMFace face in tLmFaces)
+                    {
+                        for (int j = 0; j < face.Vertices.Count; j++)
+                        {
+                            br.Write(face.Vertices[j].Location.X);
+                            br.Write(face.Vertices[j].Location.Z);
+                            br.Write(face.Vertices[j].Location.Y);
+
+                            br.Write((byte)255); //r
+                            br.Write((byte)255); //g
+                            br.Write((byte)255); //b
+
+                            br.Write(face.Vertices[j].DiffU);
+                            br.Write(face.Vertices[j].DiffV);
+                            br.Write(face.Vertices[j].LMU);
+                            br.Write(face.Vertices[j].LMV);
+                        }
+                    }
+                    br.Write((short)triCount);
+                    foreach (Lightmapper.LMFace face in tLmFaces)
+                    {
+                        foreach (uint ind in face.GetTriangleIndices())
+                        {
+                            br.Write((short)(ind + vertOffset));
+                        }
+
+                        vertOffset += face.Vertices.Count;
+                    }
                 }
 
-                List<uint> indices = face.GetTriangleIndices().ToList();
-                br.Write((short)(indices.Count / 3));
-                for (int i=0;i<indices.Count;i++)
+                IEnumerable<Face> tTrptFaces = transparentFaces.Where(x => x.Texture.Name == textures[i].Item1);
+                vertCount = 0;
+                vertOffset = 0;
+                triCount = 0;
+
+                if (tTrptFaces.Count() > 0)
                 {
-                    br.Write((short)indices[i]);
+                    foreach (Face face in tTrptFaces)
+                    {
+                        vertCount += face.Vertices.Count;
+                        triCount += face.GetTriangleIndices().Count() / 3;
+                    }
+
+                    br.Write((byte)RM2Parts.ALPHA);
+                    br.Write((byte)(i + 1));
+                    br.Write((byte)0);
+
+                    if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                    br.Write((short)vertCount);
+                    foreach (Face face in tTrptFaces)
+                    {
+                        for (int j = 0; j < face.Vertices.Count; j++)
+                        {
+                            br.Write((float)face.Vertices[j].Location.X);
+                            br.Write((float)face.Vertices[j].Location.Z);
+                            br.Write((float)face.Vertices[j].Location.Y);
+
+                            br.Write((byte)255); //r
+                            br.Write((byte)255); //g
+                            br.Write((byte)255); //b
+
+                            br.Write((float)face.Vertices[j].TextureU);
+                            br.Write((float)face.Vertices[j].TextureV);
+                            br.Write(0.0f);
+                            br.Write(0.0f);
+                        }
+                    }
+                    br.Write((short)triCount);
+                    foreach (Face face in tTrptFaces)
+                    {
+                        foreach (uint ind in face.GetTriangleIndices())
+                        {
+                            br.Write((short)(ind + vertOffset));
+                        }
+
+                        vertOffset += face.Vertices.Count;
+                    }
                 }
+            }
+
+            vertCount = 0;
+            vertOffset = 0;
+            triCount = 0;
+            if (invisibleCollisionFaces.Count() > 0)
+            {
+                foreach (Face face in invisibleCollisionFaces)
+                {
+                    vertCount += face.Vertices.Count;
+                    triCount += face.GetTriangleIndices().Count() / 3;
+                }
+
+                br.Write((byte)RM2Parts.INVISIBLE);
+                
+                if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                br.Write((short)vertCount);
+                foreach (Face face in invisibleCollisionFaces)
+                {
+                    for (int j = 0; j < face.Vertices.Count; j++)
+                    {
+                        br.Write((float)face.Vertices[j].Location.X);
+                        br.Write((float)face.Vertices[j].Location.Z);
+                        br.Write((float)face.Vertices[j].Location.Y);
+                    }
+                }
+                br.Write((short)triCount);
+                foreach (Face face in invisibleCollisionFaces)
+                {
+                    foreach (uint ind in face.GetTriangleIndices())
+                    {
+                        br.Write((short)(ind + vertOffset));
+                    }
+
+                    vertOffset += face.Vertices.Count;
+                }
+            }
+
+            foreach (Lightmapper.LMLight light in lights)
+            {
+                br.Write((byte)RM2Parts.POINTLIGHT);
+
+                br.Write(light.Origin.X);
+                br.Write(light.Origin.Z);
+                br.Write(light.Origin.Y);
+
+                br.Write(light.Range);
+
+                br.Write((byte)light.Color.X);
+                br.Write((byte)light.Color.Y);
+                br.Write((byte)light.Color.Z);
+                br.Write((byte)255); //intensity
+            }
+
+            foreach (Waypoint wp in waypoints)
+            {
+                br.Write((byte)RM2Parts.WAYPOINT);
+
+                br.Write(wp.Location.X);
+                br.Write(wp.Location.Z);
+                br.Write(wp.Location.Y);
+
+                for (int i = 0; i < wp.Connections.Count; i++)
+                {
+                    br.Write((byte)(wp.Connections[i] + 1));
+                }
+                br.Write((byte)0);
+            }
+
+            foreach (Entity soundEmitter in soundEmitters)
+            {
+                br.Write((byte)RM2Parts.SOUNDEMITTER);
+
+                br.Write((float)soundEmitter.Origin.X);
+                br.Write((float)soundEmitter.Origin.Z);
+                br.Write((float)soundEmitter.Origin.Y);
+
+                br.Write((byte)int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
+
+                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range")));
+            }
+
+            foreach (Entity prop in props)
+            {
+                br.Write((byte)RM2Parts.PROP);
+
+                WriteByteString(br, prop.EntityData.GetPropertyValue("file"));
+
+                br.Write((float)prop.Origin.X);
+                br.Write((float)prop.Origin.Z);
+                br.Write((float)prop.Origin.Y);
+
+                Coordinate rotation = prop.EntityData.GetPropertyCoordinate("angles");
+                br.Write((float)rotation.X);
+                br.Write((float)rotation.Y);
+                br.Write((float)rotation.Z);
+
+                Coordinate scale = prop.EntityData.GetPropertyCoordinate("scale");
+                br.Write((float)scale.X);
+                br.Write((float)scale.Z);
+                br.Write((float)scale.Y);
             }
 
             br.Dispose();
