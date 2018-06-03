@@ -116,10 +116,8 @@ namespace Sledge.Providers.Texture
                 var files = group.Where(ti => root.HasFile(ti.PrimarySubItem.Name)).ToList();
                 foreach (var ti in files)
                 {
-                    using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
-                    {
-                        TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, ti.Flags);
-                    }
+                    var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name));
+                    TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp.Bitmap, ti.Width, ti.Height, ti.Flags);
                 }
             }
         }
@@ -147,7 +145,7 @@ namespace Sledge.Providers.Texture
                 return _roots.Any(x => x.HasFile(item.PrimarySubItem.Name));
             }
 
-            public Bitmap GetImage(TextureItem item)
+            public BitmapRef GetImage(TextureItem item)
             {
                 var root = _roots.FirstOrDefault(x => x.HasFile(item.PrimarySubItem.Name));
                 if (root == null) return null;

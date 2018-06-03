@@ -145,10 +145,10 @@ namespace Sledge.Editor.UI
             using (var tp = _document.TextureCollection.GetStreamSource(128, 128))
             {
                 var bmp = tp.GetImage(item);
-                image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height
+                image.SizeMode = bmp.Bitmap.Width > image.Width || bmp.Bitmap.Height > image.Height
                                      ? PictureBoxSizeMode.Zoom
                                      : PictureBoxSizeMode.CenterImage;
-                image.Image = bmp;
+                image.Image = bmp.Bitmap;
             }
 
             var format = item.Flags.HasFlag(TextureFlags.Missing) ? "Invalid texture" : "{0} x {1}";

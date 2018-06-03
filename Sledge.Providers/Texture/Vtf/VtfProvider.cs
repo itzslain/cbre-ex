@@ -40,12 +40,12 @@ namespace Sledge.Providers.Texture.Vtf
             }
         }
 
-        public static Bitmap GetImage(IFile file, int maxWidth = 0, int maxHeight = 0)
+        public static BitmapRef GetImage(IFile file, int maxWidth = 0, int maxHeight = 0)
         {
             return GetImage(file.Open(), maxWidth, maxHeight);
         }
 
-        public static Bitmap GetImage(Stream stream, int maxWidth = 0, int maxHeight = 0)
+        public static BitmapRef GetImage(Stream stream, int maxWidth = 0, int maxHeight = 0)
         {
             using (var br = new BinaryReader(stream))
             {
@@ -149,7 +149,7 @@ namespace Sledge.Providers.Texture.Vtf
 
                                 var img = LoadImage(br, (uint) wid, (uint) hei, highResImageFormat);
                                 //img.Save(String.Format(@"D:\Github\sledge\_Resources\VTF\_test_fr{0}_fa{1}_sl{2}_m{3}.png", frame, face, slice, mip));
-                                return img;
+                                return new BitmapRef(img); //TODO: mark as disposable?
                             }
                         }
                     }

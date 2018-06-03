@@ -204,10 +204,8 @@ namespace Sledge.Editor.UI
             else 
             {
                 // Drop down is open and we're painting in the drop down area
-                using (var bmp = _streamSource.GetImage(item.Item))
-                {
-                    OwnerDrawItem(e.Graphics, bmp, item.Item, e.Bounds, e.ForeColor, e.Font, item.DrawBorder);
-                }
+                var bmp = _streamSource.GetImage(item.Item);
+                OwnerDrawItem(e.Graphics, bmp.Bitmap, item.Item, e.Bounds, e.ForeColor, e.Font, item.DrawBorder);
             }
 
             e.DrawFocusRectangle();

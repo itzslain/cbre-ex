@@ -5,10 +5,16 @@ using System.Linq;
 
 namespace Sledge.Providers.Texture
 {
+    public class BitmapRef
+    {
+        public BitmapRef(Bitmap bmp) { Bitmap = bmp; }
+        public Bitmap Bitmap { get; private set; }
+    }
+
     public interface ITextureStreamSource : IDisposable
     {
         bool HasImage(TextureItem item);
-        Bitmap GetImage(TextureItem item);
+        BitmapRef GetImage(TextureItem item);
     }
 
     public class MultiTextureStreamSource : ITextureStreamSource
@@ -25,7 +31,7 @@ namespace Sledge.Providers.Texture
             return _streams.Any(x => x.HasImage(item));
         }
 
-        public Bitmap GetImage(TextureItem item)
+        public BitmapRef GetImage(TextureItem item)
         {
             foreach (var ss in _streams)
             {

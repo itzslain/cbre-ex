@@ -462,7 +462,7 @@ namespace Sledge.Editor.UI
 
         #region Rendering
 
-        private Dictionary<TextureItem, Bitmap> _renderCache = new Dictionary<TextureItem, Bitmap>();
+        private Dictionary<TextureItem, BitmapRef> _renderCache = new Dictionary<TextureItem, BitmapRef>();
 
         private void UpdateCacheableItems(int y, int height)
         {
@@ -481,7 +481,7 @@ namespace Sledge.Editor.UI
             {
                 if (!cacheable.Contains(ti))
                 {
-                    if (_renderCache[ti] != null) _renderCache[ti].Dispose();
+                    //if (_renderCache[ti] != null) _renderCache[ti].Dispose();
                     _renderCache.Remove(ti);
                 }
             }
@@ -499,7 +499,7 @@ namespace Sledge.Editor.UI
                 var img = _streamSource.GetImage(item);
                 if (img == null) return;
                 if (_renderCache.ContainsKey(item)) _renderCache[item] = img;
-                else img.Dispose();
+                //else img.Dispose();
             });
         }
 
@@ -529,7 +529,7 @@ namespace Sledge.Editor.UI
                 var bmp = _renderCache[tex];
                 if (bmp == null) continue;
 
-                DrawImage(g, bmp, tex, rec.X, rec.Y - y, rec.Width, rec.Height);
+                DrawImage(g, bmp.Bitmap, tex, rec.X, rec.Y - y, rec.Width, rec.Height);
             }
         }
 

@@ -15,11 +15,11 @@ namespace Sledge.Providers.Texture
     public class MiscTexProvider : TextureProvider
     {
         static Dictionary<string, Tuple<Bitmap, TextureFlags>> loadedImages = new Dictionary<string, Tuple<Bitmap, TextureFlags>>();
-        private static Bitmap Parse(string file)
+        private static BitmapRef Parse(string file)
         {
             if (loadedImages.ContainsKey(file.ToLower()))
             {
-                return new Bitmap(loadedImages[file].Item1);
+                return new BitmapRef(loadedImages[file].Item1);
             }
 
             return null;
@@ -29,14 +29,12 @@ namespace Sledge.Providers.Texture
         {
             foreach (var item in items)
             {
-                using (var bmp = Parse(item.Name))
+                var bmp = Parse(item.Name);
+                if (bmp == null)
                 {
-                    if (bmp == null)
-                    {
-                        throw new Exception(item.Name);
-                    }
-                    TextureHelper.Create(item.Name, bmp, item.Width, item.Height, item.Flags);
+                    throw new Exception(item.Name);
                 }
+                TextureHelper.Create(item.Name, bmp.Bitmap, item.Width, item.Height, item.Flags);
             }
         }
 
@@ -109,7 +107,7 @@ namespace Sledge.Providers.Texture
                 return _packages.Any(x => x.Items.ContainsValue(item));
             }
 
-            public Bitmap GetImage(TextureItem item)
+            public BitmapRef GetImage(TextureItem item)
             {
                 return Parse(item.Name);
             }

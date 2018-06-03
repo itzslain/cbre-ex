@@ -40,7 +40,7 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        private static Bitmap Parse(string file)
+        private static BitmapRef Parse(string file)
         {
             // Sprite file spec taken from the spritegen source in the Half-Life SDK.
             using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
@@ -114,7 +114,7 @@ namespace Sledge.Providers.Texture
                 Marshal.Copy(pixels, 0, data.Scan0, data.Width * data.Height);
                 bitmap.UnlockBits(data);
 
-                return bitmap;
+                return new BitmapRef(bitmap); //TODO: mark as disposable
             }
         }
 
@@ -127,10 +127,8 @@ namespace Sledge.Providers.Texture
                     var file = Path.Combine(root, item.Name);
                     if (File.Exists(file))
                     {
-                        using (var bmp = Parse(file))
-                        {
-                            TextureHelper.Create(item.Name, bmp, item.Width, item.Height, item.Flags);
-                        }
+                        var bmp = Parse(file);
+                        TextureHelper.Create(item.Name, bmp.Bitmap, item.Width, item.Height, item.Flags);
                         break;
                     }
                 }
@@ -182,7 +180,7 @@ namespace Sledge.Providers.Texture
                 return _packages.Any(x => x.Items.ContainsValue(item));
             }
 
-            public Bitmap GetImage(TextureItem item)
+            public BitmapRef GetImage(TextureItem item)
             {
                 foreach (var root in item.Package.PackageRoot.Split(';'))
                 {

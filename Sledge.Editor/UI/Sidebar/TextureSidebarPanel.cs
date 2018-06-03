@@ -105,7 +105,7 @@ namespace Sledge.Editor.UI.Sidebar
                 var bmp = tp.GetImage(selection);
                 if (bmp != null)
                 {
-                    if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
+                    if (bmp.Bitmap.Width > SelectionPictureBox.Width || bmp.Bitmap.Height > SelectionPictureBox.Height)
                     {
                         SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                     }
@@ -114,7 +114,7 @@ namespace Sledge.Editor.UI.Sidebar
                         SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
                     }
                 }
-                SelectionPictureBox.Image = bmp;
+                SelectionPictureBox.Image = bmp.Bitmap;
             }
             SizeLabel.Text = string.Format("{0} x {1}", selection.Width, selection.Height);
         }

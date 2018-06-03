@@ -16,7 +16,7 @@ namespace Sledge.Providers.Texture
     {
         public static bool ReplaceTransparentPixels = true;
 
-        private static Bitmap PostProcessBitmap(string packageName, string name, Bitmap bmp, out bool hasTransparency)
+        private static BitmapRef PostProcessBitmap(string packageName, string name, Bitmap bmp, out bool hasTransparency)
         {
             hasTransparency = false;
             // Transparent textures are named like: {Name
@@ -67,9 +67,9 @@ namespace Sledge.Providers.Texture
                     g.DrawImage(bmp, new Rectangle(0, 0, clone.Width, clone.Height));
                 }
                 bmp.Dispose();
-                return clone;
+                return new BitmapRef(clone); //TODO: don't use clones?
             }
-            return bmp;
+            return new BitmapRef(bmp);
         }
 
         private const char NullCharacter = (char) 0;
@@ -218,14 +218,14 @@ namespace Sledge.Providers.Texture
                 var open = stream.OpenFile(ti.Name.ToLowerInvariant());
                 if (open == null) return null;
 
-                var bmp = new Bitmap(open);
+                var tempBmp = new Bitmap(open);
                 bool hasTransparency;
-                bmp = PostProcessBitmap(ti.Package.PackageRelativePath, ti.Name.ToLowerInvariant(), bmp, out hasTransparency);
+                var bmp = PostProcessBitmap(ti.Package.PackageRelativePath, ti.Name.ToLowerInvariant(), tempBmp, out hasTransparency);
                 open.Dispose();
 
                 return new
                 {
-                    Bitmap = bmp,
+                    Bitmap = bmp.Bitmap,
                     Name = ti.Name.ToLowerInvariant(),
                     ti.Width,
                     ti.Height,
@@ -271,7 +271,7 @@ namespace Sledge.Providers.Texture
                 return _streams.Any(x => x.HasFile(item.Name.ToLowerInvariant()));
             }
 
-            public Bitmap GetImage(TextureItem item)
+            public BitmapRef GetImage(TextureItem item)
             {
                 using (var stream = _streams.First(x => x.HasFile(item.Name.ToLowerInvariant())).OpenFile(item.Name.ToLowerInvariant()))
                 {

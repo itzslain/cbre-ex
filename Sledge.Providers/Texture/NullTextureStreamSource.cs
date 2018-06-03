@@ -41,11 +41,11 @@ namespace Sledge.Providers.Texture
             return item.Flags.HasFlag(TextureFlags.Missing);
         }
 
-        public Bitmap GetImage(TextureItem item)
+        public BitmapRef GetImage(TextureItem item)
         {
             lock (PlaceholderImage)
             {
-                return new Bitmap(PlaceholderImage);
+                return new BitmapRef(PlaceholderImage);
             }
         }
 
