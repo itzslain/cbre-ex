@@ -120,10 +120,10 @@ namespace Sledge.Graphics.Helpers
                 );
 
             actualBitmap.UnlockBits(data);
-            if (actualBitmap != bitmap)
+            /*if (actualBitmap != bitmap)
             {
                 actualBitmap.Dispose();
-            }
+            }*/
             var texobj = new GLTexture(tex, name, flags, 0) { Width = width, Height = height };
             Textures.Add(name, texobj);
             return texobj;

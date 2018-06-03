@@ -96,7 +96,7 @@ namespace Sledge.Editor.UI.Sidebar
         {
             var dis = SelectionPictureBox.Image;
             SelectionPictureBox.Image = null;
-            if (dis != null) dis.Dispose();
+            //if (dis != null) dis.Dispose();
             SizeLabel.Text = "";
             if (selection == null || DocumentManager.CurrentDocument == null) return;
             TextureComboBox.SetSelectedTexture(selection);

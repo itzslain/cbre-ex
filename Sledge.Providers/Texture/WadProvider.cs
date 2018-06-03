@@ -237,7 +237,6 @@ namespace Sledge.Providers.Texture
             foreach (var bmp in bitmaps)
             {
                 TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.Flags);
-                bmp.Bitmap.Dispose();
             }
         }
 
