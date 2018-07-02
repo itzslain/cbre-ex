@@ -21,6 +21,10 @@ namespace Sledge.Editor.Compiling
             public CoordinateF Color;
             public CoordinateF Origin;
             public float Range;
+
+            public CoordinateF Direction;
+            public float? innerCos;
+            public float? outerCos;
         }
 
         public class LMFace
@@ -357,7 +361,38 @@ namespace Sledge.Editor.Compiling
                 {
                     Origin = new CoordinateF(x.Origin),
                     Range = float.Parse(x.EntityData.GetPropertyValue("range")),
-                    Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color"))
+                    Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
+                    Direction = null,
+                    innerCos = null,
+                    outerCos = null
+                }));
+            lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "spotlight").OfType<Entity>()
+                .Select(x => {
+                    LMLight light = new LMLight()
+                    {
+                        Origin = new CoordinateF(x.Origin),
+                        Range = float.Parse(x.EntityData.GetPropertyValue("range")),
+                        Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
+                        Direction = null,
+                        innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle")) * (float)Math.PI / 360.0f),
+                        outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 360.0f)
+                    };
+
+                    CoordinateF eulerAngles = new CoordinateF(x.EntityData.GetPropertyCoordinate("angles"));
+                    eulerAngles.X *= (float)Math.PI / 180.0f;
+                    eulerAngles.Y *= (float)Math.PI / 180.0f;
+                    eulerAngles.Z *= (float)Math.PI / 180.0f;
+
+                    float swap = eulerAngles.Z;
+                    eulerAngles.Z = eulerAngles.Y; eulerAngles.Y = swap;
+                    swap = eulerAngles.Y;
+                    eulerAngles.Y = eulerAngles.X; eulerAngles.X = swap;
+
+                    MatrixF rot = MatrixF.Rotation(QuaternionF.EulerAngles(eulerAngles));
+                    light.Direction = (new CoordinateF(0.0f,-1.0f,0.0f))*rot;
+                    //TODO: make sure this matches 3dws
+
+                    return light;
                 }));
 
             List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
@@ -432,9 +467,9 @@ namespace Sledge.Editor.Compiling
             foreach (LightmapGroup group in lmGroups)
             {
                 float ambientMultiplier = (group.Plane.Normal.Dot(AmbientNormal) + 1.5f) * 0.4f;
-                Color mAmbientColor = Color.FromArgb((int)(AmbientColor.R * ambientMultiplier),
+                Color mAmbientColor = Color.FromArgb((int)(AmbientColor.B * ambientMultiplier),
                                                      (int)(AmbientColor.G * ambientMultiplier),
-                                                     (int)(AmbientColor.B * ambientMultiplier));
+                                                     (int)(AmbientColor.R * ambientMultiplier));
                 for (int y = group.writeY; y < group.writeY + (group.maxTotalY - group.minTotalY) / DownscaleFactor; y++)
                 {
                     if (y < 0 || y >= TextureDims) continue;
@@ -817,6 +852,24 @@ namespace Sledge.Editor.Compiling
                         if (illuminated[x, y])
                         {
                             float brightness = (lightRange - (pointOnPlane - lightPos).VectorMagnitude()) / lightRange;
+
+                            if (light.Direction != null)
+                            {
+                                float directionDot = light.Direction.Dot((pointOnPlane-lightPos).Normalise());
+                                
+                                if (directionDot < light.innerCos)
+                                {
+                                    if (directionDot < light.outerCos)
+                                    {
+                                        brightness = 0.0f;
+                                    }
+                                    else
+                                    {
+                                        brightness *= (directionDot - light.outerCos.Value) / (light.innerCos.Value - light.outerCos.Value);
+                                    }
+                                }
+                            }
+
                             brightness *= dotToLight * brightness;
                             brightness += ((float)rand.NextDouble() - 0.5f) * 0.005f;
 
