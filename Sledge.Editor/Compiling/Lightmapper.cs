@@ -30,6 +30,13 @@ namespace Sledge.Editor.Compiling
         public class LMFace
         {
             public PlaneF Plane { get; set; }
+            public CoordinateF Normal;
+            public CoordinateF Tangent;
+            public CoordinateF Bitangent;
+
+            public CoordinateF LightBasis0;
+            public CoordinateF LightBasis1;
+            public CoordinateF LightBasis2;
 
             public class Vertex
             {
@@ -53,7 +60,44 @@ namespace Sledge.Editor.Compiling
             {
                 Plane = new PlaneF(face.Plane);
 
+                Normal = Plane.Normal;
+
                 Vertices = face.Vertices.Select(x => new Vertex(new CoordinateF(x.Location), (float)x.TextureU, (float)x.TextureV)).ToList();
+
+                int i1 = 0;
+                int i2 = 1;
+                int i3 = 2;
+
+                CoordinateF v1 = Vertices[i1].Location;
+                CoordinateF v2 = Vertices[i2].Location;
+                CoordinateF v3 = Vertices[i3].Location;
+
+                float w1x = Vertices[i1].DiffU; float w1y = Vertices[i1].DiffV;
+                float w2x = Vertices[i2].DiffU; float w2y = Vertices[i2].DiffV;
+                float w3x = Vertices[i3].DiffU; float w3y = Vertices[i3].DiffV;
+                
+                float x1 = v2.X - v1.X;
+                float x2 = v3.X - v1.X;
+                float y1 = v2.Y - v1.Y;
+                float y2 = v3.Y - v1.Y;
+                float z1 = v2.Z - v1.Z;
+                float z2 = v3.Z - v1.Z;
+
+                float s1 = w2x - w1x;
+                float s2 = w3x - w1x;
+                float t1 = w2y - w1y;
+                float t2 = w3y - w1y;
+
+                float r = 1.0f / (s1 * t2 - s2 * t1);
+                CoordinateF sdir = new CoordinateF((t2* x1 -t1 * x2) *r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+                CoordinateF tdir = new CoordinateF((s1* x2 -s2 * x1) *r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+                Tangent = (sdir - Normal * Normal.Dot(sdir)).Normalise();
+                Bitangent = (tdir - Normal * Normal.Dot(tdir)).Normalise();
+
+                LightBasis0 = Tangent * (-1.0f / (float)Math.Sqrt(6.0)) + Bitangent * (-1.0f / (float)Math.Sqrt(2.0)) + Normal * (1.0f / (float)Math.Sqrt(3.0));
+                LightBasis1 = Tangent * (-1.0f / (float)Math.Sqrt(6.0)) + Bitangent * (1.0f / (float)Math.Sqrt(2.0)) + Normal * (1.0f / (float)Math.Sqrt(3.0));
+                LightBasis2 = Tangent * ((float)Math.Sqrt(2.0/3.0)) + Normal * (1.0f / (float)Math.Sqrt(3.0));
 
                 Texture = face.Texture.Name;
 
@@ -281,7 +325,7 @@ namespace Sledge.Editor.Compiling
         public static List<Thread> FaceRenderThreads;
         private static List<LMThreadException> threadExceptions;
         
-        public static IEnumerable<Tuple<string, float>> Render(Map map,Bitmap bitmap,List<LMFace> faces,List<LMLight> lightEntities)
+        public static IEnumerable<Tuple<string, float>> Render(Map map,Bitmap[] bitmaps,List<LMFace> faces,List<LMLight> lightEntities)
         {
             threadExceptions = new List<LMThreadException>();
             
@@ -352,7 +396,10 @@ namespace Sledge.Editor.Compiling
 
             int writeX = 1; int writeY = 1; int writeMaxX = 0;
 
-            var buffer = new byte[bitmap.Width * bitmap.Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8];
+            byte[][] buffers = new byte[3][];
+            buffers[0] = new byte[bitmaps[0].Width * bitmaps[0].Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8];
+            buffers[1] = new byte[bitmaps[1].Width * bitmaps[1].Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8];
+            buffers[2] = new byte[bitmaps[2].Width * bitmaps[2].Height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8];
 
             FaceRenderThreads = new List<Thread>();
 
@@ -417,7 +464,7 @@ namespace Sledge.Editor.Compiling
                 foreach (LMFace face in group.Faces)
                 {
                     faceCount++;
-                    Thread newThread = CreateLightmapRenderThread(buffer, lightEntities, writeX, writeY, group, face, allFaces);
+                    Thread newThread = CreateLightmapRenderThread(buffers, lightEntities, writeX, writeY, group, face, allFaces);
                     FaceRenderThreads.Add(newThread);
                 }
                 group.writeX = writeX;
@@ -463,80 +510,83 @@ namespace Sledge.Editor.Compiling
 
             //blur the lightmap so it doesn't look too pixellated
             yield return new Tuple<string, float>("Blurring lightmap...",0.95f);
-            byte[] blurBuffer = new byte[buffer.Length];
-            foreach (LightmapGroup group in lmGroups)
+            byte[] blurBuffer = new byte[buffers[0].Length];
+            for (int k=0;k<3;k++)
             {
-                float ambientMultiplier = (group.Plane.Normal.Dot(AmbientNormal) + 1.5f) * 0.4f;
-                Color mAmbientColor = Color.FromArgb((int)(AmbientColor.B * ambientMultiplier),
-                                                     (int)(AmbientColor.G * ambientMultiplier),
-                                                     (int)(AmbientColor.R * ambientMultiplier));
-                for (int y = group.writeY; y < group.writeY + (group.maxTotalY - group.minTotalY) / DownscaleFactor; y++)
+                foreach (LightmapGroup group in lmGroups)
                 {
-                    if (y < 0 || y >= TextureDims) continue;
-                    for (int x = group.writeX; x < group.writeX + (group.maxTotalX - group.minTotalX) / DownscaleFactor; x++)
+                    float ambientMultiplier = (group.Plane.Normal.Dot(AmbientNormal) + 1.5f) * 0.4f;
+                    Color mAmbientColor = Color.FromArgb((int)(AmbientColor.B * ambientMultiplier),
+                                                         (int)(AmbientColor.G * ambientMultiplier),
+                                                         (int)(AmbientColor.R * ambientMultiplier));
+                    for (int y = group.writeY; y < group.writeY + (group.maxTotalY - group.minTotalY) / DownscaleFactor; y++)
                     {
-                        if (x < 0 || x >= TextureDims) continue;
-                        int offset = (x + y * TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
-
-                        int accumRed = 0;
-                        int accumGreen = 0;
-                        int accumBlue = 0;
-                        int sampleCount = 0;
-                        for (int j = -BlurRadius; j <= BlurRadius; j++)
+                        if (y < 0 || y >= TextureDims) continue;
+                        for (int x = group.writeX; x < group.writeX + (group.maxTotalX - group.minTotalX) / DownscaleFactor; x++)
                         {
-                            if (y + j < 0 || y + j >= TextureDims) continue;
-                            if (y + j < group.writeY || y + j >= group.writeY + (group.maxTotalY - group.minTotalY)) continue;
-                            for (int i = -BlurRadius; i <= BlurRadius; i++)
+                            if (x < 0 || x >= TextureDims) continue;
+                            int offset = (x + y * TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+
+                            int accumRed = 0;
+                            int accumGreen = 0;
+                            int accumBlue = 0;
+                            int sampleCount = 0;
+                            for (int j = -BlurRadius; j <= BlurRadius; j++)
                             {
-                                if (i * i + j * j > BlurRadius * BlurRadius) continue;
-                                if (x + i < 0 || x + i >= TextureDims) continue;
-                                if (x + i < group.writeX || x + i >= group.writeX + (group.maxTotalX - group.minTotalX)) continue;
-                                int sampleOffset = ((x + i) + (y + j) * TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
-                                if (buffer[sampleOffset + 3] < 255) continue;
-                                sampleCount++;
-                                accumRed += buffer[sampleOffset + 0];
-                                accumGreen += buffer[sampleOffset + 1];
-                                accumBlue += buffer[sampleOffset + 2];
+                                if (y + j < 0 || y + j >= TextureDims) continue;
+                                if (y + j < group.writeY || y + j >= group.writeY + (group.maxTotalY - group.minTotalY)) continue;
+                                for (int i = -BlurRadius; i <= BlurRadius; i++)
+                                {
+                                    if (i * i + j * j > BlurRadius * BlurRadius) continue;
+                                    if (x + i < 0 || x + i >= TextureDims) continue;
+                                    if (x + i < group.writeX || x + i >= group.writeX + (group.maxTotalX - group.minTotalX)) continue;
+                                    int sampleOffset = ((x + i) + (y + j) * TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+                                    if (buffers[k][sampleOffset + 3] < 255) continue;
+                                    sampleCount++;
+                                    accumRed += buffers[k][sampleOffset + 0];
+                                    accumGreen += buffers[k][sampleOffset + 1];
+                                    accumBlue += buffers[k][sampleOffset + 2];
+                                }
                             }
+
+                            if (sampleCount < 1) sampleCount = 1;
+                            accumRed /= sampleCount;
+                            accumGreen /= sampleCount;
+                            accumBlue /= sampleCount;
+
+                            accumRed = mAmbientColor.R + (accumRed * (255 - mAmbientColor.R) / 255);
+                            accumGreen = mAmbientColor.G + (accumGreen * (255 - mAmbientColor.G) / 255);
+                            accumBlue = mAmbientColor.B + (accumBlue * (255 - mAmbientColor.B) / 255);
+
+                            if (accumRed > 255) accumRed = 255;
+                            if (accumGreen > 255) accumGreen = 255;
+                            if (accumBlue > 255) accumBlue = 255;
+
+                            blurBuffer[offset + 0] = (byte)accumRed;
+                            blurBuffer[offset + 1] = (byte)accumGreen;
+                            blurBuffer[offset + 2] = (byte)accumBlue;
+                            blurBuffer[offset + 3] = 255;
                         }
-
-                        if (sampleCount < 1) sampleCount = 1;
-                        accumRed /= sampleCount;
-                        accumGreen /= sampleCount;
-                        accumBlue /= sampleCount;
-
-                        accumRed = mAmbientColor.R + (accumRed * (255 - mAmbientColor.R) / 255);
-                        accumGreen = mAmbientColor.G + (accumGreen * (255 - mAmbientColor.G) / 255);
-                        accumBlue = mAmbientColor.B + (accumBlue * (255 - mAmbientColor.B) / 255);
-
-                        if (accumRed > 255) accumRed = 255;
-                        if (accumGreen > 255) accumGreen = 255;
-                        if (accumBlue > 255) accumBlue = 255;
-
-                        blurBuffer[offset + 0] = (byte)accumRed;
-                        blurBuffer[offset + 1] = (byte)accumGreen;
-                        blurBuffer[offset + 2] = (byte)accumBlue;
-                        blurBuffer[offset + 3] = 255;
                     }
                 }
-            }
 
-            yield return new Tuple<string, float>("Copying bitmap data...",0.99f);
-            BitmapData bitmapData2 = bitmap.LockBits(new Rectangle(0, 0, TextureDims, TextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Marshal.Copy(blurBuffer, 0, bitmapData2.Scan0, blurBuffer.Length);
-            bitmap.UnlockBits(bitmapData2);
+                yield return new Tuple<string, float>("Copying bitmap data...", 0.99f);
+                BitmapData bitmapData2 = bitmaps[k].LockBits(new Rectangle(0, 0, TextureDims, TextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                Marshal.Copy(blurBuffer, 0, bitmapData2.Scan0, blurBuffer.Length);
+                bitmaps[k].UnlockBits(bitmapData2);
+            }
 
             faces.Clear();
             faces.AddRange(lmGroups.SelectMany(g => g.Faces));
             yield return new Tuple<string, float>("Lightmapping complete!",1.0f);
         }
 
-        private static Thread CreateLightmapRenderThread(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
+        private static Thread CreateLightmapRenderThread(byte[][] bitmaps, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
         {
             return new Thread(() => {
                 try
                 {
-                    RenderLightOntoFace(bitmapData, lights, writeX, writeY, group, targetFace, blockerFaces);
+                    RenderLightOntoFace(bitmaps, lights, writeX, writeY, group, targetFace, blockerFaces);
                 }
                 catch (ThreadAbortException e)
                 {
@@ -549,7 +599,7 @@ namespace Sledge.Editor.Compiling
             });
         }
 
-        private static void RenderLightOntoFace(byte[] bitmapData, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
+        private static void RenderLightOntoFace(byte[][] bitmaps, List<LMLight> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
         {
             Random rand = new Random();
 
@@ -599,9 +649,18 @@ namespace Sledge.Editor.Compiling
             int iterX = (int)Math.Ceiling((maxX.Value - minX.Value) / DownscaleFactor);
             int iterY = (int)Math.Ceiling((maxY.Value - minY.Value) / DownscaleFactor);
 
-            int[,] r = new int[iterX, iterY];
-            int[,] g = new int[iterX, iterY];
-            int[,] b = new int[iterX, iterY];
+            int[][,] r = new int[3][,];
+            r[0] = new int[iterX, iterY];
+            r[1] = new int[iterX, iterY];
+            r[2] = new int[iterX, iterY];
+            int[][,] g = new int[3][,];
+            g[0] = new int[iterX, iterY];
+            g[1] = new int[iterX, iterY];
+            g[2] = new int[iterX, iterY];
+            int[][,] b = new int[3][,];
+            b[0] = new int[iterX, iterY];
+            b[1] = new int[iterX, iterY];
+            b[2] = new int[iterX, iterY];
 
             foreach (LMLight light in lights)
             {
@@ -802,7 +861,9 @@ namespace Sledge.Editor.Compiling
                         if (tX >= 0 && tY >= 0 && tX < TextureDims && tY < TextureDims)
                         {
                             int offset = (tX + tY * TextureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
-                            bitmapData[offset + 3] = 255;
+                            bitmaps[0][offset + 3] = 255;
+                            bitmaps[1][offset + 3] = 255;
+                            bitmaps[2][offset + 3] = 255;
                         }
                     }
                 }
@@ -818,11 +879,16 @@ namespace Sledge.Editor.Compiling
                         int tX = writeX + x + (int)(minX - group.minTotalX) / DownscaleFactor;
                         int tY = writeY + y + (int)(minY - group.minTotalY) / DownscaleFactor;
 
-                        Color luxelColor = Color.FromArgb(r[x, y], g[x, y], b[x, y]);
+                        Color luxelColor0 = Color.FromArgb(r[0][x, y], g[0][x, y], b[0][x, y]);
+                        Color luxelColor1 = Color.FromArgb(r[1][x, y], g[1][x, y], b[1][x, y]);
+                        Color luxelColor2 = Color.FromArgb(r[2][x, y], g[2][x, y], b[2][x, y]);
 
-                        float dotToLight = (lightPos - pointOnPlane).Normalise().Dot(targetFace.Plane.Normal);
+                        float dotToLightNorm = Math.Max((lightPos - pointOnPlane).Normalise().Dot(targetFace.Normal), 0.0f);
+                        float dotToLight0 = Math.Max((lightPos - pointOnPlane).Normalise().Dot(targetFace.LightBasis0), 0.0f);
+                        float dotToLight1 = Math.Max((lightPos - pointOnPlane).Normalise().Dot(targetFace.LightBasis1), 0.0f);
+                        float dotToLight2 = Math.Max((lightPos - pointOnPlane).Normalise().Dot(targetFace.LightBasis2), 0.0f);
 
-                        if (illuminated[x, y] && dotToLight > 0.0f && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
+                        if (illuminated[x, y] && (pointOnPlane - lightPos).LengthSquared() < lightRange * lightRange)
                         {
 #if TRUE
                             LineF lineTester = new LineF(lightPos, pointOnPlane);
@@ -870,23 +936,57 @@ namespace Sledge.Editor.Compiling
                                 }
                             }
 
-                            brightness *= dotToLight * brightness;
-                            brightness += ((float)rand.NextDouble() - 0.5f) * 0.005f;
+                            float brightnessNorm = dotToLightNorm * brightness * brightness;
+                            float brightness0 = dotToLight0 * brightness * brightness;
+                            float brightness1 = dotToLight1 * brightness * brightness;
+                            float brightness2 = dotToLight2 * brightness * brightness;
 
-                            r[x, y] += (int)(lightColor.Z * brightness); if (r[x, y] > 255) r[x, y] = 255; if (r[x, y] < 0) r[x, y] = 0;
-                            g[x, y] += (int)(lightColor.Y * brightness); if (g[x, y] > 255) g[x, y] = 255; if (g[x, y] < 0) g[x, y] = 0;
-                            b[x, y] += (int)(lightColor.X * brightness); if (b[x, y] > 255) b[x, y] = 255; if (b[x, y] < 0) b[x, y] = 0;
+                            float brightnessAdd = (brightness0 + brightness1 + brightness2)/(float)Math.Sqrt(3.0);
+                            if (brightnessAdd > 0.0f) //normalize brightness to remove artifacts when adding together
+                            {
+                                brightness0 *= brightnessNorm / brightnessAdd;
+                                brightness1 *= brightnessNorm / brightnessAdd;
+                                brightness2 *= brightnessNorm / brightnessAdd;
+                            }
 
-                            luxelColor = Color.FromArgb(r[x, y], g[x, y], b[x, y]);
+                            brightness0 += ((float)rand.NextDouble() - 0.5f) * 0.005f;
+                            brightness1 += ((float)rand.NextDouble() - 0.5f) * 0.005f;
+                            brightness2 += ((float)rand.NextDouble() - 0.5f) * 0.005f;
+
+                            r[0][x, y] += (int)(lightColor.Z * brightness0); if (r[0][x, y] > 255) r[0][x, y] = 255; if (r[0][x, y] < 0) r[0][x, y] = 0;
+                            g[0][x, y] += (int)(lightColor.Y * brightness0); if (g[0][x, y] > 255) g[0][x, y] = 255; if (g[0][x, y] < 0) g[0][x, y] = 0;
+                            b[0][x, y] += (int)(lightColor.X * brightness0); if (b[0][x, y] > 255) b[0][x, y] = 255; if (b[0][x, y] < 0) b[0][x, y] = 0;
+                            r[1][x, y] += (int)(lightColor.Z * brightness1); if (r[1][x, y] > 255) r[1][x, y] = 255; if (r[1][x, y] < 0) r[1][x, y] = 0;
+                            g[1][x, y] += (int)(lightColor.Y * brightness1); if (g[1][x, y] > 255) g[1][x, y] = 255; if (g[1][x, y] < 0) g[1][x, y] = 0;
+                            b[1][x, y] += (int)(lightColor.X * brightness1); if (b[1][x, y] > 255) b[1][x, y] = 255; if (b[1][x, y] < 0) b[1][x, y] = 0;
+                            r[2][x, y] += (int)(lightColor.Z * brightness2); if (r[2][x, y] > 255) r[2][x, y] = 255; if (r[2][x, y] < 0) r[2][x, y] = 0;
+                            g[2][x, y] += (int)(lightColor.Y * brightness2); if (g[2][x, y] > 255) g[2][x, y] = 255; if (g[2][x, y] < 0) g[2][x, y] = 0;
+                            b[2][x, y] += (int)(lightColor.X * brightness2); if (b[2][x, y] > 255) b[2][x, y] = 255; if (b[2][x, y] < 0) b[2][x, y] = 0;
+
+                            luxelColor0 = Color.FromArgb(r[0][x, y], g[0][x, y], b[0][x, y]);
+                            luxelColor1 = Color.FromArgb(r[1][x, y], g[1][x, y], b[1][x, y]);
+                            luxelColor2 = Color.FromArgb(r[2][x, y], g[2][x, y], b[2][x, y]);
 
                             if (tX >= 0 && tY >= 0 && tX < TextureDims && tY < TextureDims)
                             {
                                 int offset = (tX + tY * TextureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
-                                if (luxelColor.R + luxelColor.G + luxelColor.B > bitmapData[offset + 2] + bitmapData[offset + 1] + bitmapData[offset + 0])
+                                if (luxelColor0.R + luxelColor0.G + luxelColor0.B > bitmaps[0][offset + 2] + bitmaps[0][offset + 1] + bitmaps[0][offset + 0])
                                 {
-                                    bitmapData[offset + 0] = luxelColor.R;
-                                    bitmapData[offset + 1] = luxelColor.G;
-                                    bitmapData[offset + 2] = luxelColor.B;
+                                    bitmaps[0][offset + 0] = luxelColor0.R;
+                                    bitmaps[0][offset + 1] = luxelColor0.G;
+                                    bitmaps[0][offset + 2] = luxelColor0.B;
+                                }
+                                if (luxelColor1.R + luxelColor1.G + luxelColor1.B > bitmaps[1][offset + 2] + bitmaps[1][offset + 1] + bitmaps[1][offset + 0])
+                                {
+                                    bitmaps[1][offset + 0] = luxelColor1.R;
+                                    bitmaps[1][offset + 1] = luxelColor1.G;
+                                    bitmaps[1][offset + 2] = luxelColor1.B;
+                                }
+                                if (luxelColor2.R + luxelColor2.G + luxelColor2.B > bitmaps[2][offset + 2] + bitmaps[2][offset + 1] + bitmaps[2][offset + 0])
+                                {
+                                    bitmaps[2][offset + 0] = luxelColor2.R;
+                                    bitmaps[2][offset + 1] = luxelColor2.G;
+                                    bitmaps[2][offset + 2] = luxelColor2.B;
                                 }
                             }
                         }

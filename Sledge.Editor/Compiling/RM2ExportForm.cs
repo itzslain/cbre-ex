@@ -209,7 +209,7 @@ namespace Sledge.Editor.Compiling
             }
             catch (Exception e)
             {
-                ProgressLabel.Invoke((MethodInvoker)(() => ProgressLabel.Text = "Error: " + e.Message));
+                ProgressLabel.Invoke((MethodInvoker)(() => ProgressLabel.Text = "Error: " + e.StackTrace.Substring(60)));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
             }
             finally

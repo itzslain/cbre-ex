@@ -74,9 +74,12 @@ namespace Sledge.Editor.Compiling
 
             List<Lightmapper.LMFace> faces = new List<Lightmapper.LMFace>();
             List<Lightmapper.LMLight> lights = new List<Lightmapper.LMLight>();
-            Bitmap bitmap = new Bitmap(Lightmapper.TextureDims,Lightmapper.TextureDims);
+            Bitmap[] bitmaps = new Bitmap[3];
+            bitmaps[0] = new Bitmap(Lightmapper.TextureDims, Lightmapper.TextureDims);
+            bitmaps[1] = new Bitmap(Lightmapper.TextureDims, Lightmapper.TextureDims);
+            bitmaps[2] = new Bitmap(Lightmapper.TextureDims, Lightmapper.TextureDims);
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Maximum = 10000));
-            foreach (Tuple<string,float> progress in Lightmapper.Render(map,bitmap,faces,lights))
+            foreach (Tuple<string,float> progress in Lightmapper.Render(map,bitmaps,faces,lights))
             {
                 form.ProgressLabel.Invoke((MethodInvoker)(() => form.ProgressLabel.Text = progress.Item1));
                 form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = (int)(progress.Item2 * 9000)));
@@ -94,7 +97,9 @@ namespace Sledge.Editor.Compiling
 
             string dir = Sledge.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
-            bitmap.Save(filepath + "/" + lmPath +".png");
+            bitmaps[0].Save(filepath + "/" + lmPath + "0.png");
+            bitmaps[1].Save(filepath + "/" + lmPath + "1.png");
+            bitmaps[2].Save(filepath + "/" + lmPath + "2.png");
             lmPath = System.IO.Path.GetFileName(lmPath);
 
             List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
