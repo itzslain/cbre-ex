@@ -160,27 +160,20 @@ namespace Sledge.Editor.Rendering.Arrays
             {
                 // key = false -> no model, put in the untextured group
                 // key = true  -> model, put in the entity group
-                StartSubset(Textured);
+                if (!g.Key) StartSubset(Textured);
                 foreach (var entity in g)
                 {
+                    if (g.Key) StartSubset(Textured);
+                    PushOffset(entity);
                     foreach (var face in entity.GetBoxFaces())
                     {
                         var index = PushData(Convert(face));
                         if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, face.GetTriangleIndices());
                         if (!face.Parent.IsRenderHidden2D) PushIndex(EntityWireframe, index, face.GetLineIndices());
                     }
+                    if (g.Key) PushSubset(Textured, entity);
                 }
-                PushSubset(Textured, (ITexture)null);
-
-                if (g.Key)
-                {
-                    foreach (var entity in g)
-                    {
-                        StartSubset(Textured);
-                        PushOffset(entity);
-                        PushSubset(Textured, entity);
-                    }
-                }
+                if (!g.Key) PushSubset(Textured, (ITexture)null);
             }
 
             PushSubset(EntityWireframe, (object)null);

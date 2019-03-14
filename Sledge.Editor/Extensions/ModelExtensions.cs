@@ -162,7 +162,16 @@ namespace Sledge.Editor.Extensions
 
         public static int HideDistance(this Entity entity)
         {
-            return HasModel(entity) ? Sledge.Settings.View.ModelRenderDistance : int.MaxValue;
+            if (HasModel(entity))
+            {
+                int dist = Sledge.Settings.View.ModelRenderDistance;
+                decimal scale = entity.EntityData.GetPropertyCoordinate("scale", Coordinate.One).VectorMagnitude();
+                return (int)(scale * dist);
+            }
+            else
+            {
+                return int.MaxValue;
+            }
         }
     }
 }

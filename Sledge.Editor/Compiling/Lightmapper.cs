@@ -896,16 +896,13 @@ namespace Sledge.Editor.Compiling
                             {
                                 LMFace otherFace = applicableBlockerFaces[i];
                                 CoordinateF hit = otherFace.GetIntersectionPoint(lineTester);
-                                if (hit != null)
+                                if (hit != null && (hit - pointOnPlane).LengthSquared() > 25.0f && Math.Abs((hit - pointOnPlane).Dot(targetFace.Plane.Normal)) > 15.0f)
                                 {
                                     applicableBlockerFaces.RemoveAt(i);
                                     applicableBlockerFaces.Insert(0, otherFace);
-                                    if ((hit - pointOnPlane).LengthSquared() > 25.0f && Math.Abs((hit - pointOnPlane).Dot(targetFace.Plane.Normal)) > 15.0f)
-                                    {
-                                        illuminated[x, y] = false;
-                                        i++;
-                                        break;
-                                    }
+                                    illuminated[x, y] = false;
+                                    i++;
+                                    break;
                                 }
                             }
 #endif
