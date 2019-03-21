@@ -27,7 +27,7 @@ namespace Sledge.Providers.Model
             if (header == "NODE")
             {
                 string name = reader.ReadNullTerminatedString();
-                float posX = reader.ReadSingle(); float posZ = reader.ReadSingle(); float posY = reader.ReadSingle();
+                float posX = -reader.ReadSingle(); float posZ = reader.ReadSingle(); float posY = reader.ReadSingle();
                 float scaleX = reader.ReadSingle(); float scaleZ = reader.ReadSingle(); float scaleY = reader.ReadSingle();
                 float rotX = reader.ReadSingle(); float rotY = reader.ReadSingle(); float rotZ = reader.ReadSingle(); float rotW = reader.ReadSingle();
 
@@ -53,7 +53,7 @@ namespace Sledge.Providers.Model
 
                 while (reader.BaseStream.Position - initialVertPos < vertsSize)
                 {
-                    float x = reader.ReadSingle()+relative.X; float z = reader.ReadSingle() + relative.Z; float y = reader.ReadSingle() + relative.Y;
+                    float x = -reader.ReadSingle()+relative.X; float z = reader.ReadSingle() + relative.Z; float y = reader.ReadSingle() + relative.Y;
                     float normalX = 0.0f; float normalY = 1.0f; float normalZ = 0.0f;
                     if ((vertFlags&1) != 0)
                     {
@@ -94,10 +94,18 @@ namespace Sledge.Providers.Model
 
                     int brushID2 = reader.ReadInt32(); //wtf???
 
+                    int[] triInds = new int[3];
+                    int indNum = 0;
                     while (reader.BaseStream.Position - initialTriPos < trisSize)
                     {
-                        int ind = reader.ReadInt32();
-                        mesh.Vertices.Add(new MeshVertex(vertices[ind].Location, vertices[ind].Normal, vertices[ind].BoneWeightings, vertices[ind].TextureU, vertices[ind].TextureV));
+                        triInds[indNum] = reader.ReadInt32(); indNum = (indNum+1)%3;
+                        if (indNum==0)
+                        {
+                            mesh.Vertices.Add(new MeshVertex(vertices[triInds[0]].Location, vertices[triInds[0]].Normal, vertices[triInds[0]].BoneWeightings, vertices[triInds[0]].TextureU, vertices[triInds[0]].TextureV));
+                            mesh.Vertices.Add(new MeshVertex(vertices[triInds[2]].Location, vertices[triInds[2]].Normal, vertices[triInds[2]].BoneWeightings, vertices[triInds[2]].TextureU, vertices[triInds[2]].TextureV));
+                            mesh.Vertices.Add(new MeshVertex(vertices[triInds[1]].Location, vertices[triInds[1]].Normal, vertices[triInds[1]].BoneWeightings, vertices[triInds[1]].TextureU, vertices[triInds[1]].TextureV));
+                        }
+                        
                     }
                 }
 
