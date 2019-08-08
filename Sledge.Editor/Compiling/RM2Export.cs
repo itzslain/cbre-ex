@@ -29,31 +29,21 @@ namespace Sledge.Editor.Compiling
             public CoordinateF Location;
         }
 
-        enum RM2Parts
+        enum RM2Chunks
         {
-            TEXTURES = 1,
-            OPAQUE = 2,
-            ALPHA = 3,
-            INVISIBLE = 4,
-            SCREEN = 5,
-            WAYPOINT = 6,
-            POINTLIGHT = 7,
-            SPOTLIGHT = 8,
-            SOUNDEMITTER = 9,
-            PROP = 10,
+            Textures = 1,
+            VisibleGeometry = 2,
+            InvisibleGeometry = 3,
+            Waypoint = 4,
+            PointLight = 5,
+            Spotlight = 6,
+            Prop = 7
         };
         
-        enum RM2LoadFlags
+        enum RM2TextureLoadFlags
         {
-            COLOR = 1,
-            ALPHA = 2
-        };
-        
-        enum RM2BlendFlags
-        {
-            NORMAL = 0,
-            DIFFUSE = 1,
-            LM = 2
+            Opaque = 1,
+            Alpha = 2
         };
         
         private static void WriteByteString(BinaryWriter writer,string str)
@@ -104,8 +94,6 @@ namespace Sledge.Editor.Compiling
 
             List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
 
-            IEnumerable<Entity> soundEmitters = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "soundemitter").OfType<Entity>();
-
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
 
             form.ProgressLabel.Invoke((MethodInvoker)(() => form.ProgressLabel.Text = "Determining waypoint visibility..."));
@@ -150,31 +138,27 @@ namespace Sledge.Editor.Compiling
             br.Write((byte)'2');
 
             //textures
-            List<Tuple<string, byte, byte>> textures = new List<Tuple<string, byte, byte>>();
-            byte flag = (byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.DIFFUSE);
+            List<Tuple<string, byte>> textures = new List<Tuple<string, byte>>();
+            byte flag = (byte)RM2TextureLoadFlags.Opaque;
             foreach (Lightmapper.LMFace face in faces)
             {
-                if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte, byte>(face.Texture,flag,0));
+                if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture,flag));
             }
-            flag = (byte)(((int)(RM2LoadFlags.ALPHA) << 4) | (int)RM2BlendFlags.NORMAL);
+            flag = (byte)RM2TextureLoadFlags.Alpha;
             foreach (Face face in transparentFaces)
             {
-                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte, byte>(face.Texture.Name,flag,0));
+                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte>(face.Texture.Name,flag));
             }
-            flag = (byte)(((int)(RM2LoadFlags.COLOR) << 4) | (int)RM2BlendFlags.LM);
-            textures.Add(new Tuple<string, byte, byte>(lmPath,flag,1));
 
-            br.Write((byte)RM2Parts.TEXTURES);
+            br.Write((byte)RM2Chunks.Textures);
             br.Write((byte)textures.Count);
-            foreach (Tuple<string, byte, byte> tex in textures)
+            foreach (Tuple<string, byte> tex in textures)
             {
                 WriteByteString(br, tex.Item1);
                 br.Write(tex.Item2);
-                br.Write(tex.Item3);
             }
 
             //mesh
-
             int vertCount;
             int vertOffset;
             int triCount;
@@ -198,9 +182,8 @@ namespace Sledge.Editor.Compiling
                         triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
-                    br.Write((byte)RM2Parts.OPAQUE);
-                    br.Write((byte)textures.Count);
-                    br.Write((byte)(i + 1));
+                    br.Write((byte)RM2Chunks.VisibleGeometry);
+                    br.Write((byte)i);
 
                     if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
                     br.Write((short)vertCount);
@@ -247,9 +230,8 @@ namespace Sledge.Editor.Compiling
                         triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
-                    br.Write((byte)RM2Parts.ALPHA);
-                    br.Write((byte)(i + 1));
-                    br.Write((byte)0);
+                    br.Write((byte)RM2Chunks.VisibleGeometry);
+                    br.Write((byte)i);
 
                     if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
                     br.Write((short)vertCount);
@@ -261,9 +243,10 @@ namespace Sledge.Editor.Compiling
                             br.Write((float)face.Vertices[j].Location.Z);
                             br.Write((float)face.Vertices[j].Location.Y);
 
-                            br.Write((byte)255); //r
-                            br.Write((byte)255); //g
-                            br.Write((byte)255); //b
+                            //vertex color is not used since we don't do vertex lighting anymore
+                            //br.Write((byte)255); //r
+                            //br.Write((byte)255); //g
+                            //br.Write((byte)255); //b
 
                             br.Write((float)face.Vertices[j].TextureU);
                             br.Write((float)face.Vertices[j].TextureV);
@@ -274,9 +257,16 @@ namespace Sledge.Editor.Compiling
                     br.Write((short)triCount);
                     foreach (Face face in tTrptFaces)
                     {
-                        foreach (uint ind in face.GetTriangleIndices())
+                        List<uint> indices = face.GetTriangleIndices().ToList();
+                        for (int k=0;k<indices.Count;k+=3)
                         {
-                            br.Write((short)(ind + vertOffset));
+                            //hardcoded double sided surfaces
+                            br.Write((short)indices[k]);
+                            br.Write((short)indices[k + 1]);
+                            br.Write((short)indices[k + 2]);
+                            br.Write((short)indices[k]);
+                            br.Write((short)indices[k + 2]);
+                            br.Write((short)indices[k + 1]);
                         }
 
                         vertOffset += face.Vertices.Count;
@@ -295,7 +285,7 @@ namespace Sledge.Editor.Compiling
                     triCount += face.GetTriangleIndices().Count() / 3;
                 }
 
-                br.Write((byte)RM2Parts.INVISIBLE);
+                br.Write((byte)RM2Chunks.InvisibleGeometry);
                 
                 if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
                 br.Write((short)vertCount);
@@ -322,7 +312,7 @@ namespace Sledge.Editor.Compiling
 
             foreach (Lightmapper.LMLight light in lights)
             {
-                br.Write((byte)RM2Parts.POINTLIGHT);
+                br.Write((byte)RM2Chunks.PointLight);
 
                 br.Write(light.Origin.X);
                 br.Write(light.Origin.Z);
@@ -333,12 +323,11 @@ namespace Sledge.Editor.Compiling
                 br.Write((byte)light.Color.X);
                 br.Write((byte)light.Color.Y);
                 br.Write((byte)light.Color.Z);
-                br.Write((byte)255); //intensity
             }
 
             foreach (Waypoint wp in waypoints)
             {
-                br.Write((byte)RM2Parts.WAYPOINT);
+                br.Write((byte)RM2Chunks.Waypoint);
 
                 br.Write(wp.Location.X);
                 br.Write(wp.Location.Z);
@@ -351,22 +340,9 @@ namespace Sledge.Editor.Compiling
                 br.Write((byte)0);
             }
 
-            foreach (Entity soundEmitter in soundEmitters)
-            {
-                br.Write((byte)RM2Parts.SOUNDEMITTER);
-
-                br.Write((float)soundEmitter.Origin.X);
-                br.Write((float)soundEmitter.Origin.Z);
-                br.Write((float)soundEmitter.Origin.Y);
-
-                br.Write((byte)int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
-
-                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range")));
-            }
-
             foreach (Entity prop in props)
             {
-                br.Write((byte)RM2Parts.PROP);
+                br.Write((byte)RM2Chunks.Prop);
 
                 WriteByteString(br, prop.EntityData.GetPropertyValue("file"));
 
