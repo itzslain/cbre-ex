@@ -40,7 +40,7 @@ namespace Sledge.Editor.Compiling
             Prop = 7
         };
         
-        enum RM2TextureLoadFlags
+        enum RM2TextureLoadFlag
         {
             Opaque = 1,
             Alpha = 2
@@ -139,12 +139,12 @@ namespace Sledge.Editor.Compiling
 
             //textures
             List<Tuple<string, byte>> textures = new List<Tuple<string, byte>>();
-            byte flag = (byte)RM2TextureLoadFlags.Opaque;
+            byte flag = (byte)RM2TextureLoadFlag.Opaque;
             foreach (Lightmapper.LMFace face in faces)
             {
                 if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture,flag));
             }
-            flag = (byte)RM2TextureLoadFlags.Alpha;
+            flag = (byte)RM2TextureLoadFlag.Alpha;
             foreach (Face face in transparentFaces)
             {
                 if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte>(face.Texture.Name,flag));
@@ -227,7 +227,7 @@ namespace Sledge.Editor.Compiling
                     foreach (Face face in tTrptFaces)
                     {
                         vertCount += face.Vertices.Count;
-                        triCount += face.GetTriangleIndices().Count() / 3;
+                        triCount += face.GetTriangleIndices().Count() * 2 / 3;
                     }
 
                     br.Write((byte)RM2Chunks.VisibleGeometry);
