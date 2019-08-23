@@ -195,9 +195,9 @@ namespace Sledge.Editor.Compiling
                             br.Write(face.Vertices[j].Location.Z);
                             br.Write(face.Vertices[j].Location.Y);
 
-                            br.Write((byte)255); //r
-                            br.Write((byte)255); //g
-                            br.Write((byte)255); //b
+                            //br.Write((byte)255); //r
+                            //br.Write((byte)255); //g
+                            //br.Write((byte)255); //b
 
                             br.Write(face.Vertices[j].DiffU);
                             br.Write(face.Vertices[j].DiffV);
