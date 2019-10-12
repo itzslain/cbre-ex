@@ -200,7 +200,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(404, 232);
+            this.ClientSize = new System.Drawing.Size(404, 231);
             this.Controls.Add(this.ambientColorBox);
             this.Controls.Add(this.ProgressLabel);
             this.Controls.Add(this.ProgressBar);
@@ -217,13 +217,13 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(420, 270);
+            this.MaximumSize = new System.Drawing.Size(600000, 600000);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(420, 270);
             this.Name = "RM2ExportForm";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "RM2ExportForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
             this.ResumeLayout(false);

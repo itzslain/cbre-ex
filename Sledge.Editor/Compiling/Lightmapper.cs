@@ -504,7 +504,7 @@ namespace Sledge.Editor.Compiling
                             FaceRenderThreads[i].Abort();
                         }
                     }
-                    throw new Exception(threadExceptions[0].Message);// + "\n" + threadExceptions[0].StackTrace);
+                    throw new Exception(threadExceptions[0].Message + "\n" + threadExceptions[0].StackTrace);
                 }
                 Thread.Yield();
             }

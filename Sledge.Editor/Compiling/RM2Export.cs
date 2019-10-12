@@ -167,7 +167,7 @@ namespace Sledge.Editor.Compiling
             //into several for collision optimization.
             //Making each face its own collision object is too slow, and merging all of
             //them together is not optimal either.
-            for (int i=0;i<textures.Count-1;i++)
+            for (int i=0;i<textures.Count;i++)
             {
                 IEnumerable<Lightmapper.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
                 vertCount = 0;
