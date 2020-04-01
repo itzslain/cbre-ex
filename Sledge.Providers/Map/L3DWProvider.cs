@@ -174,7 +174,7 @@ namespace Sledge.Providers.Map
                     float roll = br.ReadSingle();
                     newProperty = new Property();
                     newProperty.Key = "angles";
-                    newProperty.Value = pitch.ToString()+" "+yaw.ToString()+" "+roll.ToString();
+                    newProperty.Value = pitch.ToString().Replace(',', '.') + " "+yaw.ToString().Replace(',', '.') + " "+roll.ToString().Replace(',', '.');
 
                     entity.EntityData.Properties.Add(newProperty);
 
@@ -191,7 +191,7 @@ namespace Sledge.Providers.Map
 
                     newProperty = new Property();
                     newProperty.Key = "scale";
-                    newProperty.Value = xScale.ToString() + " " + yScale.ToString() + " " + zScale.ToString();
+                    newProperty.Value = xScale.ToString().Replace(',', '.') + " " + yScale.ToString().Replace(',', '.') + " " + zScale.ToString().Replace(',', '.');
 
                     entity.EntityData.Properties.Add(newProperty);
 
