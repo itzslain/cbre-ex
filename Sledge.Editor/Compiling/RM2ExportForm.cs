@@ -30,24 +30,24 @@ namespace Sledge.Editor.Compiling
             int dims = -1; int.TryParse(((TextBox)sender).Text,out dims);
             if (dims >= 512 && dims <= 4096)
             {
-                Lightmapper.TextureDims = dims;
+                Lightmap.Config.TextureDims = dims;
             }
             else
             {
-                ((TextBox)sender).Text = Lightmapper.TextureDims.ToString();
+                ((TextBox)sender).Text = Lightmap.Config.TextureDims.ToString();
             }
         }
 
         private void downscaleFactor_LostFocus(object sender, EventArgs e)
         {
             int factor = -1; int.TryParse(((TextBox)sender).Text, out factor);
-            if (factor >= 12 && factor <= 32)
+            if (factor >= 1 && factor <= 128)
             {
-                Lightmapper.DownscaleFactor = factor;
+                Lightmap.Config.DownscaleFactor = factor;
             }
             else
             {
-                ((TextBox)sender).Text = Lightmapper.DownscaleFactor.ToString();
+                ((TextBox)sender).Text = Lightmap.Config.DownscaleFactor.ToString();
             }
         }
 
@@ -56,11 +56,11 @@ namespace Sledge.Editor.Compiling
             int radius = -1; int.TryParse(((TextBox)sender).Text, out radius);
             if (radius >= 0 && radius <= 10)
             {
-                Lightmapper.BlurRadius = radius;
+                Lightmap.Config.BlurRadius = radius;
             }
             else
             {
-                ((TextBox)sender).Text = Lightmapper.BlurRadius.ToString();
+                ((TextBox)sender).Text = Lightmap.Config.BlurRadius.ToString();
             }
         }
 
@@ -85,7 +85,7 @@ namespace Sledge.Editor.Compiling
                     export.Enabled = false;
                     cancel.Enabled = true;
 
-                    ProgressLabel.Text = "Starting...";
+                    ProgressLog.Text = "Starting...";
                     ProgressBar.Enabled = true;
 
                     exportThread = new Thread(PerformExport);
@@ -99,12 +99,12 @@ namespace Sledge.Editor.Compiling
             int r = -1; int.TryParse(((TextBox)sender).Text, out r);
             if (r >=0 && r<=255)
             {
-                Lightmapper.AmbientColor = Color.FromArgb(r, Lightmapper.AmbientColor.G, Lightmapper.AmbientColor.B);
-                ambientColorBox.BackColor = Lightmapper.AmbientColor;
+                Lightmap.Config.AmbientColor = Color.FromArgb(r, Lightmap.Config.AmbientColor.G, Lightmap.Config.AmbientColor.B);
+                ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
             }
             else
             {
-                ((TextBox)sender).Text = Lightmapper.AmbientColor.R.ToString();
+                ((TextBox)sender).Text = Lightmap.Config.AmbientColor.R.ToString();
             }
         }
 
@@ -113,12 +113,12 @@ namespace Sledge.Editor.Compiling
             int g = -1; int.TryParse(((TextBox)sender).Text, out g);
             if (g >= 0 && g <= 255)
             {
-                Lightmapper.AmbientColor = Color.FromArgb(Lightmapper.AmbientColor.R, g, Lightmapper.AmbientColor.B);
-                ambientColorBox.BackColor = Lightmapper.AmbientColor;
+                Lightmap.Config.AmbientColor = Color.FromArgb(Lightmap.Config.AmbientColor.R, g, Lightmap.Config.AmbientColor.B);
+                ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
             }
             else
             {
-                ((TextBox)sender).Text = Lightmapper.AmbientColor.G.ToString();
+                ((TextBox)sender).Text = Lightmap.Config.AmbientColor.G.ToString();
             }
         }
 
@@ -127,12 +127,12 @@ namespace Sledge.Editor.Compiling
             int b = -1; int.TryParse(((TextBox)sender).Text, out b);
             if (b >= 0 && b <= 255)
             {
-                Lightmapper.AmbientColor = Color.FromArgb(Lightmapper.AmbientColor.R, Lightmapper.AmbientColor.G, b);
-                ambientColorBox.BackColor = Lightmapper.AmbientColor;
+                Lightmap.Config.AmbientColor = Color.FromArgb(Lightmap.Config.AmbientColor.R, Lightmap.Config.AmbientColor.G, b);
+                ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
             }
             else
             {
-                ((TextBox)sender).Text = Lightmapper.AmbientColor.B.ToString();
+                ((TextBox)sender).Text = Lightmap.Config.AmbientColor.B.ToString();
             }
         }
 
@@ -141,8 +141,8 @@ namespace Sledge.Editor.Compiling
             int r = -1; int.TryParse(((TextBox)sender).Text, out r);
             if (r >= 0 && r <= 255)
             {
-                Lightmapper.AmbientColor = Color.FromArgb(r, Lightmapper.AmbientColor.G, Lightmapper.AmbientColor.B);
-                ambientColorBox.BackColor = Lightmapper.AmbientColor;
+                Lightmap.Config.AmbientColor = Color.FromArgb(r, Lightmap.Config.AmbientColor.G, Lightmap.Config.AmbientColor.B);
+                ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
             }
         }
 
@@ -151,8 +151,8 @@ namespace Sledge.Editor.Compiling
             int g = -1; int.TryParse(((TextBox)sender).Text, out g);
             if (g >= 0 && g <= 255)
             {
-                Lightmapper.AmbientColor = Color.FromArgb(Lightmapper.AmbientColor.R, g, Lightmapper.AmbientColor.B);
-                ambientColorBox.BackColor = Lightmapper.AmbientColor;
+                Lightmap.Config.AmbientColor = Color.FromArgb(Lightmap.Config.AmbientColor.R, g, Lightmap.Config.AmbientColor.B);
+                ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
             }
         }
 
@@ -161,8 +161,8 @@ namespace Sledge.Editor.Compiling
             int b = -1; int.TryParse(((TextBox)sender).Text, out b);
             if (b >= 0 && b <= 255)
             {
-                Lightmapper.AmbientColor = Color.FromArgb(Lightmapper.AmbientColor.R, Lightmapper.AmbientColor.G, b);
-                ambientColorBox.BackColor = Lightmapper.AmbientColor;
+                Lightmap.Config.AmbientColor = Color.FromArgb(Lightmap.Config.AmbientColor.R, Lightmap.Config.AmbientColor.G, b);
+                ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
             }
         }
 
@@ -174,11 +174,11 @@ namespace Sledge.Editor.Compiling
                 {
                     if (cb.ShowDialog() == DialogResult.OK)
                     {
-                        Lightmapper.AmbientColor = cb.Color;
-                        ambientColorBox.BackColor = Lightmapper.AmbientColor;
-                        ambientRed.Text = Lightmapper.AmbientColor.R.ToString();
-                        ambientGreen.Text = Lightmapper.AmbientColor.G.ToString();
-                        ambientBlue.Text = Lightmapper.AmbientColor.B.ToString();
+                        Lightmap.Config.AmbientColor = cb.Color;
+                        ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
+                        ambientRed.Text = Lightmap.Config.AmbientColor.R.ToString();
+                        ambientGreen.Text = Lightmap.Config.AmbientColor.G.ToString();
+                        ambientBlue.Text = Lightmap.Config.AmbientColor.B.ToString();
                     }
                 }
             }
@@ -193,23 +193,28 @@ namespace Sledge.Editor.Compiling
             }
             catch (ThreadAbortException e)
             {
-                if (Lightmapper.FaceRenderThreads != null)
+                foreach (Thread thread in (Lightmap.Lightmapper.FaceRenderThreads ?? Enumerable.Empty<Thread>()))
                 {
-                    foreach (Thread thread in Lightmapper.FaceRenderThreads)
+                    if (thread.IsAlive)
                     {
-                        if (thread.IsAlive)
-                        {
-                            thread.Abort();
-                        }
+                        thread.Abort();
                     }
                 }
                 
-                ProgressLabel.Invoke((MethodInvoker)(() => ProgressLabel.Text = "Cancelled by the user"));
+                ProgressLog.Invoke((MethodInvoker)(() => ProgressLog.AppendText("\nCancelled by the user")));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
             }
             catch (Exception e)
             {
-                ProgressLabel.Invoke((MethodInvoker)(() => ProgressLabel.Text = "Error: " + e.Message + " " + e.StackTrace));
+                ProgressLog.Invoke((MethodInvoker)(() =>
+                {
+                    ProgressLog.SelectionStart = ProgressLog.TextLength;
+                    ProgressLog.SelectionLength = 0;
+
+                    ProgressLog.SelectionColor = Color.Red;
+                    ProgressLog.AppendText("\nError: " + e.Message + " " + e.StackTrace);
+                    ProgressLog.SelectionColor = ProgressLog.ForeColor;
+                }));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
             }
             finally

@@ -62,17 +62,17 @@ namespace Sledge.Editor.Compiling
             filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rm2";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
-            List<Lightmapper.LMFace> faces = new List<Lightmapper.LMFace>();
-            List<Lightmapper.LMLight> lights = new List<Lightmapper.LMLight>();
+            List<Lightmap.LMFace> faces = new List<Lightmap.LMFace>();
+            List<Lightmap.Light> lights = new List<Lightmap.Light>();
             Bitmap[] bitmaps = new Bitmap[3];
-            bitmaps[0] = new Bitmap(Lightmapper.TextureDims, Lightmapper.TextureDims);
-            bitmaps[1] = new Bitmap(Lightmapper.TextureDims, Lightmapper.TextureDims);
-            bitmaps[2] = new Bitmap(Lightmapper.TextureDims, Lightmapper.TextureDims);
+            bitmaps[0] = new Bitmap(Lightmap.Config.TextureDims, Lightmap.Config.TextureDims);
+            bitmaps[1] = new Bitmap(Lightmap.Config.TextureDims, Lightmap.Config.TextureDims);
+            bitmaps[2] = new Bitmap(Lightmap.Config.TextureDims, Lightmap.Config.TextureDims);
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Maximum = 10000));
-            foreach (Tuple<string,float> progress in Lightmapper.Render(map,bitmaps,faces,lights))
+            foreach (Lightmap.Progress progress in Lightmap.Lightmapper.Render(map,bitmaps,faces,lights))
             {
-                form.ProgressLabel.Invoke((MethodInvoker)(() => form.ProgressLabel.Text = progress.Item1));
-                form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = (int)(progress.Item2 * 9000)));
+                form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\n"+progress.Message)));
+                form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = (int)(progress.Amount * 9000)));
             }
 
             IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x =>
@@ -96,7 +96,7 @@ namespace Sledge.Editor.Compiling
 
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
 
-            form.ProgressLabel.Invoke((MethodInvoker)(() => form.ProgressLabel.Text = "Determining waypoint visibility..."));
+            form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDetermining waypoint visibility...")));
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 9100));
 
             for (int i = 0; i < waypoints.Count; i++)
@@ -112,7 +112,7 @@ namespace Sledge.Editor.Compiling
                         if (waypoints[j].Connections.Contains(i)) waypoints[i].Connections.Add(j);
                     }
                 }
-                foreach (Lightmapper.LMFace face in faces)
+                foreach (Lightmap.LMFace face in faces)
                 {
                     for (int j = 0; j < waypoints[i].Connections.Count; j++)
                     {
@@ -140,7 +140,7 @@ namespace Sledge.Editor.Compiling
             //textures
             List<Tuple<string, byte>> textures = new List<Tuple<string, byte>>();
             byte flag = (byte)RM2TextureLoadFlag.Opaque;
-            foreach (Lightmapper.LMFace face in faces)
+            foreach (Lightmap.LMFace face in faces)
             {
                 if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture,flag));
             }
@@ -169,14 +169,14 @@ namespace Sledge.Editor.Compiling
             //them together is not optimal either.
             for (int i=0;i<textures.Count;i++)
             {
-                IEnumerable<Lightmapper.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
+                IEnumerable<Lightmap.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
                 vertCount = 0;
                 vertOffset = 0;
                 triCount = 0;
 
                 if (tLmFaces.Count() > 0)
                 {
-                    foreach (Lightmapper.LMFace face in tLmFaces)
+                    foreach (Lightmap.LMFace face in tLmFaces)
                     {
                         vertCount += face.Vertices.Count;
                         triCount += face.GetTriangleIndices().Count() / 3;
@@ -187,7 +187,7 @@ namespace Sledge.Editor.Compiling
 
                     if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
                     br.Write((short)vertCount);
-                    foreach (Lightmapper.LMFace face in tLmFaces)
+                    foreach (Lightmap.LMFace face in tLmFaces)
                     {
                         for (int j = 0; j < face.Vertices.Count; j++)
                         {
@@ -206,7 +206,7 @@ namespace Sledge.Editor.Compiling
                         }
                     }
                     br.Write((short)triCount);
-                    foreach (Lightmapper.LMFace face in tLmFaces)
+                    foreach (Lightmap.LMFace face in tLmFaces)
                     {
                         foreach (uint ind in face.GetTriangleIndices())
                         {
@@ -310,7 +310,7 @@ namespace Sledge.Editor.Compiling
                 }
             }
 
-            foreach (Lightmapper.LMLight light in lights)
+            foreach (Lightmap.Light light in lights)
             {
                 br.Write((byte)RM2Chunks.PointLight);
 
@@ -364,7 +364,7 @@ namespace Sledge.Editor.Compiling
             br.Dispose();
             stream.Dispose();
 
-            form.ProgressLabel.Invoke((MethodInvoker)(() => form.ProgressLabel.Text = "Done!"));
+            form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDone!")));
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 10000));
         }
     }

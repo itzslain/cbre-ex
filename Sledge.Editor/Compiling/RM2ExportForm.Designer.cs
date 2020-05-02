@@ -42,8 +42,8 @@
             this.export = new System.Windows.Forms.Button();
             this.cancel = new System.Windows.Forms.Button();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
-            this.ProgressLabel = new System.Windows.Forms.Label();
             this.ambientColorBox = new System.Windows.Forms.Panel();
+            this.ProgressLog = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -84,27 +84,33 @@
             // 
             // textureDims
             // 
+            this.textureDims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textureDims.Location = new System.Drawing.Point(121, 45);
             this.textureDims.Name = "textureDims";
-            this.textureDims.Size = new System.Drawing.Size(179, 20);
+            this.textureDims.Size = new System.Drawing.Size(554, 20);
             this.textureDims.TabIndex = 4;
             this.textureDims.Text = "2048";
             this.textureDims.LostFocus += new System.EventHandler(this.textureDims_LostFocus);
             // 
             // downscaleFactor
             // 
+            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.downscaleFactor.Location = new System.Drawing.Point(121, 68);
             this.downscaleFactor.Name = "downscaleFactor";
-            this.downscaleFactor.Size = new System.Drawing.Size(179, 20);
+            this.downscaleFactor.Size = new System.Drawing.Size(554, 20);
             this.downscaleFactor.TabIndex = 5;
             this.downscaleFactor.Text = "10";
             this.downscaleFactor.LostFocus += new System.EventHandler(this.downscaleFactor_LostFocus);
             // 
             // blurRadius
             // 
+            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.blurRadius.Location = new System.Drawing.Point(121, 92);
             this.blurRadius.Name = "blurRadius";
-            this.blurRadius.Size = new System.Drawing.Size(179, 20);
+            this.blurRadius.Size = new System.Drawing.Size(554, 20);
             this.blurRadius.TabIndex = 6;
             this.blurRadius.Text = "2";
             this.blurRadius.LostFocus += new System.EventHandler(this.blurRadius_LostFocus);
@@ -124,7 +130,7 @@
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
-            this.ambientRed.Text = Lightmapper.AmbientColor.R.ToString();
+            this.ambientRed.Text = "30";
             this.ambientRed.TextChanged += new System.EventHandler(this.ambientRed_TextChanged);
             this.ambientRed.LostFocus += new System.EventHandler(this.ambientRed_LostFocus);
             // 
@@ -134,7 +140,7 @@
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
-            this.ambientGreen.Text = Lightmapper.AmbientColor.G.ToString();
+            this.ambientGreen.Text = "30";
             this.ambientGreen.TextChanged += new System.EventHandler(this.ambientGreen_TextChanged);
             this.ambientGreen.LostFocus += new System.EventHandler(this.ambientGreen_LostFocus);
             // 
@@ -144,13 +150,14 @@
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
-            this.ambientBlue.Text = Lightmapper.AmbientColor.B.ToString();
+            this.ambientBlue.Text = "30";
             this.ambientBlue.TextChanged += new System.EventHandler(this.ambientBlue_TextChanged);
             this.ambientBlue.LostFocus += new System.EventHandler(this.ambientBlue_LostFocus);
             // 
             // export
             // 
-            this.export.Location = new System.Drawing.Point(317, 168);
+            this.export.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.export.Location = new System.Drawing.Point(519, 404);
             this.export.Name = "export";
             this.export.Size = new System.Drawing.Size(75, 23);
             this.export.TabIndex = 12;
@@ -160,8 +167,9 @@
             // 
             // cancel
             // 
+            this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancel.Enabled = false;
-            this.cancel.Location = new System.Drawing.Point(317, 197);
+            this.cancel.Location = new System.Drawing.Point(600, 404);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 13;
@@ -171,38 +179,43 @@
             // 
             // ProgressBar
             // 
+            this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressBar.Enabled = false;
-            this.ProgressBar.Location = new System.Drawing.Point(16, 168);
+            this.ProgressBar.Location = new System.Drawing.Point(16, 404);
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(295, 23);
+            this.ProgressBar.Size = new System.Drawing.Size(497, 23);
             this.ProgressBar.TabIndex = 14;
-            // 
-            // ProgressLabel
-            // 
-            this.ProgressLabel.AutoSize = true;
-            this.ProgressLabel.Location = new System.Drawing.Point(17, 197);
-            this.ProgressLabel.Name = "ProgressLabel";
-            this.ProgressLabel.Size = new System.Drawing.Size(16, 13);
-            this.ProgressLabel.TabIndex = 15;
-            this.ProgressLabel.Text = "...";
-            this.ProgressLabel.Click += new System.EventHandler(this.label6_Click);
             // 
             // ambientColorBox
             // 
-            this.ambientColorBox.BackColor = Lightmapper.AmbientColor;
+            this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.ambientColorBox.Location = new System.Drawing.Point(263, 131);
             this.ambientColorBox.Name = "ambientColorBox";
-            this.ambientColorBox.Size = new System.Drawing.Size(37, 20);
+            this.ambientColorBox.Size = new System.Drawing.Size(46, 20);
             this.ambientColorBox.TabIndex = 16;
             this.ambientColorBox.Click += new System.EventHandler(this.ambientColorBox_Click);
+            // 
+            // ProgressLog
+            // 
+            this.ProgressLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ProgressLog.HideSelection = false;
+            this.ProgressLog.Location = new System.Drawing.Point(20, 157);
+            this.ProgressLog.Name = "ProgressLog";
+            this.ProgressLog.ReadOnly = true;
+            this.ProgressLog.Size = new System.Drawing.Size(655, 241);
+            this.ProgressLog.TabIndex = 17;
+            this.ProgressLog.Text = "";
             // 
             // RM2ExportForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(404, 231);
+            this.ClientSize = new System.Drawing.Size(687, 439);
+            this.Controls.Add(this.ProgressLog);
             this.Controls.Add(this.ambientColorBox);
-            this.Controls.Add(this.ProgressLabel);
             this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.export);
@@ -217,9 +230,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(600000, 600000);
-            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(420, 270);
             this.Name = "RM2ExportForm";
             this.ShowIcon = false;
@@ -247,7 +258,7 @@
         private System.Windows.Forms.Button export;
         private System.Windows.Forms.Button cancel;
         public System.Windows.Forms.ProgressBar ProgressBar;
-        public System.Windows.Forms.Label ProgressLabel;
         private System.Windows.Forms.Panel ambientColorBox;
+        public System.Windows.Forms.RichTextBox ProgressLog;
     }
 }
