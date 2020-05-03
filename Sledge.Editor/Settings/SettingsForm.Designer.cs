@@ -1617,23 +1617,28 @@ namespace Sledge.Editor.Settings
             // 
             // modelPath
             // 
+            this.modelPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.modelPath.Location = new System.Drawing.Point(75, 47);
             this.modelPath.Name = "modelPath";
-            this.modelPath.Size = new System.Drawing.Size(149, 20);
+            this.modelPath.Size = new System.Drawing.Size(568, 20);
             this.modelPath.TabIndex = 5;
             this.modelPath.TextChanged += new System.EventHandler(this.modelPath_TextChanged);
             // 
             // texturePath
             // 
+            this.texturePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.texturePath.Location = new System.Drawing.Point(75, 15);
             this.texturePath.Name = "texturePath";
-            this.texturePath.Size = new System.Drawing.Size(149, 20);
+            this.texturePath.Size = new System.Drawing.Size(568, 20);
             this.texturePath.TabIndex = 4;
             this.texturePath.TextChanged += new System.EventHandler(this.texturePath_TextChanged);
             // 
             // browseModels
             // 
-            this.browseModels.Location = new System.Drawing.Point(230, 47);
+            this.browseModels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.browseModels.Location = new System.Drawing.Point(649, 45);
             this.browseModels.Name = "browseModels";
             this.browseModels.Size = new System.Drawing.Size(75, 23);
             this.browseModels.TabIndex = 3;
@@ -1643,7 +1648,8 @@ namespace Sledge.Editor.Settings
             // 
             // browseTextures
             // 
-            this.browseTextures.Location = new System.Drawing.Point(230, 15);
+            this.browseTextures.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.browseTextures.Location = new System.Drawing.Point(649, 12);
             this.browseTextures.Name = "browseTextures";
             this.browseTextures.Size = new System.Drawing.Size(75, 23);
             this.browseTextures.TabIndex = 2;

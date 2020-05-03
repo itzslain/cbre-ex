@@ -195,29 +195,6 @@
     <Compile Include="Brushes\TetrahedronBrush.cs" />
     <Compile Include="Brushes\WedgeBrush.cs" />
     <Compile Include="Clipboard\ClipboardManager.cs" />
-    <Compile Include="Compiling\Batch.cs" />
-    <Compile Include="Compiling\BatchCompileStep.cs" />
-    <Compile Include="Compiling\CompileDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Compiling\CompileDialog.Designer.cs">
-      <DependentUpon>CompileDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Compiling\CompileLogTracer.cs" />
-    <Compile Include="Compiling\CompileParameter.cs" />
-    <Compile Include="Compiling\CompileParameterPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Compiling\CompileParameterPanel.Designer.cs">
-      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Compiling\CompileParameterType.cs" />
-    <Compile Include="Compiling\CompilePreset.cs" />
-    <Compile Include="Compiling\CompileSpecification.cs" />
-    <Compile Include="Compiling\CompileTool.cs" />
-    <Compile Include="Compiling\HeadingButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Compiling\Lightmap\Config.cs" />
     <Compile Include="Compiling\Lightmap\LMFace.cs" />
     <Compile Include="Compiling\Lightmap\LightmapGroup.cs" />
@@ -354,30 +331,6 @@
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\VMTool\VMError.cs" />
-    <Compile Include="Tools\CordonTool.cs" />
-    <Compile Include="Tools\DecalTool.cs" />
-    <Compile Include="Tools\DisplacementForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tools\DisplacementForm.Designer.cs">
-      <DependentUpon>DisplacementForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\DisplacementTool.cs" />
-    <Compile Include="Tools\DisplacementTools\SelectTool.cs" />
-    <Compile Include="Tools\DisplacementTools\GeometryControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\DisplacementTools\GeometryControl.Designer.cs">
-      <DependentUpon>GeometryControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\DisplacementTools\GeometryTool.cs" />
-    <Compile Include="Tools\DisplacementTools\DisplacementSubTool.cs" />
-    <Compile Include="Tools\DisplacementTools\SelectControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\DisplacementTools\SelectControl.Designer.cs">
-      <DependentUpon>SelectControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\EntityTool.cs" />
     <Compile Include="Tools\SelectTool\TransformationTools\RotateTool.cs" />
     <Compile Include="Tools\SelectTool\TransformationTools\SkewTool.cs" />
@@ -675,12 +628,6 @@
     <EmbeddedResource Include="Brushes\Controls\TextControl.resx">
       <DependentUpon>TextControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Compiling\CompileDialog.resx">
-      <DependentUpon>CompileDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Compiling\CompileParameterPanel.resx">
-      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Compiling\RM2ExportForm.resx">
       <DependentUpon>RM2ExportForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -714,16 +661,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\VMTool\VMSidebarPanel.resx">
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\DisplacementForm.resx">
-      <DependentUpon>DisplacementForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\DisplacementTools\GeometryControl.resx">
-      <DependentUpon>GeometryControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\DisplacementTools\SelectControl.resx">
-      <DependentUpon>SelectControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\TextureTool\TextureApplicationForm.resx">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
@@ -863,7 +800,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Milestones.txt" />
-    <Content Include="Networking\NetworkingPlan.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
     <Content Include="ToolTextures\BLOCK_LIGHT.png">
@@ -1025,6 +961,7 @@
       <Name>Sledge.UI</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Resources\embedded_icons.txt"</PostBuildEvent>

@@ -547,66 +547,6 @@ namespace Sledge.Editor
             ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
         }
 
-        private void HistoryChanged()
-        {
-            UpdateDocumentTabs();
-        }
-
-        private void CompileStarted(Batch batch)
-        {
-            if (DockBottom.Hidden && Sledge.Settings.View.CompileOpenOutput) DockBottom.Hidden = false;
-        }
-
-        private void CompileFinished(Batch batch)
-        {
-            if (batch.Build.AfterRunGame)
-            {
-                if (batch.Build.AfterAskBeforeRun)
-                {
-                    if (MessageBox.Show(
-                        "The compile of " + batch.Document.MapFileName + " completed successfully.\n" +
-                        "Would you like to run the game now?",
-                        "Compile Successful!",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-                    {
-                        return;
-                    }
-                    var exe = batch.Game.GetExecutable();
-                    if (!File.Exists(exe))
-                    {
-                        MessageBox.Show(
-                            "The location of the game executable is incorrect. Please ensure that the game configuration has been set up correctly.",
-                            "Failed to launch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    var flags = String.Format("{0} +map \"{1}\" {2}", batch.Game.GetGameLaunchArgument(), batch.MapFileName, batch.Game.ExecutableParameters);
-                    try
-                    {
-                        Process.Start(exe, flags);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Launching game failed: " + ex.Message, "Failed to launch!",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
-            }
-        }
-
-        private void CompileFailed(Batch batch)
-        {
-            if (batch.Build.AfterRunGame && batch.Build.AfterAskBeforeRun)
-            {
-                MessageBox.Show(
-                    "The compile of " + batch.Document.MapFileName + " failed. If any errors were generated, " +
-                    "they will appear in the compile output panel.",
-                    "Compile Failed!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                if (DockBottom.Hidden) DockBottom.Hidden = false;
-            }
-        }
-
         private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e)
         {
             if (_closingDocumentTab) return;
