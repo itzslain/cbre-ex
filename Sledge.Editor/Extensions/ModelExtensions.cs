@@ -89,7 +89,7 @@ namespace Sledge.Editor.Extensions
                     cache.Add(model, mr);
                     return true;
                 }
-                catch
+                catch (Exception ex)
                 {
                     // Couldn't load
                     cache.Add(model, null);
@@ -107,30 +107,18 @@ namespace Sledge.Editor.Extensions
         {
             if (entity.ClassName == "model")
             {
-                return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"))+".b3d";
+                IEnumerable<string> extensions = new string[] { ".b3d", ".x", ".fbx" };
+                string propPath = Directories.ModelDir.Replace("\\","/");
+                if (propPath.Last() != '/') { propPath += "/"; }
+                string propName = System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
+                propPath += propName;
+                extensions = extensions.Where(ext => System.IO.File.Exists(propPath + ext));
+                if (extensions.Any())
+                {
+                    return propName + extensions.First();
+                }
             }
 
-            if (entity.GameData == null) return null;
-
-            var studio = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase))
-                         ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
-            if (studio == null) return null;
-
-            // First see if the studio behaviour forces a model...
-            if (String.Equals(studio.Name, "studio", StringComparison.InvariantCultureIgnoreCase)
-                && studio.Values.Count == 1 && !String.IsNullOrWhiteSpace(studio.Values[0]))
-            {
-                return studio.Values[0].Trim();
-            }
-
-            // Find the first property that is a studio type, or has a name of "model"...
-            var prop = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio);
-            if (prop == null) prop = entity.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, "model", StringComparison.InvariantCultureIgnoreCase));
-            if (prop != null)
-            {
-                var val = entity.EntityData.GetPropertyValue(prop.Name);
-                if (!String.IsNullOrWhiteSpace(val)) return val;
-            }
             return null;
         }
 

@@ -20,11 +20,24 @@ namespace Sledge.DataStructures.GameData
             MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
 
-            Classes.Add(new GameDataObject("light", "Point light source.", ClassType.Point));
-            Classes.Add(new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point));
+            var lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
+            lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
+            lightDataObj.Properties.Add(new Property("range", VariableType.Float) { DefaultValue = "1.0" });
+            Classes.Add(lightDataObj);
+            var spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
+            spotlightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
+            spotlightDataObj.Properties.Add(new Property("range", VariableType.Float) { DefaultValue = "1.0" });
+            spotlightDataObj.Properties.Add(new Property("innerconeangle", VariableType.Float) { DefaultValue = "45" });
+            spotlightDataObj.Properties.Add(new Property("outerconeangle", VariableType.Float) { DefaultValue = "90" });
+            spotlightDataObj.Properties.Add(new Property("angles", VariableType.Vector) { DefaultValue = "0 0 0" });
+            Classes.Add(spotlightDataObj);
             Classes.Add(new GameDataObject("waypoint", "AI waypoint.", ClassType.Point));
             Classes.Add(new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point));
-            Classes.Add(new GameDataObject("model", "Self-explanatory.", ClassType.Point));
+            var modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
+            modelDataObj.Properties.Add(new Property("file", VariableType.Other) { DefaultValue = "" });
+            modelDataObj.Properties.Add(new Property("angles", VariableType.Vector) { DefaultValue = "0 0 0" });
+            modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { DefaultValue = "1 1 1" });
+            Classes.Add(modelDataObj);
 
             Includes = new List<string>();
             MaterialExclusions = new List<string>();

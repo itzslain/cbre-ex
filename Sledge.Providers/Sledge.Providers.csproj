@@ -80,7 +80,7 @@
     <Compile Include="Map\MapProvider.cs" />
     <Compile Include="Map\ObjProvider.cs" />
     <Compile Include="Map\VmfProvider.cs" />
-    <Compile Include="Model\B3DProvider.cs" />
+    <Compile Include="Model\AssimpProvider.cs" />
     <Compile Include="Model\MdlProvider.cs" />
     <Compile Include="Model\ModelProvider.cs" />
     <Compile Include="Model\ModelReference.cs" />
@@ -106,6 +106,10 @@
     <Compile Include="Texture\WadProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AssimpNet\AssimpNet\AssimpNet.csproj">
+      <Project>{582ed347-e705-4ef5-b6dd-5ac1191d2fc2}</Project>
+      <Name>AssimpNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
       <Name>Sledge.Common</Name>
@@ -128,6 +132,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assimp64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Map\RMF22.txt" />
   </ItemGroup>
   <ItemGroup />
