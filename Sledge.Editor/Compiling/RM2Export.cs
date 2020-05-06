@@ -71,6 +71,7 @@ namespace Sledge.Editor.Compiling
 
             IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x =>
             {
+                if (x.Texture?.Texture == null) return false;
                 if (!x.Texture.Texture.HasTransparency()) return false;
                 if (x.Texture.Name.Contains("tooltextures")) return false;
 
@@ -349,8 +350,8 @@ namespace Sledge.Editor.Compiling
 
                 Coordinate scale = prop.EntityData.GetPropertyCoordinate("scale");
                 br.Write((float)scale.X);
-                br.Write((float)scale.Z);
                 br.Write((float)scale.Y);
+                br.Write((float)scale.Z);
             }
 
             br.Dispose();

@@ -70,8 +70,6 @@ namespace Sledge.Settings
         ToggleTextureLock,
         [Description("Toggle Texture Scaling Lock")]
         ToggleTextureScalingLock,
-        [Description("Toggle Cordon")]
-        ToggleCordon,
         [Description("Toggle Hide Face Mask")]
         ToggleHideFaceMask,
         [Description("Toggle Hide Displacement Solids")]

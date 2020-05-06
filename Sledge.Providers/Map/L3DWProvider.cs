@@ -185,8 +185,8 @@ namespace Sledge.Providers.Map
                     if ((flags&1)==0)
                     {
                         xScale = br.ReadSingle();
-                        zScale = br.ReadSingle();
                         yScale = br.ReadSingle();
+                        zScale = br.ReadSingle();
                     }
 
                     newProperty = new Property();

@@ -129,7 +129,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ToggleIgnoreGrouping, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureScalingLock, this);
-            Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
+            //Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideFaceMask, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideDisplacementSolids, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideNullTextures, this);

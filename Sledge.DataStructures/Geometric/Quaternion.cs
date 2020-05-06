@@ -224,6 +224,11 @@ namespace Sledge.DataStructures.Geometric
                 left.W * right.W - left.Vector.Dot(right.Vector));
         }
 
+        public static Quaternion EulerAngles(decimal x, decimal y, decimal z)
+        {
+            return EulerAngles(new Coordinate(x, y, z));
+        }
+
         public static Quaternion EulerAngles(Coordinate angles)
         {
             // http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToQuaternion/index.htm

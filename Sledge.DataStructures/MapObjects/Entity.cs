@@ -86,9 +86,12 @@ namespace Sledge.DataStructures.MapObjects
             else if (MetaData.Has<Box>("BoundingBox"))
             {
                 var scale = EntityData.GetPropertyCoordinate("scale", Coordinate.One);
+                scale = new Coordinate(scale.X, scale.Z, scale.Y);
                 var angles = EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
-                angles = new Coordinate(-DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), -DMath.DegreesToRadians(angles.Y));
-                var tform = (Matrix.Rotation(Quaternion.EulerAngles(angles))*Matrix.Scale(scale)).Translate(Origin);
+                Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
+                Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
+                Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
+                var tform = ((yaw*roll*pitch) *Matrix.Scale(scale)).Translate(Origin);
                 if (MetaData.Has<bool>("RotateBoundingBox") && !MetaData.Get<bool>("RotateBoundingBox")) tform = Matrix.Translation(Origin);
                 BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(new UnitMatrixMult(tform));
             }

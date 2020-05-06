@@ -23,7 +23,7 @@ namespace Sledge.Providers.Model
                    file.Extension.ToLowerInvariant() == "x";
         }
 
-        protected static void AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh)
+        protected static DataStructures.Models.Mesh AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh)
         {
             var sledgeMesh = new DataStructures.Models.Mesh(0);
             List<MeshVertex> vertices = new List<MeshVertex>();
@@ -36,7 +36,7 @@ namespace Sledge.Providers.Model
 
                 vertices.Add(new MeshVertex(new CoordinateF(assimpVertex.X, -assimpVertex.Z, assimpVertex.Y),
                                             new CoordinateF(assimpNormal.X, -assimpNormal.Z, assimpNormal.Y),
-                                            sledgeModel.Bones[0], assimpUv.X, assimpUv.Y));
+                                            sledgeModel.Bones[0], assimpUv.X, -assimpUv.Y));
             }
 
             foreach (var face in assimpMesh.Faces)
@@ -47,7 +47,7 @@ namespace Sledge.Providers.Model
                 sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[1]].Location, vertices[triInds[1]].Normal, vertices[triInds[1]].BoneWeightings, vertices[triInds[1]].TextureU, vertices[triInds[1]].TextureV));
             }
 
-            sledgeModel.AddMesh("mesh", 0, sledgeMesh);
+            return sledgeMesh;
         }
 
         protected override DataStructures.Models.Model LoadFromFile(IFile file)
@@ -63,29 +63,62 @@ namespace Sledge.Providers.Model
             model.Bones.Add(bone);
 
             Scene scene = importer.ImportFile(file.FullPathName);
-            foreach (var mesh in scene.Meshes)
-            {
-                AddMesh(model, mesh);
-            }
 
-            Bitmap bmp = new Bitmap(64, 64);
-            for (int i=0;i<64;i++)
+            DataStructures.Models.Texture tex = null;
+
+            if (scene.MaterialCount > 0)
             {
-                for (int j=0;j<64;j++)
+                //TODO: handle several textures
+                string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[0].TextureDiffuse.FilePath);
+                if (!File.Exists(path)) { path = scene.Materials[0].TextureDiffuse.FilePath; }
+                if (File.Exists(path))
                 {
-                    bmp.SetPixel(i, j, Color.DarkGray);
+                    Bitmap bmp = new Bitmap(path);
+                    tex = new DataStructures.Models.Texture
+                    {
+                        Name = path,
+                        Index = 0,
+                        Width = bmp.Width,
+                        Height = bmp.Height,
+                        Flags = 0,
+                        Image = bmp
+                    };
                 }
             }
-            var tex = new DataStructures.Models.Texture
+
+            if (tex == null)
             {
-                Name = "blank",
-                Index = 0,
-                Width = 64,
-                Height = 64,
-                Flags = 0,
-                Image = bmp
-            };
+                Bitmap bmp = new Bitmap(64, 64);
+                for (int i = 0; i < 64; i++)
+                {
+                    for (int j = 0; j < 64; j++)
+                    {
+                        bmp.SetPixel(i, j, Color.DarkGray);
+                    }
+                }
+                tex = new DataStructures.Models.Texture
+                {
+                    Name = "blank",
+                    Index = 0,
+                    Width = 64,
+                    Height = 64,
+                    Flags = 0,
+                    Image = bmp
+                };
+            }
+
             model.Textures.Add(tex);
+
+            foreach (var mesh in scene.Meshes)
+            {
+                DataStructures.Models.Mesh sledgeMesh = AddMesh(model, mesh);
+                foreach (var v in sledgeMesh.Vertices)
+                {
+                    v.TextureU *= tex.Width;
+                    v.TextureV *= tex.Height;
+                }
+                model.AddMesh("mesh", 0, sledgeMesh);
+            }
 
             return model;
         }

@@ -4,6 +4,7 @@ using System.Data.Odbc;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 
@@ -100,7 +101,7 @@ namespace Sledge.DataStructures.Models
         /// </summary>
         private void CombineTextures()
         {
-            if (!Textures.Any()) return;
+            if (Textures.Count < 1) return;
             // Calculate the dimension of the combined texture
             var width = 0;
             var height = 0;
@@ -114,15 +115,18 @@ namespace Sledge.DataStructures.Models
 
             // Create the combined texture and draw all the textures onto it
             var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            using (var g = Graphics.FromImage(bmp))
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            var y = 0;
+            foreach (var texture in Textures)
             {
-                var y = 0;
-                foreach (var texture in Textures)
-                {
-                    g.DrawImage(texture.Image, 0, y);
-                    y += texture.Height;
-                }
+                BitmapData bmpData2 = texture.Image.LockBits(new Rectangle(0, 0, texture.Width, texture.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                byte[] bytes = new byte[bmpData2.Width * bmpData2.Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
+                Marshal.Copy(bmpData2.Scan0, bytes, 0, bytes.Length);
+                Marshal.Copy(bytes, 0, bmpData.Scan0 + (bmpData.Width * y * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8), bytes.Length);
+                y += texture.Height;
+                texture.Image.UnlockBits(bmpData2);
             }
+            bmp.UnlockBits(bmpData);
 
             // Create the texture object and replace the existing textures
             var tex = new Texture

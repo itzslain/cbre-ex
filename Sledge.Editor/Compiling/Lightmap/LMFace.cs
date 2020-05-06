@@ -217,6 +217,7 @@ namespace Sledge.Editor.Compiling.Lightmap
                 {
                     tface.Vertices.ForEach(v => { v.LMU = -500.0f; v.LMV = -500.0f; });
                     tface.UpdateBoundingBox();
+                    if (tface.Texture?.Texture == null) continue;
                     if (tface.Texture.Name.ToLower() == "tooltextures/invisible_collision") continue;
                     if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
                     if (tface.Texture.Name.ToLower() == "tooltextures/block_light") continue;
