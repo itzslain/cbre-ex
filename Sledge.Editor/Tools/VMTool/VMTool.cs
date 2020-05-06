@@ -910,8 +910,8 @@ namespace Sledge.Editor.Tools.VMTool
             }
 
             var type = vp.Type;
-            bool shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured,
-                 textured = type == Viewport3D.ViewType.Textured,
+            bool shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured || type == Viewport3D.ViewType.Lightmapped,
+                 textured = type == Viewport3D.ViewType.Textured || type == Viewport3D.ViewType.Lightmapped,
                  wireframe = type == Viewport3D.ViewType.Wireframe;
 
             // Render out the solid previews

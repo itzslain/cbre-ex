@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Sledge.Editor.Compiling.Lightmap
 {
-    class LightmapGroup
+    public class LightmapGroup
     {
         public PlaneF Plane;
         public BoxF BoundingBox;
@@ -67,6 +67,21 @@ namespace Sledge.Editor.Compiling.Lightmap
             }
 
             return (maxTotalX - minTotalX).Value;
+        }
+
+        public static LightmapGroup FindCoplanar(List<LightmapGroup> lmGroups, LMFace otherFace)
+        {
+            foreach (LightmapGroup group in lmGroups)
+            {
+                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.1f)
+                {
+                    PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0].Location);
+                    if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;
+                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), otherFace.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
+                    if (faceBox.IntersectsWith(group.BoundingBox)) return group;
+                }
+            }
+            return null;
         }
     }
 }

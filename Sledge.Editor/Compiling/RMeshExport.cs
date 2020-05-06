@@ -13,40 +13,36 @@ using System.IO;
 using Sledge.Common;
 using System.Windows.Forms;
 using Sledge.Editor.Documents;
+using Sledge.Settings;
+using Sledge.Editor.Compiling.Lightmap;
 
 namespace Sledge.Editor.Compiling
 {
-    public class RM2Export
+    public class RMeshExport
     {
         public class Waypoint
         {
             public Waypoint(Entity ent)
             {
                 Location = new CoordinateF(ent.Origin);
-                Connections = new List<int>();
             }
 
-            public List<int> Connections;
             public CoordinateF Location;
         }
 
-        enum RM2Chunks
+        enum RMeshLoadFlags
         {
-            Textures = 1,
-            VisibleGeometry = 2,
-            InvisibleGeometry = 3,
-            Waypoint = 4,
-            PointLight = 5,
-            Spotlight = 6,
-            Prop = 7
+            COLOR = 1,
+            ALPHA = 2
         };
-        
-        enum RM2TextureLoadFlag
+
+        enum RMeshBlendFlags
         {
-            Opaque = 1,
-            Alpha = 2
+            NORMAL = 0,
+            DIFFUSE = 1,
+            LM = 2
         };
-        
+
         private static void WriteByteString(BinaryWriter writer,string str)
         {
             writer.Write((byte)str.Length);
@@ -61,7 +57,7 @@ namespace Sledge.Editor.Compiling
             var map = document.Map;
             string filepath = System.IO.Path.GetDirectoryName(filename);
             filename = System.IO.Path.GetFileName(filename);
-            filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rm2";
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rmesh";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
             List<Lightmap.LMFace> faces;
@@ -81,76 +77,49 @@ namespace Sledge.Editor.Compiling
 
             string dir = Sledge.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
-            Lightmap.Lightmapper.SaveLightmaps(document, filepath + "/" + lmPath, true);
+            Lightmap.Lightmapper.SaveLightmaps(document, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
             List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
 
+            IEnumerable<Entity> soundEmitters = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "soundemitter").OfType<Entity>();
+
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
-
-            form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDetermining waypoint visibility...")));
-            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 9100));
-
-            for (int i = 0; i < waypoints.Count; i++)
-            {
-                for (int j = 0; j < waypoints.Count; j++)
-                {
-                    if (j > i)
-                    {
-                        waypoints[i].Connections.Add(j);
-                    }
-                    else if (j < i)
-                    {
-                        if (waypoints[j].Connections.Contains(i)) waypoints[i].Connections.Add(j);
-                    }
-                }
-                foreach (Lightmap.LMFace face in faces)
-                {
-                    for (int j = 0; j < waypoints[i].Connections.Count; j++)
-                    {
-                        int connection = waypoints[i].Connections[j];
-                        if (connection < i) continue;
-                        LineF line1 = new LineF(waypoints[i].Location, waypoints[connection].Location);
-                        LineF line2 = new LineF(waypoints[connection].Location, waypoints[i].Location);
-                        if (face.GetIntersectionPoint(line1) != null || face.GetIntersectionPoint(line2) != null) {
-                            waypoints[i].Connections.RemoveAt(j);
-                            j--;
-                        }
-                    }
-                }
-            }
 
             FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
 
             //header
-            br.Write((byte)'.');
+            br.Write((Int32)8);
             br.Write((byte)'R');
+            br.Write((byte)'o');
+            br.Write((byte)'o');
+            br.Write((byte)'m');
             br.Write((byte)'M');
-            br.Write((byte)'2');
+            br.Write((byte)'e');
+            br.Write((byte)'s');
+            br.Write((byte)'h');
 
             //textures
-            List<Tuple<string, byte>> textures = new List<Tuple<string, byte>>();
-            byte flag = (byte)RM2TextureLoadFlag.Opaque;
-            foreach (Lightmap.LMFace face in faces)
+            string texDir = Directories.TextureDir;
+            if (texDir[texDir.Length - 1] != '/' && texDir[texDir.Length - 1] != '\\') texDir += "/";
+
+            List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>> textures = new List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>>();
+            RMeshLoadFlags loadFlag = RMeshLoadFlags.COLOR; RMeshBlendFlags blendFlag = RMeshBlendFlags.DIFFUSE;
+            foreach (LMFace face in faces)
             {
-                if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture,flag));
+                if (!textures.Any(x => x.Item1 == face.Texture)) textures.Add(new Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>(face.Texture, loadFlag, blendFlag, 0));
             }
-            flag = (byte)RM2TextureLoadFlag.Alpha;
+            loadFlag = RMeshLoadFlags.ALPHA; blendFlag = RMeshBlendFlags.NORMAL;
             foreach (Face face in transparentFaces)
             {
-                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte>(face.Texture.Name,flag));
+                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>(face.Texture.Name, loadFlag, blendFlag, 0));
             }
-
-            br.Write((byte)RM2Chunks.Textures);
-            br.Write((byte)textures.Count);
-            foreach (Tuple<string, byte> tex in textures)
-            {
-                WriteByteString(br, tex.Item1);
-                br.Write(tex.Item2);
-            }
+            loadFlag = RMeshLoadFlags.COLOR; blendFlag = RMeshBlendFlags.LM;
+            textures.Add(new Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>(lmPath, loadFlag, blendFlag, 1));
 
             //mesh
+
             int vertCount;
             int vertOffset;
             int triCount;
@@ -159,27 +128,47 @@ namespace Sledge.Editor.Compiling
             //into several for collision optimization.
             //Making each face its own collision object is too slow, and merging all of
             //them together is not optimal either.
-            for (int i=0;i<textures.Count;i++)
+
+            br.Write((Int32)(textures.Count - 1));
+
+            for (int i = 0; i < textures.Count - 1; i++)
             {
-                IEnumerable<Lightmap.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
+                IEnumerable<LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
+                IEnumerable<Face> tTrptFaces = transparentFaces.Where(x => x.Texture.Name == textures[i].Item1);
                 vertCount = 0;
                 vertOffset = 0;
                 triCount = 0;
 
+                string texName = "";
+                if (File.Exists(texDir + textures[i].Item1 + ".png")) texName = textures[i].Item1 + ".png";
+                if (File.Exists(texDir + textures[i].Item1 + ".jpg")) texName = textures[i].Item1 + ".jpg";
+
                 if (tLmFaces.Count() > 0)
                 {
-                    foreach (Lightmap.LMFace face in tLmFaces)
+                    foreach (LMFace face in tLmFaces)
                     {
                         vertCount += face.Vertices.Count;
                         triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
-                    br.Write((byte)RM2Chunks.VisibleGeometry);
-                    br.Write((byte)i);
+                    byte flag = 1;
+                    br.Write(flag);
+                    br.Write((Int32)(textures[textures.Count - 1].Item1 + ".png").Length);
+                    for (int k = 0; k < (textures[textures.Count - 1].Item1 + ".png").Length; k++)
+                    {
+                        br.Write((byte)(textures[textures.Count - 1].Item1 + ".png")[k]);
+                    }
+                    flag = 1;
+                    br.Write(flag);
+                    br.Write((Int32)texName.Length);
+                    for (int k = 0; k < texName.Length; k++)
+                    {
+                        br.Write((byte)texName[k]);
+                    }
 
                     if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
-                    br.Write((short)vertCount);
-                    foreach (Lightmap.LMFace face in tLmFaces)
+                    br.Write((Int32)vertCount);
+                    foreach (LMFace face in tLmFaces)
                     {
                         for (int j = 0; j < face.Vertices.Count; j++)
                         {
@@ -187,46 +176,47 @@ namespace Sledge.Editor.Compiling
                             br.Write(face.Vertices[j].Location.Z);
                             br.Write(face.Vertices[j].Location.Y);
 
-                            //br.Write((byte)255); //r
-                            //br.Write((byte)255); //g
-                            //br.Write((byte)255); //b
-
                             br.Write(face.Vertices[j].DiffU);
                             br.Write(face.Vertices[j].DiffV);
                             br.Write(face.Vertices[j].LMU);
                             br.Write(face.Vertices[j].LMV);
+
+                            br.Write((byte)255); //r
+                            br.Write((byte)255); //g
+                            br.Write((byte)255); //b
                         }
                     }
-                    br.Write((short)triCount);
-                    foreach (Lightmap.LMFace face in tLmFaces)
+                    br.Write((Int32)triCount);
+                    foreach (LMFace face in tLmFaces)
                     {
                         foreach (uint ind in face.GetTriangleIndices())
                         {
-                            br.Write((short)(ind + vertOffset));
+                            br.Write((Int32)(ind + vertOffset));
                         }
 
                         vertOffset += face.Vertices.Count;
                     }
                 }
-
-                IEnumerable<Face> tTrptFaces = transparentFaces.Where(x => x.Texture.Name == textures[i].Item1);
-                vertCount = 0;
-                vertOffset = 0;
-                triCount = 0;
-
-                if (tTrptFaces.Count() > 0)
+                else if (tTrptFaces.Count() > 0)
                 {
                     foreach (Face face in tTrptFaces)
                     {
                         vertCount += face.Vertices.Count;
-                        triCount += face.GetTriangleIndices().Count() * 2 / 3;
+                        triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
-                    br.Write((byte)RM2Chunks.VisibleGeometry);
-                    br.Write((byte)i);
+                    byte flag = 0;
+                    br.Write(flag);
+                    flag = 3;
+                    br.Write(flag);
+                    br.Write((Int32)texName.Length);
+                    for (int k = 0; k < texName.Length; k++)
+                    {
+                        br.Write((byte)texName[k]);
+                    }
 
                     if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
-                    br.Write((short)vertCount);
+                    br.Write((Int32)vertCount);
                     foreach (Face face in tTrptFaces)
                     {
                         for (int j = 0; j < face.Vertices.Count; j++)
@@ -235,30 +225,22 @@ namespace Sledge.Editor.Compiling
                             br.Write((float)face.Vertices[j].Location.Z);
                             br.Write((float)face.Vertices[j].Location.Y);
 
-                            //vertex color is not used since we don't do vertex lighting anymore
-                            //br.Write((byte)255); //r
-                            //br.Write((byte)255); //g
-                            //br.Write((byte)255); //b
-
+                            br.Write(0.0f);
+                            br.Write(0.0f);
                             br.Write((float)face.Vertices[j].TextureU);
                             br.Write((float)face.Vertices[j].TextureV);
-                            br.Write(0.0f);
-                            br.Write(0.0f);
+
+                            br.Write((byte)255); //r
+                            br.Write((byte)255); //g
+                            br.Write((byte)255); //b
                         }
                     }
-                    br.Write((short)triCount);
+                    br.Write((Int32)triCount);
                     foreach (Face face in tTrptFaces)
                     {
-                        List<uint> indices = face.GetTriangleIndices().ToList();
-                        for (int k=0;k<indices.Count;k+=3)
+                        foreach (uint ind in face.GetTriangleIndices())
                         {
-                            //hardcoded double sided surfaces
-                            br.Write((short)indices[k]);
-                            br.Write((short)indices[k + 1]);
-                            br.Write((short)indices[k + 2]);
-                            br.Write((short)indices[k]);
-                            br.Write((short)indices[k + 2]);
-                            br.Write((short)indices[k + 1]);
+                            br.Write((Int32)(ind + vertOffset));
                         }
 
                         vertOffset += face.Vertices.Count;
@@ -271,40 +253,51 @@ namespace Sledge.Editor.Compiling
             triCount = 0;
             if (invisibleCollisionFaces.Count() > 0)
             {
+                br.Write((Int32)1);
+
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     vertCount += face.Vertices.Count;
                     triCount += face.GetTriangleIndices().Count() / 3;
                 }
 
-                br.Write((byte)RM2Chunks.InvisibleGeometry);
-                
                 if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
-                br.Write((short)vertCount);
+                br.Write((Int32)vertCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     for (int j = 0; j < face.Vertices.Count; j++)
                     {
-                        br.Write((float)face.Vertices[j].Location.X);
-                        br.Write((float)face.Vertices[j].Location.Z);
-                        br.Write((float)face.Vertices[j].Location.Y);
+                        br.Write(face.Vertices[j].Location.X);
+                        br.Write(face.Vertices[j].Location.Z);
+                        br.Write(face.Vertices[j].Location.Y);
                     }
                 }
-                br.Write((short)triCount);
+                br.Write((Int32)triCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     foreach (uint ind in face.GetTriangleIndices())
                     {
-                        br.Write((short)(ind + vertOffset));
+                        br.Write((Int32)(ind + vertOffset));
                     }
 
                     vertOffset += face.Vertices.Count;
                 }
             }
-
-            foreach (Lightmap.Light light in lights)
+            else
             {
-                br.Write((byte)RM2Chunks.PointLight);
+                br.Write((Int32)0);
+            }
+
+            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count()));
+
+            foreach (Light light in lights)
+            {
+                br.Write((Int32)5);
+                br.Write((byte)'l');
+                br.Write((byte)'i');
+                br.Write((byte)'g');
+                br.Write((byte)'h');
+                br.Write((byte)'t');
 
                 br.Write(light.Origin.X);
                 br.Write(light.Origin.Z);
@@ -312,31 +305,73 @@ namespace Sledge.Editor.Compiling
 
                 br.Write(light.Range);
 
-                br.Write((byte)light.Color.X);
-                br.Write((byte)light.Color.Y);
-                br.Write((byte)light.Color.Z);
+                string lcolor = light.Color.X + " " + light.Color.Y + " " + light.Color.Z;
+                br.Write((Int32)lcolor.Length);
+                for (int k = 0; k < lcolor.Length; k++)
+                {
+                    br.Write((byte)lcolor[k]);
+                }
+
+                br.Write(1.0f); //intensity
             }
 
             foreach (Waypoint wp in waypoints)
             {
-                br.Write((byte)RM2Chunks.Waypoint);
+                br.Write((Int32)8);
+                br.Write((byte)'w');
+                br.Write((byte)'a');
+                br.Write((byte)'y');
+                br.Write((byte)'p');
+                br.Write((byte)'o');
+                br.Write((byte)'i');
+                br.Write((byte)'n');
+                br.Write((byte)'t');
 
                 br.Write(wp.Location.X);
                 br.Write(wp.Location.Z);
                 br.Write(wp.Location.Y);
+            }
 
-                for (int i = 0; i < wp.Connections.Count; i++)
-                {
-                    br.Write((byte)(wp.Connections[i] + 1));
-                }
-                br.Write((byte)0);
+            foreach (Entity soundEmitter in soundEmitters)
+            {
+                br.Write((Int32)12);
+                br.Write((byte)'s');
+                br.Write((byte)'o');
+                br.Write((byte)'u');
+                br.Write((byte)'n');
+                br.Write((byte)'d');
+                br.Write((byte)'e');
+                br.Write((byte)'m');
+                br.Write((byte)'i');
+                br.Write((byte)'t');
+                br.Write((byte)'t');
+                br.Write((byte)'e');
+                br.Write((byte)'r');
+
+                br.Write((float)soundEmitter.Origin.X);
+                br.Write((float)soundEmitter.Origin.Z);
+                br.Write((float)soundEmitter.Origin.Y);
+
+                br.Write((Int32)int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
+
+                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range")));
             }
 
             foreach (Entity prop in props)
             {
-                br.Write((byte)RM2Chunks.Prop);
+                br.Write((Int32)5);
+                br.Write((byte)'m');
+                br.Write((byte)'o');
+                br.Write((byte)'d');
+                br.Write((byte)'e');
+                br.Write((byte)'l');
 
-                WriteByteString(br, prop.EntityData.GetPropertyValue("file"));
+                string modelName = prop.EntityData.GetPropertyValue("file") + ".x";
+                br.Write((Int32)modelName.Length);
+                for (int k = 0; k < modelName.Length; k++)
+                {
+                    br.Write((byte)modelName[k]);
+                }
 
                 br.Write((float)prop.Origin.X);
                 br.Write((float)prop.Origin.Z);

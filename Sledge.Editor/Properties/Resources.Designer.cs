@@ -263,6 +263,16 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_ExportRmesh {
+            get {
+                object obj = ResourceManager.GetObject("Menu_ExportRmesh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_Flip {
             get {
                 object obj = ResourceManager.GetObject("Menu_Flip", resourceCulture);
@@ -495,7 +505,7 @@ namespace Sledge.Editor.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Menu_Run {
             get {
-                object obj = ResourceManager.GetObject("Menu_Run", resourceCulture);
+                object obj = ResourceManager.GetObject("Menu_ExportRmesh", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

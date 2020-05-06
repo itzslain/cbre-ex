@@ -152,6 +152,20 @@ namespace Sledge.Editor.Rendering.Renderers
 
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
+            if (_document.TextureCollection.LightmapTextureOutdated)
+            {
+                _document.TextureCollection.UpdateLightmapTexture();
+                List<Face> faces = new List<Face>();
+                foreach (Solid solid in _document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+                {
+                    foreach (Face tface in solid.Faces)
+                    {
+                        faces.Add(tface);
+                    }
+                }
+                UpdatePartial(faces);
+            }
+
             var type = ((Viewport3D) context).Type;
             var opts = new Viewport3DRenderOptions
             {
@@ -160,9 +174,10 @@ namespace Sledge.Editor.Rendering.Renderers
                 ModelView = modelView,
                 ShowGrid = Document.Map.Show3DGrid,
                 GridSpacing = Document.Map.GridSpacing,
-                Shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured,
-                Textured = type == Viewport3D.ViewType.Textured,
-                Wireframe = type == Viewport3D.ViewType.Wireframe
+                Shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured || type == Viewport3D.ViewType.Lightmapped,
+                Textured = type == Viewport3D.ViewType.Textured || type == Viewport3D.ViewType.Lightmapped,
+                Wireframe = type == Viewport3D.ViewType.Wireframe,
+                LightmapEnabled = type == Viewport3D.ViewType.Lightmapped
             };
 
             var cam = ((Viewport3D)context).Camera.Location;
@@ -178,7 +193,7 @@ namespace Sledge.Editor.Rendering.Renderers
                                                                    : new Vector4(1, 0.5f, 0.5f, 1);
 
                 // Render textured polygons
-                _array.RenderTextured(context.Context);
+                _array.RenderTextured(context.Context, _document.TextureCollection.BlankTexture, _document.TextureCollection.LightmapTexture);
 
                 // Render textured models
                 if (!Sledge.Settings.View.DisableModelRendering)

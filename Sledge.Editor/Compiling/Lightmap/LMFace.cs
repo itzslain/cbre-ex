@@ -27,14 +27,17 @@ namespace Sledge.Editor.Compiling.Lightmap
 
         public class Vertex
         {
-            public Vertex(CoordinateF location, float u, float v)
+            public Vertex(DataStructures.MapObjects.Vertex original)
             {
-                Location = location;
-                DiffU = u; DiffV = v;
+                OriginalVertex = original;
+                Location = new CoordinateF(original.Location);
+                DiffU = (float)original.TextureU; DiffV = (float)original.TextureV;
+                LMU = original.LMU; LMV = original.LMV;
             }
             public CoordinateF Location;
             public float DiffU; public float DiffV;
             public float LMU; public float LMV;
+            public DataStructures.MapObjects.Vertex OriginalVertex;
         };
 
         public List<Vertex> Vertices { get; set; }
@@ -43,13 +46,15 @@ namespace Sledge.Editor.Compiling.Lightmap
 
         public string Texture;
 
-        public LMFace(DataStructures.MapObjects.Face face)
+        public Face OriginalFace;
+
+        public LMFace(Face face)
         {
             Plane = new PlaneF(face.Plane);
 
             Normal = Plane.Normal;
 
-            Vertices = face.Vertices.Select(x => new Vertex(new CoordinateF(x.Location), (float)x.TextureU, (float)x.TextureV)).ToList();
+            Vertices = face.Vertices.Select(x => new Vertex(x)).ToList();
 
             int i1 = 0;
             int i2 = 1;
@@ -87,6 +92,8 @@ namespace Sledge.Editor.Compiling.Lightmap
             LightBasis2 = Tangent * ((float)Math.Sqrt(2.0 / 3.0)) + Normal * (1.0f / (float)Math.Sqrt(3.0));
 
             Texture = face.Texture.Name;
+
+            OriginalFace = face;
 
             UpdateBoundingBox();
         }
@@ -198,6 +205,38 @@ namespace Sledge.Editor.Compiling.Lightmap
                 if (lineNormal.Dot(intersect - lineMiddle) < 0.0f) return null;
             }
             return intersect;
+        }
+
+        public static void FindFacesAndGroups(Map map, out List<LMFace> faces, out List<LightmapGroup> lmGroups)
+        {
+            faces = new List<LMFace>();
+            lmGroups = new List<LightmapGroup>();
+            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+            {
+                foreach (Face tface in solid.Faces)
+                {
+                    tface.Vertices.ForEach(v => { v.LMU = -500.0f; v.LMV = -500.0f; });
+                    tface.UpdateBoundingBox();
+                    if (tface.Texture.Name.ToLower() == "tooltextures/invisible_collision") continue;
+                    if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
+                    if (tface.Texture.Name.ToLower() == "tooltextures/block_light") continue;
+                    if (tface.Texture.Texture.HasTransparency()) continue;
+                    LMFace face = new LMFace(tface);
+                    LightmapGroup group = LightmapGroup.FindCoplanar(lmGroups, face);
+                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), face.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
+                    if (group == null)
+                    {
+                        group = new LightmapGroup();
+                        group.BoundingBox = faceBox;
+                        group.Faces = new List<LMFace>();
+                        group.Plane = new PlaneF(face.Plane.Normal, face.Vertices[0].Location);
+                        lmGroups.Add(group);
+                    }
+                    group.Faces.Add(face);
+                    group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0].Location + group.Plane.PointOnPlane) / 2);
+                    group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
+                }
+            }
         }
     }
 }

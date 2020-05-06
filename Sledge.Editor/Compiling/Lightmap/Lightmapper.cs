@@ -11,26 +11,14 @@ using System.Threading;
 using Sledge.DataStructures.Transformations;
 using System.IO;
 using Sledge.Common;
+using Sledge.Editor.Documents;
+using Sledge.Graphics.Helpers;
+using System.Windows.Forms;
 
 namespace Sledge.Editor.Compiling.Lightmap
 {
     static class Lightmapper
     {
-        private static LightmapGroup FindCoplanar(List<LightmapGroup> lmGroups, LMFace otherFace)
-        {
-            foreach (LightmapGroup group in lmGroups)
-            {
-                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.1f)
-                {
-                    PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0].Location);
-                    if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;
-                    BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), otherFace.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
-                    if (faceBox.IntersectsWith(group.BoundingBox)) return group;
-                }
-            }
-            return null;
-        }
-
         struct LMThreadException
         {
             public LMThreadException(Exception e)
@@ -43,293 +31,277 @@ namespace Sledge.Editor.Compiling.Lightmap
             public string StackTrace;
         }
 
-        public static List<Thread> FaceRenderThreads;
+        public static List<Thread> FaceRenderThreads { get; private set; } 
         private static List<LMThreadException> threadExceptions;
 
-        public static IEnumerable<Progress> Render(Map map, Bitmap[] bitmaps, List<LMFace> faces, List<Light> lightEntities)
+        private static void UpdateProgress(ProgressBar progressBar, RichTextBox progressLog, string msg, float progress)
         {
-            threadExceptions = new List<LMThreadException>();
+            progressLog.Invoke((MethodInvoker)(() => progressLog.AppendText("\n" + msg)));
+            progressBar.Invoke((MethodInvoker)(() => progressBar.Value = (int)(progress * 10000)));
+        }
 
-            List<LightmapGroup> lmGroups = new List<LightmapGroup>();
-            List<LMFace> exclusiveBlockers = new List<LMFace>();
-
-            //get faces
-            yield return new Progress("Determining UV coordinates...", 0);
-            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+        public static void Render(Document document, ProgressBar progressBar, RichTextBox progressLog, out List<LMFace> faces)
+        {
+            var textureCollection = document.TextureCollection;
+            lock (textureCollection.Lightmaps)
             {
-                foreach (Face tface in solid.Faces)
+                progressBar.Invoke((MethodInvoker)(() => progressBar.Maximum = 10000));
+                var map = document.Map;
+
+                faces = new List<LMFace>();
+                var lightEntities = new List<Light>();
+                for (int i = 0; i < 4; i++)
                 {
-                    tface.UpdateBoundingBox();
-                    if (tface.Texture.Name.ToLower() == "tooltextures/invisible_collision") continue;
-                    if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
-                    if (tface.Texture.Name.ToLower() == "tooltextures/block_light") continue;
-                    if (tface.Texture.Texture.HasTransparency()) continue;
-                    LMFace face = new LMFace(tface);
-                    LightmapGroup group = FindCoplanar(lmGroups, face);
-                    BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), face.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
-                    if (group == null)
-                    {
-                        group = new LightmapGroup();
-                        group.BoundingBox = faceBox;
-                        group.Faces = new List<LMFace>();
-                        group.Plane = new PlaneF(face.Plane.Normal, face.Vertices[0].Location);
-                        lmGroups.Add(group);
-                    }
-                    group.Faces.Add(face);
-                    group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0].Location + group.Plane.PointOnPlane) / 2);
-                    group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
+                    textureCollection.Lightmaps[i]?.Dispose();
+                    textureCollection.Lightmaps[i] = new Bitmap(Config.TextureDims, Config.TextureDims);
                 }
-            }
+                var lightmaps = textureCollection.Lightmaps;
 
-            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
-            {
-                foreach (Face tface in solid.Faces)
-                {
-                    LMFace face = new LMFace(tface);
-                    if (tface.Texture.Name.ToLower() != "tooltextures/block_light") continue;
-                    exclusiveBlockers.Add(face);
-                }
-            }
+                threadExceptions = new List<LMThreadException>();
 
-            for (int i = 0; i < lmGroups.Count; i++)
-            {
-                for (int j = i + 1; j < lmGroups.Count; j++)
+                List<LightmapGroup> lmGroups = new List<LightmapGroup>();
+                List<LMFace> exclusiveBlockers = new List<LMFace>();
+
+                //get faces
+                UpdateProgress(progressBar, progressLog, "Determining UV coordinates...", 0);
+                LMFace.FindFacesAndGroups(map, out faces, out lmGroups);
+
+                foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
                 {
-                    if ((lmGroups[i].Plane.Normal - lmGroups[j].Plane.Normal).LengthSquared() < 0.1f &&
-                        lmGroups[i].BoundingBox.IntersectsWith(lmGroups[j].BoundingBox))
+                    foreach (Face tface in solid.Faces)
                     {
-                        lmGroups[i].Faces.AddRange(lmGroups[j].Faces);
-                        lmGroups[i].BoundingBox = new BoxF(new BoxF[] { lmGroups[i].BoundingBox, lmGroups[j].BoundingBox });
-                        lmGroups.RemoveAt(j);
-                        j = i + 1;
-                    }
-                }
-            }
-
-            //put the faces into the bitmap
-            lmGroups.Sort((x, y) =>
-            {
-                if (x == y) return 0;
-
-                if (x.GetGroupTextureWidth() < y.GetGroupTextureWidth()) { return 1; }
-                return -1;
-            });
-
-            int writeX = 1; int writeY = 1; int writeMaxX = 0;
-
-            float[][] buffers = new float[4][];
-            buffers[0] = new float[bitmaps[0].Width * bitmaps[0].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-            buffers[1] = new float[bitmaps[1].Width * bitmaps[1].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-            buffers[2] = new float[bitmaps[2].Width * bitmaps[2].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-            buffers[3] = new float[bitmaps[2].Width * bitmaps[2].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-
-            FaceRenderThreads = new List<Thread>();
-
-            lightEntities.Clear(); lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
-                .Select(x => new Light()
-                {
-                    Origin = new CoordinateF(x.Origin),
-                    Range = float.Parse(x.EntityData.GetPropertyValue("range")),
-                    Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
-                    Direction = null,
-                    innerCos = null,
-                    outerCos = null
-                }));
-            lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "spotlight").OfType<Entity>()
-                .Select(x => {
-                    Light light = new Light()
-                    {
-                        Origin = new CoordinateF(x.Origin),
-                        Range = float.Parse(x.EntityData.GetPropertyValue("range")),
-                        Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
-                        Direction = null,
-                        innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle")) * (float)Math.PI / 360.0f),
-                        outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 360.0f)
-                    };
-
-                    CoordinateF eulerAngles = new CoordinateF(x.EntityData.GetPropertyCoordinate("angles"));
-                    eulerAngles.X *= (float)Math.PI / 180.0f;
-                    eulerAngles.Y *= (float)Math.PI / 180.0f;
-                    eulerAngles.Z *= (float)Math.PI / 180.0f;
-
-                    float swap = eulerAngles.Z;
-                    eulerAngles.Z = eulerAngles.Y; eulerAngles.Y = swap;
-                    swap = eulerAngles.Y;
-                    eulerAngles.Y = eulerAngles.X; eulerAngles.X = swap;
-
-                    MatrixF rot = MatrixF.Rotation(QuaternionF.EulerAngles(eulerAngles));
-                    light.Direction = (new CoordinateF(0.0f, -1.0f, 0.0f)) * rot;
-                    //TODO: make sure this matches 3dws
-
-                    return light;
-                }));
-
-            List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
-            int faceCount = 0;
-            foreach (LightmapGroup group in lmGroups)
-            {
-                var uAxis = group.uAxis;
-                var vAxis = group.vAxis;
-
-                float minTotalX = group.minTotalX.Value;
-                float maxTotalX = group.maxTotalX.Value;
-                float minTotalY = group.minTotalY.Value;
-                float maxTotalY = group.maxTotalY.Value;
-
-                if (writeY + (int)(maxTotalY - minTotalY) / Config.DownscaleFactor + Config.PlaneMargin >= Config.TextureDims)
-                {
-                    writeY = 0;
-                    writeX += writeMaxX;
-                    writeMaxX = 0;
-                }
-
-                foreach (LMFace face in group.Faces)
-                {
-                    faceCount++;
-                    Thread newThread = CreateLightmapRenderThread(buffers, lightEntities, writeX, writeY, group, face, allFaces);
-                    FaceRenderThreads.Add(newThread);
-                }
-                group.writeX = writeX;
-                group.writeY = writeY;
-
-                writeY += (int)(maxTotalY - minTotalY) / Config.DownscaleFactor + Config.PlaneMargin;
-                if ((int)(maxTotalX - minTotalX) / Config.DownscaleFactor + Config.PlaneMargin > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / Config.DownscaleFactor + Config.PlaneMargin;
-            }
-
-            int faceNum = 0;
-            yield return new Progress("Started calculating brightness levels...", 0.05f);
-            while (FaceRenderThreads.Count > 0)
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    if (i >= FaceRenderThreads.Count) break;
-                    if (FaceRenderThreads[i].ThreadState == ThreadState.Unstarted)
-                    {
-                        FaceRenderThreads[i].Start();
-                    }
-                    else if (!FaceRenderThreads[i].IsAlive)
-                    {
-                        FaceRenderThreads.RemoveAt(i);
-                        i--;
-                        faceNum++;
-                        yield return new Progress(faceNum.ToString() + "/" + faceCount.ToString() + " faces complete", 0.05f + ((float)faceNum / (float)faceCount) * 0.85f);
+                        LMFace face = new LMFace(tface);
+                        if (tface.Texture.Name.ToLower() != "tooltextures/block_light") continue;
+                        exclusiveBlockers.Add(face);
                     }
                 }
 
-                if (threadExceptions.Count > 0)
+                for (int i = 0; i < lmGroups.Count; i++)
                 {
-                    for (int i = 0; i < FaceRenderThreads.Count; i++)
+                    for (int j = i + 1; j < lmGroups.Count; j++)
                     {
-                        if (FaceRenderThreads[i].IsAlive)
+                        if ((lmGroups[i].Plane.Normal - lmGroups[j].Plane.Normal).LengthSquared() < 0.1f &&
+                            lmGroups[i].BoundingBox.IntersectsWith(lmGroups[j].BoundingBox))
                         {
-                            FaceRenderThreads[i].Abort();
+                            lmGroups[i].Faces.AddRange(lmGroups[j].Faces);
+                            lmGroups[i].BoundingBox = new BoxF(new BoxF[] { lmGroups[i].BoundingBox, lmGroups[j].BoundingBox });
+                            lmGroups.RemoveAt(j);
+                            j = i + 1;
                         }
                     }
-                    throw new Exception(threadExceptions[0].Message + "\n" + threadExceptions[0].StackTrace);
                 }
-                Thread.Yield();
-            }
 
-            //blur the lightmap so it doesn't look too pixellated
-            yield return new Progress("Blurring lightmap...", 0.95f);
-            float[] blurBuffer = new float[buffers[0].Length];
-            for (int k = 0; k < 4; k++)
-            {
+                //put the faces into the bitmap
+                lmGroups.Sort((x, y) =>
+                {
+                    if (x == y) return 0;
+
+                    if (x.GetGroupTextureWidth() < y.GetGroupTextureWidth()) { return 1; }
+                    return -1;
+                });
+
+                int writeX = 1; int writeY = 1; int writeMaxX = 0;
+
+                float[][] buffers = new float[4][];
+                buffers[0] = new float[lightmaps[0].Width * lightmaps[0].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
+                buffers[1] = new float[lightmaps[1].Width * lightmaps[1].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
+                buffers[2] = new float[lightmaps[2].Width * lightmaps[2].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
+                buffers[3] = new float[lightmaps[3].Width * lightmaps[3].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
+
+                FaceRenderThreads = new List<Thread>();
+
+                Light.FindLights(map, out lightEntities);
+
+                List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
+                int faceCount = 0;
                 foreach (LightmapGroup group in lmGroups)
                 {
-                    float ambientMultiplier = (group.Plane.Normal.Dot(Config.AmbientNormal) + 1.5f) * 0.4f;
-                    CoordinateF mAmbientColor = new CoordinateF((Config.AmbientColor.B * ambientMultiplier / 255.0f),
-                                                         (Config.AmbientColor.G * ambientMultiplier / 255.0f),
-                                                         (Config.AmbientColor.R * ambientMultiplier / 255.0f));
-                    for (int y = group.writeY; y < group.writeY + (group.maxTotalY - group.minTotalY) / Config.DownscaleFactor; y++)
+                    var uAxis = group.uAxis;
+                    var vAxis = group.vAxis;
+
+                    float minTotalX = group.minTotalX.Value;
+                    float maxTotalX = group.maxTotalX.Value;
+                    float minTotalY = group.minTotalY.Value;
+                    float maxTotalY = group.maxTotalY.Value;
+
+                    if (writeY + (int)(maxTotalY - minTotalY) / Config.DownscaleFactor + Config.PlaneMargin >= Config.TextureDims)
                     {
-                        if (y < 0 || y >= Config.TextureDims) continue;
-                        for (int x = group.writeX; x < group.writeX + (group.maxTotalX - group.minTotalX) / Config.DownscaleFactor; x++)
+                        writeY = 0;
+                        writeX += writeMaxX;
+                        writeMaxX = 0;
+                    }
+
+                    foreach (LMFace face in group.Faces)
+                    {
+                        faceCount++;
+                        Thread newThread = CreateLightmapRenderThread(buffers, lightEntities, writeX, writeY, group, face, allFaces);
+                        FaceRenderThreads.Add(newThread);
+                    }
+                    group.writeX = writeX;
+                    group.writeY = writeY;
+
+                    writeY += (int)(maxTotalY - minTotalY) / Config.DownscaleFactor + Config.PlaneMargin;
+                    if ((int)(maxTotalX - minTotalX) / Config.DownscaleFactor + Config.PlaneMargin > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / Config.DownscaleFactor + Config.PlaneMargin;
+                }
+
+                int faceNum = 0;
+                UpdateProgress(progressBar, progressLog, "Started calculating brightness levels...", 0.05f);
+                while (FaceRenderThreads.Count > 0)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (i >= FaceRenderThreads.Count) break;
+                        if (FaceRenderThreads[i].ThreadState == ThreadState.Unstarted)
                         {
-                            if (x < 0 || x >= Config.TextureDims) continue;
-                            int offset = (x + y * Config.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+                            FaceRenderThreads[i].Start();
+                        }
+                        else if (!FaceRenderThreads[i].IsAlive)
+                        {
+                            FaceRenderThreads.RemoveAt(i);
+                            i--;
+                            faceNum++;
+                            UpdateProgress(progressBar, progressLog, faceNum.ToString() + "/" + faceCount.ToString() + " faces complete", 0.05f + ((float)faceNum / (float)faceCount) * 0.85f);
+                        }
+                    }
 
-                            float accumRed = 0;
-                            float accumGreen = 0;
-                            float accumBlue = 0;
-                            int sampleCount = 0;
-                            for (int j = -Config.BlurRadius; j <= Config.BlurRadius; j++)
+                    if (threadExceptions.Count > 0)
+                    {
+                        for (int i = 0; i < FaceRenderThreads.Count; i++)
+                        {
+                            if (FaceRenderThreads[i].IsAlive)
                             {
-                                if (y + j < 0 || y + j >= Config.TextureDims) continue;
-                                if (y + j < group.writeY || y + j >= group.writeY + (group.maxTotalY - group.minTotalY)) continue;
-                                for (int i = -Config.BlurRadius; i <= Config.BlurRadius; i++)
-                                {
-                                    if (i * i + j * j > Config.BlurRadius * Config.BlurRadius) continue;
-                                    if (x + i < 0 || x + i >= Config.TextureDims) continue;
-                                    if (x + i < group.writeX || x + i >= group.writeX + (group.maxTotalX - group.minTotalX)) continue;
-                                    int sampleOffset = ((x + i) + (y + j) * Config.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
-                                    if (buffers[k][sampleOffset + 3] < 1.0f) continue;
-                                    sampleCount++;
-                                    accumRed += buffers[k][sampleOffset + 0];
-                                    accumGreen += buffers[k][sampleOffset + 1];
-                                    accumBlue += buffers[k][sampleOffset + 2];
-                                }
+                                FaceRenderThreads[i].Abort();
                             }
+                        }
+                        throw new Exception(threadExceptions[0].Message + "\n" + threadExceptions[0].StackTrace);
+                    }
+                    Thread.Yield();
+                }
 
-                            if (sampleCount < 1) sampleCount = 1;
-                            accumRed /= sampleCount;
-                            accumGreen /= sampleCount;
-                            accumBlue /= sampleCount;
+                //blur the lightmap so it doesn't look too pixellated
+                UpdateProgress(progressBar, progressLog, "Blurring lightmap...", 0.95f);
+                float[] blurBuffer = new float[buffers[0].Length];
+                for (int k = 0; k < 4; k++)
+                {
+                    foreach (LightmapGroup group in lmGroups)
+                    {
+                        float ambientMultiplier = (group.Plane.Normal.Dot(Config.AmbientNormal) + 1.5f) * 0.4f;
+                        CoordinateF mAmbientColor = new CoordinateF((Config.AmbientColor.B * ambientMultiplier / 255.0f),
+                                                             (Config.AmbientColor.G * ambientMultiplier / 255.0f),
+                                                             (Config.AmbientColor.R * ambientMultiplier / 255.0f));
+                        for (int y = group.writeY; y < group.writeY + (group.maxTotalY - group.minTotalY) / Config.DownscaleFactor; y++)
+                        {
+                            if (y < 0 || y >= Config.TextureDims) continue;
+                            for (int x = group.writeX; x < group.writeX + (group.maxTotalX - group.minTotalX) / Config.DownscaleFactor; x++)
+                            {
+                                if (x < 0 || x >= Config.TextureDims) continue;
+                                int offset = (x + y * Config.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
 
-                            accumRed = mAmbientColor.X + (accumRed * (1.0f - mAmbientColor.X));
-                            accumGreen = mAmbientColor.Y + (accumGreen * (1.0f - mAmbientColor.Y));
-                            accumBlue = mAmbientColor.Z + (accumBlue * (1.0f - mAmbientColor.Z));
+                                float accumRed = 0;
+                                float accumGreen = 0;
+                                float accumBlue = 0;
+                                int sampleCount = 0;
+                                for (int j = -Config.BlurRadius; j <= Config.BlurRadius; j++)
+                                {
+                                    if (y + j < 0 || y + j >= Config.TextureDims) continue;
+                                    if (y + j < group.writeY || y + j >= group.writeY + (group.maxTotalY - group.minTotalY)) continue;
+                                    for (int i = -Config.BlurRadius; i <= Config.BlurRadius; i++)
+                                    {
+                                        if (i * i + j * j > Config.BlurRadius * Config.BlurRadius) continue;
+                                        if (x + i < 0 || x + i >= Config.TextureDims) continue;
+                                        if (x + i < group.writeX || x + i >= group.writeX + (group.maxTotalX - group.minTotalX)) continue;
+                                        int sampleOffset = ((x + i) + (y + j) * Config.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+                                        if (buffers[k][sampleOffset + 3] < 1.0f) continue;
+                                        sampleCount++;
+                                        accumRed += buffers[k][sampleOffset + 0];
+                                        accumGreen += buffers[k][sampleOffset + 1];
+                                        accumBlue += buffers[k][sampleOffset + 2];
+                                    }
+                                }
 
-                            if (accumRed > 1.0f) accumRed = 1.0f;
-                            if (accumGreen > 1.0f) accumGreen = 1.0f;
-                            if (accumBlue > 1.0f) accumBlue = 1.0f;
+                                if (sampleCount < 1) sampleCount = 1;
+                                accumRed /= sampleCount;
+                                accumGreen /= sampleCount;
+                                accumBlue /= sampleCount;
 
-                            blurBuffer[offset + 0] = accumRed;
-                            blurBuffer[offset + 1] = accumGreen;
-                            blurBuffer[offset + 2] = accumBlue;
-                            blurBuffer[offset + 3] = 1.0f;
+                                accumRed = mAmbientColor.X + (accumRed * (1.0f - mAmbientColor.X));
+                                accumGreen = mAmbientColor.Y + (accumGreen * (1.0f - mAmbientColor.Y));
+                                accumBlue = mAmbientColor.Z + (accumBlue * (1.0f - mAmbientColor.Z));
+
+                                if (accumRed > 1.0f) accumRed = 1.0f;
+                                if (accumGreen > 1.0f) accumGreen = 1.0f;
+                                if (accumBlue > 1.0f) accumBlue = 1.0f;
+
+                                blurBuffer[offset + 0] = accumRed;
+                                blurBuffer[offset + 1] = accumGreen;
+                                blurBuffer[offset + 2] = accumBlue;
+                                blurBuffer[offset + 3] = 1.0f;
+                            }
+                        }
+                    }
+
+                    blurBuffer.CopyTo(buffers[k], 0);
+                }
+
+                for (int i = 0; i < buffers[0].Length; i++)
+                {
+                    if (i % 4 == 3)
+                    {
+                        buffers[0][i] = 1.0f;
+                        buffers[1][i] = 1.0f;
+                        buffers[2][i] = 1.0f;
+                        buffers[3][i] = 1.0f;
+                    }
+                    else
+                    {
+                        float brightnessAdd = (buffers[0][i] + buffers[1][i] + buffers[2][i]) / (float)Math.Sqrt(3.0);
+                        if (brightnessAdd > 0.0f) //normalize brightness to remove artifacts when adding together
+                        {
+                            buffers[0][i] *= buffers[3][i] / brightnessAdd;
+                            buffers[1][i] *= buffers[3][i] / brightnessAdd;
+                            buffers[2][i] *= buffers[3][i] / brightnessAdd;
                         }
                     }
                 }
 
-                blurBuffer.CopyTo(buffers[k], 0);
-            }
+                for (int k = 0; k < 4; k++)
+                {
+                    byte[] byteBuffer = new byte[buffers[k].Length];
+                    for (int i = 0; i < buffers[k].Length; i++)
+                    {
+                        byteBuffer[i] = (byte)Math.Max(Math.Min(buffers[k][i] * 255.0f, 255.0f), 0.0f);
+                    }
+                    UpdateProgress(progressBar, progressLog, "Copying bitmap data...", 0.99f);
+                    BitmapData bitmapData2 = lightmaps[k].LockBits(new Rectangle(0, 0, Config.TextureDims, Config.TextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    Marshal.Copy(byteBuffer, 0, bitmapData2.Scan0, byteBuffer.Length);
+                    lightmaps[k].UnlockBits(bitmapData2);
+                }
 
-            for (int i = 0; i < buffers[0].Length; i++)
+                faces.Clear();
+                faces.AddRange(lmGroups.SelectMany(g => g.Faces));
+
+                document.TextureCollection.LightmapTextureOutdated = true;
+
+                UpdateProgress(progressBar, progressLog, "Lightmapping complete!", 1.0f);
+            }
+        }
+
+        public static void SaveLightmaps(Document document, string path, bool threeBasisModel)
+        {
+            lock (document.TextureCollection.Lightmaps)
             {
-                if (i%4==3) {
-                    buffers[0][i] = 1.0f;
-                    buffers[1][i] = 1.0f;
-                    buffers[2][i] = 1.0f;
+                if (threeBasisModel)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        document.TextureCollection.Lightmaps[i].Save(path + i.ToString() + ".png");
+                    }
                 }
                 else
                 {
-                    float brightnessAdd = (buffers[0][i] + buffers[1][i] + buffers[2][i]) / (float)Math.Sqrt(3.0);
-                    if (brightnessAdd > 0.0f) //normalize brightness to remove artifacts when adding together
-                    {
-                        buffers[0][i] *= buffers[3][i] / brightnessAdd;
-                        buffers[1][i] *= buffers[3][i] / brightnessAdd;
-                        buffers[2][i] *= buffers[3][i] / brightnessAdd;
-                    }
+                    document.TextureCollection.Lightmaps[3].Save(path + ".png");
                 }
             }
-
-            for (int k = 0; k < 3; k++)
-            {
-                byte[] byteBuffer = new byte[buffers[k].Length];
-                for (int i = 0; i < buffers[k].Length; i++)
-                {
-                    byteBuffer[i] = (byte)Math.Max(Math.Min(buffers[k][i] * 255.0f,255.0f),0.0f);
-                }
-                yield return new Progress("Copying bitmap data...", 0.99f);
-                BitmapData bitmapData2 = bitmaps[k].LockBits(new Rectangle(0, 0, Config.TextureDims, Config.TextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                Marshal.Copy(byteBuffer, 0, bitmapData2.Scan0, byteBuffer.Length);
-                bitmaps[k].UnlockBits(bitmapData2);
-            }
-
-            faces.Clear();
-            faces.AddRange(lmGroups.SelectMany(g => g.Faces));
-            yield return new Progress("Lightmapping complete!",1.0f);
         }
 
         private static Thread CreateLightmapRenderThread(float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
@@ -392,6 +364,7 @@ namespace Sledge.Editor.Compiling.Lightmap
                 float v = (writeY + 0.5f + (y - group.minTotalY.Value) / Config.DownscaleFactor) / Config.TextureDims;
 
                 vert.LMU = u; vert.LMV = v;
+                vert.OriginalVertex.LMU = u; vert.OriginalVertex.LMV = v;
             }
 
             float centerX = (maxX.Value + minX.Value) / 2;

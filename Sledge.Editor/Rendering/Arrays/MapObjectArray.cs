@@ -28,18 +28,27 @@ namespace Sledge.Editor.Rendering.Arrays
         {
         }
 
-        public void RenderTextured(IGraphicsContext context)
+        public void RenderTextured(IGraphicsContext context, ITexture blankTexture, ITexture lightmapTexture)
         {
             foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null))
             {
+                GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
                 var tex = (ITexture)subset.Instance;
                 tex.Bind();
+                GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
+                (lightmapTexture!=null ? lightmapTexture : blankTexture).Bind();
+
                 Render(context, PrimitiveType.Triangles, subset);
+                GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
             }
         }
         public void RenderUntextured(IGraphicsContext context, Coordinate location)
         {
+            GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
             TextureHelper.Unbind();
+            GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
+            TextureHelper.Unbind();
+            GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
             foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance == null))
             {
                 Render(context, PrimitiveType.Triangles, subset);
@@ -194,11 +203,13 @@ namespace Sledge.Editor.Rendering.Arrays
                   g = face.Colour.G / 255f,
                   b = face.Colour.B / 255f,
                   a = face.Opacity;
+            var lmed = face.GetIndexedVertices().Where(v => v.LMU != 0).ToList();
             return face.GetIndexedVertices().Select(vert => new MapObjectVertex
             {
                 Position = new Vector3((float)vert.Location.DX, (float)vert.Location.DY, (float)vert.Location.DZ),
                 Normal = new Vector3(nx, ny, nz),
                 Texture = new Vector2((float)vert.TextureU, (float)vert.TextureV),
+                LightmapUv = new Vector2(vert.LMU, vert.LMV),
                 Colour = new Color4(r, g, b, a),
                 IsSelected = face.IsSelected || (face.Parent != null && face.Parent.IsSelected) ? 1 : 0
             });

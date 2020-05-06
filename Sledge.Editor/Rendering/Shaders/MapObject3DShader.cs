@@ -18,6 +18,8 @@ namespace Sledge.Editor.Rendering.Shaders
         public bool IsTextured { set { Shader.Set("isTextured", value); } }
         private bool IsLit { set { Shader.Set("isLit", value); } }
 
+        public bool LightmapEnabled { set { Shader.Set("lightmapEnabled", value); } }
+
         public Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
         public Matrix4 Transformation { set { Shader.Set("transformation", value); } }
 
@@ -43,13 +45,15 @@ namespace Sledge.Editor.Rendering.Shaders
             Perspective = Camera = ModelView = SelectionTransform = Matrix4.Identity;
             IsTextured = true;
             IsLit = true;
+            LightmapEnabled = false;
             Show3DGrid = false;
             GridSpacing = 64;
             SelectionColourMultiplier = new Vector4(1, 0.5f, 0.5f, 1);
             Transformation = Matrix4.Identity;
 
-            GL.ActiveTexture(TextureUnit.Texture0);
-            Shader.Set("currentTexture", 0);
+            //GL.ActiveTexture(TextureUnit.Texture0);
+            Shader.Set("currentTexture", (int)0);
+            Shader.Set("lightmapTexture", (int)1);
 
             Shader.Unbind();
         }
@@ -62,6 +66,7 @@ namespace Sledge.Editor.Rendering.Shaders
             Camera = options.Camera;
             ModelView = options.ModelView;
             IsTextured = options.Textured;
+            LightmapEnabled = options.LightmapEnabled;
             IsLit = options.Shaded;
             Show3DGrid = options.ShowGrid;
             GridSpacing = (float) options.GridSpacing;

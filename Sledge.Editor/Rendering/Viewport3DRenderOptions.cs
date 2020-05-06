@@ -8,6 +8,8 @@ namespace Sledge.Editor.Rendering
         public bool Textured { get; set; }
         public bool Shaded { get; set; }
 
+        public bool LightmapEnabled { get; set; }
+
         public bool ShowGrid { get; set; }
         public decimal GridSpacing { get; set; }
     }

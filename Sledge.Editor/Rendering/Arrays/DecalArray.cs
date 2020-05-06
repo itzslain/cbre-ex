@@ -93,6 +93,7 @@ namespace Sledge.Editor.Rendering.Arrays
                 Position = new Vector3((float)vert.Location.DX, (float)vert.Location.DY, (float)vert.Location.DZ),
                 Normal = new Vector3(nx, ny, nz),
                 Texture = new Vector2((float)vert.TextureU, (float)vert.TextureV),
+                LightmapUv = new Vector2(vert.LMU, vert.LMV),
                 Colour = new Color4(r, g, b, a),
                 IsSelected = face.IsSelected || (face.Parent != null && face.Parent.IsSelected) ? 1 : 0
             });

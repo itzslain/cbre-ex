@@ -5,14 +5,17 @@ varying vec4 worldNormal;
 varying vec4 vertexColour;
 varying float vertexLighting;
 varying vec2 texCoord;
+varying vec2 lightmapCoord;
 varying float vertexSelected;
 
 uniform bool isTextured;
 uniform bool isLit;
+uniform bool lightmapEnabled;
 uniform vec4 selectionColourMultiplier;
 uniform bool showGrid;
 uniform float gridSpacing;
 uniform sampler2D currentTexture;
+uniform sampler2D lightmapTexture;
 
 void main()
 {
@@ -23,7 +26,12 @@ void main()
 
     if (isTextured) {
         vec4 texColour = texture2D(currentTexture, texCoord);
-        outputColor = texColour * lighting;
+        outputColor = texColour;
+        if (lightmapEnabled && lightmapCoord.x > -100.0) {
+            outputColor = texColour * 2.0 * texture2D(lightmapTexture, lightmapCoord);
+        } else {
+            outputColor = texColour * lighting;
+        }
         if (texColour.w < alpha) alpha = texColour.w;
     } else {
         outputColor = vertexColour * lighting;

@@ -89,6 +89,7 @@ namespace Sledge.Editor.Rendering.Arrays
                     Colour = new Color4(colour.R, colour.G, colour.B, colour.A),
                     Normal = Vector3.Zero,
                     Texture = Vector2.Zero,
+                    LightmapUv = new Vector2(-500.0f, -500.0f),
                     IsSelected = 0
                 }
             }), new uint[] {0});

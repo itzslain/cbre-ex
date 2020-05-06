@@ -34,7 +34,7 @@ namespace Sledge.Editor.UI
 
         private static ViewportBase CreateViewport(string setting, Viewport2D.ViewDirection preferred2D)
         {
-            return CreateViewport(setting, false, Viewport3D.ViewType.Textured, preferred2D);
+            return CreateViewport(setting, false, Viewport3D.ViewType.Lightmapped, preferred2D);
         }
 
         private static ViewportBase CreateViewport(string setting, bool prefer3D, Viewport3D.ViewType preferred3D, Viewport2D.ViewDirection preferred2D)
@@ -120,10 +120,10 @@ namespace Sledge.Editor.UI
         {
             var defaultViewports = new[]
             {
-                Tuple.Create(true, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Top),
-                Tuple.Create(false, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Top),
-                Tuple.Create(false, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Front),
-                Tuple.Create(false, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Side)
+                Tuple.Create(true, Viewport3D.ViewType.Lightmapped, Viewport2D.ViewDirection.Top),
+                Tuple.Create(false, Viewport3D.ViewType.Lightmapped, Viewport2D.ViewDirection.Top),
+                Tuple.Create(false, Viewport3D.ViewType.Lightmapped, Viewport2D.ViewDirection.Front),
+                Tuple.Create(false, Viewport3D.ViewType.Lightmapped, Viewport2D.ViewDirection.Side)
             };
 
             var viewports = config.Viewports ?? new List<string>();

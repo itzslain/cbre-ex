@@ -73,6 +73,11 @@ namespace Sledge.Graphics.Shaders
             GetVariable(name).Set(f);
         }
 
+        public void Set(string name, int i)
+        {
+            GetVariable(name).Set(i);
+        }
+
         public void Set(string name, bool b)
         {
             GetVariable(name).Set(b);

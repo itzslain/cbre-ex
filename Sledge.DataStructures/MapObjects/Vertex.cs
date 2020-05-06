@@ -53,6 +53,9 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
+        public float LMU { get; set; } = -1000.0f;
+        public float LMV { get; set; } = -1000.0f;
+
         public Coordinate Location { get; set; }
 
         public Face Parent { get; set; }

@@ -22,9 +22,9 @@ namespace Sledge.Editor.Rendering
                 case RenderMode.OpenGL3:
                     _renderer = new ModernRenderer(_document);
                     break;
-                case RenderMode.OpenGL1DisplayLists:
+                /*case RenderMode.OpenGL1DisplayLists:
                     _renderer = new DisplayListRenderer(_document);
-                    break;
+                    break;*/
                 default:
                     throw new ArgumentOutOfRangeException("This isn't a valid render mode.");
             }

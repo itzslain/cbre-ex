@@ -21,9 +21,9 @@ namespace Sledge.Settings
         FileSave,
         [Description("Save As...")]
         FileSaveAs,
-        [Description("Export...")]
-        FileExport,
-        [Description("Run")]
+        /*[Description("Export...")]
+        FileExport,*/
+        [Description("Export / Lightmap")]
         FileCompile,
 
         [Description("Undo")]

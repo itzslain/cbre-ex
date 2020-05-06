@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Sledge.Common;
+using Sledge.Graphics;
+using Sledge.Graphics.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Sledge.Providers.Texture
@@ -15,6 +19,21 @@ namespace Sledge.Providers.Texture
         private readonly List<TextureItem> _recentTextures;
         private readonly List<TexturePackage> _packages;
         private readonly Dictionary<string, TextureItem> _items;
+
+        public bool LightmapTextureOutdated = false;
+        public Bitmap[] Lightmaps { get; private set; } = new Bitmap[4];
+        public ITexture LightmapTexture { get; set; } = null;
+        public ITexture BlankTexture { get; private set; } //TODO: don't make one of these per document?
+
+        public void UpdateLightmapTexture()
+        {
+            LightmapTexture?.Dispose();
+            lock (Lightmaps)
+            {
+                LightmapTexture = TextureHelper.Create("lightmap", Lightmaps[3], Lightmaps[3].Width, Lightmaps[3].Height, TextureFlags.None);
+            }
+            LightmapTextureOutdated = false;
+        }
 
         public TextureItem SelectedTexture
         {
@@ -42,6 +61,16 @@ namespace Sledge.Providers.Texture
             }
             _recentTextures = new List<TextureItem>();
             SelectedTexture = GetDefaultSelection();
+
+            Bitmap bmp = new Bitmap(64, 64);
+            for (int i = 0; i < 64; i++)
+            {
+                for (int j = 0; j < 64; j++)
+                {
+                    bmp.SetPixel(i, j, Color.White);
+                }
+            }
+            BlankTexture = TextureHelper.Create("__blank", bmp, 64, 64, TextureFlags.None);
         }
 
         private TextureItem GetDefaultSelection()

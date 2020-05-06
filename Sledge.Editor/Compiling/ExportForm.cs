@@ -1,9 +1,11 @@
-﻿using Sledge.Editor.Documents;
+﻿using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,11 +13,11 @@ using System.Windows.Forms;
 
 namespace Sledge.Editor.Compiling
 {
-    public partial class RM2ExportForm : Form
+    public partial class ExportForm : Form
     {
         public Document Document;
 
-        public RM2ExportForm()
+        public ExportForm()
         {
             InitializeComponent();
         }
@@ -65,31 +67,28 @@ namespace Sledge.Editor.Compiling
         }
 
         private string SaveFileName = "";
+        private void render_Click(object sender, EventArgs e)
+        {
+            actionThread = new Thread(() => { PerformAction(false); });
+            actionThread.Start();
+        }
+
         private void export_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog save = new SaveFileDialog())
             {
-                var filter = "SCP - Containment Breach RoomMesh 2 (*.rm2)|*.rm2";
+                var filter = "SCP-CB v1.4 RM2 (*.rm2)|*.rm2";
+                filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
                 save.Filter = filter;
                 if (save.ShowDialog() == DialogResult.OK)
                 {
                     SaveFileName = save.FileName;
-                    textureDims.Enabled = false;
-                    downscaleFactor.Enabled = false;
-                    blurRadius.Enabled = false;
 
-                    ambientRed.Enabled = false;
-                    ambientGreen.Enabled = false;
-                    ambientBlue.Enabled = false;
-
-                    export.Enabled = false;
-                    cancel.Enabled = true;
-
-                    ProgressLog.Text = "Starting...";
+                    ProgressLog.Text = "Exporting to "+save.FileName;
                     ProgressBar.Enabled = true;
 
-                    exportThread = new Thread(PerformExport);
-                    exportThread.Start();
+                    actionThread = new Thread(() => { PerformAction(true); });
+                    actionThread.Start();
                 }
             }
         }
@@ -184,12 +183,52 @@ namespace Sledge.Editor.Compiling
             }
         }
 
-        Thread exportThread = null;
-        private void PerformExport()
+        private void SetCancelEnabled(bool enabled)
+        {
+            Invoke((MethodInvoker)(() =>
+            {
+                textureDims.Enabled = !enabled;
+                downscaleFactor.Enabled = !enabled;
+                blurRadius.Enabled = !enabled;
+
+                ambientRed.Enabled = !enabled;
+                ambientGreen.Enabled = !enabled;
+                ambientBlue.Enabled = !enabled;
+
+                render.Enabled = !enabled;
+                export.Enabled = !enabled;
+                cancel.Enabled = enabled;
+
+                ProgressBar.Enabled = enabled;
+            }));
+        }
+
+        Thread actionThread = null;
+        private void PerformAction(bool export)
         {
             try
             {
-                RM2Export.SaveToFile(SaveFileName, Document.Map, this);
+                SetCancelEnabled(true);
+                if (export)
+                {
+                    string extension = System.IO.Path.GetExtension(SaveFileName);
+                    if (extension.Equals(".rm2", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        RM2Export.SaveToFile(SaveFileName, Document, this);
+                    }
+                    else if (extension.Equals(".rmesh", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        RMeshExport.SaveToFile(SaveFileName, Document, this);
+                    }
+                    else
+                    {
+                        throw new Exception($"Unknown file extension ({extension})");
+                    }
+                }
+                else
+                {
+                    Lightmap.Lightmapper.Render(Document, ProgressBar, ProgressLog, out _);
+                }
             }
             catch (ThreadAbortException e)
             {
@@ -219,27 +258,13 @@ namespace Sledge.Editor.Compiling
             }
             finally
             {
-                Invoke((MethodInvoker)(() =>
-                {
-                    textureDims.Enabled = true;
-                    downscaleFactor.Enabled = true;
-                    blurRadius.Enabled = true;
-
-                    ambientRed.Enabled = true;
-                    ambientGreen.Enabled = true;
-                    ambientBlue.Enabled = true;
-
-                    export.Enabled = true;
-                    cancel.Enabled = false;
-
-                    ProgressBar.Enabled = false;
-                }));
+                SetCancelEnabled(false);
             }
         }
 
         private void formClosing(object sender,FormClosingEventArgs args)
         {
-            if (exportThread!=null && exportThread.IsAlive)
+            if (actionThread != null && actionThread.IsAlive)
             {
                 args.Cancel = true;
             }
@@ -247,9 +272,9 @@ namespace Sledge.Editor.Compiling
 
         private void cancel_Click(object sender, EventArgs e)
         {
-            if (exportThread != null && exportThread.IsAlive)
+            if (actionThread != null && actionThread.IsAlive)
             {
-                exportThread.Abort();
+                actionThread.Abort();
             }
         }
     }

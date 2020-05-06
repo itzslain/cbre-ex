@@ -12,6 +12,11 @@ namespace Sledge.UI
         public enum ViewType
         {
             /// <summary>
+            /// Renders textures and shaded solids with lightmaps if available
+            /// </summary>
+            Lightmapped,
+
+            /// <summary>
             /// Renders textured and shaded solids
             /// </summary>
             Textured,

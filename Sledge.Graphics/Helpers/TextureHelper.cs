@@ -197,7 +197,11 @@ namespace Sledge.Graphics.Helpers
 
         public static void Unbind()
         {
+            GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.ActiveTexture(TextureUnit.Texture0);
         }
 
         public static void SetRenderTarget(GLTexture target)

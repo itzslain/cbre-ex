@@ -201,12 +201,13 @@
     <Compile Include="Compiling\Lightmap\Lightmapper.cs" />
     <Compile Include="Compiling\Lightmap\Light.cs" />
     <Compile Include="Compiling\Lightmap\Progress.cs" />
+    <Compile Include="Compiling\RMeshExport.cs" />
     <Compile Include="Compiling\RM2Export.cs" />
-    <Compile Include="Compiling\RM2ExportForm.cs">
+    <Compile Include="Compiling\ExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Compiling\RM2ExportForm.Designer.cs">
-      <DependentUpon>RM2ExportForm.cs</DependentUpon>
+    <Compile Include="Compiling\ExportForm.Designer.cs">
+      <DependentUpon>ExportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
@@ -276,7 +277,6 @@
     <Compile Include="Rendering\Immediate\ModelRenderer.cs" />
     <Compile Include="Rendering\Immediate\MapObjectRenderer.cs" />
     <Compile Include="Rendering\Renderers\ModernRenderer.cs" />
-    <Compile Include="Rendering\Renderers\DisplayListRenderer.cs" />
     <Compile Include="Rendering\Renderers\IRenderer.cs" />
     <Compile Include="Rendering\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
@@ -628,8 +628,8 @@
     <EmbeddedResource Include="Brushes\Controls\TextControl.resx">
       <DependentUpon>TextControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Compiling\RM2ExportForm.resx">
-      <DependentUpon>RM2ExportForm.cs</DependentUpon>
+    <EmbeddedResource Include="Compiling\ExportForm.resx">
+      <DependentUpon>ExportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
@@ -802,6 +802,7 @@
     <Content Include="Milestones.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
+    <None Include="Resources\Menu_ExportRmesh.png" />
     <Content Include="ToolTextures\BLOCK_LIGHT.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

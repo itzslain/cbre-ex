@@ -66,7 +66,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.FileClose, this);
             Mediator.Subscribe(HotkeysMediator.FileSave, this);
             Mediator.Subscribe(HotkeysMediator.FileSaveAs, this);
-            Mediator.Subscribe(HotkeysMediator.FileExport, this);
+            //Mediator.Subscribe(HotkeysMediator.FileExport, this);
             Mediator.Subscribe(HotkeysMediator.FileCompile, this);
 
             Mediator.Subscribe(HotkeysMediator.HistoryUndo, this);
@@ -245,36 +245,11 @@ namespace Sledge.Editor.Documents
             _document.SaveFile(null, true);
         }
 
-        public void FileExport()
-        {
-            _document.SaveFile(null, true, false);
-        }
-
         public void FileCompile()
         {
-            RM2ExportForm form = new RM2ExportForm();
+            ExportForm form = new ExportForm();
             form.Document = _document;
             form.ShowDialog();
-            return;
-
-            _document.SaveFile();
-            if (_document.MapFile == null) return;
-            
-            var build = SettingsManager.Build;
-            if (build == null)
-            {
-                throw new Exception("Build == null");
-            }
-            
-            using (var cd = new SaveFileDialog())
-            {
-                var filter = "SCP - Containment Breach RoomMesh 2 (*.rm2)";
-                cd.Filter = filter;
-                if (cd.ShowDialog() == DialogResult.OK)
-                {
-
-                }
-            }
         }
 
         public void OperationsCopy()

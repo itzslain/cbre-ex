@@ -63,6 +63,7 @@ namespace Sledge.Editor.Rendering
             if (_menu != null) _menu.Dispose();
             _menu = new ContextMenu(new[]
                                         {
+                                            CreateMenu("3D Lightmapped", Viewport3D.ViewType.Lightmapped, null),
                                             CreateMenu("3D Textured", Viewport3D.ViewType.Textured, null),
                                             CreateMenu("3D Shaded", Viewport3D.ViewType.Shaded, null),
                                             CreateMenu("3D Flat", Viewport3D.ViewType.Flat, null),
