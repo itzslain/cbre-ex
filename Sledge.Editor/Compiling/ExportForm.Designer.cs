@@ -92,7 +92,6 @@
             this.textureDims.Name = "textureDims";
             this.textureDims.Size = new System.Drawing.Size(553, 20);
             this.textureDims.TabIndex = 4;
-            this.textureDims.Text = Lightmap.Config.TextureDims.ToString();
             this.textureDims.LostFocus += new System.EventHandler(this.textureDims_LostFocus);
             // 
             // downscaleFactor
@@ -103,7 +102,6 @@
             this.downscaleFactor.Name = "downscaleFactor";
             this.downscaleFactor.Size = new System.Drawing.Size(553, 20);
             this.downscaleFactor.TabIndex = 5;
-            this.downscaleFactor.Text = Lightmap.Config.DownscaleFactor.ToString();
             this.downscaleFactor.LostFocus += new System.EventHandler(this.downscaleFactor_LostFocus);
             // 
             // blurRadius
@@ -114,7 +112,6 @@
             this.blurRadius.Name = "blurRadius";
             this.blurRadius.Size = new System.Drawing.Size(553, 20);
             this.blurRadius.TabIndex = 6;
-            this.blurRadius.Text = Lightmap.Config.BlurRadius.ToString();
             this.blurRadius.LostFocus += new System.EventHandler(this.blurRadius_LostFocus);
             // 
             // label5
@@ -132,7 +129,6 @@
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
-            this.ambientRed.Text = Lightmap.Config.AmbientColor.R.ToString();
             this.ambientRed.TextChanged += new System.EventHandler(this.ambientRed_TextChanged);
             this.ambientRed.LostFocus += new System.EventHandler(this.ambientRed_LostFocus);
             // 
@@ -142,7 +138,6 @@
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
-            this.ambientGreen.Text = Lightmap.Config.AmbientColor.G.ToString();
             this.ambientGreen.TextChanged += new System.EventHandler(this.ambientGreen_TextChanged);
             this.ambientGreen.LostFocus += new System.EventHandler(this.ambientGreen_LostFocus);
             // 
@@ -152,7 +147,6 @@
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
-            this.ambientBlue.Text = Lightmap.Config.AmbientColor.B.ToString();
             this.ambientBlue.TextChanged += new System.EventHandler(this.ambientBlue_TextChanged);
             this.ambientBlue.LostFocus += new System.EventHandler(this.ambientBlue_LostFocus);
             // 
@@ -194,7 +188,7 @@
             this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.ambientColorBox.Location = new System.Drawing.Point(263, 131);
             this.ambientColorBox.Name = "ambientColorBox";
-            this.ambientColorBox.Size = new System.Drawing.Size(46, 20);
+            this.ambientColorBox.Size = new System.Drawing.Size(42, 20);
             this.ambientColorBox.TabIndex = 16;
             this.ambientColorBox.Click += new System.EventHandler(this.ambientColorBox_Click);
             // 
@@ -251,6 +245,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Export / Lightmap";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
+            this.Load += new System.EventHandler(this.ExportForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

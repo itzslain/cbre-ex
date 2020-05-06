@@ -193,7 +193,7 @@ namespace Sledge.Editor.Rendering.Renderers
                                                                    : new Vector4(1, 0.5f, 0.5f, 1);
 
                 // Render textured polygons
-                _array.RenderTextured(context.Context, _document.TextureCollection.BlankTexture, _document.TextureCollection.LightmapTexture);
+                _array.RenderTextured(context.Context, _document.TextureCollection.LightmapTexture);
 
                 // Render textured models
                 if (!Sledge.Settings.View.DisableModelRendering)

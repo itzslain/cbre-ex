@@ -28,7 +28,7 @@ namespace Sledge.Editor.Rendering.Arrays
         {
         }
 
-        public void RenderTextured(IGraphicsContext context, ITexture blankTexture, ITexture lightmapTexture)
+        public void RenderTextured(IGraphicsContext context, ITexture lightmapTexture)
         {
             foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null))
             {
@@ -36,7 +36,7 @@ namespace Sledge.Editor.Rendering.Arrays
                 var tex = (ITexture)subset.Instance;
                 tex.Bind();
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
-                (lightmapTexture!=null ? lightmapTexture : blankTexture).Bind();
+                lightmapTexture.Bind();
 
                 Render(context, PrimitiveType.Triangles, subset);
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);

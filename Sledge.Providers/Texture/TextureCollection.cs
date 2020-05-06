@@ -23,14 +23,16 @@ namespace Sledge.Providers.Texture
         public bool LightmapTextureOutdated = false;
         public Bitmap[] Lightmaps { get; private set; } = new Bitmap[4];
         public ITexture LightmapTexture { get; set; } = null;
-        public ITexture BlankTexture { get; private set; } //TODO: don't make one of these per document?
+
+        private static ulong LastTextureCollectionID = 0;
 
         public void UpdateLightmapTexture()
         {
             lock (Lightmaps)
             {
-                LightmapTexture?.Dispose();
-                LightmapTexture = TextureHelper.Create("lightmap", Lightmaps[3], Lightmaps[3].Width, Lightmaps[3].Height, TextureFlags.None);
+                string texName = LightmapTexture.Name;
+                LightmapTexture.Dispose();
+                LightmapTexture = TextureHelper.Create(texName, Lightmaps[3], Lightmaps[3].Width, Lightmaps[3].Height, TextureFlags.None);
                 LightmapTextureOutdated = false;
             }
         }
@@ -70,7 +72,17 @@ namespace Sledge.Providers.Texture
                     bmp.SetPixel(i, j, Color.White);
                 }
             }
-            BlankTexture = TextureHelper.Create("__blank", bmp, 64, 64, TextureFlags.None);
+            LastTextureCollectionID++;
+            LightmapTexture = TextureHelper.Create("__lightmap"+ LastTextureCollectionID.ToString(), bmp, 64, 64, TextureFlags.None);
+        }
+
+        ~TextureCollection()
+        {
+            TextureHelper.EnqueueDisposal(LightmapTexture);
+            for (int i=0;i<4;i++)
+            {
+                Lightmaps[i]?.Dispose();
+            }
         }
 
         private TextureItem GetDefaultSelection()

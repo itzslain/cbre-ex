@@ -88,8 +88,29 @@ namespace Sledge.Graphics.Helpers
             return (int) (x + 1);
         }
 
+        private static List<ITexture> texturesToDispose = new List<ITexture>();
+
+        public static void EnqueueDisposal(ITexture tex)
+        {
+            lock (texturesToDispose)
+            {
+                texturesToDispose.Add(tex);
+            }
+        }
+
+        public static void DisposeQueuedTextures()
+        {
+            lock (texturesToDispose)
+            {
+                texturesToDispose.ForEach(t => t.Dispose());
+                texturesToDispose.Clear();
+            }
+        }
+
         public static GLTexture Create(string name, Bitmap bitmap, int width, int height, TextureFlags flags)
         {
+            DisposeQueuedTextures();
+
             if (Exists(name)) {
                 Delete(name);
             }

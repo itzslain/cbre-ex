@@ -56,7 +56,7 @@ namespace Sledge.Editor.Compiling
         private void blurRadius_LostFocus(object sender, EventArgs e)
         {
             int radius = -1; int.TryParse(((TextBox)sender).Text, out radius);
-            if (radius >= 0 && radius <= 10)
+            if (radius >= 0 && radius <= 150)
             {
                 Lightmap.Config.BlurRadius = radius;
             }
@@ -279,6 +279,21 @@ namespace Sledge.Editor.Compiling
             {
                 actionThread.Abort();
             }
+        }
+
+        private void ExportForm_Load(object sender, EventArgs e)
+        {
+            ambientRed.Text = Lightmap.Config.AmbientColor.R.ToString();
+            ambientGreen.Text = Lightmap.Config.AmbientColor.G.ToString();
+            ambientBlue.Text = Lightmap.Config.AmbientColor.B.ToString();
+
+            ambientColorBox.BackColor = Lightmap.Config.AmbientColor;
+
+            textureDims.Text = Lightmap.Config.TextureDims.ToString();
+
+            downscaleFactor.Text = Lightmap.Config.DownscaleFactor.ToString();
+
+            blurRadius.Text = Lightmap.Config.BlurRadius.ToString();
         }
     }
 }
