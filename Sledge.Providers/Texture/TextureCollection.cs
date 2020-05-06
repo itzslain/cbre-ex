@@ -27,12 +27,12 @@ namespace Sledge.Providers.Texture
 
         public void UpdateLightmapTexture()
         {
-            LightmapTexture?.Dispose();
             lock (Lightmaps)
             {
+                LightmapTexture?.Dispose();
                 LightmapTexture = TextureHelper.Create("lightmap", Lightmaps[3], Lightmaps[3].Width, Lightmaps[3].Height, TextureFlags.None);
+                LightmapTextureOutdated = false;
             }
-            LightmapTextureOutdated = false;
         }
 
         public TextureItem SelectedTexture

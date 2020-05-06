@@ -69,6 +69,9 @@ namespace Sledge.Editor.Compiling
         private string SaveFileName = "";
         private void render_Click(object sender, EventArgs e)
         {
+            ProgressLog.Text = "Rendering lightmap";
+            ProgressBar.Enabled = true;
+
             actionThread = new Thread(() => { PerformAction(false); });
             actionThread.Start();
         }
@@ -84,7 +87,7 @@ namespace Sledge.Editor.Compiling
                 {
                     SaveFileName = save.FileName;
 
-                    ProgressLog.Text = "Exporting to "+save.FileName;
+                    ProgressLog.Text = "Exporting to " + save.FileName;
                     ProgressBar.Enabled = true;
 
                     actionThread = new Thread(() => { PerformAction(true); });
@@ -251,7 +254,7 @@ namespace Sledge.Editor.Compiling
                     ProgressLog.SelectionLength = 0;
 
                     ProgressLog.SelectionColor = Color.Red;
-                    ProgressLog.AppendText("\nError: " + e.Message + " " + e.StackTrace);
+                    ProgressLog.AppendText("\nError: " + e.Message + "\n" + e.StackTrace);
                     ProgressLog.SelectionColor = ProgressLog.ForeColor;
                 }));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
