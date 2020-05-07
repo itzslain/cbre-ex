@@ -268,9 +268,9 @@ namespace Sledge.Editor.Compiling
                 {
                     for (int j = 0; j < face.Vertices.Count; j++)
                     {
-                        br.Write(face.Vertices[j].Location.X);
-                        br.Write(face.Vertices[j].Location.Z);
-                        br.Write(face.Vertices[j].Location.Y);
+                        br.Write((float)face.Vertices[j].Location.X);
+                        br.Write((float)face.Vertices[j].Location.Z);
+                        br.Write((float)face.Vertices[j].Location.Y);
                     }
                 }
                 br.Write((Int32)triCount);
