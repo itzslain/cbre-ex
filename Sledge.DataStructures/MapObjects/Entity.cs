@@ -91,7 +91,7 @@ namespace Sledge.DataStructures.MapObjects
                 Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
                 Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
                 Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
-                var tform = ((yaw*roll*pitch) *Matrix.Scale(scale)).Translate(Origin);
+                var tform = ((yaw * roll * pitch) * Matrix.Scale(scale)).Translate(Origin);
                 if (MetaData.Has<bool>("RotateBoundingBox") && !MetaData.Get<bool>("RotateBoundingBox")) tform = Matrix.Translation(Origin);
                 BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(new UnitMatrixMult(tform));
             }

@@ -1,5 +1,6 @@
 ﻿using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,18 +43,13 @@ namespace Sledge.Editor.Compiling.Lightmap
                         outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 360.0f)
                     };
 
-                    CoordinateF eulerAngles = new CoordinateF(x.EntityData.GetPropertyCoordinate("angles"));
-                    eulerAngles.X *= (float)Math.PI / 180.0f;
-                    eulerAngles.Y *= (float)Math.PI / 180.0f;
-                    eulerAngles.Z *= (float)Math.PI / 180.0f;
+                    Coordinate angles = x.EntityData.GetPropertyCoordinate("angles");
+                    Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
+                    Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, DMath.DegreesToRadians(angles.Y)));
+                    Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
 
-                    float swap = eulerAngles.Z;
-                    eulerAngles.Z = eulerAngles.Y; eulerAngles.Y = swap;
-                    swap = eulerAngles.Y;
-                    eulerAngles.Y = eulerAngles.X; eulerAngles.X = swap;
-
-                    MatrixF rot = MatrixF.Rotation(QuaternionF.EulerAngles(eulerAngles));
-                    light.Direction = (new CoordinateF(0.0f, -1.0f, 0.0f)) * rot;
+                    Matrix rot = yaw * roll * pitch;
+                    light.Direction = new CoordinateF((new Coordinate(0, -1, 0)) * rot);
                     //TODO: make sure this matches 3dws
 
                     return light;
