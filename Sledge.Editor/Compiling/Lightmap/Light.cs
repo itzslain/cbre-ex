@@ -1,5 +1,6 @@
 ﻿using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Transformations;
 using Sledge.Extensions;
 using System;
 using System.Collections.Generic;
@@ -44,12 +45,14 @@ namespace Sledge.Editor.Compiling.Lightmap
                     };
 
                     Coordinate angles = x.EntityData.GetPropertyCoordinate("angles");
+
                     Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
-                    Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, DMath.DegreesToRadians(angles.Y)));
+                    Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
                     Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
 
-                    Matrix rot = yaw * roll * pitch;
-                    light.Direction = new CoordinateF((new Coordinate(0, -1, 0)) * rot);
+                    var m = new UnitMatrixMult(yaw * roll * pitch);
+
+                    light.Direction = new CoordinateF(m.Transform(Coordinate.UnitY));
                     //TODO: make sure this matches 3dws
 
                     return light;

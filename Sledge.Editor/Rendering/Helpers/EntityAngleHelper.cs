@@ -49,12 +49,17 @@ namespace Sledge.Editor.Rendering.Helpers
             var angles = entityData.GetPropertyCoordinate("angles");
             if (angles == null) return;
 
-            angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
-            var m = new UnitMatrixMult(Matrix4.CreateRotationX((float)angles.X) * Matrix4.CreateRotationY((float)angles.Y) * Matrix4.CreateRotationZ((float)angles.Z));
+            //angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
+
+            Matrix pitch = Matrix.Rotation(DataStructures.Geometric.Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
+            Matrix yaw = Matrix.Rotation(DataStructures.Geometric.Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
+            Matrix roll = Matrix.Rotation(DataStructures.Geometric.Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
+
+            var m = new UnitMatrixMult(yaw * roll * pitch);
 
             var min = Math.Min(o.BoundingBox.Width, Math.Min(o.BoundingBox.Height, o.BoundingBox.Length));
             var p1 = viewport.Flatten(o.BoundingBox.Center);
-            var p2 = p1 + viewport.Flatten(m.Transform(Coordinate.UnitX)) * min * 0.4m;
+            var p2 = p1 + viewport.Flatten(m.Transform(Coordinate.UnitY)) * min * 0.4m;
 
             var multiplier = 4 / viewport.Zoom;
             var dir = (p2 - p1).Normalise();
