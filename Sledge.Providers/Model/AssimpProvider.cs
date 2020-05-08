@@ -23,7 +23,27 @@ namespace Sledge.Providers.Model
                    file.Extension.ToLowerInvariant() == "x";
         }
 
-        protected static DataStructures.Models.Mesh AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh)
+        protected static void AddNode(Scene scene, Node node, DataStructures.Models.Model model, DataStructures.Models.Texture tex, Matrix4x4 parentMatrix)
+        {
+            Matrix4x4 selfMatrix = node.Transform * parentMatrix;
+            foreach (var meshIndex in node.MeshIndices)
+            {
+                DataStructures.Models.Mesh sledgeMesh = AddMesh(model, scene.Meshes[meshIndex], selfMatrix);
+                foreach (var v in sledgeMesh.Vertices)
+                {
+                    v.TextureU *= tex.Width;
+                    v.TextureV *= tex.Height;
+                }
+                model.AddMesh("mesh", 0, sledgeMesh);
+            }
+
+            foreach (var subNode in node.Children)
+            {
+                AddNode(scene, subNode, model, tex, selfMatrix);
+            }
+        }
+
+        protected static DataStructures.Models.Mesh AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh, Matrix4x4 selfMatrix)
         {
             var sledgeMesh = new DataStructures.Models.Mesh(0);
             List<MeshVertex> vertices = new List<MeshVertex>();
@@ -31,7 +51,9 @@ namespace Sledge.Providers.Model
             for (int i=0;i<assimpMesh.VertexCount;i++)
             {
                 var assimpVertex = assimpMesh.Vertices[i];
+                assimpVertex = selfMatrix * assimpVertex;
                 var assimpNormal = assimpMesh.Normals[i];
+                assimpNormal = selfMatrix * assimpNormal;
                 var assimpUv = assimpMesh.TextureCoordinateChannels[0][i];
 
                 vertices.Add(new MeshVertex(new CoordinateF(assimpVertex.X, -assimpVertex.Z, assimpVertex.Y),
@@ -109,16 +131,7 @@ namespace Sledge.Providers.Model
 
             model.Textures.Add(tex);
 
-            foreach (var mesh in scene.Meshes)
-            {
-                DataStructures.Models.Mesh sledgeMesh = AddMesh(model, mesh);
-                foreach (var v in sledgeMesh.Vertices)
-                {
-                    v.TextureU *= tex.Width;
-                    v.TextureV *= tex.Height;
-                }
-                model.AddMesh("mesh", 0, sledgeMesh);
-            }
+            AddNode(scene, scene.RootNode, model, tex, Matrix4x4.Identity);
 
             return model;
         }
