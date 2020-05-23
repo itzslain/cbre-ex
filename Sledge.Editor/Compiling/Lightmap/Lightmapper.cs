@@ -40,6 +40,76 @@ namespace Sledge.Editor.Compiling.Lightmap
             progressBar.Invoke((MethodInvoker)(() => progressBar.Value = (int)(progress * 10000)));
         }
 
+        private static void CalculateUV(List<LightmapGroup> lmGroups, Rectangle area, out int usedWidth, out int usedHeight)
+        {
+            usedWidth = 0;
+            usedHeight = 0;
+            if (lmGroups.Count <= 0) { return; }
+
+            for (int i=0;i<lmGroups.Count;i++)
+            {
+                LightmapGroup lmGroup = lmGroups[i];
+
+                for (int j = 0; j < 2; j++)
+                {
+                    int downscaledWidth = (int)Math.Ceiling(lmGroup.Width / Config.DownscaleFactor);
+                    int downscaledHeight = (int)Math.Ceiling(lmGroup.Height / Config.DownscaleFactor);
+
+                    if (downscaledWidth < area.Width && downscaledHeight < area.Height)
+                    {
+                        usedWidth += downscaledWidth;
+                        usedHeight += downscaledHeight;
+                        lmGroups.RemoveAt(i);
+                        lmGroup.writeX = area.Left;
+                        lmGroup.writeY = area.Top;
+
+                        int subWidth = -1; int subHeight = -1;
+                        int subUsedWidth = 0;
+                        while (subWidth != 0)
+                        {
+                            CalculateUV(lmGroups, new Rectangle(area.Left + subUsedWidth + downscaledWidth + Config.PlaneMargin,
+                                                                area.Top,
+                                                                area.Width - subUsedWidth - downscaledWidth - Config.PlaneMargin,
+                                                                downscaledHeight),
+                                        out subWidth, out subHeight);
+                            subUsedWidth += subWidth;
+                        }
+
+                        usedWidth += subUsedWidth;
+
+                        subWidth = -1; subHeight = -1;
+                        int subUsedHeight = 0;
+                        while (subHeight != 0)
+                        {
+                            CalculateUV(lmGroups, new Rectangle(area.Left,
+                                                                area.Top + subUsedHeight + downscaledHeight + Config.PlaneMargin,
+                                                                downscaledWidth,
+                                                                area.Height - subUsedHeight - downscaledHeight - Config.PlaneMargin),
+                                        out subWidth, out subHeight);
+                            subUsedHeight += subHeight;
+                        }
+
+                        usedHeight += subUsedHeight;
+
+                        Rectangle remainder = new Rectangle(area.Left + downscaledWidth + Config.PlaneMargin,
+                                                            area.Top + downscaledHeight + Config.PlaneMargin,
+                                                            area.Width - downscaledWidth - Config.PlaneMargin,
+                                                            area.Height - downscaledHeight - Config.PlaneMargin);
+
+                        CalculateUV(lmGroups, remainder,
+                                        out subWidth, out subHeight);
+
+                        usedWidth += subWidth;
+                        usedHeight += subHeight;
+
+                        return;
+                    }
+
+                    lmGroup.SwapUV();
+                }
+            }
+        }
+
         public static void Render(Document document, ProgressBar progressBar, RichTextBox progressLog, out List<LMFace> faces)
         {
             var textureCollection = document.TextureCollection;
@@ -99,7 +169,7 @@ namespace Sledge.Editor.Compiling.Lightmap
             {
                 if (x == y) return 0;
 
-                if (x.Width < y.Width) { return 1; }
+                if (x.Width * x.Height < y.Width * y.Height) { return 1; }
                 return -1;
             });
 
@@ -121,33 +191,12 @@ namespace Sledge.Editor.Compiling.Lightmap
             List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
             int faceCount = 0;
 
-            foreach (LightmapGroup group in lmGroups)
+            List<LightmapGroup> uvCalcFaces = new List<LightmapGroup>(lmGroups);
+            CalculateUV(uvCalcFaces, new Rectangle(1, 1, Config.TextureDims-1, Config.TextureDims-1), out _, out _);
+
+            if (uvCalcFaces.Count > 0)
             {
-                var uAxis = group.uAxis;
-                var vAxis = group.vAxis;
-
-                float minTotalX = group.minTotalX.Value;
-                float maxTotalX = group.maxTotalX.Value;
-                float minTotalY = group.minTotalY.Value;
-                float maxTotalY = group.maxTotalY.Value;
-
-                if (writeY + (int)(maxTotalY - minTotalY) / Config.DownscaleFactor + Config.PlaneMargin >= Config.TextureDims)
-                {
-                    writeY = 0;
-                    writeX += writeMaxX;
-                    writeMaxX = 0;
-                }
-
-                group.writeX = writeX;
-                group.writeY = writeY;
-
-                writeY += (int)(maxTotalY - minTotalY) / Config.DownscaleFactor + Config.PlaneMargin;
-                if ((int)(maxTotalX - minTotalX) / Config.DownscaleFactor + Config.PlaneMargin > writeMaxX) writeMaxX = (int)(maxTotalX - minTotalX) / Config.DownscaleFactor + Config.PlaneMargin;
-
-                if (writeX + writeMaxX >= Config.TextureDims)
-                {
-                    throw new Exception("UV coordinates out of bounds: try increasing downscale factor or increasing texture dimensions");
-                }
+                throw new Exception("UV coordinates out of bounds: try increasing downscale factor or increasing texture dimensions");
             }
 
             foreach (LightmapGroup group in lmGroups)
@@ -440,8 +489,8 @@ namespace Sledge.Editor.Compiling.Lightmap
                 {
                     for (int x = 0; x < iterX; x++)
                     {
-                        int tX = writeX + x + (int)(minX - group.minTotalX) / Config.DownscaleFactor;
-                        int tY = writeY + y + (int)(minY - group.minTotalY) / Config.DownscaleFactor;
+                        int tX = (int)(writeX + x + (int)(minX - group.minTotalX) / Config.DownscaleFactor);
+                        int tY = (int)(writeY + y + (int)(minY - group.minTotalY) / Config.DownscaleFactor);
 
                         if (tX >= 0 && tY >= 0 && tX < Config.TextureDims && tY < Config.TextureDims)
                         {
@@ -462,8 +511,8 @@ namespace Sledge.Editor.Compiling.Lightmap
                         float ttY = minY.Value + (y * Config.DownscaleFactor);
                         CoordinateF pointOnPlane = (ttX - centerX) * group.uAxis + (ttY - centerY) * group.vAxis + targetFace.BoundingBox.Center;
 
-                        int tX = writeX + x + (int)(minX - group.minTotalX) / Config.DownscaleFactor;
-                        int tY = writeY + y + (int)(minY - group.minTotalY) / Config.DownscaleFactor;
+                        int tX = (int)(writeX + x + (int)(minX - group.minTotalX) / Config.DownscaleFactor);
+                        int tY = (int)(writeY + y + (int)(minY - group.minTotalY) / Config.DownscaleFactor);
 
                         CoordinateF luxelColor0 = new CoordinateF(r[0][x, y], g[0][x, y], b[0][x, y]);
                         CoordinateF luxelColor1 = new CoordinateF(r[1][x, y], g[1][x, y], b[1][x, y]);

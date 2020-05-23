@@ -42,7 +42,7 @@ namespace Sledge.Editor.Compiling
 
         private void downscaleFactor_LostFocus(object sender, EventArgs e)
         {
-            int factor = -1; int.TryParse(((TextBox)sender).Text, out factor);
+            float factor = -1; float.TryParse(((TextBox)sender).Text, out factor);
             if (factor >= 1 && factor <= 128)
             {
                 Lightmap.Config.DownscaleFactor = factor;
