@@ -240,12 +240,23 @@ namespace Sledge.Providers.Map
                 }
                 else if (name == "brush")
                 {
+                    bool invisibleCollision = false;
+
                     byte brushFlags = br.ReadByte(); //TODO: ???
                     Int32 keys = br.ReadInt32();
                     for (int j=0;j<keys;j++)
                     {
                         Int32 keyNameInd = br.ReadInt32();
                         Int32 keyValueInd = br.ReadInt32();
+                        string keyName = names[keyNameInd - 1];
+                        if (keyName.Equals("classname", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            string keyValue = names[keyValueInd - 1];
+                            if (keyValue.Equals("field_hit", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                invisibleCollision = true;
+                            }
+                        }
                     }
                     Int32 groupIndex = br.ReadInt32();
                     Int32 visgroupIndex = br.ReadInt32();
@@ -323,9 +334,12 @@ namespace Sledge.Providers.Map
                             Coordinate vNorm = new Coordinate(vTexPlane0, vTexPlane2, vTexPlane1);
                             if (Math.Abs((double)(uNorm.LengthSquared() - vNorm.LengthSquared()))>0.001) throw new Exception(uNorm.LengthSquared().ToString()+" "+vNorm.LengthSquared().ToString());
 
-                            newFace.Texture.Name = (faceFlags & 4) != 0 ? "tooltextures/remove_face" : materials[materialInd];
+                            newFace.Texture.Name = (faceFlags & 4) != 0 ? "tooltextures/remove_face" :
+                                                    invisibleCollision  ? "tooltextures/invisible_collision" :
+                                                                          materials[materialInd];
                             newFace.AlignTextureToWorld();
-                            if (texRotY != texRotX) throw new Exception((texRotX - texRotY).ToString());
+                            //TODO: add warning?
+                            //if (texRotY != texRotX) throw new Exception((texRotX - texRotY).ToString());
                             
                             newFace.Texture.UAxis = uNorm * (decimal)Math.Cos(-texRotY * Math.PI / 180.0) + vNorm * (decimal)Math.Sin(-texRotY * Math.PI / 180.0);
                             newFace.Texture.VAxis = vNorm * (decimal)Math.Cos(-texRotY * Math.PI / 180.0) - uNorm * (decimal)Math.Sin(-texRotY * Math.PI / 180.0);

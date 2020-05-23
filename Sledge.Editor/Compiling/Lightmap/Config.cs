@@ -6,7 +6,7 @@ namespace Sledge.Editor.Compiling.Lightmap
     static class Config
     {
         public static int DownscaleFactor = 10;
-        public static int PlaneMargin = 5;
+        public static int PlaneMargin = 1;
         public static int TextureDims = 2048;
         public static int BlurRadius = 2;
 

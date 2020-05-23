@@ -67,6 +67,8 @@ namespace Sledge.Editor.Compiling.Lightmap
             UpdateProgress(progressBar, progressLog, "Determining UV coordinates...", 0);
             LMFace.FindFacesAndGroups(map, out faces, out lmGroups);
 
+            if (!lmGroups.Any()) { throw new Exception("No lightmap groups!"); }
+
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
             {
                 foreach (Face tface in solid.Faces)
@@ -97,11 +99,9 @@ namespace Sledge.Editor.Compiling.Lightmap
             {
                 if (x == y) return 0;
 
-                if (x.GetGroupTextureWidth() < y.GetGroupTextureWidth()) { return 1; }
+                if (x.Width < y.Width) { return 1; }
                 return -1;
             });
-
-            int writeX = 1; int writeY = 1; int writeMaxX = 0;
 
             float[][] buffers = new float[4][];
             lock (textureCollection.Lightmaps)
@@ -112,12 +112,15 @@ namespace Sledge.Editor.Compiling.Lightmap
                 buffers[3] = new float[textureCollection.Lightmaps[3].Width * textureCollection.Lightmaps[3].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
             }
 
+            int writeX = 1; int writeY = 1; int writeMaxX = 0;
+
             FaceRenderThreads = new List<Thread>();
 
             Light.FindLights(map, out lightEntities);
 
             List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
             int faceCount = 0;
+
             foreach (LightmapGroup group in lmGroups)
             {
                 var uAxis = group.uAxis;

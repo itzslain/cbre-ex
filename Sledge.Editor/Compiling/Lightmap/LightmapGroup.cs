@@ -20,7 +20,7 @@ namespace Sledge.Editor.Compiling.Lightmap
         public int writeX;
         public int writeY;
 
-        public float GetGroupTextureWidth()
+        private void CalculateInitialUV()
         {
             if (uAxis == null || vAxis == null)
             {
@@ -56,17 +56,38 @@ namespace Sledge.Editor.Compiling.Lightmap
 
                 if ((maxTotalX - minTotalX) > (maxTotalY - minTotalY))
                 {
-                    float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
-                    maxTotalX = maxTotalY; minTotalX = minTotalY;
-                    maxTotalY = maxSwap; minTotalY = minSwap;
-
-                    CoordinateF swapAxis = uAxis;
-                    uAxis = vAxis;
-                    vAxis = swapAxis;
+                    SwapUV();
                 }
             }
+        }
 
-            return (maxTotalX - minTotalX).Value;
+        public float Width
+        {
+            get
+            {
+                CalculateInitialUV();
+                return (maxTotalX - minTotalX).Value;
+            }
+        }
+
+        public float Height
+        {
+            get
+            {
+                CalculateInitialUV();
+                return (maxTotalY - minTotalY).Value;
+            }
+        }
+
+        public void SwapUV()
+        {
+            float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
+            maxTotalX = maxTotalY; minTotalX = minTotalY;
+            maxTotalY = maxSwap; minTotalY = minSwap;
+
+            CoordinateF swapAxis = uAxis;
+            uAxis = vAxis;
+            vAxis = swapAxis;
         }
 
         public static LightmapGroup FindCoplanar(List<LightmapGroup> lmGroups, LMFace otherFace)
