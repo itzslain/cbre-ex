@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
+using CBRE.Editor.Brushes;
+
+namespace CBRE.Editor.UI.Sidebar
+{
+    public partial class BrushSidebarPanel : UserControl, IMediatorListener
+    {
+        public bool RoundCheckboxEnabled
+        {
+            get { return RoundCreatedVerticesCheckbox.Enabled; }
+            set { RoundCreatedVerticesCheckbox.Enabled = value; }
+        }
+
+        public BrushSidebarPanel()
+        {
+            InitializeComponent();
+
+            Mediator.Subscribe(EditorMediator.ResetSelectedBrushType, this);
+
+            RoundCreatedVerticesCheckbox.Checked = BrushManager.RoundCreatedVertices;
+        }
+
+        public void ResetSelectedBrushType()
+        {
+            if (BrushTypeList.Items.Count > 0)
+            {
+                BrushTypeList.SelectedIndex = 0;
+            }
+        }
+
+        public void Notify(string message, object data)
+        {
+            Mediator.ExecuteDefault(this, message, data);
+        }
+
+        private void RoundCreatedVerticesChanged(object sender, EventArgs e)
+        {
+            BrushManager.RoundCreatedVertices = RoundCreatedVerticesCheckbox.Checked;
+        }
+    }
+}
