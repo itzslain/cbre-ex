@@ -94,7 +94,7 @@ namespace Sledge.Editor.Compiling.Lightmap
         {
             foreach (LightmapGroup group in lmGroups)
             {
-                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.1f)
+                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.01f)
                 {
                     PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0].Location);
                     if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;

@@ -40,22 +40,28 @@ namespace Sledge.Editor.Compiling.Lightmap
             progressBar.Invoke((MethodInvoker)(() => progressBar.Value = (int)(progress * 10000)));
         }
 
+
         private static void CalculateUV(List<LightmapGroup> lmGroups, Rectangle area, out int usedWidth, out int usedHeight)
         {
             usedWidth = 0;
             usedHeight = 0;
             if (lmGroups.Count <= 0) { return; }
 
-            for (int i=0;i<lmGroups.Count;i++)
+            for (int i = 0; i < lmGroups.Count; i++)
             {
                 LightmapGroup lmGroup = lmGroups[i];
+
+                if ((area.Width <= area.Height) != (lmGroup.Width <= lmGroup.Height))
+                {
+                    lmGroup.SwapUV();
+                }
 
                 for (int j = 0; j < 2; j++)
                 {
                     int downscaledWidth = (int)Math.Ceiling(lmGroup.Width / Config.DownscaleFactor);
                     int downscaledHeight = (int)Math.Ceiling(lmGroup.Height / Config.DownscaleFactor);
 
-                    if (downscaledWidth < area.Width && downscaledHeight < area.Height)
+                    if (downscaledWidth <= area.Width && downscaledHeight <= area.Height)
                     {
                         usedWidth += downscaledWidth;
                         usedHeight += downscaledHeight;
@@ -64,43 +70,52 @@ namespace Sledge.Editor.Compiling.Lightmap
                         lmGroup.writeY = area.Top;
 
                         int subWidth = -1; int subHeight = -1;
-                        int subUsedWidth = 0;
-                        while (subWidth != 0)
+                        if (downscaledWidth < area.Width)
                         {
-                            CalculateUV(lmGroups, new Rectangle(area.Left + subUsedWidth + downscaledWidth + Config.PlaneMargin,
-                                                                area.Top,
-                                                                area.Width - subUsedWidth - downscaledWidth - Config.PlaneMargin,
-                                                                downscaledHeight),
-                                        out subWidth, out subHeight);
-                            subUsedWidth += subWidth;
+                            int subUsedWidth = 0;
+                            while (subWidth != 0)
+                            {
+                                CalculateUV(lmGroups, new Rectangle(area.Left + subUsedWidth + downscaledWidth + Config.PlaneMargin,
+                                                                    area.Top,
+                                                                    area.Width - subUsedWidth - downscaledWidth - Config.PlaneMargin,
+                                                                    downscaledHeight),
+                                            out subWidth, out subHeight);
+                                subUsedWidth += subWidth + Config.PlaneMargin;
+                            }
+
+                            usedWidth += subUsedWidth;
+                            subWidth = -1; subHeight = -1;
                         }
 
-                        usedWidth += subUsedWidth;
-
-                        subWidth = -1; subHeight = -1;
-                        int subUsedHeight = 0;
-                        while (subHeight != 0)
+                        if (downscaledHeight < area.Height)
                         {
-                            CalculateUV(lmGroups, new Rectangle(area.Left,
-                                                                area.Top + subUsedHeight + downscaledHeight + Config.PlaneMargin,
-                                                                downscaledWidth,
-                                                                area.Height - subUsedHeight - downscaledHeight - Config.PlaneMargin),
-                                        out subWidth, out subHeight);
-                            subUsedHeight += subHeight;
+                            int subUsedHeight = 0;
+                            while (subHeight != 0)
+                            {
+                                CalculateUV(lmGroups, new Rectangle(area.Left,
+                                                                    area.Top + subUsedHeight + downscaledHeight + Config.PlaneMargin,
+                                                                    downscaledWidth,
+                                                                    area.Height - subUsedHeight - downscaledHeight - Config.PlaneMargin),
+                                            out subWidth, out subHeight);
+                                subUsedHeight += subHeight + Config.PlaneMargin;
+                            }
+
+                            usedHeight += subUsedHeight;
                         }
 
-                        usedHeight += subUsedHeight;
-
-                        Rectangle remainder = new Rectangle(area.Left + downscaledWidth + Config.PlaneMargin,
+                        if (downscaledWidth < area.Width && downscaledHeight < area.Height)
+                        {
+                            Rectangle remainder = new Rectangle(area.Left + downscaledWidth + Config.PlaneMargin,
                                                             area.Top + downscaledHeight + Config.PlaneMargin,
                                                             area.Width - downscaledWidth - Config.PlaneMargin,
                                                             area.Height - downscaledHeight - Config.PlaneMargin);
 
-                        CalculateUV(lmGroups, remainder,
-                                        out subWidth, out subHeight);
+                            CalculateUV(lmGroups, remainder,
+                                            out subWidth, out subHeight);
 
-                        usedWidth += subWidth;
-                        usedHeight += subHeight;
+                            usedWidth += subWidth;
+                            usedHeight += subHeight;
+                        }
 
                         return;
                     }
@@ -113,7 +128,7 @@ namespace Sledge.Editor.Compiling.Lightmap
         public static void Render(Document document, ProgressBar progressBar, RichTextBox progressLog, out List<LMFace> faces)
         {
             var textureCollection = document.TextureCollection;
-            
+
             progressBar.Invoke((MethodInvoker)(() => progressBar.Maximum = 10000));
             var map = document.Map;
 
@@ -182,8 +197,6 @@ namespace Sledge.Editor.Compiling.Lightmap
                 buffers[3] = new float[textureCollection.Lightmaps[3].Width * textureCollection.Lightmaps[3].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
             }
 
-            int writeX = 1; int writeY = 1; int writeMaxX = 0;
-
             FaceRenderThreads = new List<Thread>();
 
             Light.FindLights(map, out lightEntities);
@@ -192,7 +205,7 @@ namespace Sledge.Editor.Compiling.Lightmap
             int faceCount = 0;
 
             List<LightmapGroup> uvCalcFaces = new List<LightmapGroup>(lmGroups);
-            CalculateUV(uvCalcFaces, new Rectangle(1, 1, Config.TextureDims-1, Config.TextureDims-1), out _, out _);
+            CalculateUV(uvCalcFaces, new Rectangle(1, 1, Config.TextureDims - 2, Config.TextureDims - 2), out _, out _);
 
             if (uvCalcFaces.Count > 0)
             {
@@ -250,14 +263,17 @@ namespace Sledge.Editor.Compiling.Lightmap
             {
                 foreach (LightmapGroup group in lmGroups)
                 {
+                    int downscaledWidth = (int)Math.Ceiling(group.Width / Config.DownscaleFactor);
+                    int downscaledHeight = (int)Math.Ceiling(group.Height / Config.DownscaleFactor);
+
                     float ambientMultiplier = (group.Plane.Normal.Dot(Config.AmbientNormal) + 1.5f) * 0.4f;
                     CoordinateF mAmbientColor = new CoordinateF((Config.AmbientColor.B * ambientMultiplier / 255.0f),
                                                             (Config.AmbientColor.G * ambientMultiplier / 255.0f),
                                                             (Config.AmbientColor.R * ambientMultiplier / 255.0f));
-                    for (int y = group.writeY; y < group.writeY + (group.maxTotalY - group.minTotalY) / Config.DownscaleFactor; y++)
+                    for (int y = group.writeY; y < group.writeY + downscaledHeight; y++)
                     {
                         if (y < 0 || y >= Config.TextureDims) continue;
-                        for (int x = group.writeX; x < group.writeX + (group.maxTotalX - group.minTotalX) / Config.DownscaleFactor; x++)
+                        for (int x = group.writeX; x < group.writeX + downscaledWidth; x++)
                         {
                             if (x < 0 || x >= Config.TextureDims) continue;
                             int offset = (x + y * Config.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
@@ -269,12 +285,12 @@ namespace Sledge.Editor.Compiling.Lightmap
                             for (int j = -Config.BlurRadius; j <= Config.BlurRadius; j++)
                             {
                                 if (y + j < 0 || y + j >= Config.TextureDims) continue;
-                                if (y + j < group.writeY || y + j >= group.writeY + (group.maxTotalY - group.minTotalY)) continue;
+                                if (y + j < group.writeY || y + j >= group.writeY + downscaledHeight) continue;
                                 for (int i = -Config.BlurRadius; i <= Config.BlurRadius; i++)
                                 {
                                     if (i * i + j * j > Config.BlurRadius * Config.BlurRadius) continue;
                                     if (x + i < 0 || x + i >= Config.TextureDims) continue;
-                                    if (x + i < group.writeX || x + i >= group.writeX + (group.maxTotalX - group.minTotalX)) continue;
+                                    if (x + i < group.writeX || x + i >= group.writeX + downscaledWidth) continue;
                                     int sampleOffset = ((x + i) + (y + j) * Config.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
                                     if (buffers[k][sampleOffset + 3] < 1.0f) continue;
                                     sampleCount++;
