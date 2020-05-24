@@ -1,5 +1,7 @@
-Sledge-CB
+Containment Breach Room Editor
 ======
+
+omg it's not 3dws so it sux :(
 
 This is a hacked-up fork of Sledge meant for room creation for SCP - Containment Breach.
 
