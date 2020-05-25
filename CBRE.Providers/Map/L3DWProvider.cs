@@ -7,13 +7,12 @@ using System.Globalization;
 using CBRE.DataStructures.Geometric;
 using CBRE.Common;
 using CBRE.DataStructures.Transformations;
+using System.Drawing;
 
 namespace CBRE.Providers.Map
 {
     public class L3DWProvider : MapProvider
     {
-        private static readonly List<MapProvider> RegisteredProviders;
-        
         protected override DataStructures.MapObjects.Map GetFromFile(string filename)
         {
             using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read))
@@ -330,8 +329,37 @@ namespace CBRE.Providers.Map
 
                             newFace.UpdateBoundingBox();
 
-                            Coordinate uNorm = new Coordinate(uTexPlane0, uTexPlane2, uTexPlane1);
-                            Coordinate vNorm = new Coordinate(vTexPlane0, vTexPlane2, vTexPlane1);
+                            /*if ((faceFlags & 4) == 0)
+                            {
+                                Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
+                                entity.Colour = Color.Lime;
+                                entity.Origin = newFace.BoundingBox.Center;
+                                entity.UpdateBoundingBox();
+                                entity.SetParent(map.WorldSpawn);
+
+                                Property newProperty = new Property();
+                                newProperty.Key = "normal";
+                                newProperty.Value = newFace.Plane.Normal.ToString();
+                                entity.EntityData.Properties.Add(newProperty);
+
+                                var direction = newFace.Plane.GetClosestAxisToNormal();
+                                var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+                                var uAxis = newFace.Plane.Normal.Cross(tempV).Normalise();
+                                var vAxis = uAxis.Cross(newFace.Plane.Normal).Normalise();
+
+                                newProperty = new Property();
+                                newProperty.Key = "uaxis";
+                                newProperty.Value = uAxis.ToString();
+                                entity.EntityData.Properties.Add(newProperty);
+
+                                newProperty = new Property();
+                                newProperty.Key = "vaxis";
+                                newProperty.Value = vAxis.ToString();
+                                entity.EntityData.Properties.Add(newProperty);
+                            }*/
+
+                            Coordinate uNorm = new Coordinate(uTexPlane0, uTexPlane2, uTexPlane1).Normalise();
+                            Coordinate vNorm = new Coordinate(vTexPlane0, vTexPlane2, vTexPlane1).Normalise();
                             if (Math.Abs((double)(uNorm.LengthSquared() - vNorm.LengthSquared()))>0.001) throw new Exception(uNorm.LengthSquared().ToString()+" "+vNorm.LengthSquared().ToString());
 
                             newFace.Texture.Name = (faceFlags & 4) != 0 ? "tooltextures/remove_face" :
@@ -362,10 +390,14 @@ namespace CBRE.Providers.Map
                         newSolid.Faces.Add(face);
                     }
                     newSolid.Colour = Colour.GetRandomBrushColour();
-                    newSolid.SetParent(map.WorldSpawn);
-                    newSolid.UpdateBoundingBox();
 
-                    newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
+                    if (newSolid.IsValid())
+                    {
+                        newSolid.SetParent(map.WorldSpawn);
+                        newSolid.UpdateBoundingBox();
+
+                        newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
+                    }
                 }
                 else
                 {

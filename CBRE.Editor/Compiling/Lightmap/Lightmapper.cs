@@ -183,11 +183,14 @@ namespace CBRE.Editor.Compiling.Lightmap
             {
                 for (int j = i + 1; j < lmGroups.Count; j++)
                 {
-                    if ((lmGroups[i].Plane.Normal - lmGroups[j].Plane.Normal).LengthSquared() < 0.1f &&
+                    if ((lmGroups[i].Plane.Normal - lmGroups[j].Plane.Normal).LengthSquared() < 0.001f &&
                         lmGroups[i].BoundingBox.IntersectsWith(lmGroups[j].BoundingBox))
                     {
                         lmGroups[i].Faces.AddRange(lmGroups[j].Faces);
                         lmGroups[i].BoundingBox = new BoxF(new BoxF[] { lmGroups[i].BoundingBox, lmGroups[j].BoundingBox });
+#if DEBUG
+                        if (lmGroups[j].DebugBreakpoint) { lmGroups[i].DebugBreakpoint = true; }
+#endif
                         lmGroups.RemoveAt(j);
                         j = i + 1;
                     }
@@ -237,7 +240,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 foreach (LMFace face in group.Faces)
                 {
                     faceCount++;
-                    Thread newThread = CreateLightmapRenderThread(buffers, lightEntities, group.writeX, group.writeY, group, face, allFaces);
+                    Thread newThread = CreateLightmapRenderThread(document.Map, buffers, lightEntities, group.writeX, group.writeY, group, face, allFaces);
                     FaceRenderThreads.Add(newThread);
                 }
             }
@@ -413,12 +416,12 @@ namespace CBRE.Editor.Compiling.Lightmap
             }
         }
 
-        private static Thread CreateLightmapRenderThread(float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
+        private static Thread CreateLightmapRenderThread(Map map, float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
         {
             return new Thread(() => {
                 try
                 {
-                    RenderLightOntoFace(bitmaps, lights, writeX, writeY, group, targetFace, blockerFaces);
+                    RenderLightOntoFace(map, bitmaps, lights, writeX, writeY, group, targetFace, blockerFaces);
                 }
                 catch (ThreadAbortException e)
                 {
@@ -431,7 +434,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             });
         }
 
-        private static void RenderLightOntoFace(float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, List<LMFace> blockerFaces)
+        private static void RenderLightOntoFace(Map map, float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
         {
             Random rand = new Random();
 
@@ -455,6 +458,8 @@ namespace CBRE.Editor.Compiling.Lightmap
                 if (maxX == null || x > maxX) maxX = x;
                 if (maxY == null || y > maxY) maxY = y;
             }
+
+            CoordinateF leewayPoint = group.Plane.PointOnPlane + (group.Plane.Normal * Math.Max(LightmapConfig.DownscaleFactor * 0.25f, 1.5f));
 
             minX -= LightmapConfig.DownscaleFactor; minY -= LightmapConfig.DownscaleFactor;
             maxX += LightmapConfig.DownscaleFactor; maxY += LightmapConfig.DownscaleFactor;
@@ -505,14 +510,14 @@ namespace CBRE.Editor.Compiling.Lightmap
                 CoordinateF lightColor = light.Color*(1.0f/255.0f);
 
                 BoxF lightBox = new BoxF(new BoxF[] { targetFace.BoundingBox, new BoxF(light.Origin - new CoordinateF(30.0f, 30.0f, 30.0f), light.Origin + new CoordinateF(30.0f, 30.0f, 30.0f)) });
-                List<LMFace> applicableBlockerFaces = blockerFaces.FindAll(x =>
+                List<LMFace> applicableBlockerFaces = blockerFaces.Where(x =>
                 {
                     if (x == targetFace) return false;
                     if (group.Faces.Contains(x)) return false;
                     //return true;
                     if (lightBox.IntersectsWith(x.BoundingBox)) return true;
                     return false;
-                });
+                }).ToList();
 
                 bool[,] illuminated = new bool[iterX, iterY];
 
@@ -549,6 +554,12 @@ namespace CBRE.Editor.Compiling.Lightmap
                         float ttX = minX.Value + (x * LightmapConfig.DownscaleFactor);
                         float ttY = minY.Value + (y * LightmapConfig.DownscaleFactor);
                         CoordinateF pointOnPlane = (ttX - centerX) * group.uAxis + (ttY - centerY) * group.vAxis + targetFace.BoundingBox.Center;
+                        
+                        /*Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
+                        entity.Colour = Color.Pink;
+                        entity.Origin = new Coordinate(pointOnPlane);
+                        entity.UpdateBoundingBox();
+                        entity.SetParent(map.WorldSpawn);*/
 
                         int tX = (int)(writeX + x + (int)(minX - group.minTotalX) / LightmapConfig.DownscaleFactor);
                         int tY = (int)(writeY + y + (int)(minY - group.minTotalY) / LightmapConfig.DownscaleFactor);
@@ -571,7 +582,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                             {
                                 LMFace otherFace = applicableBlockerFaces[i];
                                 CoordinateF hit = otherFace.GetIntersectionPoint(lineTester);
-                                if (hit != null && (hit - pointOnPlane).LengthSquared() > 25.0f && Math.Abs((hit - pointOnPlane).Dot(targetFace.Plane.Normal)) > 15.0f)
+                                if (hit != null && ((hit - leewayPoint).Dot(group.Plane.Normal)>0.0f || (hit - pointOnPlane).LengthSquared() > LightmapConfig.DownscaleFactor * 2f))
                                 {
                                     applicableBlockerFaces.RemoveAt(i);
                                     applicableBlockerFaces.Insert(0, otherFace);

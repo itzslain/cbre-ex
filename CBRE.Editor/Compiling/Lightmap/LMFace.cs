@@ -218,9 +218,9 @@ namespace CBRE.Editor.Compiling.Lightmap
                     tface.Vertices.ForEach(v => { v.LMU = -500.0f; v.LMV = -500.0f; });
                     tface.UpdateBoundingBox();
                     if (tface.Texture?.Texture == null) continue;
-                    if (tface.Texture.Name.ToLower() == "tooltextures/invisible_collision") continue;
-                    if (tface.Texture.Name.ToLower() == "tooltextures/remove_face") continue;
-                    if (tface.Texture.Name.ToLower() == "tooltextures/block_light") continue;
+                    if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/invisible_collision") continue;
+                    if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/remove_face") continue;
+                    if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/block_light") continue;
                     if (tface.Texture.Texture.HasTransparency()) continue;
                     LMFace face = new LMFace(tface);
                     LightmapGroup group = LightmapGroup.FindCoplanar(lmGroups, face);
@@ -233,6 +233,12 @@ namespace CBRE.Editor.Compiling.Lightmap
                         group.Plane = new PlaneF(face.Plane.Normal, face.Vertices[0].Location);
                         lmGroups.Add(group);
                     }
+#if DEBUG
+                    if (face.Texture.ToLowerInvariant() == "tooltextures/debug_breakpoint")
+                    {
+                        group.DebugBreakpoint = true;
+                    }
+#endif
                     group.Faces.Add(face);
                     group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0].Location + group.Plane.PointOnPlane) / 2);
                     group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });

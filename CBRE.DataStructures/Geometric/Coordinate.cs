@@ -96,6 +96,16 @@ namespace CBRE.DataStructures.Geometric
             _dz = (double)z;
         }
 
+        public Coordinate(CoordinateF other)
+        {
+            _x = (decimal)other.X;
+            _y = (decimal)other.Y;
+            _z = (decimal)other.Z;
+            _dx = other.X;
+            _dy = other.Y;
+            _dy = other.Z;
+        }
+
         protected Coordinate(SerializationInfo info, StreamingContext context)
         {
             X = info.GetDecimal("X");
