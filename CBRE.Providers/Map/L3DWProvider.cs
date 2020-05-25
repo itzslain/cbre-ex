@@ -408,7 +408,7 @@ namespace CBRE.Providers.Map
                             if (!polygon.IsValid() || !polygon.IsConvex())
                             {
                                 // tetrahedrons
-                                foreach (var triangle in face.GetTriangles())
+                                foreach (var triangle in face.GetTrianglesReversed())
                                 {
                                     var tf = new Face(map.IDGenerator.GetNextFaceID());
                                     tf.Plane = new Plane(triangle[0].Location, triangle[1].Location, triangle[2].Location);
@@ -449,6 +449,9 @@ namespace CBRE.Providers.Map
             solid.Colour = Colour.GetRandomBrushColour();
             solid.Faces.Add(face);
             face.Parent = solid;
+            var center = face.Vertices.Aggregate(Coordinate.Zero, (sum, v) => sum + v.Location) / face.Vertices.Count;
+            var normalOffset = center - face.Plane.Normal * 5;
+            if (face.Plane.Normal.Dot(offset - center) >= 0) { offset = normalOffset; }
             for (var i = 0; i < face.Vertices.Count; i++)
             {
                 var v1 = face.Vertices[i];

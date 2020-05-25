@@ -158,6 +158,19 @@ namespace CBRE.DataStructures.MapObjects
             }
         }
 
+        public virtual IEnumerable<Vertex[]> GetTrianglesReversed()
+        {
+            for (var i = 1; i < Vertices.Count - 1; i++)
+            {
+                yield return new[]
+                                 {
+                                     Vertices[Vertices.Count - 1],
+                                     Vertices[Vertices.Count - 2 - i],
+                                     Vertices[Vertices.Count - 1 - i]
+                                 };
+            }
+        }
+
         public IEnumerable<Vertex> GetNonPlanarVertices(decimal epsilon = 0.001m)
         {
             return Vertices.Where(x => Plane.OnPlane(x.Location, epsilon) != 0);
