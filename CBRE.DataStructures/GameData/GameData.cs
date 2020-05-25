@@ -40,6 +40,9 @@ namespace CBRE.DataStructures.GameData
             modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { DefaultValue = "1 1 1" });
             Classes.Add(modelDataObj);
 
+            var noShadowObj = new GameDataObject("noshadow", "Disables shadow casting for this brush.", ClassType.Solid);
+            Classes.Add(noShadowObj);
+
             Includes = new List<string>();
             MaterialExclusions = new List<string>();
             AutoVisgroups = new List<AutoVisgroupSection>();

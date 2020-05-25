@@ -173,7 +173,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             {
                 foreach (Face tface in solid.Faces)
                 {
-                    LMFace face = new LMFace(tface);
+                    LMFace face = new LMFace(tface, solid);
                     if (tface.Texture.Name.ToLower() != "tooltextures/block_light") continue;
                     exclusiveBlockers.Add(face);
                 }
@@ -224,7 +224,7 @@ namespace CBRE.Editor.Compiling.Lightmap
 
             Light.FindLights(map, out lightEntities);
 
-            List<LMFace> allFaces = lmGroups.Select(q => q.Faces).SelectMany(q => q).Union(exclusiveBlockers).ToList();
+            List<LMFace> allBlockers = lmGroups.Select(q => q.Faces).SelectMany(q => q).Where(f => f.CastsShadows).Union(exclusiveBlockers).ToList();
             int faceCount = 0;
 
             List<LightmapGroup> uvCalcFaces = new List<LightmapGroup>(lmGroups);
@@ -240,7 +240,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 foreach (LMFace face in group.Faces)
                 {
                     faceCount++;
-                    Thread newThread = CreateLightmapRenderThread(document.Map, buffers, lightEntities, group.writeX, group.writeY, group, face, allFaces);
+                    Thread newThread = CreateLightmapRenderThread(document.Map, buffers, lightEntities, group.writeX, group.writeY, group, face, allBlockers);
                     FaceRenderThreads.Add(newThread);
                 }
             }

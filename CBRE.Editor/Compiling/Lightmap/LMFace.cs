@@ -25,6 +25,8 @@ namespace CBRE.Editor.Compiling.Lightmap
         public CoordinateF LightBasis1;
         public CoordinateF LightBasis2;
 
+        public bool CastsShadows;
+
         public class Vertex
         {
             public Vertex(DataStructures.MapObjects.Vertex original)
@@ -48,13 +50,15 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         public Face OriginalFace;
 
-        public LMFace(Face face)
+        public LMFace(Face face, Solid solid)
         {
             Plane = new PlaneF(face.Plane);
 
             Normal = Plane.Normal;
 
             Vertices = face.Vertices.Select(x => new Vertex(x)).ToList();
+
+            CastsShadows = !(solid?.Parent?.GetEntityData()?.Name.Equals("noshadow", StringComparison.InvariantCultureIgnoreCase) ?? false);
 
             int i1 = 0;
             int i2 = 1;
@@ -222,7 +226,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/remove_face") continue;
                     if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/block_light") continue;
                     if (tface.Texture.Texture.HasTransparency()) continue;
-                    LMFace face = new LMFace(tface);
+                    LMFace face = new LMFace(tface, solid);
                     LightmapGroup group = LightmapGroup.FindCoplanar(lmGroups, face);
                     BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), face.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
                     if (group == null)
