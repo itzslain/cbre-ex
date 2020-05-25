@@ -390,13 +390,48 @@ namespace CBRE.Providers.Map
                         newSolid.Faces.Add(face);
                     }
                     newSolid.Colour = Colour.GetRandomBrushColour();
+                    newSolid.UpdateBoundingBox();
 
                     if (newSolid.IsValid())
                     {
                         newSolid.SetParent(map.WorldSpawn);
-                        newSolid.UpdateBoundingBox();
 
                         newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
+                    }
+                    else
+                    {
+                        var offset = newSolid.BoundingBox.Center;
+                        // Not a valid solid, decompose into tetrahedrons/etc
+                        foreach (var face in faces)
+                        {
+                            var polygon = new Polygon(face.Vertices.Select(x => x.Location));
+                            if (!polygon.IsValid() || !polygon.IsConvex())
+                            {
+                                // tetrahedrons
+                                foreach (var triangle in face.GetTriangles())
+                                {
+                                    var tf = new Face(map.IDGenerator.GetNextFaceID());
+                                    tf.Plane = new Plane(triangle[0].Location, triangle[1].Location, triangle[2].Location);
+                                    tf.Vertices.AddRange(triangle.Select(x => new Vertex(x.Location, tf)));
+                                    tf.Texture = face.Texture.Clone();
+                                    tf.UpdateBoundingBox();
+                                    newSolid = SolidifyFace(map, tf, offset);
+                                    newSolid.SetParent(map.WorldSpawn);
+                                    newSolid.UpdateBoundingBox();
+
+                                    newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
+                                }
+                            }
+                            else
+                            {
+                                // cone/pyramid/whatever
+                                newSolid = SolidifyFace(map, face, offset);
+                                newSolid.SetParent(map.WorldSpawn);
+                                newSolid.UpdateBoundingBox();
+
+                                newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
+                            }
+                        }
                     }
                 }
                 else
@@ -406,6 +441,31 @@ namespace CBRE.Providers.Map
             }
             
             return map;
+        }
+
+        private Solid SolidifyFace(DataStructures.MapObjects.Map map, Face face, Coordinate offset)
+        {
+            var solid = new Solid(map.IDGenerator.GetNextObjectID());
+            solid.Colour = Colour.GetRandomBrushColour();
+            solid.Faces.Add(face);
+            face.Parent = solid;
+            for (var i = 0; i < face.Vertices.Count; i++)
+            {
+                var v1 = face.Vertices[i];
+                var v2 = face.Vertices[(i + 1) % face.Vertices.Count];
+                var f = new Face(map.IDGenerator.GetNextFaceID());
+                f.Parent = solid;
+                f.Plane = new Plane(v1.Location, offset, v2.Location);
+                f.Parent = solid;
+                f.Vertices.Add(new Vertex(offset, f));
+                f.Vertices.Add(new Vertex(v2.Location, f));
+                f.Vertices.Add(new Vertex(v1.Location, f));
+                f.Texture.Name = "tooltextures/remove_face";
+                f.UpdateBoundingBox();
+
+                solid.Faces.Add(f);
+            }
+            return solid;
         }
 
         protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map)
