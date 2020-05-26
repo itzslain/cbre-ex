@@ -46,8 +46,8 @@ namespace CBRE.Editor.Compiling.Lightmap
                         Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity")),
                         HasSprite = bool.Parse(x.EntityData.GetPropertyValue("hassprite") ?? "true"),
                         Direction = null,
-                        innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle")) * (float)Math.PI / 360.0f),
-                        outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 360.0f)
+                        innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle")) * (float)Math.PI / 180.0f),
+                        outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 180.0f)
                     };
 
                     Coordinate angles = x.EntityData.GetPropertyCoordinate("angles");
