@@ -313,7 +313,7 @@ namespace CBRE.Editor.Compiling
                     br.Write((byte)lcolor[k]);
                 }
 
-                br.Write(1.0f); //intensity
+                br.Write(light.Intensity);
             }
 
             foreach (Waypoint wp in waypoints)

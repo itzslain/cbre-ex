@@ -316,6 +316,7 @@ namespace CBRE.Editor.Compiling
                 br.Write((byte)light.Color.X);
                 br.Write((byte)light.Color.Y);
                 br.Write((byte)light.Color.Z);
+                br.Write(light.Intensity);
             }
 
             foreach (Waypoint wp in waypoints)

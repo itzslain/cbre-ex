@@ -11,6 +11,7 @@ namespace CBRE.Editor.Compiling.Lightmap
     class Light
     {
         public CoordinateF Color;
+        public float Intensity;
         public CoordinateF Origin;
         public float Range;
 
@@ -27,6 +28,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     Origin = new CoordinateF(x.Origin),
                     Range = float.Parse(x.EntityData.GetPropertyValue("range")),
                     Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
+                    Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity")),
                     Direction = null,
                     innerCos = null,
                     outerCos = null
@@ -39,6 +41,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                         Origin = new CoordinateF(x.Origin),
                         Range = float.Parse(x.EntityData.GetPropertyValue("range")),
                         Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
+                        Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity")),
                         Direction = null,
                         innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle")) * (float)Math.PI / 360.0f),
                         outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 360.0f)

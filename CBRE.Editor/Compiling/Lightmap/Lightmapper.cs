@@ -507,7 +507,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             {
                 CoordinateF lightPos = light.Origin;
                 float lightRange = light.Range;
-                CoordinateF lightColor = light.Color*(1.0f/255.0f);
+                CoordinateF lightColor = light.Color*(1.0f/255.0f)*light.Intensity;
 
                 BoxF lightBox = new BoxF(new BoxF[] { targetFace.BoundingBox, new BoxF(light.Origin - new CoordinateF(30.0f, 30.0f, 30.0f), light.Origin + new CoordinateF(30.0f, 30.0f, 30.0f)) });
                 List<LMFace> applicableBlockerFaces = blockerFaces.Where(x =>

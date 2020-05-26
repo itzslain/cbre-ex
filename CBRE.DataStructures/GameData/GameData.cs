@@ -22,11 +22,13 @@ namespace CBRE.DataStructures.GameData
 
             var lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
             lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
+            lightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { DefaultValue = "1.0" });
             lightDataObj.Properties.Add(new Property("range", VariableType.Float) { DefaultValue = "1.0" });
             lightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/lightbulb.spr"));
             Classes.Add(lightDataObj);
             var spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
             spotlightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
+            spotlightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { DefaultValue = "1.0" });
             spotlightDataObj.Properties.Add(new Property("range", VariableType.Float) { DefaultValue = "1.0" });
             spotlightDataObj.Properties.Add(new Property("innerconeangle", VariableType.Float) { DefaultValue = "45" });
             spotlightDataObj.Properties.Add(new Property("outerconeangle", VariableType.Float) { DefaultValue = "90" });
