@@ -446,7 +446,6 @@ namespace CBRE.Providers.Map
         private Solid SolidifyFace(DataStructures.MapObjects.Map map, Face face, Coordinate offset)
         {
             var solid = new Solid(map.IDGenerator.GetNextObjectID());
-            solid.Colour = Colour.GetRandomBrushColour();
             solid.Faces.Add(face);
             face.Parent = solid;
             var center = face.Vertices.Aggregate(Coordinate.Zero, (sum, v) => sum + v.Location) / face.Vertices.Count;
@@ -468,6 +467,7 @@ namespace CBRE.Providers.Map
 
                 solid.Faces.Add(f);
             }
+            solid.Colour = Colour.GetRandomBrushColour();
             return solid;
         }
 

@@ -14,7 +14,7 @@ namespace CBRE.Settings
         {
             Definitions = new List<HotkeyDefinition>
                                {
-                                    new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.ViewportAutosize, "Ctrl+A"),
+                                    new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.ViewportAutosize, ""),
                                     new HotkeyDefinition("Focus View Top Left", "Focus on the 3D View", HotkeysMediator.FourViewFocusTopLeft, "F5"),
                                     new HotkeyDefinition("Focus View Top Right", "Focus on the XY View", HotkeysMediator.FourViewFocusTopRight, "F2"),
                                     new HotkeyDefinition("Focus View Bottom Left", "Focus on the YZ View", HotkeysMediator.FourViewFocusBottomLeft, "F4"),
@@ -61,9 +61,10 @@ namespace CBRE.Settings
                                     
                                     new HotkeyDefinition("Center 2D View on Selection", "Center the 2D viewports on the current selection", HotkeysMediator.Center2DViewsOnSelection, "Ctrl+E"),
                                     new HotkeyDefinition("Center 3D View on Selection", "Center the 3D viewport on the current selection", HotkeysMediator.Center3DViewsOnSelection, "Ctrl+Shift+E"),
-                                    
+
+                                    new HotkeyDefinition("Select All", "Select all objects", HotkeysMediator.SelectAll, "Ctrl+A"),
                                     new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Shift+Q", "Escape"),
-                                    
+
                                     new HotkeyDefinition("Tie to Entity", "Tie the selected objects to an entity", HotkeysMediator.TieToEntity, "Ctrl+T"),
                                     new HotkeyDefinition("Move to World", "Move the selected entities to the world", HotkeysMediator.TieToWorld, "Ctrl+Shift+W"),
 
