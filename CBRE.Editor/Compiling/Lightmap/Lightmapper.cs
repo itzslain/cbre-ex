@@ -35,24 +35,24 @@ namespace CBRE.Editor.Compiling.Lightmap
         public static List<Thread> FaceRenderThreads { get; private set; } 
         private static List<LMThreadException> threadExceptions;
 
-        private static void UpdateProgress(ProgressBar progressBar, RichTextBox progressLog, string msg, float progress)
+        private static void UpdateProgress(ExportForm exportForm, string msg, float progress)
         {
             string currTxt = "";
-            progressLog.Invoke((MethodInvoker)(() => currTxt = progressLog.Text));
+            exportForm.ProgressLog.Invoke((MethodInvoker)(() => currTxt = exportForm.ProgressLog.Text));
             if (msg.EndsWith("faces complete") && currTxt.EndsWith("faces complete"))
             {
-                progressLog.Invoke((MethodInvoker)(() =>
+                exportForm.ProgressLog.Invoke((MethodInvoker)(() =>
                 {
                     string newMsg = currTxt.Substring(0, currTxt.LastIndexOf('\n'));
                     newMsg += "\n"+msg;
-                    progressLog.Text = newMsg;
+                    exportForm.ProgressLog.Text = newMsg;
                 }));
             }
             else
             {
-                progressLog.Invoke((MethodInvoker)(() => progressLog.AppendText("\n" + msg)));
+                exportForm.ProgressLog.Invoke((MethodInvoker)(() => exportForm.ProgressLog.AppendText("\n" + msg)));
             }
-            progressBar.Invoke((MethodInvoker)(() => progressBar.Value = (int)(progress * 10000)));
+            exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Value = (int)(progress * 10000)));
         }
 
 
@@ -140,23 +140,15 @@ namespace CBRE.Editor.Compiling.Lightmap
             }
         }
 
-        public static void Render(Document document, ProgressBar progressBar, RichTextBox progressLog, out List<LMFace> faces)
+        public static void Render(Document document, ExportForm exportForm, out List<LMFace> faces, out int lmCount)
         {
             var textureCollection = document.TextureCollection;
 
-            progressBar.Invoke((MethodInvoker)(() => progressBar.Maximum = 10000));
+            exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Maximum = 10000));
             var map = document.Map;
 
             faces = new List<LMFace>();
             var lightEntities = new List<Light>();
-            lock (textureCollection.Lightmaps)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    textureCollection.Lightmaps[i]?.Dispose();
-                    textureCollection.Lightmaps[i] = new Bitmap(LightmapConfig.TextureDims, LightmapConfig.TextureDims);
-                }
-            }
 
             threadExceptions = new List<LMThreadException>();
 
@@ -164,7 +156,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             List<LMFace> exclusiveBlockers = new List<LMFace>();
 
             //get faces
-            UpdateProgress(progressBar, progressLog, "Determining UV coordinates...", 0);
+            UpdateProgress(exportForm, "Determining UV coordinates...", 0);
             LMFace.FindFacesAndGroups(map, out faces, out lmGroups);
 
             if (!lmGroups.Any()) { throw new Exception("No lightmap groups!"); }
@@ -211,15 +203,6 @@ namespace CBRE.Editor.Compiling.Lightmap
                 return -1;
             });
 
-            float[][] buffers = new float[4][];
-            lock (textureCollection.Lightmaps)
-            {
-                buffers[0] = new float[textureCollection.Lightmaps[0].Width * textureCollection.Lightmaps[0].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-                buffers[1] = new float[textureCollection.Lightmaps[1].Width * textureCollection.Lightmaps[1].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-                buffers[2] = new float[textureCollection.Lightmaps[2].Width * textureCollection.Lightmaps[2].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-                buffers[3] = new float[textureCollection.Lightmaps[3].Width * textureCollection.Lightmaps[3].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
-            }
-
             FaceRenderThreads = new List<Thread>();
 
             Light.FindLights(map, out lightEntities);
@@ -228,11 +211,33 @@ namespace CBRE.Editor.Compiling.Lightmap
             int faceCount = 0;
 
             List<LightmapGroup> uvCalcFaces = new List<LightmapGroup>(lmGroups);
-            CalculateUV(uvCalcFaces, new Rectangle(1, 1, LightmapConfig.TextureDims - 2, LightmapConfig.TextureDims - 2), out _, out _);
+
+            int totalTextureDims = LightmapConfig.TextureDims;
+            lmCount = 0;
+            for (int i=0;i<4;i++)
+            {
+                int x = 1 + ((i % 2) * LightmapConfig.TextureDims);
+                int y = 1 + ((i / 2) * LightmapConfig.TextureDims);
+                CalculateUV(uvCalcFaces, new Rectangle(x, y, LightmapConfig.TextureDims - 2, LightmapConfig.TextureDims - 2), out _, out _);
+                lmCount++;
+                if (uvCalcFaces.Count == 0) { break; }
+                totalTextureDims = LightmapConfig.TextureDims * 2;
+            }
 
             if (uvCalcFaces.Count > 0)
             {
-                throw new Exception("UV coordinates out of bounds: try increasing downscale factor or increasing texture dimensions");
+                throw new Exception("Could not fit lightmap into four textures; try increasing texture dimensions or downscale factor");
+            }
+
+            float[][] buffers = new float[4][];
+            lock (textureCollection.Lightmaps)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    textureCollection.Lightmaps[i]?.Dispose();
+                    textureCollection.Lightmaps[i] = new Bitmap(totalTextureDims, totalTextureDims);
+                    buffers[i] = new float[textureCollection.Lightmaps[i].Width * textureCollection.Lightmaps[i].Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
+                }
             }
 
             foreach (LightmapGroup group in lmGroups)
@@ -240,13 +245,13 @@ namespace CBRE.Editor.Compiling.Lightmap
                 foreach (LMFace face in group.Faces)
                 {
                     faceCount++;
-                    Thread newThread = CreateLightmapRenderThread(document.Map, buffers, lightEntities, group.writeX, group.writeY, group, face, allBlockers);
+                    Thread newThread = CreateLightmapRenderThread(document, buffers, lightEntities, group, face, allBlockers);
                     FaceRenderThreads.Add(newThread);
                 }
             }
 
             int faceNum = 0;
-            UpdateProgress(progressBar, progressLog, "Started calculating brightness levels...", 0.05f);
+            UpdateProgress(exportForm, "Started calculating brightness levels...", 0.05f);
             while (FaceRenderThreads.Count > 0)
             {
                 for (int i = 0; i < 8; i++)
@@ -261,7 +266,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                         FaceRenderThreads.RemoveAt(i);
                         i--;
                         faceNum++;
-                        UpdateProgress(progressBar, progressLog, faceNum.ToString() + "/" + faceCount.ToString() + " faces complete", 0.05f + ((float)faceNum / (float)faceCount) * 0.85f);
+                        UpdateProgress(exportForm, faceNum.ToString() + "/" + faceCount.ToString() + " faces complete", 0.05f + ((float)faceNum / (float)faceCount) * 0.85f);
                     }
                 }
 
@@ -280,7 +285,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             }
 
             //blur the lightmap so it doesn't look too pixellated
-            UpdateProgress(progressBar, progressLog, "Blurring lightmap...", 0.95f);
+            UpdateProgress(exportForm, "Blurring lightmap...", 0.95f);
             float[] blurBuffer = new float[buffers[0].Length];
             for (int k = 0; k < 4; k++)
             {
@@ -298,11 +303,11 @@ namespace CBRE.Editor.Compiling.Lightmap
                                                             (LightmapConfig.AmbientColorR * ambientMultiplier / 255.0f));
                     for (int y = group.writeY; y < group.writeY + downscaledHeight; y++)
                     {
-                        if (y < 0 || y >= LightmapConfig.TextureDims) continue;
+                        if (y < 0 || y >= totalTextureDims) continue;
                         for (int x = group.writeX; x < group.writeX + downscaledWidth; x++)
                         {
-                            if (x < 0 || x >= LightmapConfig.TextureDims) continue;
-                            int offset = (x + y * LightmapConfig.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+                            if (x < 0 || x >= totalTextureDims) continue;
+                            int offset = (x + y * totalTextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
 
                             float accumRed = 0;
                             float accumGreen = 0;
@@ -310,14 +315,14 @@ namespace CBRE.Editor.Compiling.Lightmap
                             int sampleCount = 0;
                             for (int j = -LightmapConfig.BlurRadius; j <= LightmapConfig.BlurRadius; j++)
                             {
-                                if (y + j < 0 || y + j >= LightmapConfig.TextureDims) continue;
+                                if (y + j < 0 || y + j >= totalTextureDims) continue;
                                 if (y + j < group.writeY || y + j >= group.writeY + downscaledHeight) continue;
                                 for (int i = -LightmapConfig.BlurRadius; i <= LightmapConfig.BlurRadius; i++)
                                 {
                                     if (i * i + j * j > LightmapConfig.BlurRadius * LightmapConfig.BlurRadius) continue;
-                                    if (x + i < 0 || x + i >= LightmapConfig.TextureDims) continue;
+                                    if (x + i < 0 || x + i >= totalTextureDims) continue;
                                     if (x + i < group.writeX || x + i >= group.writeX + downscaledWidth) continue;
-                                    int sampleOffset = ((x + i) + (y + j) * LightmapConfig.TextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
+                                    int sampleOffset = ((x + i) + (y + j) * totalTextureDims) * System.Drawing.Image.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8;
                                     if (buffers[k][sampleOffset + 3] < 1.0f) continue;
                                     sampleCount++;
                                     accumRed += buffers[k][sampleOffset + 0];
@@ -371,6 +376,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 }
             }
 
+            UpdateProgress(exportForm, "Copying bitmap data...", 0.99f);
             for (int k = 0; k < 4; k++)
             {
                 byte[] byteBuffer = new byte[buffers[k].Length];
@@ -380,8 +386,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 }
                 lock (textureCollection.Lightmaps)
                 {
-                    UpdateProgress(progressBar, progressLog, "Copying bitmap data...", 0.99f);
-                    BitmapData bitmapData2 = textureCollection.Lightmaps[k].LockBits(new Rectangle(0, 0, LightmapConfig.TextureDims, LightmapConfig.TextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    BitmapData bitmapData2 = textureCollection.Lightmaps[k].LockBits(new Rectangle(0, 0, totalTextureDims, totalTextureDims), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     Marshal.Copy(byteBuffer, 0, bitmapData2.Scan0, byteBuffer.Length);
                     textureCollection.Lightmaps[k].UnlockBits(bitmapData2);
                 }
@@ -395,33 +400,44 @@ namespace CBRE.Editor.Compiling.Lightmap
                 document.TextureCollection.LightmapTextureOutdated = true;
             }
 
-            UpdateProgress(progressBar, progressLog, "Lightmapping complete!", 1.0f);
+            UpdateProgress(exportForm, "Lightmapping complete!", 1.0f);
         }
 
-        public static void SaveLightmaps(Document document, string path, bool threeBasisModel)
+        public static void SaveLightmaps(Document document, int lmCount, string path, bool threeBasisModel)
         {
             lock (document.TextureCollection.Lightmaps)
             {
-                if (threeBasisModel)
+                for (int i = (threeBasisModel ? 0 : 3); i < (threeBasisModel ? 3 : 4); i++)
                 {
-                    for (int i = 0; i < 3; i++)
+                    string iPath = path + (threeBasisModel ? i.ToString() : "");
+                    if (lmCount == 1)
                     {
-                        document.TextureCollection.Lightmaps[i].Save(path + i.ToString() + ".png");
+                        document.TextureCollection.Lightmaps[i].Save(iPath + ".png");
                     }
-                }
-                else
-                {
-                    document.TextureCollection.Lightmaps[3].Save(path + ".png");
+                    else
+                    {
+                        for (int j=0;j<lmCount;j++)
+                        {
+                            int x = ((j % 2) * LightmapConfig.TextureDims);
+                            int y = ((j / 2) * LightmapConfig.TextureDims);
+
+                            Bitmap clone = document.TextureCollection.Lightmaps[i].Clone(
+                                new Rectangle(x, y, LightmapConfig.TextureDims, LightmapConfig.TextureDims),
+                                PixelFormat.Format32bppArgb);
+                            clone.Save(iPath + "_" + j.ToString() + ".png");
+                            clone.Dispose();
+                        }
+                    }
                 }
             }
         }
 
-        private static Thread CreateLightmapRenderThread(Map map, float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
+        private static Thread CreateLightmapRenderThread(Document doc, float[][] bitmaps, List<Light> lights, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
         {
             return new Thread(() => {
                 try
                 {
-                    RenderLightOntoFace(map, bitmaps, lights, writeX, writeY, group, targetFace, blockerFaces);
+                    RenderLightOntoFace(doc, bitmaps, lights, group, targetFace, blockerFaces);
                 }
                 catch (ThreadAbortException e)
                 {
@@ -434,9 +450,18 @@ namespace CBRE.Editor.Compiling.Lightmap
             });
         }
 
-        private static void RenderLightOntoFace(Map map, float[][] bitmaps, List<Light> lights, int writeX, int writeY, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
+        private static void RenderLightOntoFace(Document doc, float[][] bitmaps, List<Light> lights, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
         {
             Random rand = new Random();
+
+            int writeX = group.writeX;
+            int writeY = group.writeY;
+
+            int textureDims;
+            lock (doc.TextureCollection.Lightmaps)
+            {
+                textureDims = doc.TextureCollection.Lightmaps[0].Width;
+            }
 
             lights = lights.FindAll(x =>
             {
@@ -474,8 +499,13 @@ namespace CBRE.Editor.Compiling.Lightmap
                 float x = vert.Location.Dot(group.uAxis);
                 float y = vert.Location.Dot(group.vAxis);
 
-                float u = (writeX + 0.5f + (x - group.minTotalX.Value) / LightmapConfig.DownscaleFactor) / LightmapConfig.TextureDims;
-                float v = (writeY + 0.5f + (y - group.minTotalY.Value) / LightmapConfig.DownscaleFactor) / LightmapConfig.TextureDims;
+                float u = (writeX + 0.5f + (x - group.minTotalX.Value) / LightmapConfig.DownscaleFactor);
+                float v = (writeY + 0.5f + (y - group.minTotalY.Value) / LightmapConfig.DownscaleFactor);
+
+                targetFace.LmIndex = (u >= LightmapConfig.TextureDims ? 1 : 0) + (v >= LightmapConfig.TextureDims ? 2 : 0);
+
+                u /= (float)textureDims;
+                v /= (float)textureDims;
 
                 vert.LMU = u; vert.LMV = v;
                 vert.OriginalVertex.LMU = u; vert.OriginalVertex.LMV = v;
@@ -536,9 +566,9 @@ namespace CBRE.Editor.Compiling.Lightmap
                         int tX = (int)(writeX + x + (int)(minX - group.minTotalX) / LightmapConfig.DownscaleFactor);
                         int tY = (int)(writeY + y + (int)(minY - group.minTotalY) / LightmapConfig.DownscaleFactor);
 
-                        if (tX >= 0 && tY >= 0 && tX < LightmapConfig.TextureDims && tY < LightmapConfig.TextureDims)
+                        if (tX >= 0 && tY >= 0 && tX < textureDims && tY < textureDims)
                         {
-                            int offset = (tX + tY * LightmapConfig.TextureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
+                            int offset = (tX + tY * textureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
                             bitmaps[0][offset + 3] = 1.0f;
                             bitmaps[1][offset + 3] = 1.0f;
                             bitmaps[2][offset + 3] = 1.0f;
@@ -650,9 +680,9 @@ namespace CBRE.Editor.Compiling.Lightmap
                             luxelColor2 = new CoordinateF(r[2][x, y], g[2][x, y], b[2][x, y]);
                             luxelColorNorm = new CoordinateF(r[3][x, y], g[3][x, y], b[3][x, y]);
 
-                            if (tX >= 0 && tY >= 0 && tX < LightmapConfig.TextureDims && tY < LightmapConfig.TextureDims)
+                            if (tX >= 0 && tY >= 0 && tX < textureDims && tY < textureDims)
                             {
-                                int offset = (tX + tY * LightmapConfig.TextureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
+                                int offset = (tX + tY * textureDims) * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb) / 8;
                                 if (luxelColor0.X + luxelColor0.Y + luxelColor0.Z > bitmaps[0][offset + 2] + bitmaps[0][offset + 1] + bitmaps[0][offset + 0])
                                 {
                                     bitmaps[0][offset + 0] = luxelColor0.X;

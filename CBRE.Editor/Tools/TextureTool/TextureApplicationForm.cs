@@ -13,7 +13,7 @@ using CBRE.Settings.Models;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
-    public partial class TextureApplicationForm : HotkeyForm
+    partial class TextureApplicationForm : HotkeyForm
     {
         public class CurrentTextureProperties : TextureReference
         {

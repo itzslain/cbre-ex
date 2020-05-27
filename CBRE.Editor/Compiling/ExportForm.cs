@@ -233,7 +233,7 @@ namespace CBRE.Editor.Compiling
                 }
                 else
                 {
-                    Lightmap.Lightmapper.Render(Document, ProgressBar, ProgressLog, out _);
+                    Lightmap.Lightmapper.Render(Document, this, out _, out _);
                 }
             }
             catch (ThreadAbortException e)

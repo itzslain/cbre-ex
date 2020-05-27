@@ -64,9 +64,9 @@ namespace CBRE.Editor.Compiling
             filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rm2";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
-            List<Lightmap.LMFace> faces;
+            List<Lightmap.LMFace> faces; int lmCount;
             List<Lightmap.Light> lights;
-            Lightmap.Lightmapper.Render(document, form.ProgressBar, form.ProgressLog, out faces);
+            Lightmap.Lightmapper.Render(document, form, out faces, out lmCount);
             Lightmap.Light.FindLights(map, out lights);
 
             IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x =>
@@ -82,7 +82,7 @@ namespace CBRE.Editor.Compiling
 
             string dir = CBRE.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
-            Lightmap.Lightmapper.SaveLightmaps(document, filepath + "/" + lmPath, true);
+            Lightmap.Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, true);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
             List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
@@ -144,6 +144,7 @@ namespace CBRE.Editor.Compiling
             }
 
             br.Write((byte)RM2Chunks.Textures);
+            br.Write((byte)lmCount);
             br.Write((byte)textures.Count);
             foreach (Tuple<string, byte> tex in textures)
             {
@@ -162,51 +163,63 @@ namespace CBRE.Editor.Compiling
             //them together is not optimal either.
             for (int i=0;i<textures.Count;i++)
             {
-                IEnumerable<Lightmap.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1);
-                vertCount = 0;
-                vertOffset = 0;
-                triCount = 0;
-
-                if (tLmFaces.Count() > 0)
+                for (int lmInd=0;lmInd < lmCount;lmInd++)
                 {
-                    foreach (Lightmap.LMFace face in tLmFaces)
-                    {
-                        vertCount += face.Vertices.Count;
-                        triCount += face.GetTriangleIndices().Count() / 3;
-                    }
+                    IEnumerable<Lightmap.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1 && x.LmIndex == lmInd);
+                    vertCount = 0;
+                    vertOffset = 0;
+                    triCount = 0;
 
-                    br.Write((byte)RM2Chunks.VisibleGeometry);
-                    br.Write((byte)i);
-
-                    if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
-                    br.Write((short)vertCount);
-                    foreach (Lightmap.LMFace face in tLmFaces)
+                    if (tLmFaces.Count() > 0)
                     {
-                        for (int j = 0; j < face.Vertices.Count; j++)
+                        foreach (Lightmap.LMFace face in tLmFaces)
                         {
-                            br.Write(face.Vertices[j].Location.X);
-                            br.Write(face.Vertices[j].Location.Z);
-                            br.Write(face.Vertices[j].Location.Y);
-
-                            //br.Write((byte)255); //r
-                            //br.Write((byte)255); //g
-                            //br.Write((byte)255); //b
-
-                            br.Write(face.Vertices[j].DiffU);
-                            br.Write(face.Vertices[j].DiffV);
-                            br.Write(face.Vertices[j].LMU);
-                            br.Write(face.Vertices[j].LMV);
-                        }
-                    }
-                    br.Write((short)triCount);
-                    foreach (Lightmap.LMFace face in tLmFaces)
-                    {
-                        foreach (uint ind in face.GetTriangleIndices())
-                        {
-                            br.Write((short)(ind + vertOffset));
+                            vertCount += face.Vertices.Count;
+                            triCount += face.GetTriangleIndices().Count() / 3;
                         }
 
-                        vertOffset += face.Vertices.Count;
+                        br.Write((byte)RM2Chunks.VisibleGeometry);
+                        br.Write((byte)i);
+                        if (lmCount > 1)
+                        {
+                            br.Write((byte)lmInd);
+                        }
+
+                        if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                        br.Write((short)vertCount);
+                        foreach (Lightmap.LMFace face in tLmFaces)
+                        {
+                            for (int j = 0; j < face.Vertices.Count; j++)
+                            {
+                                br.Write(face.Vertices[j].Location.X);
+                                br.Write(face.Vertices[j].Location.Z);
+                                br.Write(face.Vertices[j].Location.Y);
+
+                                //br.Write((byte)255); //r
+                                //br.Write((byte)255); //g
+                                //br.Write((byte)255); //b
+
+                                br.Write(face.Vertices[j].DiffU);
+                                br.Write(face.Vertices[j].DiffV);
+
+                                float lmMul = (lmCount > 1) ? 2.0f : 1.0f;
+                                float uSub = ((lmInd % 2) > 0) ? 0.5f : 0.0f;
+                                float vSub = ((lmInd / 2) > 0) ? 0.5f : 0.0f;
+
+                                br.Write((face.Vertices[j].LMU - uSub) * lmMul);
+                                br.Write((face.Vertices[j].LMV - vSub) * lmMul);
+                            }
+                        }
+                        br.Write((short)triCount);
+                        foreach (Lightmap.LMFace face in tLmFaces)
+                        {
+                            foreach (uint ind in face.GetTriangleIndices())
+                            {
+                                br.Write((short)(ind + vertOffset));
+                            }
+
+                            vertOffset += face.Vertices.Count;
+                        }
                     }
                 }
 

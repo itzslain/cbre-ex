@@ -1,8 +1,9 @@
 ﻿using CBRE.Editor.UI;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
-    partial class TextureApplicationForm
+    partial class TextureApplicationForm : HotkeyForm
     {
         /// <summary>
         /// Required designer variable.
@@ -388,7 +389,7 @@ namespace CBRE.Editor.Tools.TextureTool
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 207F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 208F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -654,6 +655,8 @@ namespace CBRE.Editor.Tools.TextureTool
             this.Controls.Add(this.label8);
             this.Controls.Add(this.LightmapValue);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximumSize = new System.Drawing.Size(433, 459);
+            this.MinimumSize = new System.Drawing.Size(433, 459);
             this.Name = "TextureApplicationForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

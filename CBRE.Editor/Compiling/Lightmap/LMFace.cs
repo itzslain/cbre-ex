@@ -27,6 +27,8 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         public bool CastsShadows;
 
+        public int LmIndex;
+
         public class Vertex
         {
             public Vertex(DataStructures.MapObjects.Vertex original)
