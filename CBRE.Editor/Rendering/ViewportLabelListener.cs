@@ -45,13 +45,13 @@ namespace CBRE.Editor.Rendering
                 switch (dir)
                 {
                     case Viewport2D.ViewDirection.Top:
-                        _text = "Top (x/y)";
+                        _text = "Top (x/z)";
                         break;
                     case Viewport2D.ViewDirection.Front:
-                        _text = "Front (y/z)";
+                        _text = "Front (z/y)";
                         break;
                     case Viewport2D.ViewDirection.Side:
-                        _text = "Side (x/z)";
+                        _text = "Side (x/y)";
                         break;
                 }
             }
@@ -69,9 +69,9 @@ namespace CBRE.Editor.Rendering
                                             CreateMenu("3D Flat", Viewport3D.ViewType.Flat, null),
                                             CreateMenu("3D Wireframe", Viewport3D.ViewType.Wireframe, null),
                                             new MenuItem("-"), 
-                                            CreateMenu("2D Top (x/y)", null, Viewport2D.ViewDirection.Top),
-                                            CreateMenu("2D Side (x/z)", null, Viewport2D.ViewDirection.Side),
-                                            CreateMenu("2D Front (y/z)", null, Viewport2D.ViewDirection.Front),
+                                            CreateMenu("2D Top (x/z)", null, Viewport2D.ViewDirection.Top),
+                                            CreateMenu("2D Side (x/y)", null, Viewport2D.ViewDirection.Side),
+                                            CreateMenu("2D Front (z/y)", null, Viewport2D.ViewDirection.Front),
                                             new MenuItem("-"), 
                                             ScreenshotMenuItem()
                                         });
