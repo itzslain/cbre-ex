@@ -4,6 +4,7 @@ using CBRE.DataStructures.Transformations;
 using CBRE.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace CBRE.Editor.Compiling.Lightmap
@@ -27,9 +28,9 @@ namespace CBRE.Editor.Compiling.Lightmap
                 .Select(x => new Light()
                 {
                     Origin = new CoordinateF(x.Origin),
-                    Range = float.Parse(x.EntityData.GetPropertyValue("range")),
+                    Range = float.Parse(x.EntityData.GetPropertyValue("range"), CultureInfo.InvariantCulture),
                     Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
-                    Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity")),
+                    Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity"), CultureInfo.InvariantCulture),
                     HasSprite = bool.Parse(x.EntityData.GetPropertyValue("hassprite") ?? "true"),
                     Direction = null,
                     innerCos = null,
@@ -41,13 +42,13 @@ namespace CBRE.Editor.Compiling.Lightmap
                     Light light = new Light()
                     {
                         Origin = new CoordinateF(x.Origin),
-                        Range = float.Parse(x.EntityData.GetPropertyValue("range")),
+                        Range = float.Parse(x.EntityData.GetPropertyValue("range"), CultureInfo.InvariantCulture),
                         Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
-                        Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity")),
+                        Intensity = float.Parse(x.EntityData.GetPropertyValue("intensity"), CultureInfo.InvariantCulture),
                         HasSprite = bool.Parse(x.EntityData.GetPropertyValue("hassprite") ?? "true"),
                         Direction = null,
-                        innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle")) * (float)Math.PI / 180.0f),
-                        outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle")) * (float)Math.PI / 180.0f)
+                        innerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("innerconeangle"), CultureInfo.InvariantCulture) * (float)Math.PI / 180.0f),
+                        outerCos = (float)Math.Cos(float.Parse(x.EntityData.GetPropertyValue("outerconeangle"), CultureInfo.InvariantCulture) * (float)Math.PI / 180.0f)
                     };
 
                     Coordinate angles = x.EntityData.GetPropertyCoordinate("angles");

@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
 using CBRE.Editor.Compiling.Lightmap;
+using System.Globalization;
 
 namespace CBRE.Editor.Compiling
 {
@@ -373,7 +374,7 @@ namespace CBRE.Editor.Compiling
 
                 br.Write((Int32)int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
 
-                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range")));
+                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range"), CultureInfo.InvariantCulture));
             }
 
             foreach (Entity prop in props)

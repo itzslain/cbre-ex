@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.Geometric
@@ -194,7 +195,7 @@ namespace CBRE.DataStructures.Geometric
 
         public static CoordinateF Parse(string x, string y, string z)
         {
-            return new CoordinateF(float.Parse(x), float.Parse(y), float.Parse(z));
+            return new CoordinateF(float.Parse(x, CultureInfo.InvariantCulture), float.Parse(y, CultureInfo.InvariantCulture), float.Parse(z, CultureInfo.InvariantCulture));
         }
     }
 }
