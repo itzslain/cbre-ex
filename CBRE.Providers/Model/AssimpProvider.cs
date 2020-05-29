@@ -64,9 +64,12 @@ namespace CBRE.Providers.Model
             foreach (var face in assimpMesh.Faces)
             {
                 var triInds = face.Indices;
-                sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[0]].Location, vertices[triInds[0]].Normal, vertices[triInds[0]].BoneWeightings, vertices[triInds[0]].TextureU, vertices[triInds[0]].TextureV));
-                sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[2]].Location, vertices[triInds[2]].Normal, vertices[triInds[2]].BoneWeightings, vertices[triInds[2]].TextureU, vertices[triInds[2]].TextureV));
-                sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[1]].Location, vertices[triInds[1]].Normal, vertices[triInds[1]].BoneWeightings, vertices[triInds[1]].TextureU, vertices[triInds[1]].TextureV));
+                for (var i = 1; i < triInds.Count - 1; i++)
+                {
+                    sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[0]].Location, vertices[triInds[0]].Normal, vertices[triInds[0]].BoneWeightings, vertices[triInds[0]].TextureU, vertices[triInds[0]].TextureV));
+                    sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[i + 1]].Location, vertices[triInds[i + 1]].Normal, vertices[triInds[2]].BoneWeightings, vertices[triInds[i + 1]].TextureU, vertices[triInds[i + 1]].TextureV));
+                    sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[i]].Location, vertices[triInds[i]].Normal, vertices[triInds[i]].BoneWeightings, vertices[triInds[i]].TextureU, vertices[triInds[i]].TextureV));
+                }
             }
 
             return sledgeMesh;
@@ -91,20 +94,25 @@ namespace CBRE.Providers.Model
             if (scene.MaterialCount > 0)
             {
                 //TODO: handle several textures
-                string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[0].TextureDiffuse.FilePath);
-                if (!File.Exists(path)) { path = scene.Materials[0].TextureDiffuse.FilePath; }
-                if (File.Exists(path))
+                for (int i=0;i<scene.MaterialCount;i++)
                 {
-                    Bitmap bmp = new Bitmap(path);
-                    tex = new DataStructures.Models.Texture
+                    if (string.IsNullOrEmpty(scene.Materials[i].TextureDiffuse.FilePath)) { continue; }
+                    string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[i].TextureDiffuse.FilePath);
+                    if (!File.Exists(path)) { path = scene.Materials[i].TextureDiffuse.FilePath; }
+                    if (File.Exists(path))
                     {
-                        Name = path,
-                        Index = 0,
-                        Width = bmp.Width,
-                        Height = bmp.Height,
-                        Flags = 0,
-                        Image = bmp
-                    };
+                        Bitmap bmp = new Bitmap(path);
+                        tex = new DataStructures.Models.Texture
+                        {
+                            Name = path,
+                            Index = 0,
+                            Width = bmp.Width,
+                            Height = bmp.Height,
+                            Flags = 0,
+                            Image = bmp
+                        };
+                    }
+                    break;
                 }
             }
 
