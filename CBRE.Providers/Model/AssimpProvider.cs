@@ -11,6 +11,10 @@ using Assimp;
 using Assimp.Configs;
 using OpenTK.Graphics.OpenGL;
 using Mesh = Assimp.Mesh;
+using System.Configuration;
+using CBRE.DataStructures.MapObjects;
+using Path = System.IO.Path;
+using Face = CBRE.DataStructures.MapObjects.Face;
 
 namespace CBRE.Providers.Model
 {
@@ -146,18 +150,58 @@ namespace CBRE.Providers.Model
             return model;
         }
 
-        public static void SaveToFile(string filename, float[] vertices)
+        public static void SaveToFile(string filename, DataStructures.MapObjects.Map map)
         {
             AssimpContext exporter = new AssimpContext();
             Scene scene = new Scene();
 
-            Mesh mesh = new Mesh();
-            for (int i = 0; i < vertices.Length; i += 3)
+            Material material = new Material();
+            TextureSlot textureSlot = new TextureSlot("dirtymetal.jpg",
+                TextureType.Diffuse,
+                0,
+                TextureMapping.Plane,
+                0,
+                1.0f,
+                TextureOperation.Multiply,
+                Assimp.TextureWrapMode.Wrap,
+                Assimp.TextureWrapMode.Wrap,
+                0);
+            material.AddMaterialTexture(ref textureSlot);
+            scene.Materials.Add(material);
+
+            Mesh mesh;
+            int vertOffset;
+            string[] textures = map.GetAllTextures().ToArray();
+            foreach (string texture in textures)
             {
-                mesh.Vertices.Add(new Vector3D(vertices[i], vertices[i+1], vertices[i+2]));
+                if (texture == "tooltextures/remove_face") { continue; }
+                mesh = new Mesh();
+                vertOffset = 0;
+
+                List<int> indices = new List<int>();
+
+                IEnumerable<Face> faces = map.WorldSpawn.Find(x => x is Solid).
+                OfType<Solid>().
+                SelectMany(x => x.Faces).
+                Where(x => x.Texture.Name == texture);
+
+                foreach (Face face in faces)
+                {
+                    foreach (Vertex v in face.Vertices)
+                    {
+                        mesh.Vertices.Add(new Vector3D((float)v.Location.X, (float)v.Location.Y, (float)v.Location.Z));
+                    }
+                    foreach (uint ind in face.GetTriangleIndices())
+                    {
+                        indices.Add((int) ind + vertOffset);
+                    }
+
+                    vertOffset += face.Vertices.Count;
+                }
+
+                mesh.SetIndices(indices.ToArray(), indices.Count / faces.Count());
+                scene.Meshes.Add(mesh);
             }
-            mesh.SetIndices(new int[] { 0, 1, 2 }, 3);
-            scene.Meshes.Add(mesh);
 
             Node node = new Node();
             node.MeshIndices.Add(0);
