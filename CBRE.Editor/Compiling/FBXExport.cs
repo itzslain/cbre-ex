@@ -16,10 +16,9 @@ namespace CBRE.Editor.Compiling
             foreach (Face f in faces) {
                 foreach (Vertex i in f.Vertices)
                 {
-                    //verts.Add(i.x);
-                    //verts.Add(i.y);
-                    //verts.Add(i.z);
-                    // vertex coords???
+                    verts.Add((float) i.Location.X);
+                    verts.Add((float) i.Location.Y);
+                    verts.Add((float) i.Location.Z);
                 }
             }
             AssimpProvider.SaveToFile(filename, verts.ToArray());
