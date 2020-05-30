@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
@@ -89,7 +88,7 @@ namespace CBRE.Editor.Extensions
                     cache.Add(model, mr);
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Couldn't load
                     cache.Add(model, null);

@@ -9,7 +9,6 @@ using CBRE.DataStructures.Geometric;
 using OpenTK.Graphics.OpenGL;
 using TextPrinter = OpenTK.Graphics.TextPrinter;
 using TextQuality = OpenTK.Graphics.TextQuality;
-using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.Tools
 {
@@ -161,8 +160,8 @@ namespace CBRE.Editor.Tools
 
         // Class Variables
         protected const decimal HandleWidth = 12;
-
-        protected TextPrinter _printer;
+        
+        protected TextPrinter _printer; //TODO replace all TextPrinters with something not obsolete?
         protected Font _printerFont;
 
         protected abstract Color BoxColour { get; }

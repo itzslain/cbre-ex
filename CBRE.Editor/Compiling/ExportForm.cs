@@ -236,7 +236,7 @@ namespace CBRE.Editor.Compiling
                     Lightmap.Lightmapper.Render(Document, this, out _, out _);
                 }
             }
-            catch (ThreadAbortException e)
+            catch (ThreadAbortException)
             {
                 foreach (Thread thread in (Lightmap.Lightmapper.FaceRenderThreads ?? Enumerable.Empty<Thread>()))
                 {

@@ -439,7 +439,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 {
                     RenderLightOntoFace(doc, bitmaps, lights, group, targetFace, blockerFaces);
                 }
-                catch (ThreadAbortException e)
+                catch (ThreadAbortException)
                 {
                     //do nothing
                 }

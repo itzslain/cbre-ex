@@ -47,7 +47,7 @@ namespace CBRE.Editor.Rendering.Helpers
             var max = viewport.ScreenToWorld(viewport.Width, viewport.Height);
 
             GL.Color4(Color.FromArgb(128, Color.Purple));
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
 
             GL.Vertex3(min.DX, min.DY, 0);
             GL.Vertex3(max.DX, min.DY, 0);
@@ -73,7 +73,7 @@ namespace CBRE.Editor.Rendering.Helpers
 
 
             GL.LineWidth(2);
-            GL.Begin(BeginMode.LineLoop);
+		  GL.Begin(PrimitiveType.LineLoop);
             GL.Color3(Color.Red);
             GL.Vertex3(start.DX, start.DY, start.DZ);
             GL.Vertex3(end.DX, start.DY, start.DZ);

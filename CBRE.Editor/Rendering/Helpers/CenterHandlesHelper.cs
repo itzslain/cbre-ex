@@ -37,7 +37,7 @@ namespace CBRE.Editor.Rendering.Helpers
             var mp = viewport.PointToClient(Control.MousePosition);
             _mousePos = viewport.ScreenToWorld(new Coordinate(mp.X, viewport.Height - mp.Y, 0));
             GL.Enable(EnableCap.LineSmooth);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
         }
 
         public void Render2D(Viewport2D viewport, MapObject o)

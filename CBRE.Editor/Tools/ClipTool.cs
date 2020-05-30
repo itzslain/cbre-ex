@@ -271,7 +271,7 @@ namespace CBRE.Editor.Tools
             var p2 = vp.Flatten(_clipPlanePoint2);
             var p3 = vp.Flatten(_clipPlanePoint3);
             // Draw points
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
             GL.Color3(Color.White);
             GLX.Square(new Vector2d(p1.DX, p1.DY), 4, z, true);
             GLX.Square(new Vector2d(p2.DX, p2.DY), 4, z, true);
@@ -282,7 +282,7 @@ namespace CBRE.Editor.Tools
             GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
 
             // Draw lines between points and point outlines
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.White);
             GL.Vertex2(p1.DX, p1.DY);
             GL.Vertex2(p2.DX, p2.DY);
