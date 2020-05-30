@@ -9,6 +9,8 @@ using System.Text;
 using System.Drawing;
 using Assimp;
 using Assimp.Configs;
+using OpenTK.Graphics.OpenGL;
+using Mesh = Assimp.Mesh;
 
 namespace CBRE.Providers.Model
 {
@@ -142,6 +144,26 @@ namespace CBRE.Providers.Model
             AddNode(scene, scene.RootNode, model, tex, Matrix4x4.Identity);
 
             return model;
+        }
+
+        public static void SaveToFile(string filename, float[] vertices)
+        {
+            AssimpContext exporter = new AssimpContext();
+            Scene scene = new Scene();
+
+            Mesh mesh = new Mesh();
+            for (int i = 0; i < vertices.Length; i += 3)
+            {
+                mesh.Vertices.Add(new Vector3D(vertices[i], vertices[i+1], vertices[i+2]));
+            }
+            mesh.SetIndices(new int[] { 0, 1, 2 }, 3);
+            scene.Meshes.Add(mesh);
+
+            Node node = new Node();
+            node.MeshIndices.Add(0);
+            scene.RootNode = node;
+
+            exporter.ExportFile(scene, filename, "fbx");
         }
     }
 }

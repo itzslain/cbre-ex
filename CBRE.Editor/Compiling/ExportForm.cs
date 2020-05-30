@@ -83,6 +83,7 @@ namespace CBRE.Editor.Compiling
             {
                 var filter = "SCP-CB v1.4 RM2 (*.rm2)|*.rm2";
                 filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
+                filter += "|Autodesk FBX (*.fbx)|*.fbx";
                 save.Filter = filter;
                 if (save.ShowDialog() == DialogResult.OK)
                 {
@@ -225,6 +226,9 @@ namespace CBRE.Editor.Compiling
                     else if (extension.Equals(".rmesh", StringComparison.InvariantCultureIgnoreCase))
                     {
                         RMeshExport.SaveToFile(SaveFileName, Document, this);
+                    }
+                    else if (extension.Equals(".fbx", StringComparison.InvariantCultureIgnoreCase)) {
+                        FBXExport.SaveToFile(SaveFileName, Document, this);
                     }
                     else
                     {
