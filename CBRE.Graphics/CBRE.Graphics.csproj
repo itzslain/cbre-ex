@@ -63,7 +63,6 @@
     <Compile Include="Helpers\DisplayList.cs" />
     <Compile Include="Helpers\GraphicsHelper.cs" />
     <Compile Include="Helpers\Matrix.cs" />
-    <Compile Include="Helpers\Text.cs" />
     <Compile Include="Helpers\TextureHelper.cs" />
     <Compile Include="Helpers\Viewport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

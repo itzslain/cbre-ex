@@ -10,8 +10,6 @@ namespace CBRE.Graphics.Shaders
         public ActiveUniformType Type { get; set; }
         public object Value { get; set; }
 
-        private int _samplerId;
-
         public Variable(int location, string name, ActiveUniformType type)
         {
             Location = location;

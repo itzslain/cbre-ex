@@ -240,10 +240,10 @@ Move the origin point around by *clicking and dragging* it.";
             var pos = viewport.Flatten(_origin.Coordinate);
 
             GL.Color3(Color.Cyan);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             GLX.Circle(new Vector2d(pos.DX, pos.DY), 8, (double) viewport.Zoom);
             GL.End();
-            GL.Begin(BeginMode.Points);
+            GL.Begin(PrimitiveType.Points);
             GL.Vertex2(pos.DX, pos.DY);
             GL.End();
         }

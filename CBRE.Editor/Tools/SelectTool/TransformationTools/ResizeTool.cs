@@ -57,7 +57,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
                 resize += new Coordinate(1, 1, 1);
                 var offset = -GetOriginForTransform(viewport, state);
                 var trans = Matrix4.CreateTranslation((float)offset.X, (float)offset.Y, (float)offset.Z);
-                var scale = Matrix4.Mult(trans, Matrix4.Scale((float)resize.X, (float)resize.Y, (float)resize.Z));
+                var scale = Matrix4.Mult(trans, Matrix4.CreateScale((float)resize.X, (float)resize.Y, (float)resize.Z));
                 resizeMatrix = Matrix4.Mult(scale, Matrix4.Invert(trans));
             }
             return resizeMatrix;

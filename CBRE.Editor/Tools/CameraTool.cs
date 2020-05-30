@@ -261,7 +261,7 @@ namespace CBRE.Editor.Tools
             GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
 
             // Draw lines between points and point outlines
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
 
             foreach (var camera in cams)
             {
@@ -285,7 +285,7 @@ namespace CBRE.Editor.Tools
                 var p1 = vp.Flatten(camera.EyePosition);
 
                 // Position circle
-                GL.Begin(BeginMode.Polygon);
+                GL.Begin(PrimitiveType.Polygon);
                 GL.Color3(camera == Document.Map.ActiveCamera ? Color.DarkOrange : Color.LawnGreen);
                 GLX.Circle(new Vector2d(p1.DX, p1.DY), 4, z, loop: true);
                 GL.End();
@@ -300,7 +300,7 @@ namespace CBRE.Editor.Tools
                 var cp = new Coordinate(-dir.Y, dir.X, 0).Normalise();
 
                 // Direction Triangle
-                GL.Begin(BeginMode.Triangles);
+                GL.Begin(PrimitiveType.Triangles);
                 GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
                 Coord(p2 - (dir - cp) * multiplier);
                 Coord(p2 - (dir + cp) * multiplier);
@@ -310,7 +310,7 @@ namespace CBRE.Editor.Tools
 
             GL.Disable(EnableCap.PolygonSmooth);
 
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
 
             foreach (var camera in cams)
             {

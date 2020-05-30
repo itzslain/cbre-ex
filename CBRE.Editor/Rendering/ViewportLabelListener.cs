@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Editor.UI;
@@ -13,6 +14,8 @@ using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
 using View = CBRE.Settings.View;
+using GL = OpenTK.Graphics.OpenGL.GL;
+using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
 
 namespace CBRE.Editor.Rendering
 {
@@ -145,7 +148,7 @@ namespace CBRE.Editor.Rendering
             _printer.Begin();
             if (_showing)
             {
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 GL.Color3(Viewport is Viewport3D ? View.ViewportBackground : Grid.Background);
                 GL.Vertex2(0, 0);
                 GL.Vertex2(_rect.Right, 0);

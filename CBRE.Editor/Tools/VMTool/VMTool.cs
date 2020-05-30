@@ -845,7 +845,7 @@ namespace CBRE.Editor.Tools.VMTool
                            select point).ToList();
             // Render out the point handles
             var z = (double) vp.Zoom;
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
             foreach (var point in ordered)
             {
                 var c = vp.Flatten(point.Coordinate);

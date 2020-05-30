@@ -195,7 +195,7 @@ namespace CBRE.UI
         public override Matrix4 GetCameraMatrix()
         {
             var translate = Matrix4.CreateTranslation((float)-Position.X, (float)-Position.Y, 0);
-            var scale = Matrix4.Scale(new Vector3((float)Zoom, (float)Zoom, 0));
+            var scale = Matrix4.CreateScale(new Vector3((float)Zoom, (float)Zoom, 0));
             return translate * scale;
         }
 

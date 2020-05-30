@@ -118,8 +118,6 @@ namespace CBRE.Editor.Compiling
             {
                 if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>(face.Texture.Name, loadFlag, blendFlag, 0));
             }
-            RMeshLoadFlags lmLoadFlag = RMeshLoadFlags.COLOR;
-            RMeshBlendFlags lmBlendFlag = RMeshBlendFlags.LM;
 
             //mesh
 

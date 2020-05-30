@@ -134,29 +134,14 @@ namespace CBRE.Providers.Texture.Vtf
                 var mipNum = 0;
                 if (maxWidth > 0 || maxHeight > 0) mipNum = GetMipToLoad(width, height, maxWidth > 0 ? maxWidth : width, maxHeight > 0 ? maxHeight : height, mipmapCount);
 
-                for (var frame = 0; frame < numFrames; frame++)
-                {
-                    for (var face = 0; face < faces; face++)
-                    {
-                        for (var slice = 0; slice < depth; slice++)
-                        {
-                            for (var mip = mipNum; mip < mipmapCount; mip++)
-                            {
-                                var wid = MipmapResize(width, mip);
-                                var hei = MipmapResize(height, mip);
-                                var offset = GetImageDataLocation(frame, face, slice, mip, highResImageFormat, width, height, numFrames, faces, depth, mipmapCount);
-                                br.BaseStream.Position = offset + dataPos;
-
-                                var img = LoadImage(br, (uint) wid, (uint) hei, highResImageFormat);
-                                //img.Save(String.Format(@"D:\Github\sledge\_Resources\VTF\_test_fr{0}_fa{1}_sl{2}_m{3}.png", frame, face, slice, mip));
-                                return new BitmapRef(img); //TODO: mark as disposable?
-                            }
-                        }
-                    }
-                }
-
-
-                return null;
+               var wid = MipmapResize(width, mipNum);
+               var hei = MipmapResize(height, mipNum);
+               var offset = GetImageDataLocation(0, 0, 0, mipNum, highResImageFormat, width, height, numFrames, faces, depth, mipmapCount);
+               br.BaseStream.Position = offset + dataPos;
+                        
+               var img = LoadImage(br, (uint) wid, (uint) hei, highResImageFormat);
+               //img.Save(String.Format(@"D:\Github\sledge\_Resources\VTF\_test_fr{0}_fa{1}_sl{2}_m{3}.png", frame, face, slice, mip));
+               return new BitmapRef(img); //TODO: mark as disposable?
             }
         }
 
@@ -301,21 +286,6 @@ namespace CBRE.Providers.Texture.Vtf
                 case VtfImageFormat.Bgr888:
                     TransformBytes(buffer, br, width, height, 3, -1, 2, 1, 0, false);
                     break;
-                case VtfImageFormat.Rgb565:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.I8:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Ia88:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.P8:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.A8:
-                    throw new NotImplementedException();
-                    break;
                 case VtfImageFormat.Rgb888Bluescreen:
                     TransformBytes(buffer, br, width, height, 3, -1, 0, 1, 2, true);
                     break;
@@ -332,32 +302,14 @@ namespace CBRE.Providers.Texture.Vtf
                 case VtfImageFormat.Dxt1Onebitalpha:
                     DecompressDxt1(buffer, br, width, height);
                     break;
-                case VtfImageFormat.Dxt3:
-                    throw new NotImplementedException();
-                    break;
                 case VtfImageFormat.Dxt5:
                     DecompressDxt5(buffer, br, width, height);
                     break;
                 case VtfImageFormat.Bgrx8888:
                     TransformBytes(buffer, br, width, height, 4, -1, 2, 1, 0, false);
                     break;
-                case VtfImageFormat.Bgr565:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Bgrx5551:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Bgra4444:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Bgra5551:
-                    throw new NotImplementedException();
-                    break;
                 case VtfImageFormat.Uv88:
                     TransformBytes(buffer, br, width, height, 2, -1, 0, 1, -1, false);
-                    break;
-                case VtfImageFormat.Uvwq8888:
-                    throw new NotImplementedException();
                     break;
                 case VtfImageFormat.Rgba16161616F:
                     TransformRgba16161616F(buffer, br, width, height);
@@ -365,45 +317,8 @@ namespace CBRE.Providers.Texture.Vtf
                 case VtfImageFormat.Rgba16161616:
                     TransformShorts(buffer, br, width, height, 8, 3, 0, 1, 2);
                     break;
-                case VtfImageFormat.Uvlx8888:
+                default:
                     throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.R32F:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Rgb323232F:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Rgba32323232F:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.NvDst16:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.NvDst24:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.NvIntz:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.NvRawz:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.AtiDst16:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.AtiDst24:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.NvNull:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Ati2N:
-                    throw new NotImplementedException();
-                    break;
-                case VtfImageFormat.Ati1N:
-                    throw new NotImplementedException();
-                    break;
             }
             var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format32bppArgb);
             var bits = bmp.LockBits(new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);

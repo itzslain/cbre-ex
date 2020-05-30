@@ -809,7 +809,7 @@ namespace CBRE.Editor.Tools.SelectTool
             GL.Color3(Color.White);
             foreach (var handle in handles)
             {
-                GL.Begin(BeginMode.Polygon);
+                GL.Begin(PrimitiveType.Polygon);
                 if (circles) GLX.Circle(handle, 4, z, loop: true);
                 else GLX.Square(handle, 4, z, true);
                 GL.End();
@@ -817,7 +817,7 @@ namespace CBRE.Editor.Tools.SelectTool
 
             // Draw the borders of the handles in black
             GL.Color3(Color.Black);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             foreach (var handle in handles)
             {
                 if (circles) GLX.Circle(handle, 4, z);
