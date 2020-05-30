@@ -139,14 +139,10 @@ namespace CBRE.Editor
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new L3DWProvider());
             GameDataProvider.Register(new FgdProvider());
-            TextureProvider.Register(new WadProvider());
             TextureProvider.Register(new SprProvider());
             TextureProvider.Register(new MiscTexProvider());
-            TextureProvider.Register(new VmtProvider());
-            ModelProvider.Register(new MdlProvider());
             ModelProvider.Register(new AssimpProvider());
 
-            WadProvider.ReplaceTransparentPixels = !CBRE.Settings.View.DisableWadTransparency && !CBRE.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !CBRE.Settings.View.GloballyDisableTransparency;
             TextureHelper.DisableTextureFiltering = CBRE.Settings.View.DisableTextureFiltering;
             TextureHelper.ForceNonPowerOfTwoResize = CBRE.Settings.View.ForcePowerOfTwoTextureResizing;
@@ -383,7 +379,6 @@ namespace CBRE.Editor
                 vp.Camera.ClipDistance = CBRE.Settings.View.BackClippingPane;
             }
             ViewportManager.RefreshClearColour(Instance.DocumentTabs.TabPages.Count == 0);
-            WadProvider.ReplaceTransparentPixels = !CBRE.Settings.View.DisableWadTransparency && !CBRE.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !CBRE.Settings.View.GloballyDisableTransparency;
             TextureHelper.DisableTextureFiltering = CBRE.Settings.View.DisableTextureFiltering;
             TextureHelper.ForceNonPowerOfTwoResize = CBRE.Settings.View.ForcePowerOfTwoTextureResizing;

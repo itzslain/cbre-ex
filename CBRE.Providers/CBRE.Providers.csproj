@@ -60,7 +60,6 @@
     <Compile Include="Map\MapProvider.cs" />
     <Compile Include="Map\VmfProvider.cs" />
     <Compile Include="Model\AssimpProvider.cs" />
-    <Compile Include="Model\MdlProvider.cs" />
     <Compile Include="Model\ModelProvider.cs" />
     <Compile Include="Model\ModelReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,7 +69,6 @@
     <Compile Include="Texture\MiscTexProvider.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
-    <Compile Include="Texture\VmtProvider.cs" />
     <Compile Include="Texture\SpriteOrientation.cs" />
     <Compile Include="Texture\SprProvider.cs" />
     <Compile Include="Texture\TextureCollection.cs" />
@@ -82,7 +80,6 @@
     <Compile Include="Texture\Vtf\VtfImageFormat.cs" />
     <Compile Include="Texture\Vtf\VtfImageFlag.cs" />
     <Compile Include="Texture\Vtf\VtfProvider.cs" />
-    <Compile Include="Texture\WadProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AssimpNet\AssimpNet\AssimpNet.csproj">
