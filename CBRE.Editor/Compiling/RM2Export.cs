@@ -90,7 +90,7 @@ namespace CBRE.Editor.Compiling
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
 
             form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDetermining waypoint visibility...")));
-            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 91));
+            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 9100));
 
             for (int i = 0; i < waypoints.Count; i++)
             {
@@ -372,7 +372,7 @@ namespace CBRE.Editor.Compiling
             stream.Dispose();
 
             form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDone!")));
-            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 100));
+            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 10000));
         }
     }
 }

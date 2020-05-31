@@ -10,7 +10,7 @@ namespace CBRE.Editor.Compiling
         {
             AssimpProvider.SaveToFile(filename, document.Map, format);
             form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDone!")));
-            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 100));
+            form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 10000));
         }
     }
 }
