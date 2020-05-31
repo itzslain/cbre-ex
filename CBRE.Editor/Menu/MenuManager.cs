@@ -106,9 +106,6 @@ namespace CBRE.Editor.Menu
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { Image = Resources.Menu_MapProperties, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Quick Load Pointfile", HotkeysMediator.QuickLoadPointfile) { Image = Resources.Menu_QuickLoadPointfile, IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Load Pointfile...", HotkeysMediator.LoadPointfile) { Image = Resources.Menu_LoadPointfile, IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Unload Pointfile", HotkeysMediator.UnloadPointfile) { Image = Resources.Menu_UnloadPointfile, IsVisible = mapOpen });
 
             Add("View", new SimpleMenuBuilder("Autosize All Views", HotkeysMediator.ViewportAutosize) { Image = Resources.Menu_AutosizeViews, IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Center All Views on Selection", HotkeysMediator.CenterAllViewsOnSelection) { Image = Resources.Menu_CenterSelectionAll, IsVisible = mapOpen, IsActive = itemsSelected });

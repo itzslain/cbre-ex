@@ -52,7 +52,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             {
                 exportForm.ProgressLog.Invoke((MethodInvoker)(() => exportForm.ProgressLog.AppendText("\n" + msg)));
             }
-            exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Value = (int)(progress * 10000)));
+            exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Value = (int)(progress * 100)));
         }
 
 
@@ -144,7 +144,6 @@ namespace CBRE.Editor.Compiling.Lightmap
         {
             var textureCollection = document.TextureCollection;
 
-            exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Maximum = 10000));
             var map = document.Map;
 
             faces = new List<LMFace>();

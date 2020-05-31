@@ -87,7 +87,7 @@ Post-Alpha
     Hotkeys - 100%
     Map Info/Entity Report - 100%
     Check For Problems - 100%
-    Pointfiles/Leak Detection? - 100%
+    Pointfiles/Leak Detection? - -100% (removed)
     Go to coordinates/brush number - 100%
     Options - 80%, hotkeys, general
     Right Toolbar Textures - 100%

@@ -83,6 +83,10 @@ namespace CBRE.Editor.Compiling
             {
                 var filter = "SCP-CB v1.4 RM2 (*.rm2)|*.rm2";
                 filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
+                filter += "|Autodesk Filmbox (*.fbx)|*.fbx";
+                filter += "|Wavefront Object (*.obj)|*.obj";
+                filter += "|Stereolithography (*.stl)|*.stl";
+                filter += "|Stanford Polygon Library (*.ply)|*.ply";
                 save.Filter = filter;
                 if (save.ShowDialog() == DialogResult.OK)
                 {
@@ -225,6 +229,26 @@ namespace CBRE.Editor.Compiling
                     else if (extension.Equals(".rmesh", StringComparison.InvariantCultureIgnoreCase))
                     {
                         RMeshExport.SaveToFile(SaveFileName, Document, this);
+                    }
+                    else if (extension.Equals(".fbx", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        GenericExport.SaveToFile(SaveFileName, Document, this, "fbx");
+                    }
+                    else if (extension.Equals(".obj", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        GenericExport.SaveToFile(SaveFileName, Document, this, "obj");
+                    }
+                    else if (extension.Equals(".dae", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        GenericExport.SaveToFile(SaveFileName, Document, this, "dae");
+                    }
+                    else if (extension.Equals(".stl", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        GenericExport.SaveToFile(SaveFileName, Document, this, "stl");
+                    }
+                    else if (extension.Equals(".ply", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        GenericExport.SaveToFile(SaveFileName, Document, this, "ply");
                     }
                     else
                     {
