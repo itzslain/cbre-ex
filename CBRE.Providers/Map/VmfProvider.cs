@@ -284,6 +284,13 @@ namespace CBRE.Providers.Map
 
             ret.UpdateBoundingBox(false);
 
+            if (Math.Abs(ret.BoundingBox.Dimensions.DX) < 0.001 ||
+                Math.Abs(ret.BoundingBox.Dimensions.DY) < 0.001 ||
+                Math.Abs(ret.BoundingBox.Dimensions.DZ) < 0.001)
+            {
+                return null;
+            }
+
             return ret;
         }
 
