@@ -81,12 +81,15 @@ namespace CBRE.Editor.Extensions
                     return true;
                 }
 
+#if !DEBUG
                 try
                 {
+#endif
                     var mr = ModelProvider.CreateModelReference(file);
                     SetModel(e, mr);
                     cache.Add(model, mr);
                     return true;
+#if !DEBUG
                 }
                 catch (Exception)
                 {
@@ -94,6 +97,7 @@ namespace CBRE.Editor.Extensions
                     cache.Add(model, null);
                     return updatedChildren;
                 }
+#endif
             }
         }
 

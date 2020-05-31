@@ -736,7 +736,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Byte length of the UTF-8 string.
         /// </summary>
-        public UIntPtr Length;
+        public UInt32 Length;
 
         /// <summary>
         /// Actual string data.
@@ -749,7 +749,7 @@ namespace Assimp.Unmanaged
         /// <param name="data">The string data</param>
         public AiString(String data)
         {
-            Length = UIntPtr.Zero;
+            Length = 0;
 
             SetString(data);
         }
@@ -761,7 +761,7 @@ namespace Assimp.Unmanaged
         /// <returns>AiString string data</returns>
         public unsafe String GetString()
         {
-            int length = (int) Length.ToUInt32();
+            int length = (int) Length;
 
             if(length > 0)
             {
@@ -790,7 +790,7 @@ namespace Assimp.Unmanaged
         {
             if(String.IsNullOrEmpty(data))
             {
-                Length = new UIntPtr(0);
+                Length = 0;
                 fixed(byte* bytePtr = Data)
                     MemoryHelper.ClearMemory(new IntPtr(bytePtr), 0, AiDefines.MAX_LENGTH);
 
@@ -809,7 +809,7 @@ namespace Assimp.Unmanaged
                         MemoryHelper.Write<byte>(new IntPtr(bytePtr), copy, 0, copy.Length);
                 }
 
-                Length = new UIntPtr((uint) copy.Length);
+                Length = (uint) copy.Length;
 
                 return true;
             }
