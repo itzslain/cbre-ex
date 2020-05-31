@@ -45,8 +45,6 @@ namespace CBRE.Editor.Documents
         public GameEnvironment Environment { get; private set; }
         public GameData GameData { get; set; }
 
-        public Pointfile Pointfile { get; set; }
-
         public RenderManager Renderer { get; private set; }
 
         public SelectionManager Selection { get; private set; }

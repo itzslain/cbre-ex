@@ -237,6 +237,11 @@
     <Compile Include="Problems\TargetWithoutMatchingName.cs" />
     <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
     <Compile Include="Problems\TextureNotFound.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Rendering\Arrays\DecalArray.cs" />
     <Compile Include="Rendering\Arrays\GridArray.cs" />
     <Compile Include="Rendering\Arrays\ModelArray.cs" />
@@ -250,7 +255,6 @@
     <Compile Include="Rendering\Helpers\HelperRenderable.cs" />
     <Compile Include="Rendering\Helpers\HelperType.cs" />
     <Compile Include="Rendering\Helpers\IHelper.cs" />
-    <Compile Include="Rendering\Helpers\PointfileHelper.cs" />
     <Compile Include="Rendering\Immediate\ModelRenderer.cs" />
     <Compile Include="Rendering\Immediate\MapObjectRenderer.cs" />
     <Compile Include="Rendering\Renderers\ModernRenderer.cs" />
@@ -616,14 +620,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>

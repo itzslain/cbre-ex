@@ -86,13 +86,6 @@ namespace CBRE.Settings
         [Description("Check For Problems")]
         CheckForProblems,
 
-        [Description("Quick Load Pointfile")]
-        QuickLoadPointfile,
-        [Description("Load Pointfile...")]
-        LoadPointfile,
-        [Description("Unload Pointfile")]
-        UnloadPointfile,
-
         [Description("Autosize 4 Viewports")]
         ViewportAutosize,
         [Description("Maximize Top Left Viewport")]
