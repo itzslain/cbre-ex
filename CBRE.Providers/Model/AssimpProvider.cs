@@ -155,19 +155,9 @@ namespace CBRE.Providers.Model
             AssimpContext exporter = new AssimpContext();
             Scene scene = new Scene();
 
-            Material material = new Material();
-            TextureSlot textureSlot = new TextureSlot("dirtymetal.jpg",
-                TextureType.Diffuse,
-                0,
-                TextureMapping.Plane,
-                0,
-                1.0f,
-                TextureOperation.Multiply,
-                Assimp.TextureWrapMode.Wrap,
-                Assimp.TextureWrapMode.Wrap,
-                0);
-            material.AddMaterialTexture(ref textureSlot);
-            scene.Materials.Add(material);
+            Node rootNode = new Node();
+            rootNode.Name = "root";
+            scene.RootNode = rootNode;
 
             Mesh mesh;
             int vertOffset;
@@ -175,37 +165,60 @@ namespace CBRE.Providers.Model
             foreach (string texture in textures)
             {
                 if (texture == "tooltextures/remove_face") { continue; }
+
+                Material material = new Material();
+                material.Name = texture;
+                TextureSlot textureSlot = new TextureSlot(texture + ".jpg",
+                    TextureType.Diffuse,
+                    0,
+                    TextureMapping.Plane,
+                    0,
+                    1.0f,
+                    TextureOperation.Multiply,
+                    Assimp.TextureWrapMode.Wrap,
+                    Assimp.TextureWrapMode.Wrap,
+                    0);
+                material.AddMaterialTexture(ref textureSlot);
+                scene.Materials.Add(material);
+
                 mesh = new Mesh();
+                mesh.Name = texture + "_mesh";
+                mesh.MaterialIndex = scene.MaterialCount - 1;
                 vertOffset = 0;
 
                 List<int> indices = new List<int>();
 
                 IEnumerable<Face> faces = map.WorldSpawn.Find(x => x is Solid).
-                OfType<Solid>().
-                SelectMany(x => x.Faces).
-                Where(x => x.Texture.Name == texture);
+                    OfType<Solid>().
+                    SelectMany(x => x.Faces).
+                    Where(x => x.Texture.Name == texture);
 
                 foreach (Face face in faces)
                 {
                     foreach (Vertex v in face.Vertices)
                     {
-                        mesh.Vertices.Add(new Vector3D((float)v.Location.X, (float)v.Location.Y, (float)v.Location.Z));
+                        mesh.Vertices.Add(new Vector3D((float)v.Location.X, (float)v.Location.Z, (float)v.Location.Y));
+                        mesh.Normals.Add(new Vector3D((float)face.Plane.Normal.X, (float)face.Plane.Normal.Z, (float)face.Plane.Normal.Y));
+                        mesh.TextureCoordinateChannels[0].Add(new Vector3D((float)v.TextureU, (float)v.TextureV, 0));
                     }
+                    mesh.UVComponentCount[0] = 2;
                     foreach (uint ind in face.GetTriangleIndices())
                     {
-                        indices.Add((int) ind + vertOffset);
+                        indices.Add((int)ind + vertOffset);
                     }
 
                     vertOffset += face.Vertices.Count;
                 }
 
-                mesh.SetIndices(indices.ToArray(), indices.Count / faces.Count());
+                mesh.SetIndices(indices.ToArray(), 3);
                 scene.Meshes.Add(mesh);
+
+                Node node = new Node();
+                node.Name = texture + "_node";
+                node.MeshIndices.Add(scene.MeshCount - 1);
+                rootNode.Children.Add(node);
             }
 
-            Node node = new Node();
-            node.MeshIndices.Add(0);
-            scene.RootNode = node;
 
             exporter.ExportFile(scene, filename, "fbx");
         }
