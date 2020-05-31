@@ -15,6 +15,7 @@ using System.Configuration;
 using CBRE.DataStructures.MapObjects;
 using Path = System.IO.Path;
 using Face = CBRE.DataStructures.MapObjects.Face;
+using CBRE.Common;
 
 namespace CBRE.Providers.Model
 {
@@ -150,7 +151,7 @@ namespace CBRE.Providers.Model
             return model;
         }
 
-        public static void SaveToFile(string filename, DataStructures.MapObjects.Map map)
+        public static void SaveToFile(string filename,DataStructures.MapObjects.Map map,string format)
         {
             AssimpContext exporter = new AssimpContext();
             Scene scene = new Scene();
@@ -168,7 +169,8 @@ namespace CBRE.Providers.Model
 
                 Material material = new Material();
                 material.Name = texture;
-                TextureSlot textureSlot = new TextureSlot(texture + ".jpg",
+                TextureSlot textureSlot = new TextureSlot(texture +
+                    (File.Exists(texture + ".png") ? ".png" : (File.Exists(texture + ".jpg") ? ".jpg" : ".jpeg")),
                     TextureType.Diffuse,
                     0,
                     TextureMapping.Plane,
@@ -220,7 +222,7 @@ namespace CBRE.Providers.Model
             }
 
 
-            exporter.ExportFile(scene, filename, "fbx");
+            exporter.ExportFile(scene, filename, format);
         }
     }
 }
