@@ -153,7 +153,6 @@ namespace CBRE.Providers.Model
 
         public static void SaveToFile(string filename,DataStructures.MapObjects.Map map,string format)
         {
-            AssimpContext exporter = new AssimpContext();
             Scene scene = new Scene();
 
             Node rootNode = new Node();
@@ -221,8 +220,7 @@ namespace CBRE.Providers.Model
                 rootNode.Children.Add(node);
             }
 
-
-            exporter.ExportFile(scene, filename, format);
+            new AssimpContext().ExportFile(scene, filename, format);
         }
     }
 }

@@ -230,25 +230,13 @@ namespace CBRE.Editor.Compiling
                     {
                         RMeshExport.SaveToFile(SaveFileName, Document, this);
                     }
-                    else if (extension.Equals(".fbx", StringComparison.InvariantCultureIgnoreCase))
+                    else if (extension.Equals(".fbx", StringComparison.InvariantCultureIgnoreCase) ||
+                        extension.Equals(".obj", StringComparison.InvariantCultureIgnoreCase) ||
+                        extension.Equals(".dae", StringComparison.InvariantCultureIgnoreCase) ||
+                        extension.Equals(".stl", StringComparison.InvariantCultureIgnoreCase) ||
+                        extension.Equals(".ply", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        GenericExport.SaveToFile(SaveFileName, Document, this, "fbx");
-                    }
-                    else if (extension.Equals(".obj", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        GenericExport.SaveToFile(SaveFileName, Document, this, "obj");
-                    }
-                    else if (extension.Equals(".dae", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        GenericExport.SaveToFile(SaveFileName, Document, this, "dae");
-                    }
-                    else if (extension.Equals(".stl", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        GenericExport.SaveToFile(SaveFileName, Document, this, "stl");
-                    }
-                    else if (extension.Equals(".ply", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        GenericExport.SaveToFile(SaveFileName, Document, this, "ply");
+                        GenericExport.SaveToFile(SaveFileName, Document, this, extension.Substring(1));
                     }
                     else
                     {
