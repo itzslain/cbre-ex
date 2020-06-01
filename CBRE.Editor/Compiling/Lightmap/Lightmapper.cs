@@ -142,7 +142,6 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         public static void Render(Document document, ExportForm exportForm, out List<LMFace> faces, out int lmCount)
         {
-            exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Maximum = 10000));
             var textureCollection = document.TextureCollection;
 
             var map = document.Map;

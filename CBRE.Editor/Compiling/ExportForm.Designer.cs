@@ -179,6 +179,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressBar.Enabled = false;
             this.ProgressBar.Location = new System.Drawing.Point(20, 382);
+            this.ProgressBar.Maximum = 10000;
             this.ProgressBar.Name = "ProgressBar";
             this.ProgressBar.Size = new System.Drawing.Size(654, 23);
             this.ProgressBar.TabIndex = 14;
