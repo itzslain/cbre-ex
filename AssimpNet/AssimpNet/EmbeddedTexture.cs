@@ -223,6 +223,7 @@ namespace Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<EmbeddedTexture, AiTexture>.ToNative(IntPtr thisPtr, out AiTexture nativeValue)
         {
+            nativeValue.Name = new AiString("idk");
             if(IsCompressed)
             {
                 nativeValue.Width = (uint) CompressedDataSize;
