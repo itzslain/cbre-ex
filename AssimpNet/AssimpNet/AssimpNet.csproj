@@ -16,10 +16,4 @@
     <Exec Command="&quot;$(ProjectDir)..\AssimpNet.Interop.Generator\bin\$(Configuration)\$(TargetFramework)\AssimpNet.Interop.Generator.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot;" />
   </Target>
 
-  <ItemGroup>
-    <None Update="Assimp64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
