@@ -159,6 +159,8 @@ namespace CBRE.Providers.Model
             rootNode.Name = "root";
             scene.RootNode = rootNode;
 
+            Node newNode = new Node();
+
             Mesh mesh;
             int vertOffset;
             string[] textures = map.GetAllTextures().ToArray();
@@ -183,7 +185,10 @@ namespace CBRE.Providers.Model
                 scene.Materials.Add(material);
 
                 mesh = new Mesh();
-                mesh.Name = texture + "_mesh";
+                if (format != "obj") // .obj files should have no mesh names so they are one proper mesh
+                {
+                    mesh.Name = texture + "_mesh";
+                }
                 mesh.MaterialIndex = scene.MaterialCount - 1;
                 vertOffset = 0;
 
@@ -214,11 +219,10 @@ namespace CBRE.Providers.Model
                 mesh.SetIndices(indices.ToArray(), 3);
                 scene.Meshes.Add(mesh);
 
-                Node node = new Node();
-                node.Name = texture + "_node";
-                node.MeshIndices.Add(scene.MeshCount - 1);
-                rootNode.Children.Add(node);
+                newNode.MeshIndices.Add(scene.MeshCount - 1);
             }
+
+            rootNode.Children.Add(newNode);
 
             new AssimpContext().ExportFile(scene, filename, format);
         }
