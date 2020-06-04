@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace CBRE.Editor.Logging
 {
@@ -50,6 +47,35 @@ namespace CBRE.Editor.Logging
 
         public string FullStackTrace { get; set; }
 
+        public string FriendlyOSName()
+        {
+            Version version = System.Environment.OSVersion.Version;
+            string os;
+            switch (version.Major)
+            {
+                case 6:
+                    switch (version.Minor)
+                    {
+                        case 1: os = $"Windows 7 (NT {version.Major}.{version.Minor}, Build {version.Build})"; break;
+                        case 2: os = $"Windows 8 (NT {version.Major}.{version.Minor}, Build {version.Build})"; break;
+                        case 3: os = $"Windows 8.1 (NT {version.Major}.{version.Minor}, Build {version.Build})"; break;
+                        default: os = "Unknown"; break;
+                    }
+                    break;
+                case 10:
+                    switch (version.Minor)
+                    {
+                        case 0: os = $"Windows 10 (NT {version.Major}.{version.Minor}, Build {version.Build})"; break;
+                        default: os = "Unknown"; break;
+                    }
+                    break;
+                default:
+                    os = "Unknown";
+                    break;
+            }
+            return os;
+        }
+
         public ExceptionInfo(Exception exception, string info)
         {
             Exception = exception;
@@ -57,7 +83,7 @@ namespace CBRE.Editor.Logging
             Date = DateTime.Now;
             InformationMessage = info;
             ApplicationVersion = FileVersionInfo.GetVersionInfo(typeof(Logger).Assembly.Location).FileVersion;
-            OperatingSystem = System.Environment.OSVersion.VersionString;
+            OperatingSystem = FriendlyOSName();
 
             var list = new List<Exception>();
             do
