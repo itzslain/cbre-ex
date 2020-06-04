@@ -48,5 +48,10 @@ namespace CBRE.Editor.UI
         {
 
         }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

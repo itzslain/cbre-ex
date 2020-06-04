@@ -41,6 +41,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,7 +90,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(325, 99);
+            this.label2.Location = new System.Drawing.Point(309, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(175, 13);
             this.label2.TabIndex = 5;
@@ -99,7 +100,7 @@
             // LTLink
             // 
             this.LTLink.AutoSize = true;
-            this.LTLink.Location = new System.Drawing.Point(356, 112);
+            this.LTLink.Location = new System.Drawing.Point(349, 123);
             this.LTLink.Name = "LTLink";
             this.LTLink.Size = new System.Drawing.Size(96, 13);
             this.LTLink.TabIndex = 6;
@@ -109,7 +110,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(292, 149);
+            this.label3.Location = new System.Drawing.Point(292, 206);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(231, 13);
             this.label3.TabIndex = 5;
@@ -118,7 +119,7 @@
             // GithubLink
             // 
             this.GithubLink.AutoSize = true;
-            this.GithubLink.Location = new System.Drawing.Point(377, 171);
+            this.GithubLink.Location = new System.Drawing.Point(378, 219);
             this.GithubLink.Name = "GithubLink";
             this.GithubLink.Size = new System.Drawing.Size(146, 13);
             this.GithubLink.TabIndex = 6;
@@ -129,7 +130,7 @@
             // GPLLink
             // 
             this.GPLLink.AutoSize = true;
-            this.GPLLink.Location = new System.Drawing.Point(378, 194);
+            this.GPLLink.Location = new System.Drawing.Point(378, 232);
             this.GPLLink.Name = "GPLLink";
             this.GPLLink.Size = new System.Drawing.Size(145, 13);
             this.GPLLink.TabIndex = 6;
@@ -139,7 +140,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(328, 171);
+            this.label4.Location = new System.Drawing.Point(328, 219);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 5;
@@ -148,7 +149,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(325, 194);
+            this.label5.Location = new System.Drawing.Point(325, 232);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 13);
             this.label5.TabIndex = 5;
@@ -164,11 +165,22 @@
             this.label11.Text = "Made by juanjp600 for use with SCPCB";
             this.label11.Click += new System.EventHandler(this.label11_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(265, 159);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(259, 13);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Thanks to Salvage and Bananaman043 for misc fixes";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
             // AboutDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(535, 305);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.GPLLink);
             this.Controls.Add(this.GithubLink);
@@ -210,5 +222,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label6;
     }
 }
