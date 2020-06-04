@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Drawing;
-using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.Meta;
 using CBRE.DataStructures.Transformations;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -45,7 +45,7 @@ namespace CBRE.DataStructures.MapObjects
             AutoVisgroups = info.GetString("AutoVisgroups").Split(',').Select(x => int.Parse(x, CultureInfo.InvariantCulture)).ToList();
             Colour = Color.FromArgb(info.GetInt32("Colour"));
 
-            var children = (MapObject[]) info.GetValue("Children", typeof (MapObject[]));
+            var children = (MapObject[])info.GetValue("Children", typeof(MapObject[]));
             foreach (var child in children)
             {
                 child.SetParent(this);

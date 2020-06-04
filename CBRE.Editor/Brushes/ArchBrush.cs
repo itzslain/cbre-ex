@@ -1,12 +1,11 @@
-using System;
+using CBRE.Common;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Brushes.Controls;
+using CBRE.Extensions;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Common;
-using CBRE.Editor.Brushes.Controls;
-using CBRE.Extensions;
 
 namespace CBRE.Editor.Brushes
 {
@@ -92,7 +91,7 @@ namespace CBRE.Editor.Brushes
             var tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
             if (DMath.Abs(tiltAngle % 180) == 90) yield break;
             var tiltInterp = curvedRamp && _tiltInterp.GetValue();
-            
+
             // Very similar to the pipe brush, except with options for start angle, arc, height and tilt
             var width = box.Width;
             var length = box.Length;
@@ -116,7 +115,7 @@ namespace CBRE.Editor.Brushes
                 var h = i * addHeight;
                 var interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2M)) : 1;
                 var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
-                
+
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
                 var yval = box.Center.Y + minorOut * DMath.Sin(a);
                 var zval = box.Start.Z + (curvedRamp ? h + tiltHeight : 0);
@@ -141,19 +140,19 @@ namespace CBRE.Editor.Brushes
                     // The splitting orientation depends on the curving direction of the arch
                     if (addHeight >= 0)
                     {
-                        faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1] });
-                        faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i] + z,   inner[i]   });
-                        faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]   });
-                        faces.Add(new[] { outer[i] + z,   inner[i] + z,   outer[i+1] + z  });
-                        faces.Add(new[] { outer[i+1],     inner[i],       outer[i]        });
+                        faces.Add(new[] { outer[i], outer[i] + z, outer[i + 1] + z, outer[i + 1] });
+                        faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i] + z, inner[i] });
+                        faces.Add(new[] { inner[i], inner[i] + z, outer[i] + z, outer[i] });
+                        faces.Add(new[] { outer[i] + z, inner[i] + z, outer[i + 1] + z });
+                        faces.Add(new[] { outer[i + 1], inner[i], outer[i] });
                     }
                     else
                     {
-                        faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]   });
-                        faces.Add(new[] { outer[i],       outer[i] + z,   inner[i+1] + z, inner[i+1] });
-                        faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]   });
-                        faces.Add(new[] { inner[i+1] + z, outer[i] + z,   inner[i] + z    });
-                        faces.Add(new[] { inner[i],       outer[i],       inner[i+1]      });
+                        faces.Add(new[] { inner[i + 1], inner[i + 1] + z, inner[i] + z, inner[i] });
+                        faces.Add(new[] { outer[i], outer[i] + z, inner[i + 1] + z, inner[i + 1] });
+                        faces.Add(new[] { inner[i], inner[i] + z, outer[i] + z, outer[i] });
+                        faces.Add(new[] { inner[i + 1] + z, outer[i] + z, inner[i] + z });
+                        faces.Add(new[] { inner[i], outer[i], inner[i + 1] });
                     }
                     yield return MakeSolid(generator, faces, texture, colour);
 
@@ -161,31 +160,31 @@ namespace CBRE.Editor.Brushes
 
                     if (addHeight >= 0)
                     {
-                        faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]   });
-                        faces.Add(new[] { inner[i],       inner[i] + z,   outer[i+1] + z, outer[i+1] });
-                        faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1] });
-                        faces.Add(new[] { inner[i+1] + z, outer[i+1] + z, inner[i] + z    });
-                        faces.Add(new[] { inner[i],       outer[i+1],     inner[i+1]      });
+                        faces.Add(new[] { inner[i + 1], inner[i + 1] + z, inner[i] + z, inner[i] });
+                        faces.Add(new[] { inner[i], inner[i] + z, outer[i + 1] + z, outer[i + 1] });
+                        faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i + 1] + z, inner[i + 1] });
+                        faces.Add(new[] { inner[i + 1] + z, outer[i + 1] + z, inner[i] + z });
+                        faces.Add(new[] { inner[i], outer[i + 1], inner[i + 1] });
                     }
                     else
                     {
-                        faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1] });
-                        faces.Add(new[] { inner[i+1],     inner[i+1] + z, outer[i] + z,   outer[i]   });
-                        faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1] });
-                        faces.Add(new[] { outer[i] + z,   inner[i+1] + z, outer[i+1] + z  });
-                        faces.Add(new[] { outer[i+1],     inner[i+1],     outer[i]        });
+                        faces.Add(new[] { outer[i], outer[i] + z, outer[i + 1] + z, outer[i + 1] });
+                        faces.Add(new[] { inner[i + 1], inner[i + 1] + z, outer[i] + z, outer[i] });
+                        faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i + 1] + z, inner[i + 1] });
+                        faces.Add(new[] { outer[i] + z, inner[i + 1] + z, outer[i + 1] + z });
+                        faces.Add(new[] { outer[i + 1], inner[i + 1], outer[i] });
                     }
                     yield return MakeSolid(generator, faces, texture, colour);
                 }
                 else
                 {
                     var h = i * addHeight * Coordinate.UnitZ;
-                    faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1]   }.Select(x => x + h).ToArray());
-                    faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]     }.Select(x => x + h).ToArray());
-                    faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1]   }.Select(x => x + h).ToArray());
-                    faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]     }.Select(x => x + h).ToArray());
-                    faces.Add(new[] { inner[i+1] + z, outer[i+1] + z, outer[i] + z,   inner[i] + z }.Select(x => x + h).ToArray());
-                    faces.Add(new[] { inner[i],       outer[i],       outer[i+1],     inner[i+1]   }.Select(x => x + h).ToArray());
+                    faces.Add(new[] { outer[i], outer[i] + z, outer[i + 1] + z, outer[i + 1] }.Select(x => x + h).ToArray());
+                    faces.Add(new[] { inner[i + 1], inner[i + 1] + z, inner[i] + z, inner[i] }.Select(x => x + h).ToArray());
+                    faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i + 1] + z, inner[i + 1] }.Select(x => x + h).ToArray());
+                    faces.Add(new[] { inner[i], inner[i] + z, outer[i] + z, outer[i] }.Select(x => x + h).ToArray());
+                    faces.Add(new[] { inner[i + 1] + z, outer[i + 1] + z, outer[i] + z, inner[i] + z }.Select(x => x + h).ToArray());
+                    faces.Add(new[] { inner[i], outer[i], outer[i + 1], inner[i + 1] }.Select(x => x + h).ToArray());
                     yield return MakeSolid(generator, faces, texture, colour);
                 }
             }

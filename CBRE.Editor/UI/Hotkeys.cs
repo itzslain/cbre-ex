@@ -1,8 +1,6 @@
-﻿using System;
-using System.Reflection;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.UI;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {

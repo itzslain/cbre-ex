@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Operations;
@@ -16,6 +9,13 @@ using CBRE.Graphics;
 using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Matrix = CBRE.Graphics.Helpers.Matrix;
 using Select = CBRE.Settings.Select;
 using View = CBRE.Settings.View;
@@ -260,7 +260,7 @@ namespace CBRE.Editor.Tools.VMTool
         public List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
         {
             var l = viewport.Camera.Location;
-            var pos = new Coordinate((decimal) l.X, (decimal) l.Y, (decimal) l.Z);
+            var pos = new Coordinate((decimal)l.X, (decimal)l.Y, (decimal)l.Z);
             var p = new Coordinate(x, y, 0);
             const int d = 5;
             return (from point in Points
@@ -431,14 +431,14 @@ namespace CBRE.Editor.Tools.VMTool
                     if (recreate && !existingPoints.Any())
                     {
                         Points.Add(new VMPoint
-                                        {
-                                            Solid = copy,
-                                            Coordinate = coord,
-                                            IsMidPoint = true,
-                                            MidpointStart = mpStart,
-                                            MidpointEnd = mpEnd,
-                                            IsSelected = selected.Any(x => x.Solid == copy && x.Start == mpStart.Coordinate && x.End == mpEnd.Coordinate)
-                                        });
+                        {
+                            Solid = copy,
+                            Coordinate = coord,
+                            IsMidPoint = true,
+                            MidpointStart = mpStart,
+                            MidpointEnd = mpEnd,
+                            IsSelected = selected.Any(x => x.Solid == copy && x.Start == mpStart.Coordinate && x.End == mpEnd.Coordinate)
+                        });
                     }
                     else
                     {
@@ -542,13 +542,13 @@ namespace CBRE.Editor.Tools.VMTool
                     {
                         // deselect solid
                         var select = new MapObject[0];
-                        var deselect = new[] {solid};
+                        var deselect = new[] { solid };
                         Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
                     }
                     else if (!solid.IsSelected)
                     {
                         // select solid
-                        var select = new[] {solid};
+                        var select = new[] { solid };
                         var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
                         Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
                     }
@@ -844,7 +844,7 @@ namespace CBRE.Editor.Tools.VMTool
                            orderby point.IsSelected, unused.X + unused.Y + unused.Z
                            select point).ToList();
             // Render out the point handles
-            var z = (double) vp.Zoom;
+            var z = (double)vp.Zoom;
             GL.Begin(PrimitiveType.Quads);
             foreach (var point in ordered)
             {

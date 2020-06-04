@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CBRE.DataStructures.Geometric;
 using OpenTK;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.Editor.Extensions
 {
@@ -16,7 +12,7 @@ namespace CBRE.Editor.Extensions
 
         public static Coordinate ToCoordinate(this Vector3 vector3)
         {
-            return new Coordinate((decimal) vector3.X, (decimal) vector3.Y, (decimal) vector3.Z);
+            return new Coordinate((decimal)vector3.X, (decimal)vector3.Y, (decimal)vector3.Z);
         }
     }
 }

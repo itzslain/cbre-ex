@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CBRE.DataStructures.GameData;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.Transformations;
+using CBRE.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.GameData;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.Transformations;
-using CBRE.Extensions;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -25,8 +25,8 @@ namespace CBRE.DataStructures.MapObjects
 
         protected Entity(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            EntityData = (EntityData) info.GetValue("EntityData", typeof (EntityData));
-            Origin = (Coordinate) info.GetValue("Origin", typeof (Coordinate));
+            EntityData = (EntityData)info.GetValue("EntityData", typeof(EntityData));
+            Origin = (Coordinate)info.GetValue("Origin", typeof(Coordinate));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -39,11 +39,11 @@ namespace CBRE.DataStructures.MapObjects
         public override MapObject Copy(IDGenerator generator)
         {
             var e = new Entity(generator.GetNextObjectID())
-                       {
-                           GameData = GameData,
-                           EntityData = EntityData.Clone(),
-                           Origin = Origin.Clone()
-                       };
+            {
+                GameData = GameData,
+                EntityData = EntityData.Clone(),
+                Origin = Origin.Clone()
+            };
             CopyBase(e, generator);
             return e;
         }
@@ -60,7 +60,7 @@ namespace CBRE.DataStructures.MapObjects
 
         public override MapObject Clone()
         {
-            var e = new Entity(ID) {GameData = GameData, EntityData = EntityData.Clone(), Origin = Origin.Clone()};
+            var e = new Entity(ID) { GameData = GameData, EntityData = EntityData.Clone(), Origin = Origin.Clone() };
             CopyBase(e, null, true);
             return e;
         }
@@ -114,7 +114,7 @@ namespace CBRE.DataStructures.MapObjects
             }
             else if (Children.Any())
             {
-                BoundingBox = new Box(GetChildren().SelectMany(x => new[] {x.BoundingBox.Start, x.BoundingBox.End}));
+                BoundingBox = new Box(GetChildren().SelectMany(x => new[] { x.BoundingBox.Start, x.BoundingBox.End }));
             }
             else
             {
@@ -147,22 +147,22 @@ namespace CBRE.DataStructures.MapObjects
 
             var box = BoundingBox.GetBoxFaces();
             var dummySolid = new Solid(-1)
-                                 {
-                                     IsCodeHidden = IsCodeHidden,
-                                     IsRenderHidden2D = IsRenderHidden2D,
-                                     IsSelected = IsSelected,
-                                     IsRenderHidden3D = IsRenderHidden3D,
-                                     IsVisgroupHidden = IsVisgroupHidden
-                                 };
+            {
+                IsCodeHidden = IsCodeHidden,
+                IsRenderHidden2D = IsRenderHidden2D,
+                IsSelected = IsSelected,
+                IsRenderHidden3D = IsRenderHidden3D,
+                IsVisgroupHidden = IsVisgroupHidden
+            };
             foreach (var ca in box)
             {
                 var face = new Face(0)
-                               {
-                                   Plane = new Plane(ca[0], ca[1], ca[2]),
-                                   Colour = Colour,
-                                   IsSelected = IsSelected,
-                                   Parent = dummySolid
-                               };
+                {
+                    Plane = new Plane(ca[0], ca[1], ca[2]),
+                    Colour = Colour,
+                    IsSelected = IsSelected,
+                    Parent = dummySolid
+                };
                 face.Vertices.AddRange(ca.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();
                 faces.Add(face);
@@ -192,7 +192,7 @@ namespace CBRE.DataStructures.MapObjects
 
         public override Box GetIntersectionBoundingBox()
         {
-            return new Box(new[] {BoundingBox}.Union(MetaData.GetAll<Box>()));
+            return new Box(new[] { BoundingBox }.Union(MetaData.GetAll<Box>()));
         }
 
         public override EntityData GetEntityData()

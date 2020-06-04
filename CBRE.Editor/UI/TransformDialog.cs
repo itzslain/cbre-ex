@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Enums;
+using System;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -32,7 +26,7 @@ namespace CBRE.Editor.UI
             get
             {
                 if (Rotate.Checked) return TransformType.Rotate;
-                if (Scale.Checked) return TransformType.Scale;
+                if (scale.Checked) return TransformType.Scale;
                 return TransformType.Translate;
             }
             set
@@ -43,7 +37,7 @@ namespace CBRE.Editor.UI
                         Rotate.Checked = true;
                         break;
                     case TransformType.Scale:
-                        Scale.Checked = true;
+                        scale.Checked = true;
                         break;
                     default:
                         Translate.Checked = true;
@@ -77,8 +71,8 @@ namespace CBRE.Editor.UI
             ZeroValueXButton.Text
                 = ZeroValueYButton.Text
                   = ZeroValueZButton.Text
-                    = Scale.Checked ? "1" : "0";
-            if (Scale.Checked)
+                    = scale.Checked ? "1" : "0";
+            if (scale.Checked)
             {
                 if (ValueX.Value == 0) ValueX.Value = 1;
                 if (ValueY.Value == 0) ValueY.Value = 1;
@@ -96,7 +90,7 @@ namespace CBRE.Editor.UI
 
         private void OkButtonClicked(object sender, EventArgs e)
         {
-            if (Scale.Checked && (ValueX.Value == 0 || ValueY.Value == 0 || ValueZ.Value == 0))
+            if (scale.Checked && (ValueX.Value == 0 || ValueY.Value == 0 || ValueZ.Value == 0))
             {
                 MessageBox.Show("Please enter a non-zero value for all axes when scaling.");
                 DialogResult = DialogResult.None;

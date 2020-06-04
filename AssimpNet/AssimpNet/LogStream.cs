@@ -20,11 +20,11 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -157,9 +157,9 @@ namespace Assimp
         /// </summary>
         public static void DetachAllLogstreams()
         {
-            lock(s_sync)
+            lock (s_sync)
             {
-                foreach(LogStream logstream in s_activeLogstreams)
+                foreach (LogStream logstream in s_activeLogstreams)
                 {
                     logstream.m_isAttached = false;
                     AssimpLibrary.Instance.DetachLogStream(logstream.m_logstreamPtr);
@@ -176,7 +176,7 @@ namespace Assimp
         /// <returns>Collection of active logstreams attached to the library.</returns>
         public static IEnumerable<LogStream> GetAttachedLogStreams()
         {
-            lock(s_sync)
+            lock (s_sync)
             {
                 return s_activeLogstreams.ToArray();
             }
@@ -193,10 +193,10 @@ namespace Assimp
         /// </summary>
         public void Attach()
         {
-            if(m_isAttached)
+            if (m_isAttached)
                 return;
 
-            lock(s_sync)
+            lock (s_sync)
             {
                 s_activeLogstreams.Add(this);
                 m_isAttached = true;
@@ -210,10 +210,10 @@ namespace Assimp
         /// </summary>
         public void Detach()
         {
-            if(!m_isAttached)
+            if (!m_isAttached)
                 return;
 
-            lock(s_sync)
+            lock (s_sync)
             {
                 s_activeLogstreams.Remove(this);
                 m_isAttached = false;
@@ -237,15 +237,15 @@ namespace Assimp
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!m_isDisposed)
+            if (!m_isDisposed)
             {
-                if(m_logstreamPtr != IntPtr.Zero)
+                if (m_logstreamPtr != IntPtr.Zero)
                 {
                     MemoryHelper.FreeMemory(m_logstreamPtr);
                     m_logstreamPtr = IntPtr.Zero;
                 }
 
-                if(disposing)
+                if (disposing)
                 {
                     m_assimpCallback = null;
                 }
@@ -275,7 +275,7 @@ namespace Assimp
 
         private void OnAiLogStreamCallback(String msg, IntPtr userData)
         {
-            if(m_logCallback != null)
+            if (m_logCallback != null)
             {
                 m_logCallback(msg, m_userData);
             }
@@ -287,7 +287,7 @@ namespace Assimp
 
         private void Initialize(LoggingCallback callback, String userData)
         {
-            if(userData == null)
+            if (userData == null)
                 userData = String.Empty;
 
             m_assimpCallback = OnAiLogStreamCallback;
@@ -326,7 +326,7 @@ namespace Assimp
         /// <param name="userData">Userdata</param>
         protected override void LogMessage(String msg, String userData)
         {
-            if(String.IsNullOrEmpty(userData))
+            if (String.IsNullOrEmpty(userData))
             {
                 Console.WriteLine(msg);
             }

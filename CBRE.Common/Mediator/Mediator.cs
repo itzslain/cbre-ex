@@ -44,19 +44,19 @@ namespace CBRE.Common.Mediator
             object[] parameters = null;
             if (parameter is object[])
             {
-                var arr = (object[]) parameter;
-                method = t.GetMethod(message, flags, null, arr.Select(x => x == null ? typeof (object) : x.GetType()).ToArray(), null);
+                var arr = (object[])parameter;
+                method = t.GetMethod(message, flags, null, arr.Select(x => x == null ? typeof(object) : x.GetType()).ToArray(), null);
                 parameters = arr;
             }
             if (method == null && parameter != null)
             {
                 method = t.GetMethod(message, flags, null, new[] { parameter.GetType() }, null);
-                parameters = new[] {parameter};
+                parameters = new[] { parameter };
             }
             if (method == null)
             {
                 method = t.GetMethod(message, flags);
-                if (method != null) parameters = method.GetParameters().Select(x => (object) null).ToArray();
+                if (method != null) parameters = method.GetParameters().Select(x => (object)null).ToArray();
             }
             if (method != null)
             {

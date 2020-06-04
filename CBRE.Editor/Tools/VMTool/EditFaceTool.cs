@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.UI;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.VMTool
 {
@@ -82,12 +82,12 @@ namespace CBRE.Editor.Tools.VMTool
                 var v2 = face.Vertices.First(x => x.Location == edge.End);
                 var verts = new[] { vertexCoordinates[v1], vertexCoordinates[v2], v2.Location, v1.Location };
                 var f = new Face(Document.Map.IDGenerator.GetNextFaceID())
-                            {
-                                Parent = solid,
-                                Plane = new Plane(verts[0], verts[1], verts[2]),
-                                Colour = solid.Colour,
-                                Texture = face.Texture.Clone()
-                            };
+                {
+                    Parent = solid,
+                    Plane = new Plane(verts[0], verts[1], verts[2]),
+                    Colour = solid.Colour,
+                    Texture = face.Texture.Clone()
+                };
                 f.Vertices.AddRange(verts.Select(x => new Vertex(x, face)));
                 f.UpdateBoundingBox();
                 f.AlignTextureToFace();
@@ -150,7 +150,7 @@ namespace CBRE.Editor.Tools.VMTool
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
-            
+
         }
 
         public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
@@ -258,7 +258,7 @@ namespace CBRE.Editor.Tools.VMTool
 
         public override void SelectionChanged()
         {
-            
+
         }
 
         public override bool ShouldDeselect(List<VMPoint> vtxs)

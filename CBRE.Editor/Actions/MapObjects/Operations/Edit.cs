@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using CBRE.DataStructures.MapObjects;
+﻿using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Operations.EditOperations;
-using CBRE.Editor.Documents;
+using System.Collections.Generic;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations
 {

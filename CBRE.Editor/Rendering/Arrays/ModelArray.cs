@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using CBRE.Common;
 using CBRE.DataStructures.Models;
 using CBRE.Graphics.Arrays;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Rendering.Arrays
 {
@@ -14,7 +14,7 @@ namespace CBRE.Editor.Rendering.Arrays
         private const int Textured = 0;
 
         public ModelArray(Model model)
-            : base(new []{ model })
+            : base(new[] { model })
         {
         }
 
@@ -22,7 +22,7 @@ namespace CBRE.Editor.Rendering.Arrays
         {
             foreach (var subset in GetSubsets<ITexture>(Textured))
             {
-                ((ITexture) subset.Instance).Bind();
+                ((ITexture)subset.Instance).Bind();
                 Render(context, PrimitiveType.Triangles, subset);
             }
         }
@@ -59,7 +59,7 @@ namespace CBRE.Editor.Rendering.Arrays
                                     IsSelected = 0
                                 }
                             });
-                            PushIndex(Textured, index, new[] {(uint) 0});
+                            PushIndex(Textured, index, new[] { (uint)0 });
                         }
                     }
                     PushSubset(Textured, tex.TextureObject);

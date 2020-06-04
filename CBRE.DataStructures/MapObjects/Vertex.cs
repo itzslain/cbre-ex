@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -19,7 +19,7 @@ namespace CBRE.DataStructures.MapObjects
             set
             {
                 _textureU = value;
-                _dTextureU = (double) value;
+                _dTextureU = (double)value;
             }
         }
 
@@ -39,7 +39,7 @@ namespace CBRE.DataStructures.MapObjects
             set
             {
                 _dTextureU = value;
-                _textureU = (decimal) value;
+                _textureU = (decimal)value;
             }
         }
 
@@ -49,7 +49,7 @@ namespace CBRE.DataStructures.MapObjects
             set
             {
                 _dTextureV = value;
-                _textureV = (decimal) value;
+                _textureV = (decimal)value;
             }
         }
 
@@ -71,7 +71,7 @@ namespace CBRE.DataStructures.MapObjects
         {
             TextureU = info.GetDecimal("TextureU");
             TextureV = info.GetDecimal("TextureV");
-            Location = (Coordinate) info.GetValue("Location", typeof (Coordinate));
+            Location = (Coordinate)info.GetValue("Location", typeof(Coordinate));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -84,12 +84,12 @@ namespace CBRE.DataStructures.MapObjects
         public Vertex Clone()
         {
             return new Vertex(Location.Clone(), Parent)
-                       {
-                           _textureU = _textureU,
-                           _textureV = _textureV,
-                           _dTextureU = _dTextureU,
-                           _dTextureV = _dTextureV
-                       };
+            {
+                _textureU = _textureU,
+                _textureV = _textureV,
+                _dTextureU = _dTextureU,
+                _dTextureV = _dTextureV
+            };
         }
     }
 }

@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.IO;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -104,12 +104,12 @@ namespace Assimp
         {
             m_name = dataBlob.Name.GetString();
 
-            if(dataBlob.Size.ToUInt32() > 0 && dataBlob.Data != IntPtr.Zero)
-                m_data = MemoryHelper.FromNativeArray<byte>(dataBlob.Data, (int) dataBlob.Size.ToUInt32());
+            if (dataBlob.Size.ToUInt32() > 0 && dataBlob.Data != IntPtr.Zero)
+                m_data = MemoryHelper.FromNativeArray<byte>(dataBlob.Data, (int)dataBlob.Size.ToUInt32());
 
             m_next = null;
 
-            if(dataBlob.NextBlob != IntPtr.Zero)
+            if (dataBlob.NextBlob != IntPtr.Zero)
             {
                 AiExportDataBlob nextBlob = MemoryHelper.MarshalStructure<AiExportDataBlob>(dataBlob.NextBlob);
                 m_next = new ExportDataBlob(ref nextBlob);
@@ -136,7 +136,7 @@ namespace Assimp
         {
             MemoryStream memStream = new MemoryStream();
 
-            using(BinaryWriter writer = new BinaryWriter(memStream))
+            using (BinaryWriter writer = new BinaryWriter(memStream))
             {
                 WriteBlob(this, writer);
 
@@ -152,7 +152,7 @@ namespace Assimp
         /// <returns>Data blob</returns>
         public static ExportDataBlob FromStream(Stream stream)
         {
-            if(stream == null || !stream.CanRead)
+            if (stream == null || !stream.CanRead)
                 return null;
 
             BlobBinaryReader reader = new BlobBinaryReader(stream);
@@ -169,7 +169,7 @@ namespace Assimp
 
         private static void WriteBlob(ExportDataBlob blob, BinaryWriter writer)
         {
-            if(blob == null || writer == null)
+            if (blob == null || writer == null)
                 return;
 
             bool hasNext = blob.NextBlob != null;
@@ -179,13 +179,13 @@ namespace Assimp
             writer.Write(blob.Data);
             writer.Write(hasNext);
 
-            if(hasNext)
+            if (hasNext)
                 WriteBlob(blob.NextBlob, writer);
         }
 
         private static ExportDataBlob ReadBlob(BinaryReader reader)
         {
-            if(reader == null)
+            if (reader == null)
                 return null;
 
             String name = reader.ReadString();
@@ -195,7 +195,7 @@ namespace Assimp
 
             ExportDataBlob blob = new ExportDataBlob(name, data);
 
-            if(hasNext)
+            if (hasNext)
                 blob.m_next = ReadBlob(reader);
 
             return blob;

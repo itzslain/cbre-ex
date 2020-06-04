@@ -274,7 +274,7 @@ namespace Assimp.Unmanaged
         /// <returns>Fully qualified texture name</returns>
         public static String GetFullTextureName(String baseName, TextureType texType, int texIndex)
         {
-            return String.Format("{0},{1},{2}", baseName, (int) texType, texIndex);
+            return String.Format("{0},{1},{2}", baseName, (int)texType, texIndex);
         }
 
         /// <summary>
@@ -286,11 +286,11 @@ namespace Assimp.Unmanaged
         /// <returns>Base name of the property type.</returns>
         public static String GetBaseName(String fullyQualifiedName)
         {
-            if(String.IsNullOrEmpty(fullyQualifiedName))
+            if (String.IsNullOrEmpty(fullyQualifiedName))
                 return String.Empty;
 
             String[] substrings = fullyQualifiedName.Split(',');
-            if(substrings != null && substrings.Length == 3)
+            if (substrings != null && substrings.Length == 3)
                 return substrings[0];
 
             return String.Empty;

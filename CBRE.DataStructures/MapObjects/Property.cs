@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -57,10 +57,10 @@ namespace CBRE.DataStructures.MapObjects
         public Property Clone()
         {
             return new Property
-                       {
-                           Key = Key,
-                           Value = Value
-                       };
+            {
+                Key = Key,
+                Value = Value
+            };
         }
     }
 }

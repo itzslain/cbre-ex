@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CBRE.DataStructures.MapObjects;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CBRE.DataStructures.MapObjects;
 using Path = CBRE.DataStructures.MapObjects.Path;
 
 namespace CBRE.Providers.Map
@@ -44,7 +44,7 @@ namespace CBRE.Providers.Map
             {
                 throw new ProviderException("Incorrect RMF version number. Expected 2.2, got " + version + ".");
             }
-            map.Version = (decimal) version;
+            map.Version = (decimal)version;
 
             // RMF header test
             var header = br.ReadFixedLengthString(Encoding.UTF8, 3);
@@ -68,7 +68,7 @@ namespace CBRE.Providers.Map
             {
                 throw new ProviderException("Incorrect RMF format. Expected 'DOCINFO', got '" + docinfo + "'.");
             }
-            
+
             // Cameras
             br.ReadSingle(); // Appears to be a version number for camera data. Unused.
             var activeCamera = br.ReadInt32();
@@ -98,10 +98,10 @@ namespace CBRE.Providers.Map
         private static Property ReadProperty(BinaryReader br)
         {
             return new Property
-                {
-                    Key = br.ReadCString(),
-                    Value = br.ReadCString()
-                };
+            {
+                Key = br.ReadCString(),
+                Value = br.ReadCString()
+            };
         }
 
         public static void WriteProperty(BinaryWriter bw, Property p)
@@ -138,9 +138,9 @@ namespace CBRE.Providers.Map
         private static EntityData ReadEntityData(BinaryReader br)
         {
             var data = new EntityData
-                {
-                    Name = br.ReadCString()
-                };
+            {
+                Name = br.ReadCString()
+            };
 
             br.ReadBytes(4); // Unused bytes
 
@@ -343,11 +343,11 @@ namespace CBRE.Providers.Map
         private static PathNode ReadPathNode(BinaryReader br)
         {
             var node = new PathNode
-                {
-                    Position = br.ReadCoordinate(),
-                    ID = br.ReadInt32(),
-                    Name = br.ReadFixedLengthString(Encoding.UTF8, 128)
-                };
+            {
+                Position = br.ReadCoordinate(),
+                ID = br.ReadInt32(),
+                Name = br.ReadFixedLengthString(Encoding.UTF8, 128)
+            };
             var numProps = br.ReadInt32();
             for (var i = 0; i < numProps; i++)
             {
@@ -371,11 +371,11 @@ namespace CBRE.Providers.Map
         private static Path ReadPath(BinaryReader br)
         {
             var path = new Path
-                {
-                    Name = br.ReadFixedLengthString(Encoding.UTF8, 128),
-                    Type = br.ReadFixedLengthString(Encoding.UTF8, 128),
-                    Direction = (PathDirection) br.ReadInt32()
-                };
+            {
+                Name = br.ReadFixedLengthString(Encoding.UTF8, 128),
+                Type = br.ReadFixedLengthString(Encoding.UTF8, 128),
+                Direction = (PathDirection)br.ReadInt32()
+            };
             var numNodes = br.ReadInt32();
             for (var i = 0; i < numNodes; i++)
             {
@@ -390,7 +390,7 @@ namespace CBRE.Providers.Map
         {
             bw.WriteFixedLengthString(Encoding.UTF8, 128, path.Name);
             bw.WriteFixedLengthString(Encoding.UTF8, 128, path.Type);
-            bw.Write((int) path.Direction);
+            bw.Write((int)path.Direction);
             bw.Write(path.Nodes.Count);
             foreach (var node in path.Nodes)
             {
@@ -430,12 +430,12 @@ namespace CBRE.Providers.Map
             for (var i = 0; i < numVisgroups; i++)
             {
                 var vis = new Visgroup
-                    {
-                        Name = br.ReadFixedLengthString(Encoding.UTF8, 128),
-                        Colour = br.ReadRGBAColour(),
-                        ID = br.ReadInt32(),
-                        Visible = br.ReadBoolean()
-                    };
+                {
+                    Name = br.ReadFixedLengthString(Encoding.UTF8, 128),
+                    Colour = br.ReadRGBAColour(),
+                    ID = br.ReadInt32(),
+                    Visible = br.ReadBoolean()
+                };
                 vis.Colour = Color.FromArgb(255, vis.Colour);
                 br.ReadBytes(3);
                 list.Add(vis);

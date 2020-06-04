@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.Serialization;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
+using System;
+using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -57,8 +57,8 @@ namespace CBRE.DataStructures.MapObjects
         {
             Name = info.GetString("Name");
             Rotation = info.GetInt32("Rotation");
-            _uAxis = (Coordinate) info.GetValue("UAxis", typeof (Coordinate));
-            _vAxis = (Coordinate) info.GetValue("VAxis", typeof (Coordinate));
+            _uAxis = (Coordinate)info.GetValue("UAxis", typeof(Coordinate));
+            _vAxis = (Coordinate)info.GetValue("VAxis", typeof(Coordinate));
             XShift = info.GetDecimal("XShift");
             XScale = info.GetDecimal("XScale");
             YShift = info.GetDecimal("YShift");
@@ -85,17 +85,17 @@ namespace CBRE.DataStructures.MapObjects
         public TextureReference Clone()
         {
             return new TextureReference
-                       {
-                           Name = Name,
-                           Texture = Texture,
-                           Rotation = Rotation,
-                           UAxis = UAxis.Clone(),
-                           VAxis = VAxis.Clone(),
-                           XShift = XShift,
-                           XScale = XScale,
-                           YShift = YShift,
-                           YScale = YScale
-                       };
+            {
+                Name = Name,
+                Texture = Texture,
+                Rotation = Rotation,
+                UAxis = UAxis.Clone(),
+                VAxis = VAxis.Clone(),
+                XShift = XShift,
+                XScale = XScale,
+                YShift = YShift,
+                YScale = YScale
+            };
         }
     }
 }

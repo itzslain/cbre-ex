@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Graphics.Helpers;
 
 namespace CBRE.Graphics

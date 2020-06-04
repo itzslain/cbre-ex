@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 
 namespace CBRE.UI
 {

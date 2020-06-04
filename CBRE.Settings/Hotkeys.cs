@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CBRE.Settings.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using CBRE.Settings.Models;
 
 namespace CBRE.Settings
 {
@@ -39,26 +39,26 @@ namespace CBRE.Settings
                                     new HotkeyDefinition("Redo", "Redo the last undone action", HotkeysMediator.HistoryRedo, "Ctrl+Y"),
 
                                     new HotkeyDefinition("Show Object Properties", "Open the object properties dialog for the currently selected items", HotkeysMediator.ObjectProperties, "Alt+Enter"),
-                                    
+
                                     new HotkeyDefinition("Copy", "Copy the current selection", HotkeysMediator.OperationsCopy, "Ctrl+C", "Ctrl+Ins"),
                                     new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Ctrl+X", "Shift+Del"),
                                     new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Ctrl+V", "Shift+Ins"),
                                     new HotkeyDefinition("Paste Special", "Paste special the clipboard contents", HotkeysMediator.OperationsPasteSpecial, "Ctrl+Shift+V"),
                                     new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Del"),
-                                    
+
                                     new HotkeyDefinition("Group", "Group the selected objects", HotkeysMediator.GroupingGroup, "Ctrl+G"),
                                     new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+U"),
                                     new HotkeyDefinition("Toggle Ignore Grouping", "Toggle ignore grouping on and off", HotkeysMediator.ToggleIgnoreGrouping, "Ctrl+W"),
-                                    
+
                                     new HotkeyDefinition("Hide Selected", "Hide the selected objects", HotkeysMediator.QuickHideSelected, "H"),
                                     new HotkeyDefinition("Hide Unselected", "Hide the unselected objects", HotkeysMediator.QuickHideUnselected, "Ctrl+H"),
                                     new HotkeyDefinition("Unhide All", "Show all hidden objects", HotkeysMediator.QuickHideShowAll, "U"),
-                                    
+
                                     new HotkeyDefinition("Rotate Selection Clockwise", "Rotate the selected objects 90 degrees clockwise", HotkeysMediator.RotateClockwise, "N"),
                                     new HotkeyDefinition("Rotate Selection Counter-Clockwise", "Rotate the selected objects 90 degrees counter-clockwise", HotkeysMediator.RotateCounterClockwise, "M"),
 
                                     new HotkeyDefinition("Create New Visgroup", "Create a new visgroup", HotkeysMediator.VisgroupCreateNew, "Alt+V"),
-                                    
+
                                     new HotkeyDefinition("Center 2D View on Selection", "Center the 2D viewports on the current selection", HotkeysMediator.Center2DViewsOnSelection, "Ctrl+E"),
                                     new HotkeyDefinition("Center 3D View on Selection", "Center the 3D viewport on the current selection", HotkeysMediator.Center3DViewsOnSelection, "Ctrl+Shift+E"),
 
@@ -75,11 +75,11 @@ namespace CBRE.Settings
                                     new HotkeyDefinition("Transform", "Open the 'Transform' dialog", HotkeysMediator.Transform, "Ctrl+M"),
                                     new HotkeyDefinition("Check for Problems", "Open the 'Check for Problems' dialog", HotkeysMediator.CheckForProblems, "Alt+P"),
                                     new HotkeyDefinition("Go to Brush ID", "Open the 'Go to Brush ID' dialog", HotkeysMediator.GoToBrushID, "Ctrl+Shift+G"),
-                                    
+
                                     new HotkeyDefinition("Flip X", "Flip selection along the X axis", HotkeysMediator.FlipX, "Ctrl+L"),
                                     new HotkeyDefinition("Flip Y", "Flip selection along the Y axis", HotkeysMediator.FlipY, "Ctrl+I"),
                                     new HotkeyDefinition("Flip Z", "Flip selection along the Z axis", HotkeysMediator.FlipZ, "Ctrl+K"),
-                                    
+
                                     new HotkeyDefinition("Selection Tool", "Switch to the selection tool", HotkeysMediator.SwitchTool, HotkeyTool.Selection, "Shift+S"),
                                     new HotkeyDefinition("Camera Tool", "Switch to the camera tool", HotkeysMediator.SwitchTool, HotkeyTool.Camera, "Shift+C"),
                                     new HotkeyDefinition("Entity Tool", "Switch to the entity tool", HotkeysMediator.SwitchTool, HotkeyTool.Entity, "Shift+E"),
@@ -89,9 +89,9 @@ namespace CBRE.Settings
                                     new HotkeyDefinition("Clip Tool", "Switch to the clipping tool", HotkeysMediator.SwitchTool, HotkeyTool.Clip, "Shift+X"),
                                     new HotkeyDefinition("Vertex Manipulation Tool", "Switch to the vertex manipulation tool", HotkeysMediator.SwitchTool, HotkeyTool.VM, "Shift+V"),
                                     new HotkeyDefinition("Cordon Tool", "Switch to the cordon tool", HotkeysMediator.SwitchTool, HotkeyTool.Cordon, "Shift+K"),
-                                    
+
                                     new HotkeyDefinition("Apply Current Texture", "Apply the current texture to the selection.", HotkeysMediator.ApplyCurrentTextureToSelection, "Shift+T"),
-                                    
+
                                     new HotkeyDefinition("Vertex Manipulation Standard Mode", "Switch to the standard mode while in the VM tool.", HotkeysMediator.VMStandardMode, "Alt+W"),
                                     new HotkeyDefinition("Vertex Manipulation Scaling Mode", "Switch to the scaling mode while in the VM tool.", HotkeysMediator.VMScalingMode, "Alt+E"),
                                     new HotkeyDefinition("Vertex Manipulation Face Edit Mode", "Switch to the face edit mode while in the VM tool.", HotkeysMediator.VMFaceEditMode, "Alt+R"),
@@ -99,7 +99,7 @@ namespace CBRE.Settings
 
                                     new HotkeyDefinition("Next Camera", "Switch to the next camera in the camera tool.", HotkeysMediator.CameraNext, "Tab", "PgDn"),
                                     new HotkeyDefinition("Previous Camera", "Switch to the previous camera in the camera tool.", HotkeysMediator.CameraPrevious, "PgUp"),
-                                    
+
                                     new HotkeyDefinition("Previous Tab", "Move to the previous open tab", HotkeysMediator.PreviousTab, "Ctrl+Shift+Tab"),
                                     new HotkeyDefinition("Next Tab", "Move to the next open tab", HotkeysMediator.NextTab, "Ctrl+Tab"),
                                };
@@ -138,13 +138,13 @@ namespace CBRE.Settings
                 var impls = Implementations.Where(x => x.Definition.ID == def.ID).ToList();
                 if (!impls.Any())
                 {
-                    yield return new Hotkey {ID = def.ID, HotkeyString = ""};
+                    yield return new Hotkey { ID = def.ID, HotkeyString = "" };
                 }
                 else
                 {
                     foreach (var impl in impls)
                     {
-                        yield return new Hotkey {ID = def.ID, HotkeyString = impl.Hotkey};
+                        yield return new Hotkey { ID = def.ID, HotkeyString = impl.Hotkey };
                     }
                 }
             }

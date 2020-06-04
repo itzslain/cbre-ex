@@ -8,7 +8,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void Set(MatrixMode mode)
         {
-            if (CurrentMode != mode) {
+            if (CurrentMode != mode)
+            {
                 GL.MatrixMode(mode);
             }
         }

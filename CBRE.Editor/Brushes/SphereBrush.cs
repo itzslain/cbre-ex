@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using CBRE.Common;
 using CBRE.Editor.Brushes.Controls;
 using CBRE.Extensions;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace CBRE.Editor.Brushes
 {
@@ -64,14 +64,14 @@ namespace CBRE.Editor.Brushes
             var major = width / 2;
             var minor = length / 2;
             var heightRadius = height / 2;
-            
+
             var angleV = DMath.DegreesToRadians(180) / numSides;
             var angleH = DMath.DegreesToRadians(360) / numSides;
 
             var faces = new List<Coordinate[]>();
             var bottom = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals);
             var top = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals);
-            
+
             for (var i = 0; i < numSides; i++)
             {
                 // Top -> bottom

@@ -26,17 +26,17 @@ namespace CBRE.Settings
         static Grid()
         {
             Background = Color.Black;
-            GridLines = Color.FromArgb(75,75,75);
-            ZeroLines = Color.FromArgb(0,100,100);
+            GridLines = Color.FromArgb(75, 75, 75);
+            ZeroLines = Color.FromArgb(0, 100, 100);
             BoundaryLines = Color.Red;
 
             Highlight1On = true;
             Highlight1LineNum = 8;
-            Highlight1 = Color.FromArgb(115,115,115);
+            Highlight1 = Color.FromArgb(115, 115, 115);
 
             Highlight2On = true;
             Highlight2UnitNum = 1024;
-            Highlight2 = Color.FromArgb(100,46,0);
+            Highlight2 = Color.FromArgb(100, 46, 0);
 
             DefaultSize = 4;
 

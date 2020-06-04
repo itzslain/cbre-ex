@@ -1,20 +1,15 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
+using CBRE.Settings;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CBRE.DataStructures.Transformations;
-using System.IO;
-using CBRE.Common;
-using CBRE.Editor.Documents;
-using CBRE.Graphics.Helpers;
 using System.Windows.Forms;
-using CBRE.Settings;
 
 namespace CBRE.Editor.Compiling.Lightmap
 {
@@ -32,7 +27,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             public string StackTrace;
         }
 
-        public static List<Thread> FaceRenderThreads { get; private set; } 
+        public static List<Thread> FaceRenderThreads { get; private set; }
         private static List<LMThreadException> threadExceptions;
 
         private static void UpdateProgress(ExportForm exportForm, string msg, float progress)
@@ -44,7 +39,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 exportForm.ProgressLog.Invoke((MethodInvoker)(() =>
                 {
                     string newMsg = currTxt.Substring(0, currTxt.LastIndexOf('\n'));
-                    newMsg += "\n"+msg;
+                    newMsg += "\n" + msg;
                     exportForm.ProgressLog.Text = newMsg;
                 }));
             }
@@ -213,7 +208,7 @@ namespace CBRE.Editor.Compiling.Lightmap
 
             int totalTextureDims = LightmapConfig.TextureDims;
             lmCount = 0;
-            for (int i=0;i<4;i++)
+            for (int i = 0; i < 4; i++)
             {
                 int x = 1 + ((i % 2) * LightmapConfig.TextureDims);
                 int y = 1 + ((i / 2) * LightmapConfig.TextureDims);
@@ -415,7 +410,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     }
                     else
                     {
-                        for (int j=0;j<lmCount;j++)
+                        for (int j = 0; j < lmCount; j++)
                         {
                             int x = ((j % 2) * LightmapConfig.TextureDims);
                             int y = ((j / 2) * LightmapConfig.TextureDims);
@@ -433,7 +428,8 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         private static Thread CreateLightmapRenderThread(Document doc, float[][] bitmaps, List<Light> lights, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
         {
-            return new Thread(() => {
+            return new Thread(() =>
+            {
                 try
                 {
                     RenderLightOntoFace(doc, bitmaps, lights, group, targetFace, blockerFaces);
@@ -536,7 +532,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             {
                 CoordinateF lightPos = light.Origin;
                 float lightRange = light.Range;
-                CoordinateF lightColor = light.Color*(1.0f/255.0f)*light.Intensity;
+                CoordinateF lightColor = light.Color * (1.0f / 255.0f) * light.Intensity;
 
                 BoxF lightBox = new BoxF(new BoxF[] { targetFace.BoundingBox, new BoxF(light.Origin - new CoordinateF(30.0f, 30.0f, 30.0f), light.Origin + new CoordinateF(30.0f, 30.0f, 30.0f)) });
                 List<LMFace> applicableBlockerFaces = blockerFaces.Where(x =>
@@ -583,7 +579,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                         float ttX = minX.Value + (x * LightmapConfig.DownscaleFactor);
                         float ttY = minY.Value + (y * LightmapConfig.DownscaleFactor);
                         CoordinateF pointOnPlane = (ttX - centerX) * group.uAxis + (ttY - centerY) * group.vAxis + targetFace.BoundingBox.Center;
-                        
+
                         /*Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
                         entity.Colour = Color.Pink;
                         entity.Origin = new Coordinate(pointOnPlane);
@@ -611,7 +607,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                             {
                                 LMFace otherFace = applicableBlockerFaces[i];
                                 CoordinateF hit = otherFace.GetIntersectionPoint(lineTester);
-                                if (hit != null && ((hit - leewayPoint).Dot(group.Plane.Normal)>0.0f || (hit - pointOnPlane).LengthSquared() > LightmapConfig.DownscaleFactor * 2f))
+                                if (hit != null && ((hit - leewayPoint).Dot(group.Plane.Normal) > 0.0f || (hit - pointOnPlane).LengthSquared() > LightmapConfig.DownscaleFactor * 2f))
                                 {
                                     applicableBlockerFaces.RemoveAt(i);
                                     applicableBlockerFaces.Insert(0, otherFace);
@@ -633,8 +629,8 @@ namespace CBRE.Editor.Compiling.Lightmap
 
                             if (light.Direction != null)
                             {
-                                float directionDot = light.Direction.Dot((pointOnPlane-lightPos).Normalise());
-                                
+                                float directionDot = light.Direction.Dot((pointOnPlane - lightPos).Normalise());
+
                                 if (directionDot < light.innerCos)
                                 {
                                     if (directionDot < light.outerCos)

@@ -1,6 +1,6 @@
+using CBRE.DataStructures.GameData;
 using System;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {
@@ -10,7 +10,7 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
         private readonly CheckBox _checkBox;
         public SmartEditBoolean()
         {
-            _checkBox = new CheckBox {AutoSize = true, Checked = false, Text = "Enabled / Active"};
+            _checkBox = new CheckBox { AutoSize = true, Checked = false, Text = "Enabled / Active" };
             _checkBox.CheckedChanged += (sender, e) => OnValueChanged();
             Controls.Add(_checkBox);
         }

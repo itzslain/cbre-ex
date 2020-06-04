@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using CBRE.Common.Mediator;
-using CBRE.Editor.Menu;
 using CBRE.Editor.Tools;
+using System.Collections.Generic;
 
 namespace CBRE.Editor.Documents
 {
@@ -50,7 +48,7 @@ namespace CBRE.Editor.Documents
                 SwitchTo(null);
                 Mediator.Publish(EditorMediator.DocumentAllClosed);
             }
-            
+
         }
 
         public static void SwitchTo(Document doc)

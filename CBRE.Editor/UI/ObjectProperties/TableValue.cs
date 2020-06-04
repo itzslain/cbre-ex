@@ -1,8 +1,8 @@
+using CBRE.DataStructures.GameData;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CBRE.DataStructures.GameData;
 using Property = CBRE.DataStructures.MapObjects.Property;
 
 namespace CBRE.Editor.UI.ObjectProperties
@@ -50,7 +50,7 @@ namespace CBRE.Editor.UI.ObjectProperties
                 var gdProp = gdProps.First();
                 var vals = props.Where(x => x.Key == gdProp.Name).Select(x => x.Value).Distinct().ToList();
                 var value = vals.Count == 0 ? gdProp.DefaultValue : (vals.Count == 1 ? vals.First() : "<multiple values>" + String.Join(", ", vals));
-                list.Add(new TableValue { Class = className, OriginalKey = gdProp.Name, NewKey = gdProp.Name, Value = value});
+                list.Add(new TableValue { Class = className, OriginalKey = gdProp.Name, NewKey = gdProp.Name, Value = value });
             }
             foreach (var group in props.Where(x => gameDataProps.All(y => x.Key != y.Name)).GroupBy(x => x.Key))
             {

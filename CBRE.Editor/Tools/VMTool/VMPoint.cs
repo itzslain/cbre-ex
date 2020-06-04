@@ -1,8 +1,8 @@
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
 
 namespace CBRE.Editor.Tools.VMTool
 {

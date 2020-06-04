@@ -6,7 +6,7 @@ namespace CBRE.Editor.Compiling
 {
     class GenericExport
     {
-        public static void SaveToFile(string filename,Document document,ExportForm form,string format)
+        public static void SaveToFile(string filename, Document document, ExportForm form, string format)
         {
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Maximum = 10000));
             AssimpProvider.SaveToFile(filename, document.Map, format);

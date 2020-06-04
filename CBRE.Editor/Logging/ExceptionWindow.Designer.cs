@@ -37,7 +37,7 @@
             this.CBREVersion = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.FullError = new System.Windows.Forms.TextBox();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.copyButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -130,16 +130,16 @@
             this.FullError.Size = new System.Drawing.Size(337, 324);
             this.FullError.TabIndex = 3;
             // 
-            // CancelButton
+            // cancelButton
             // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CancelButton.Location = new System.Drawing.Point(8, 413);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(121, 23);
-            this.CancelButton.TabIndex = 4;
-            this.CancelButton.Text = "Close";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cancelButton.Location = new System.Drawing.Point(8, 413);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(121, 23);
+            this.cancelButton.TabIndex = 4;
+            this.cancelButton.Text = "Close";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
             // 
             // copyButton
             // 
@@ -158,7 +158,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 448);
             this.Controls.Add(this.copyButton);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.FullError);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.CBREVersion);
@@ -191,7 +191,7 @@
         private System.Windows.Forms.TextBox CBREVersion;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox FullError;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button copyButton;
     }
 }

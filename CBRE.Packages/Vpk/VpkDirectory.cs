@@ -30,7 +30,7 @@ namespace CBRE.Packages.Vpk
             var nameWithoutExt = Path.GetFileNameWithoutExtension(packageFile.Name);
             var ext = Path.GetExtension(packageFile.Name);
             if (!nameWithoutExt.EndsWith(DirString)) throw new PackageException("This is not a valid VPK directory file.");
-            
+
             var baseName = nameWithoutExt.Substring(0, nameWithoutExt.Length - DirString.Length);
 
             // Scan and find all chunk files that match this vpk directory
@@ -75,7 +75,7 @@ namespace CBRE.Packages.Vpk
                 BuildDirectories();
             }
         }
-        
+
         internal Stream OpenFile(FileInfo file)
         {
             return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
@@ -129,7 +129,7 @@ namespace CBRE.Packages.Vpk
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
             {
-                return sr.ReadBytes((int) sr.BaseStream.Length);
+                return sr.ReadBytes((int)sr.BaseStream.Length);
             }
         }
 

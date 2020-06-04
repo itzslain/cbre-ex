@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using CBRE.DataStructures.MapObjects;
+using System.Collections.Generic;
 using System.IO;
-using CBRE.DataStructures.MapObjects;
+using System.Linq;
 
 namespace CBRE.Providers.Map
 {

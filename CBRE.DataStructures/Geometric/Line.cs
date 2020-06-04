@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CBRE.DataStructures.Transformations;
+using System;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Transformations;
 
 namespace CBRE.DataStructures.Geometric
 {
@@ -22,8 +22,8 @@ namespace CBRE.DataStructures.Geometric
 
         protected Line(SerializationInfo info, StreamingContext context)
         {
-            Start = (Coordinate) info.GetValue("Start", typeof (Coordinate));
-            End = (Coordinate) info.GetValue("End", typeof (Coordinate));
+            Start = (Coordinate)info.GetValue("Start", typeof(Coordinate));
+            End = (Coordinate)info.GetValue("End", typeof(Coordinate));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -93,8 +93,8 @@ namespace CBRE.DataStructures.Geometric
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Line)) return false;
-            return Equals((Line) obj);
+            if (obj.GetType() != typeof(Line)) return false;
+            return Equals((Line)obj);
         }
 
         public override int GetHashCode()

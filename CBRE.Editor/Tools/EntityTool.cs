@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
@@ -17,6 +11,12 @@ using CBRE.Editor.UI;
 using CBRE.Editor.UI.Sidebar;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Select = CBRE.Settings.Select;
 
 namespace CBRE.Editor.Tools
@@ -130,13 +130,13 @@ namespace CBRE.Editor.Tools
         {
             if (viewport is Viewport3D)
             {
-                MouseDown((Viewport3D) viewport, e);
+                MouseDown((Viewport3D)viewport, e);
                 return;
             }
             if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 
             _state = EntityState.Moving;
-            var vp = (Viewport2D) viewport;
+            var vp = (Viewport2D)viewport;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }

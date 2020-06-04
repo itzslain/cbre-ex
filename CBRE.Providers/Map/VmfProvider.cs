@@ -1,13 +1,13 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using CBRE.Common;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
 
 namespace CBRE.Providers.Map
 {
@@ -53,15 +53,15 @@ namespace CBRE.Providers.Map
             {
                 if (mo is Solid)
                 {
-                    solids.Add((Solid) mo);
+                    solids.Add((Solid)mo);
                 }
                 else if (mo is Entity)
                 {
-                    entities.Add((Entity) mo);
+                    entities.Add((Entity)mo);
                 }
                 else if (mo is Group)
                 {
-                    groups.Add((Group) mo);
+                    groups.Add((Group)mo);
                     FlattenTree(mo, solids, entities, groups);
                 }
             }
@@ -81,7 +81,7 @@ namespace CBRE.Providers.Map
                 + " " + c.B.ToString(CultureInfo.InvariantCulture);
         }
 
-        private static readonly string[] ExcludedKeys = new[] {"id", "spawnflags", "classname", "origin", "wad", "mapversion"};
+        private static readonly string[] ExcludedKeys = new[] { "id", "spawnflags", "classname", "origin", "wad", "mapversion" };
 
         private static EntityData ReadEntityData(GenericStructure structure)
         {
@@ -109,7 +109,7 @@ namespace CBRE.Providers.Map
         {
             var editor = new GenericStructure("editor");
             editor["color"] = FormatColor(obj.Colour);
-            foreach (var visgroup in obj.Visgroups.Except(obj.AutoVisgroups).OrderBy(x => x)) 
+            foreach (var visgroup in obj.Visgroups.Except(obj.AutoVisgroups).OrderBy(x => x))
             {
                 editor.AddProperty("visgroupid", visgroup.ToString(CultureInfo.InvariantCulture));
             }
@@ -185,7 +185,7 @@ namespace CBRE.Providers.Map
                 var count = verts.PropertyInteger("count");
                 for (var i = 0; i < count; i++)
                 {
-                    ret.Vertices.Add(new Vertex(verts.PropertyCoordinate("vertex"+i), ret));
+                    ret.Vertices.Add(new Vertex(verts.PropertyCoordinate("vertex" + i), ret));
                 }
             }
 
@@ -320,11 +320,11 @@ namespace CBRE.Providers.Map
         private static Entity ReadEntity(GenericStructure entity, IDGenerator generator)
         {
             var ret = new Entity(GetObjectID(entity, generator))
-                          {
-                              ClassName = entity["classname"],
-                              EntityData = ReadEntityData(entity),
-                              Origin = entity.PropertyCoordinate("origin")
-                          };
+            {
+                ClassName = entity["classname"],
+                EntityData = ReadEntityData(entity),
+                Origin = entity.PropertyCoordinate("origin")
+            };
             var editor = entity.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));
@@ -378,10 +378,10 @@ namespace CBRE.Providers.Map
         private static World ReadWorld(GenericStructure world, IDGenerator generator)
         {
             var ret = new World(GetObjectID(world, generator))
-                          {
-                              ClassName = "worldspawn",
-                              EntityData = ReadEntityData(world)
-                          };
+            {
+                ClassName = "worldspawn",
+                EntityData = ReadEntityData(world)
+            };
 
             // Load groups
             var groups = new Dictionary<Group, long>();
@@ -419,7 +419,7 @@ namespace CBRE.Providers.Map
             }
 
             // Load visible solids
-            foreach (var read in world.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x}))
+            foreach (var read in world.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x }))
             {
                 var s = read.Solid;
                 var solid = read.Structure;
@@ -427,7 +427,7 @@ namespace CBRE.Providers.Map
 
                 var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                 var gid = editor.PropertyLong("groupid");
-                var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject) ret : ret;
+                var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject)ret : ret;
                 s.SetParent(parent, false);
             }
 
@@ -480,12 +480,12 @@ namespace CBRE.Providers.Map
         private static Visgroup ReadVisgroup(GenericStructure visgroup)
         {
             var v = new Visgroup
-                        {
-                            Name = visgroup["name"],
-                            ID = visgroup.PropertyInteger("visgroupid"),
-                            Colour = visgroup.PropertyColour("color", Colour.GetRandomBrushColour()),
-                            Visible = true
-                        };
+            {
+                Name = visgroup["name"],
+                ID = visgroup.PropertyInteger("visgroupid"),
+                Colour = visgroup.PropertyColour("color", Colour.GetRandomBrushColour()),
+                Visible = true
+            };
             return v;
         }
 
@@ -532,7 +532,7 @@ namespace CBRE.Providers.Map
         {
             foreach (var o in objs)
             {
-                if (o is Solid) ((Solid) o).Faces.ForEach(x => x.ID = generator.GetNextFaceID());
+                if (o is Solid) ((Solid)o).Faces.ForEach(x => x.ID = generator.GetNextFaceID());
 
                 // Remove the children
                 var children = o.GetChildren().ToList();
@@ -579,7 +579,7 @@ namespace CBRE.Providers.Map
                 foreach (var visgroup in visgroups)
                 {
                     var vg = ReadVisgroup(visgroup);
-                    if (vg.ID < 0 && vg.Name == "Auto") continue; 
+                    if (vg.ID < 0 && vg.Name == "Auto") continue;
                     map.Visgroups.Add(vg);
                 }
 
@@ -602,7 +602,7 @@ namespace CBRE.Providers.Map
                         var look = cam.PropertyCoordinate("look");
                         if (pos != null && look != null)
                         {
-                            map.Cameras.Add(new Camera {EyePosition = pos, LookPosition = look});
+                            map.Cameras.Add(new Camera { EyePosition = pos, LookPosition = look });
                         }
                     }
                 }
@@ -648,7 +648,7 @@ namespace CBRE.Providers.Map
             var ents = new List<Entity>();
             FlattenTree(map.WorldSpawn, solids, ents, groups);
 
-            var fvi = FileVersionInfo.GetVersionInfo(typeof (VmfProvider).Assembly.Location);
+            var fvi = FileVersionInfo.GetVersionInfo(typeof(VmfProvider).Assembly.Location);
             var versioninfo = new GenericStructure("versioninfo");
             versioninfo.AddProperty("editorname", "CBRE");
             versioninfo.AddProperty("editorversion", fvi.ProductMajorPart.ToString(CultureInfo.InvariantCulture) + "." + fvi.ProductMinorPart.ToString(CultureInfo.InvariantCulture));

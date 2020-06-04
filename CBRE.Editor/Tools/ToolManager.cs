@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Tools
 {

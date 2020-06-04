@@ -1,5 +1,4 @@
 ﻿using CBRE.Common;
-using CBRE.Graphics;
 using CBRE.Graphics.Helpers;
 using System;
 using System.Collections.Generic;
@@ -73,13 +72,13 @@ namespace CBRE.Providers.Texture
                 }
             }
             LastTextureCollectionID++;
-            LightmapTexture = TextureHelper.Create("__lightmap"+ LastTextureCollectionID.ToString(), bmp, 64, 64, TextureFlags.None);
+            LightmapTexture = TextureHelper.Create("__lightmap" + LastTextureCollectionID.ToString(), bmp, 64, 64, TextureFlags.None);
         }
 
         ~TextureCollection()
         {
             TextureHelper.EnqueueDisposal(LightmapTexture);
-            for (int i=0;i<4;i++)
+            for (int i = 0; i < 4; i++)
             {
                 Lightmaps[i]?.Dispose();
             }

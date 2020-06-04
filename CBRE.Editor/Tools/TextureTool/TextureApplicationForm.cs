@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.UI;
 using CBRE.Providers.Texture;
 using CBRE.Settings;
-using CBRE.Settings.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
@@ -272,7 +271,7 @@ namespace CBRE.Editor.Tools.TextureTool
             else if (RecentTexturesList.GetTextures().Contains(item))
             {
                 // Otherwise, select the texture in the recent list
-                RecentTexturesList.SetSelectedTextures(new[] {item});
+                RecentTexturesList.SetSelectedTextures(new[] { item });
                 RecentTexturesList.ScrollToItem(item);
             }
             RecentTexturesList.Refresh();

@@ -16,13 +16,13 @@ namespace CBRE.Common.Mediator
     {
         public MultiDictionary()
         {
-            
+
         }
 
         protected MultiDictionary(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            
-        } 
+
+        }
 
         //checks if the key is already present
         private void EnsureKey(T key)

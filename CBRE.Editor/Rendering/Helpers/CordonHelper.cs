@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using OpenTK.Graphics.OpenGL;
-using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools;
 using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CBRE.Editor.Rendering.Helpers
 {
@@ -73,7 +72,7 @@ namespace CBRE.Editor.Rendering.Helpers
 
 
             GL.LineWidth(2);
-		  GL.Begin(PrimitiveType.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             GL.Color3(Color.Red);
             GL.Vertex3(start.DX, start.DY, start.DZ);
             GL.Vertex3(end.DX, start.DY, start.DZ);

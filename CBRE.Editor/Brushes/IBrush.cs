@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using CBRE.Common;
 using CBRE.Editor.Brushes.Controls;
+using System.Collections.Generic;
 
 namespace CBRE.Editor.Brushes
 {

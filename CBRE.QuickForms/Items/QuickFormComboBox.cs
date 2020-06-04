@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,7 +9,7 @@ namespace CBRE.QuickForms.Items
     /// </summary>
     public class QuickFormComboBox : QuickFormItem
     {
-        private readonly IEnumerable<object> _items; 
+        private readonly IEnumerable<object> _items;
 
         public QuickFormComboBox(string name, IEnumerable<object> items)
         {
@@ -29,11 +28,11 @@ namespace CBRE.QuickForms.Items
             controls.Add(l);
 
             var cb = new ComboBox
-                         {
-                             Name = Name,
-                             Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                             DropDownStyle = ComboBoxStyle.DropDownList
-                         };
+            {
+                Name = Name,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
             cb.Items.AddRange(_items.ToArray());
             cb.SelectedIndex = 0;
 

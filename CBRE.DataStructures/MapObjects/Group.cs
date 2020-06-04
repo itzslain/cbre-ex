@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {

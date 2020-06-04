@@ -1,3 +1,5 @@
+using CBRE.Common.Extensions;
+using CBRE.DataStructures.Geometric;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,29 +8,26 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using CBRE.Common.Extensions;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.Providers
 {
-	/// <summary>
-	/// Holds values parsed from a generic Valve structure. It holds a single entity:
-	/// entity_name
-	/// {
-	/// 	"property" "value"
-	/// 	subentity_name
-	/// 	{
-	/// 		"property" "value
-	/// 		subentity_name
-	/// 		{
-	/// 			...
-	/// 		}
-	/// 	}
-	/// }
-	/// </summary>
-	public class GenericStructure
-	{
+    /// <summary>
+    /// Holds values parsed from a generic Valve structure. It holds a single entity:
+    /// entity_name
+    /// {
+    /// 	"property" "value"
+    /// 	subentity_name
+    /// 	{
+    /// 		"property" "value
+    /// 		subentity_name
+    /// 		{
+    /// 			...
+    /// 		}
+    /// 	}
+    /// }
+    /// </summary>
+    public class GenericStructure
+    {
         private class GenericStructureProperty
         {
             public string Key { get; set; }
@@ -41,12 +40,12 @@ namespace CBRE.Providers
             }
         }
 
-	    public string Name { get; private set; }
-	    private List<GenericStructureProperty> Properties { get; set; }
-	    public List<GenericStructure> Children { get; private set; }
+        public string Name { get; private set; }
+        private List<GenericStructureProperty> Properties { get; set; }
+        public List<GenericStructure> Children { get; private set; }
 
         public string this[string key]
-	    {
+        {
             get
             {
                 var prop = Properties.FirstOrDefault(x => x.Key == key);
@@ -58,7 +57,7 @@ namespace CBRE.Providers
                 if (prop != null) prop.Value = value;
                 else Properties.Add(new GenericStructureProperty(key, value));
             }
-	    }
+        }
 
         public void AddProperty(string key, string value)
         {
@@ -70,12 +69,12 @@ namespace CBRE.Providers
             Properties.RemoveAll(x => x.Key == key);
         }
 
-		public GenericStructure(string name)
-		{
-		    Name = name;
+        public GenericStructure(string name)
+        {
+            Name = name;
             Properties = new List<GenericStructureProperty>();
             Children = new List<GenericStructure>();
-		}
+        }
 
         public IEnumerable<string> GetPropertyKeys()
         {
@@ -87,11 +86,11 @@ namespace CBRE.Providers
             return Properties.Where(x => x.Key == key).Select(x => x.Value);
         }
 
-	    public string GetPropertyValue(string name, bool ignoreCase)
-	    {
+        public string GetPropertyValue(string name, bool ignoreCase)
+        {
             var prop = Properties.FirstOrDefault(x => String.Equals(x.Key, name, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture));
             return prop == null ? null : prop.Value;
-	    }
+        }
 
         public bool PropertyBoolean(string name, bool defaultValue = false)
         {
@@ -279,10 +278,10 @@ namespace CBRE.Providers
 
         #region Serialise / Deserialise
 
-	    public static GenericStructure Serialise(object obj)
-	    {
-	        return SerialiseHelper(obj, new List<object>());
-	    }
+        public static GenericStructure Serialise(object obj)
+        {
+            return SerialiseHelper(obj, new List<object>());
+        }
 
         private static GenericStructure SerialiseHelper(object obj, List<object> encounteredObjects)
         {
@@ -296,16 +295,16 @@ namespace CBRE.Providers
                 return rf;
             }
 
-	        var ty = obj.GetType();
+            var ty = obj.GetType();
 
             // Handle primitive types
-	        if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(decimal))
-	        {
-	            var name = "Primitives.";
-	            if (ty == typeof (bool)) name += "Boolean";
-	            else if (ty == typeof (char) || ty == typeof (string)) name += "String";
-	            else name += "Numeric";
-	            return new GenericStructure(name) {Properties = {new GenericStructureProperty("Primitive.Value", Convert.ToString(obj, CultureInfo.InvariantCulture))}};
+            if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(decimal))
+            {
+                var name = "Primitives.";
+                if (ty == typeof(bool)) name += "Boolean";
+                else if (ty == typeof(char) || ty == typeof(string)) name += "String";
+                else name += "Numeric";
+                return new GenericStructure(name) { Properties = { new GenericStructureProperty("Primitive.Value", Convert.ToString(obj, CultureInfo.InvariantCulture)) } };
             }
 
             if (ty == typeof(DateTime))
@@ -331,9 +330,9 @@ namespace CBRE.Providers
                 return new GenericStructure("Primitives.Box") { Properties = { new GenericStructureProperty("Primitive.Value", b.Start + " " + b.End) } };
             }
 
-            if (ty == typeof (Rectangle))
+            if (ty == typeof(Rectangle))
             {
-                var r = (Rectangle) obj;
+                var r = (Rectangle)obj;
                 return new GenericStructure("Primitives.Rectangle") { Properties = { new GenericStructureProperty("Primitive.Value", r.X + " " + r.Y + " " + r.Width + " " + r.Height) } };
             }
 
@@ -358,114 +357,114 @@ namespace CBRE.Providers
             }
 
             // Handle complex types
-	        var gs = new GenericStructure(ty.FullName);
+            var gs = new GenericStructure(ty.FullName);
             gs.AddProperty("Serialise.Reference", index.ToString(CultureInfo.InvariantCulture));
-	        foreach (var pi in ty.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-	        {
-	            if (!pi.CanRead) continue;
-	            var val = pi.GetValue(obj, null);
-	            var pv = SerialiseHelper(val, encounteredObjects);
-	            if (pv.Name.StartsWith("Primitives."))
-	            {
+            foreach (var pi in ty.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!pi.CanRead) continue;
+                var val = pi.GetValue(obj, null);
+                var pv = SerialiseHelper(val, encounteredObjects);
+                if (pv.Name.StartsWith("Primitives."))
+                {
                     gs.AddProperty(pi.Name, pv["Primitive.Value"]);
-	            }
-	            else
-	            {
-	                pv.Name = pi.Name;
-	                gs.Children.Add(pv);
-	            }
-	        }
-	        return gs;
-	    }
+                }
+                else
+                {
+                    pv.Name = pi.Name;
+                    gs.Children.Add(pv);
+                }
+            }
+            return gs;
+        }
 
-	    public static T Deserialise<T>(GenericStructure structure)
-	    {
-	        var obj = DeserialiseHelper(typeof (T), structure, new Dictionary<int, object>());
-	        if (obj is T) return (T) obj;
-	        obj = Convert.ChangeType(obj, typeof (T));
-	        if (obj is T) return (T) obj;
-	        return default(T);
-	    }
+        public static T Deserialise<T>(GenericStructure structure)
+        {
+            var obj = DeserialiseHelper(typeof(T), structure, new Dictionary<int, object>());
+            if (obj is T) return (T)obj;
+            obj = Convert.ChangeType(obj, typeof(T));
+            if (obj is T) return (T)obj;
+            return default(T);
+        }
 
-	    private static object DeserialiseHelper(Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
-	    {
+        private static object DeserialiseHelper(Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
+        {
             // Null values
-	        if (structure.Name == "Serialise.Null" || structure["Serialise.Null.Value"] == "null")
-	        {
-	            return bindingType.IsValueType ? Activator.CreateInstance(bindingType) : null;
-	        }
-            
+            if (structure.Name == "Serialise.Null" || structure["Serialise.Null.Value"] == "null")
+            {
+                return bindingType.IsValueType ? Activator.CreateInstance(bindingType) : null;
+            }
+
             // Referenced values
-	        var indexProp = structure.Properties.FirstOrDefault(x => x.Key == "Serialise.Reference.Index");
-	        if (indexProp != null) return encounteredObjects[int.Parse(indexProp.Value)];
+            var indexProp = structure.Properties.FirstOrDefault(x => x.Key == "Serialise.Reference.Index");
+            if (indexProp != null) return encounteredObjects[int.Parse(indexProp.Value)];
 
             // Primitive objects
-	        if (structure.Name.StartsWith("Primitives.")) return ConvertPrimitive(structure);
+            if (structure.Name.StartsWith("Primitives.")) return ConvertPrimitive(structure);
 
             //var instance = Activator.CreateInstance(bindingType);
             var refProp = structure.Properties.FirstOrDefault(x => x.Key == "Serialise.Reference");
-	        var refVal = refProp != null ? int.Parse(refProp.Value) : -1;
+            var refVal = refProp != null ? int.Parse(refProp.Value) : -1;
 
             // List objects
-	        if (structure.Name == "Serialise.List" || typeof(IEnumerable).IsAssignableFrom(bindingType))
+            if (structure.Name == "Serialise.List" || typeof(IEnumerable).IsAssignableFrom(bindingType))
             {
                 var list = Activator.CreateInstance(bindingType);
                 if (refVal >= 0) encounteredObjects[refVal] = list;
                 DeserialiseList(list, bindingType, structure, encounteredObjects);
-	            return list;
-	        }
+                return list;
+            }
 
             // Complex types
-	        var ctor = bindingType.GetConstructor(Type.EmptyTypes) ?? bindingType.GetConstructors().First();
-	        var args = ctor.GetParameters().Select(x => x.ParameterType.IsValueType ? Activator.CreateInstance(x.ParameterType) : null).ToArray();
+            var ctor = bindingType.GetConstructor(Type.EmptyTypes) ?? bindingType.GetConstructors().First();
+            var args = ctor.GetParameters().Select(x => x.ParameterType.IsValueType ? Activator.CreateInstance(x.ParameterType) : null).ToArray();
             var instance = ctor.Invoke(args);
 
             if (refVal >= 0) encounteredObjects[refVal] = instance;
 
-	        foreach (var pi in bindingType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-	        {
-	            if (!pi.CanWrite) continue;
-	            var prop = structure.Properties.FirstOrDefault(x => x.Key == pi.Name);
-	            var child = structure.Children.FirstOrDefault(x => x.Name == pi.Name);
-	            if (prop != null)
-	            {
-	                var prim = ConvertPrimitive(pi.PropertyType, prop.Value);
+            foreach (var pi in bindingType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!pi.CanWrite) continue;
+                var prop = structure.Properties.FirstOrDefault(x => x.Key == pi.Name);
+                var child = structure.Children.FirstOrDefault(x => x.Name == pi.Name);
+                if (prop != null)
+                {
+                    var prim = ConvertPrimitive(pi.PropertyType, prop.Value);
                     pi.SetValue(instance, Convert.ChangeType(prim, pi.PropertyType), null);
-	            }
+                }
                 else if (child != null)
                 {
                     var obj = DeserialiseHelper(pi.PropertyType, child, encounteredObjects);
                     pi.SetValue(instance, obj, null);
                 }
-	        }
+            }
 
-	        return instance;
-	    }
+            return instance;
+        }
 
-	    private static void DeserialiseList(object instance, Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
-	    {
-	        Type listType = null;
+        private static void DeserialiseList(object instance, Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
+        {
+            Type listType = null;
             if (bindingType.IsGenericType) listType = bindingType.GetGenericArguments()[0];
-	        var children = structure.Children.Select(x =>
-	        {
-	            var name = x.Name;
-	            var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(name)).FirstOrDefault(t => t != null) ?? (listType ?? typeof(object));
-	            var result = DeserialiseHelper(type, x, encounteredObjects);
-	            return Convert.ChangeType(result, type);
-	        }).ToList();
-	        if (typeof (IList).IsAssignableFrom(bindingType))
-	        {
-	            foreach (var child in children) ((IList) instance).Add(child);
-	        }
-	        else if (typeof (Array).IsAssignableFrom(bindingType))
-	        {
-	            var arr = (object[]) instance;
-	            Array.Resize(ref arr, children.Count);
-	            children.CopyTo(arr);
-	        }
-	    }
+            var children = structure.Children.Select(x =>
+            {
+                var name = x.Name;
+                var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(name)).FirstOrDefault(t => t != null) ?? (listType ?? typeof(object));
+                var result = DeserialiseHelper(type, x, encounteredObjects);
+                return Convert.ChangeType(result, type);
+            }).ToList();
+            if (typeof(IList).IsAssignableFrom(bindingType))
+            {
+                foreach (var child in children) ((IList)instance).Add(child);
+            }
+            else if (typeof(Array).IsAssignableFrom(bindingType))
+            {
+                var arr = (object[])instance;
+                Array.Resize(ref arr, children.Count);
+                children.CopyTo(arr);
+            }
+        }
 
-	    private static object ConvertPrimitive(GenericStructure structure)
+        private static object ConvertPrimitive(GenericStructure structure)
         {
             var prim = structure.Name.Substring("Primitives.".Length);
             var value = structure["Primitive.Value"];
@@ -478,7 +477,7 @@ namespace CBRE.Providers
         }
 
         private static object ConvertPrimitive(string primitiveType, string value)
-	    {
+        {
             var spl = value.Split(' ');
             switch (primitiveType)
             {
@@ -505,21 +504,21 @@ namespace CBRE.Providers
                 default:
                     throw new ArgumentException();
             }
-	    }
+        }
 
         private static string GetPrimitiveName(Type ty)
-	    {
+        {
             if (ty == typeof(bool)) return "Boolean";
             if (ty == typeof(char) || ty == typeof(string)) return "String";
-	        if (ty.IsPrimitive || ty == typeof (decimal)) return "Numeric";
-	        if (ty == typeof (DateTime)) return "DateTime";
+            if (ty.IsPrimitive || ty == typeof(decimal)) return "Numeric";
+            if (ty == typeof(DateTime)) return "DateTime";
             if (ty == typeof(Color)) return "Colour";
             if (ty == typeof(Coordinate)) return "Coordinate";
             if (ty == typeof(Box)) return "Box";
             if (ty == typeof(Plane)) return "Plane";
             if (ty == typeof(Rectangle)) return "Rectangle";
             throw new ArgumentException();
-	    }
+        }
 
         #endregion
 
@@ -536,11 +535,11 @@ namespace CBRE.Providers
             Print(tw);
         }
 
-	    private static string LengthLimit(string str, int limit)
-	    {
-	        if (str.Length >= limit) return str.Substring(0, limit - 1);
-	        return str;
-	    }
+        private static string LengthLimit(string str, int limit)
+        {
+            if (str.Length >= limit) return str.Substring(0, limit - 1);
+            return str;
+        }
 
         private void Print(TextWriter tw, int tabs = 0)
         {
@@ -639,14 +638,14 @@ namespace CBRE.Providers
                 }
             }
             while ((line = CleanLine(reader.ReadLine())) != null)
-			{
-				if (line == "}") break;
+            {
+                if (line == "}") break;
 
-				if (ValidStructPropertyString(line)) ParseProperty(gs, line);
-				else if (ValidStructStartString(line)) gs.Children.Add(ParseStructure(reader, line));
-			}
-			return gs;
-		}
+                if (ValidStructPropertyString(line)) ParseProperty(gs, line);
+                else if (ValidStructStartString(line)) gs.Children.Add(ParseStructure(reader, line));
+            }
+            return gs;
+        }
 
         /// <summary>
         /// Check if the given string is a valid structure name
@@ -654,11 +653,11 @@ namespace CBRE.Providers
         /// <param name="s">The string to test</param>
         /// <returns>True if this is a valid structure name, false otherwise</returns>
 	    private static bool ValidStructStartString(string s)
-		{
-			if (string.IsNullOrEmpty(s)) return false;
+        {
+            if (string.IsNullOrEmpty(s)) return false;
             var split = s.SplitWithQuotes();
             return split.Length == 1 || (split.Length == 2 && split[1] == "{");
-		}
+        }
 
         /// <summary>
         /// Check if the given string is a valid property string in the format: "key" "value"
@@ -666,11 +665,11 @@ namespace CBRE.Providers
         /// <param name="s">The string to test</param>
         /// <returns>True if this is a valid property string, false otherwise</returns>
 		private static bool ValidStructPropertyString(string s)
-		{
-			if (string.IsNullOrEmpty(s)) return false;
+        {
+            if (string.IsNullOrEmpty(s)) return false;
             var split = s.SplitWithQuotes();
             return split.Length == 2;
-		}
+        }
 
         /// <summary>
         /// Parse a property string in the format: "key" "value", and add it to the structure
@@ -678,10 +677,10 @@ namespace CBRE.Providers
         /// <param name="gs">The structure to add the property to</param>
         /// <param name="prop">The property string to parse</param>
 		private static void ParseProperty(GenericStructure gs, string prop)
-		{
+        {
             var split = prop.SplitWithQuotes();
             gs.Properties.Add(new GenericStructureProperty(split[0], (split[1] ?? "").Replace('`', '"')));
-		}
+        }
         #endregion
-	}
+    }
 }

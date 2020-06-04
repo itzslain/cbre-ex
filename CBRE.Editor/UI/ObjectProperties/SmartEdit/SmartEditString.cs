@@ -1,5 +1,5 @@
-using System.Windows.Forms;
 using CBRE.DataStructures.GameData;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {

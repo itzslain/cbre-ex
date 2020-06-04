@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.DataStructures.MapObjects;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Providers.Texture;
 using CBRE.QuickForms;
 using CBRE.Settings;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -129,7 +126,7 @@ namespace CBRE.Editor.UI
             var key = package == null ? null : package.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
             SetMemory("SelectedPackage", key);
-            SetMemory("SelectedFavourite", (string) null);
+            SetMemory("SelectedFavourite", (string)null);
 
             UpdateTextureList();
         }
@@ -233,7 +230,7 @@ namespace CBRE.Editor.UI
                 favs.Add(f);
                 CollectNodes(favs, f.Children);
             }
-        } 
+        }
 
         private void UpdateTextureList()
         {
@@ -253,7 +250,7 @@ namespace CBRE.Editor.UI
             var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.TextureCollection.SelectedTexture;
             if (sel != null)
             {
-                TextureList.SetSelectedTextures(new [] { sel });
+                TextureList.SetSelectedTextures(new[] { sel });
                 TextureList.ScrollToItem(sel);
             }
         }
@@ -315,7 +312,7 @@ namespace CBRE.Editor.UI
         private void SortOrderComboIndexChanged(object sender, EventArgs e)
         {
             SetMemory("SortBy", SortOrderCombo.SelectedIndex);
-            TextureList.SortOrder = (TextureListPanel.TextureSortOrder) SortOrderCombo.SelectedItem;
+            TextureList.SortOrder = (TextureListPanel.TextureSortOrder)SortOrderCombo.SelectedItem;
         }
 
         private void SortDescendingCheckboxChanged(object sender, EventArgs e)
@@ -344,7 +341,7 @@ namespace CBRE.Editor.UI
             var selected = FavouritesTree.SelectedNode;
             if (selected != null) parent = selected.Tag as FavouriteTextureFolder;
             var siblings = parent != null ? parent.Children : SettingsManager.FavouriteTextureFolders;
-            using (var qf = new QuickForm("Enter Folder Name") { UseShortcutKeys = true}.TextBox("Name").OkCancel())
+            using (var qf = new QuickForm("Enter Folder Name") { UseShortcutKeys = true }.TextBox("Name").OkCancel())
             {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
@@ -387,10 +384,10 @@ namespace CBRE.Editor.UI
                 var dest = FavouritesTree.GetNodeAt(pt);
                 if (dest != null && dest.Tag is FavouriteTextureFolder)
                 {
-                    var data = e.Data.GetDataPresent(typeof (TextureItem))
-                        ? new List<TextureItem> {(TextureItem) e.Data.GetData(typeof (TextureItem))}
+                    var data = e.Data.GetDataPresent(typeof(TextureItem))
+                        ? new List<TextureItem> { (TextureItem)e.Data.GetData(typeof(TextureItem)) }
                         : (List<TextureItem>)e.Data.GetData(typeof(List<TextureItem>));
-                    var folder = (FavouriteTextureFolder) dest.Tag;
+                    var folder = (FavouriteTextureFolder)dest.Tag;
                     foreach (var ti in data)
                     {
                         if (!folder.Items.Contains(ti.Name, StringComparer.InvariantCultureIgnoreCase)) folder.Items.Add(ti.Name);
@@ -410,7 +407,7 @@ namespace CBRE.Editor.UI
 
         private void FavouritesTreeDragOver(object sender, DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(typeof (TextureItem)) && !e.Data.GetDataPresent(typeof (List<TextureItem>))) return;
+            if (!e.Data.GetDataPresent(typeof(TextureItem)) && !e.Data.GetDataPresent(typeof(List<TextureItem>))) return;
 
             var pt = FavouritesTree.PointToClient(new Point(e.X, e.Y));
             var highlightedNode = FavouritesTree.GetNodeAt(pt);

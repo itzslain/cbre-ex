@@ -1,11 +1,9 @@
-﻿using System;
+﻿using CBRE.Common.Mediator;
+using CBRE.Editor.Tools;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.Editor.Tools;
-using CBRE.Settings;
 
 namespace CBRE.Editor.UI.Sidebar
 {

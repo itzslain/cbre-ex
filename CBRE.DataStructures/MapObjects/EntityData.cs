@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -29,7 +29,7 @@ namespace CBRE.DataStructures.MapObjects
             Name = gd.Name;
             foreach (var prop in gd.Properties.Where(x => x.Name != "spawnflags"))
             {
-                Properties.Add(new Property {Key = prop.Name, Value = prop.DefaultValue});
+                Properties.Add(new Property { Key = prop.Name, Value = prop.DefaultValue });
             }
         }
 
@@ -37,8 +37,8 @@ namespace CBRE.DataStructures.MapObjects
         {
             Name = info.GetString("Name");
             Flags = info.GetInt32("Flags");
-            Properties = ((Property[]) info.GetValue("Properties", typeof (Property[]))).ToList();
-            Outputs = ((Output[]) info.GetValue("Outputs", typeof (Output[]))).ToList();
+            Properties = ((Property[])info.GetValue("Properties", typeof(Property[]))).ToList();
+            Outputs = ((Output[])info.GetValue("Outputs", typeof(Output[]))).ToList();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -68,7 +68,7 @@ namespace CBRE.DataStructures.MapObjects
             var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
             if (prop == null)
             {
-                prop = new Property { Key = key};
+                prop = new Property { Key = key };
                 Properties.Add(prop);
             }
             prop.Value = value;

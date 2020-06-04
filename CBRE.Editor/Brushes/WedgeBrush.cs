@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes.Controls;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Brushes
 {
@@ -42,12 +42,12 @@ namespace CBRE.Editor.Brushes
             foreach (var arr in faces)
             {
                 var face = new Face(generator.GetNextFaceID())
-                               {
-                                   Parent = solid,
-                                   Plane = new Plane(arr[0], arr[1], arr[2]),
-                                   Colour = solid.Colour,
-                                   Texture = { Texture = texture }
-                               };
+                {
+                    Parent = solid,
+                    Plane = new Plane(arr[0], arr[1], arr[2]),
+                    Colour = solid.Colour,
+                    Texture = { Texture = texture }
+                };
                 face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();
                 face.AlignTextureToFace();

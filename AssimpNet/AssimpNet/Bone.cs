@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -122,7 +122,7 @@ namespace Assimp
             m_offsetMatrix = offsetMatrix;
             m_weights = new List<VertexWeight>();
 
-            if(weights != null)
+            if (weights != null)
                 m_weights.AddRange(weights);
         }
 
@@ -145,10 +145,10 @@ namespace Assimp
         {
             nativeValue.Name = new AiString(m_name);
             nativeValue.OffsetMatrix = m_offsetMatrix;
-            nativeValue.NumWeights = (uint) m_weights.Count;
+            nativeValue.NumWeights = (uint)m_weights.Count;
             nativeValue.Weights = IntPtr.Zero;
 
-            if(nativeValue.NumWeights > 0)
+            if (nativeValue.NumWeights > 0)
                 nativeValue.Weights = MemoryHelper.ToNativeArray<VertexWeight>(m_weights.ToArray());
         }
 
@@ -162,8 +162,8 @@ namespace Assimp
             m_offsetMatrix = nativeValue.OffsetMatrix;
             m_weights.Clear();
 
-            if(nativeValue.NumWeights > 0 && nativeValue.Weights != IntPtr.Zero)
-                m_weights.AddRange(MemoryHelper.FromNativeArray<VertexWeight>(nativeValue.Weights, (int) nativeValue.NumWeights));
+            if (nativeValue.NumWeights > 0 && nativeValue.Weights != IntPtr.Zero)
+                m_weights.AddRange(MemoryHelper.FromNativeArray<VertexWeight>(nativeValue.Weights, (int)nativeValue.NumWeights));
         }
 
         /// <summary>
@@ -173,17 +173,17 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiBone aiBone = MemoryHelper.Read<AiBone>(nativeValue);
             int numWeights = MemoryHelper.Read<int>(MemoryHelper.AddIntPtr(nativeValue, MemoryHelper.SizeOf<AiString>()));
             IntPtr weightsPtr = MemoryHelper.AddIntPtr(nativeValue, MemoryHelper.SizeOf<AiString>() + sizeof(uint));
 
-            if(aiBone.NumWeights > 0 && aiBone.Weights != IntPtr.Zero)
+            if (aiBone.NumWeights > 0 && aiBone.Weights != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiBone.Weights);
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

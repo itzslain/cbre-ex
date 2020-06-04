@@ -66,7 +66,7 @@ namespace CBRE.DataStructures.Geometric
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == typeof (CoordinateF) && Equals((CoordinateF) obj);
+            return obj.GetType() == typeof(CoordinateF) && Equals((CoordinateF)obj);
         }
 
         public override int GetHashCode()
@@ -74,8 +74,8 @@ namespace CBRE.DataStructures.Geometric
             unchecked
             {
                 var result = X.GetHashCode();
-                result = (result*397) ^ Y.GetHashCode();
-                result = (result*397) ^ Z.GetHashCode();
+                result = (result * 397) ^ Y.GetHashCode();
+                result = (result * 397) ^ Z.GetHashCode();
                 return result;
             }
         }
@@ -96,17 +96,17 @@ namespace CBRE.DataStructures.Geometric
         public CoordinateF Round(int num = 4)
         {
             return new CoordinateF(
-                (float) Math.Round(X, num),
-                (float) Math.Round(Y, num),
-                (float) Math.Round(Z, num));
+                (float)Math.Round(X, num),
+                (float)Math.Round(Y, num),
+                (float)Math.Round(Z, num));
         }
 
         public CoordinateF Snap(float snapTo)
         {
             return new CoordinateF(
-                (float) Math.Round(X / snapTo) * snapTo,
-                (float) Math.Round(Y / snapTo) * snapTo,
-                (float) Math.Round(Z / snapTo) * snapTo);
+                (float)Math.Round(X / snapTo) * snapTo,
+                (float)Math.Round(Y / snapTo) * snapTo,
+                (float)Math.Round(Z / snapTo) * snapTo);
         }
 
         public float LengthSquared()

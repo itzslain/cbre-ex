@@ -1,7 +1,7 @@
-using System;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
+using System;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations.EditOperations
 {

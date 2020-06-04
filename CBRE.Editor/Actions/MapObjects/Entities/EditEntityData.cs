@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Entities
 {
@@ -29,7 +29,7 @@ namespace CBRE.Editor.Actions.MapObjects.Entities
 
         public void AddEntity(MapObject obj, EntityData newData)
         {
-            _objects.Add(new EntityReference {ID = obj.ID, Before = obj.GetEntityData().Clone(), After = newData});
+            _objects.Add(new EntityReference { ID = obj.ID, Before = obj.GetEntityData().Clone(), After = newData });
         }
 
         public bool IsEmpty()
@@ -66,8 +66,8 @@ namespace CBRE.Editor.Actions.MapObjects.Entities
             {
                 var obj = document.Map.WorldSpawn.FindByID(r.ID);
                 changed.Add(obj);
-                if (obj is Entity) SetEntityData((Entity) obj, r.After, document.GameData);
-                else if (obj is World) SetEntityData((World) obj, r.After);
+                if (obj is Entity) SetEntityData((Entity)obj, r.After, document.GameData);
+                else if (obj is World) SetEntityData((World)obj, r.After);
 
                 if (obj != null) obj.UpdateBoundingBox();
             }

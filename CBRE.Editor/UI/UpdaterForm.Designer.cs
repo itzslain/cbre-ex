@@ -30,7 +30,7 @@
         {
             this.StatusLabel = new System.Windows.Forms.Label();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.StartButton = new System.Windows.Forms.Button();
             this.ReleaseDetails = new System.Windows.Forms.TextBox();
             this.ReleaseNotesLink = new System.Windows.Forms.LinkLabel();
@@ -56,16 +56,16 @@
             this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.ProgressBar.TabIndex = 1;
             // 
-            // CancelButton
+            // cancelButton
             // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(311, 233);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 2;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Location = new System.Drawing.Point(311, 233);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 2;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
             // 
             // StartButton
             // 
@@ -112,7 +112,7 @@
             this.Controls.Add(this.ReleaseNotesLink);
             this.Controls.Add(this.ReleaseDetails);
             this.Controls.Add(this.StartButton);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.StatusLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -132,7 +132,7 @@
 
         private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.ProgressBar ProgressBar;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.TextBox ReleaseDetails;
         private System.Windows.Forms.LinkLabel ReleaseNotesLink;

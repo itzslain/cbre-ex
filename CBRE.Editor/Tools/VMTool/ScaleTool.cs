@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.Graphics;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Vertex = CBRE.DataStructures.MapObjects.Vertex;
 
 namespace CBRE.Editor.Tools.VMTool
@@ -32,7 +32,7 @@ namespace CBRE.Editor.Tools.VMTool
             sc.ValueChanged += ValueChanged;
             sc.ValueReset += ValueReset;
             sc.ResetOrigin += ResetOrigin;
-            _origin = new VMPoint {Coordinate = Coordinate.Zero, Vertices = new List<Vertex>()};
+            _origin = new VMPoint { Coordinate = Coordinate.Zero, Vertices = new List<Vertex>() };
         }
 
         private void ResetOrigin(object sender)
@@ -57,7 +57,7 @@ namespace CBRE.Editor.Tools.VMTool
 
         public override void SelectionChanged()
         {
-            ((ScaleControl) Control).ResetValue();
+            ((ScaleControl)Control).ResetValue();
             if (MainTool.GetSelectedPoints().Any()) ResetOrigin(null);
         }
 
@@ -171,7 +171,7 @@ Move the origin point around by *clicking and dragging* it.";
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
-            
+
         }
 
         public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
@@ -241,7 +241,7 @@ Move the origin point around by *clicking and dragging* it.";
 
             GL.Color3(Color.Cyan);
             GL.Begin(PrimitiveType.Lines);
-            GLX.Circle(new Vector2d(pos.DX, pos.DY), 8, (double) viewport.Zoom);
+            GLX.Circle(new Vector2d(pos.DX, pos.DY), 8, (double)viewport.Zoom);
             GL.End();
             GL.Begin(PrimitiveType.Points);
             GL.Vertex2(pos.DX, pos.DY);

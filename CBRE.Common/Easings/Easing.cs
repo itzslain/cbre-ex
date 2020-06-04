@@ -1,5 +1,5 @@
-using System;
 using CBRE.Extensions;
+using System;
 
 namespace CBRE.Common.Easings
 {

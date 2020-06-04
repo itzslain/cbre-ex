@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.Visgroups
 {
@@ -111,7 +111,7 @@ namespace CBRE.Editor.Visgroups
             if (document == null) return;
             var states = document.Map.WorldSpawn
                 .FindAll()
-                .SelectMany(x => x.GetVisgroups(true).Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))
+                .SelectMany(x => x.GetVisgroups(true).Select(y => new { ID = y, Hidden = x.IsVisgroupHidden }))
                 .GroupBy(x => x.ID)
                 .ToDictionary(x => x.Key, x => GetCheckState(x.Select(y => y.Hidden)));
             foreach (var v in Sort(document.Map.Visgroups))
@@ -204,7 +204,7 @@ namespace CBRE.Editor.Visgroups
         {
             return GetAllNodes()
                 .Where(x => x.Tag is int)
-                .ToDictionary(x => (int) x.Tag, GetCheckState);
+                .ToDictionary(x => (int)x.Tag, GetCheckState);
         }
 
         public void SetCheckState(int visgroupId, CheckState state)
@@ -240,7 +240,7 @@ namespace CBRE.Editor.Visgroups
             var disabled = e.Node.StateImageKey.EndsWith("Disabled");
             if (disabled) return;
 
-            var id = (int) e.Node.Tag;
+            var id = (int)e.Node.Tag;
             // unchecked -> checked, checked -> unchecked, mixed -> unchecked
             var visible = e.Node.StateImageKey.StartsWith("Unchecked");
             e.Node.StateImageKey = (visible ? "Checked" : "Unchecked");

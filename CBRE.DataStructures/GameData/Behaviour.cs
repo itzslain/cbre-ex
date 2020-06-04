@@ -1,8 +1,5 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CBRE.DataStructures.Geometric;
 using System.Drawing;
 
 namespace CBRE.DataStructures.GameData
@@ -28,7 +25,7 @@ namespace CBRE.DataStructures.GameData
         public Color GetColour(int index)
         {
             var coord = GetCoordinate(index);
-            return coord == null ? Color.White : Color.FromArgb((int) coord.X, (int) coord.Y, (int) coord.Z);
+            return coord == null ? Color.White : Color.FromArgb((int)coord.X, (int)coord.Y, (int)coord.Z);
         }
     }
 }

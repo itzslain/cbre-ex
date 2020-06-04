@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.Transformations;
+using CBRE.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.Transformations;
-using CBRE.Extensions;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -40,9 +40,9 @@ namespace CBRE.DataStructures.MapObjects
         {
             ID = info.GetInt64("ID");
             Colour = Color.FromArgb(info.GetInt32("Colour"));
-            Plane = (Plane) info.GetValue("Plane", typeof (Plane));
-            Texture = (TextureReference) info.GetValue("Texture", typeof (TextureReference));
-            Vertices = ((Vertex[]) info.GetValue("Vertices", typeof (Vertex[]))).ToList();
+            Plane = (Plane)info.GetValue("Plane", typeof(Plane));
+            Texture = (TextureReference)info.GetValue("Texture", typeof(TextureReference));
+            Vertices = ((Vertex[])info.GetValue("Vertices", typeof(Vertex[]))).ToList();
             Vertices.ForEach(x => x.Parent = this);
         }
 
@@ -58,16 +58,16 @@ namespace CBRE.DataStructures.MapObjects
         public virtual Face Copy(IDGenerator generator)
         {
             var f = new Face(generator.GetNextFaceID())
-                        {
-                            Plane = Plane.Clone(),
-                            Colour = Colour,
-                            IsSelected = IsSelected,
-                            IsHidden = IsHidden,
-                            Opacity = Opacity,
-                            Texture = Texture.Clone(),
-                            Parent = Parent,
-                            BoundingBox = BoundingBox.Clone()
-                        };
+            {
+                Plane = Plane.Clone(),
+                Colour = Colour,
+                IsSelected = IsSelected,
+                IsHidden = IsHidden,
+                Opacity = Opacity,
+                Texture = Texture.Clone(),
+                Parent = Parent,
+                BoundingBox = BoundingBox.Clone()
+            };
             foreach (var v in Vertices.Select(x => x.Clone()))
             {
                 v.Parent = f;
@@ -281,7 +281,7 @@ namespace CBRE.DataStructures.MapObjects
             var intersectionEdge = face.Plane.Normal.Cross(Plane.Normal);
             // Create a plane using the intersection edge as the normal
             var intersectionPlane = new Plane(intersectionEdge, 0);
-            
+
             // If the planes are parallel, the texture doesn't need any rotation - just different shift values.
             var intersect = Plane.Intersect(face.Plane, Plane, intersectionPlane);
             if (intersect != null)
@@ -485,7 +485,7 @@ namespace CBRE.DataStructures.MapObjects
         /// <param name="line">The intersection line</param>
         /// <returns>The point of intersection between the face and the line.
         /// Returns null if the line does not intersect this face.</returns>
-        public virtual Coordinate GetIntersectionPoint(Line line, bool ignoreDirection=false, bool ignoreSegment=false)
+        public virtual Coordinate GetIntersectionPoint(Line line, bool ignoreDirection = false, bool ignoreSegment = false)
         {
             return GetIntersectionPoint(Vertices.Select(x => x.Location).ToList(), line, ignoreDirection, ignoreSegment);
         }

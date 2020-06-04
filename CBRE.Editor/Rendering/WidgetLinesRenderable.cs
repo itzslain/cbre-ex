@@ -1,7 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System.Drawing;
+﻿using CBRE.Graphics.Helpers;
 using CBRE.Graphics.Renderables;
-using CBRE.Graphics.Helpers;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace CBRE.Editor.Rendering
 {

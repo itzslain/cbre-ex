@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using CBRE.Graphics.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using CBRE.Graphics.Shaders;
+using System;
+using System.IO;
 
 namespace CBRE.Editor.Rendering.Shaders
 {

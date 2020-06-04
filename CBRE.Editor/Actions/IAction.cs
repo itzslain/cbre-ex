@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CBRE.Editor.Documents;
+﻿using CBRE.Editor.Documents;
+using System;
 
 namespace CBRE.Editor.Actions
 {

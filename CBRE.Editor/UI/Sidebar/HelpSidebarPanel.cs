@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using CBRE.Common.Mediator;
+using CBRE.Editor.Tools;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.DataStructures.GameData;
-using CBRE.Editor.Documents;
-using CBRE.Editor.Tools;
 
 namespace CBRE.Editor.UI.Sidebar
 {
@@ -69,7 +65,7 @@ namespace CBRE.Editor.UI.Sidebar
             var sb = new StringBuilder();
             foreach (var c in escaped)
             {
-                if (c > 127) sb.AppendFormat(@"\u{0}?", (int) c);
+                if (c > 127) sb.AppendFormat(@"\u{0}?", (int)c);
                 else if (c == '\\') sb.Append("\\\\");
                 else if (c == '{') sb.Append("\\{");
                 else if (c == '}') sb.Append("\\}");

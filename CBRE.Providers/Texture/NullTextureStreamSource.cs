@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CBRE.Common;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using CBRE.Common;
 
 namespace CBRE.Providers.Texture
 {

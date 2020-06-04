@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using CBRE.Providers;
 
 namespace CBRE.Settings.Models
 {
@@ -28,11 +26,11 @@ namespace CBRE.Settings.Models
         public string DefaultBrushEntity { get; set; }
         public decimal DefaultTextureScale { get; set; }
         public decimal DefaultLightmapScale { get; set; }
-        
+
         public bool OverrideMapSize { get; set; }
         public int OverrideMapSizeLow { get; set; }
         public int OverrideMapSizeHigh { get; set; }
-        
+
         public List<string> AdditionalPackages { get; set; }
         public string PackageBlacklist { get; set; }
         public string PackageWhitelist { get; set; }
@@ -48,7 +46,7 @@ namespace CBRE.Settings.Models
             DefaultBrushEntity = "";
             DefaultPointEntity = "light";
         }
-        
+
         public string GetMapDirectory()
         {
             return Path.Combine(GetModDirectory(), "maps");
@@ -63,7 +61,7 @@ namespace CBRE.Settings.Models
         {
             return Path.Combine(GameDir, BaseDir);
         }
-        
+
         public string GetExecutable()
         {
             return Path.Combine(GameDir, Executable);

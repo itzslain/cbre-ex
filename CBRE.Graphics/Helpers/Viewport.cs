@@ -10,7 +10,7 @@ namespace CBRE.Graphics.Helpers
             Switch(x, y, width, height);
             var mode = Matrix.CurrentMode;
             Matrix.Set(MatrixMode.Projection);
-            var ratio = width / (float) height;
+            var ratio = width / (float)height;
             if (ratio <= 0) ratio = 1;
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(fov), ratio, near, far);
             GL.LoadMatrix(ref projection);

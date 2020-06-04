@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Groups
 {
@@ -30,7 +30,7 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
             _originalChildParents = objects.ToDictionary(x => x.ID, x => x.Parent.ID);
 
             if (_groupId == 0) _groupId = document.Map.IDGenerator.GetNextObjectID();
-            var group = new Group(_groupId) {Colour = Colour.GetRandomGroupColour()};
+            var group = new Group(_groupId) { Colour = Colour.GetRandomGroupColour() };
 
             objects.ForEach(x => x.SetParent(group));
             objects.ForEach(x => x.Colour = group.Colour.Vary());

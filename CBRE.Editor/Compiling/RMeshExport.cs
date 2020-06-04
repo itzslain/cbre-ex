@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using System.IO;
-using CBRE.Common;
-using System.Windows.Forms;
+using CBRE.Editor.Compiling.Lightmap;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
-using CBRE.Editor.Compiling.Lightmap;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Compiling
 {
@@ -38,21 +38,21 @@ namespace CBRE.Editor.Compiling
             LM = 2
         };
 
-        private static void WriteByteString(BinaryWriter writer,string str)
+        private static void WriteByteString(BinaryWriter writer, string str)
         {
             writer.Write((byte)str.Length);
-            for (int i=0;i<str.Length;i++)
+            for (int i = 0; i < str.Length; i++)
             {
                 writer.Write((byte)str[i]);
             }
         }
-        
-        public static void SaveToFile(string filename,Document document,ExportForm form)
+
+        public static void SaveToFile(string filename, Document document, ExportForm form)
         {
             var map = document.Map;
             string filepath = System.IO.Path.GetDirectoryName(filename);
             filename = System.IO.Path.GetFileName(filename);
-            filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rmesh";
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename) + ".rmesh";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
             List<Lightmap.LMFace> faces; int lmCount;
@@ -70,14 +70,14 @@ namespace CBRE.Editor.Compiling
                 return true;
             });
 
-            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name=="tooltextures/invisible_collision");
+            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name == "tooltextures/invisible_collision");
 
             string dir = CBRE.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
             Lightmap.Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
-            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
+            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
 
             IEnumerable<Entity> soundEmitters = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "soundemitter").OfType<Entity>();
 
@@ -125,7 +125,7 @@ namespace CBRE.Editor.Compiling
             //them together is not optimal either.
 
             int texCount = 0;
-            for (int i=0;i<textures.Count;i++)
+            for (int i = 0; i < textures.Count; i++)
             {
                 texCount += faces.Where(x => x.Texture == textures[i].Item1).Select(x => x.LmIndex).Distinct().Count();
                 texCount += transparentFaces.Any(x => x.Texture.Name == textures[i].Item1) ? 1 : 0;

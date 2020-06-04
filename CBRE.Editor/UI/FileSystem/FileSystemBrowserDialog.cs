@@ -1,9 +1,9 @@
-﻿using System;
+﻿using CBRE.Editor.Logging;
+using CBRE.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.Editor.Logging;
-using CBRE.FileSystem;
 
 namespace CBRE.Editor.UI.FileSystem
 {

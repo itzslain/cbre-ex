@@ -1,16 +1,14 @@
+using CBRE.DataStructures.Geometric;
 using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
-using CBRE.Common;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.Models
 {
-    public class Model: IDisposable
+    public class Model : IDisposable
     {
         public string Name { get; set; }
         public List<Bone> Bones { get; private set; }
@@ -29,7 +27,7 @@ namespace CBRE.DataStructures.Models
             Animations = new List<Animation>();
             Textures = new List<Texture>();
             _preprocessed = false;
-            
+
         }
 
         public Box GetBoundingBox()
@@ -37,12 +35,12 @@ namespace CBRE.DataStructures.Models
             if (_boundingBox == null)
             {
                 var transforms = GetTransforms();
-                var list = 
+                var list =
                     from mesh in GetActiveMeshes()
                     from vertex in mesh.Vertices
                     let transform = transforms[vertex.BoneWeightings.First().Bone.BoneIndex]
                     let cf = vertex.Location * transform
-                    select new Coordinate((decimal) cf.X, (decimal) cf.Y, (decimal) cf.Z);
+                    select new Coordinate((decimal)cf.X, (decimal)cf.Y, (decimal)cf.Z);
                 _boundingBox = new Box(list);
             }
             return _boundingBox;

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CBRE.Providers;
+using CBRE.Settings.Models;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CBRE.Providers;
-using CBRE.Settings.Models;
 
 namespace CBRE.Settings
 {
@@ -60,7 +60,7 @@ namespace CBRE.Settings
             if (!Directory.Exists(cache)) Directory.CreateDirectory(cache);
             return cache;
         }
-        
+
         public static float GetSpecialTextureOpacity(string name)
         {
             name = name.ToLowerInvariant();
@@ -102,7 +102,7 @@ namespace CBRE.Settings
             {
                 foreach (var key in settings.GetPropertyKeys())
                 {
-                    Settings.Add(new Setting {Key = key, Value = settings[key]});
+                    Settings.Add(new Setting { Key = key, Value = settings[key] });
                 }
             }
             var recents = root.Children.FirstOrDefault(x => x.Name == "RecentFiles");
@@ -113,7 +113,7 @@ namespace CBRE.Settings
                     int i;
                     if (int.TryParse(key, out i))
                     {
-                        RecentFiles.Add(new RecentFile {Location = recents[key], Order = i});
+                        RecentFiles.Add(new RecentFile { Location = recents[key], Order = i });
                     }
                 }
             }
@@ -123,7 +123,7 @@ namespace CBRE.Settings
                 foreach (var key in hotkeys.GetPropertyKeys())
                 {
                     var spl = key.Split(':');
-                    Hotkeys.Add(new Hotkey {ID = spl[0], HotkeyString = hotkeys[key]});
+                    Hotkeys.Add(new Hotkey { ID = spl[0], HotkeyString = hotkeys[key] });
                 }
             }
 
@@ -199,7 +199,7 @@ namespace CBRE.Settings
                 i++;
             }
             root.Children.Add(recents);
-            
+
             // Hotkeys
             Hotkeys = CBRE.Settings.Hotkeys.GetHotkeys().ToList();
             var hotkeys = new GenericStructure("Hotkeys");

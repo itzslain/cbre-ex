@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -88,7 +88,7 @@ namespace Assimp
         {
             m_indices = new List<int>();
 
-            if(indices != null)
+            if (indices != null)
                 m_indices.AddRange(indices);
         }
 
@@ -109,10 +109,10 @@ namespace Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<Face, AiFace>.ToNative(IntPtr thisPtr, out AiFace nativeValue)
         {
-            nativeValue.NumIndices = (uint) IndexCount;
+            nativeValue.NumIndices = (uint)IndexCount;
             nativeValue.Indices = IntPtr.Zero;
 
-            if(nativeValue.NumIndices > 0)
+            if (nativeValue.NumIndices > 0)
                 nativeValue.Indices = MemoryHelper.ToNativeArray<int>(m_indices.ToArray());
         }
 
@@ -124,8 +124,8 @@ namespace Assimp
         {
             m_indices.Clear();
 
-            if(nativeValue.NumIndices > 0 && nativeValue.Indices != IntPtr.Zero)
-                m_indices.AddRange(MemoryHelper.FromNativeArray<int>(nativeValue.Indices, (int) nativeValue.NumIndices));
+            if (nativeValue.NumIndices > 0 && nativeValue.Indices != IntPtr.Zero)
+                m_indices.AddRange(MemoryHelper.FromNativeArray<int>(nativeValue.Indices, (int)nativeValue.NumIndices));
         }
 
         /// <summary>
@@ -135,15 +135,15 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiFace aiFace = MemoryHelper.Read<AiFace>(nativeValue);
 
-            if(aiFace.NumIndices > 0 && aiFace.Indices != IntPtr.Zero)
+            if (aiFace.NumIndices > 0 && aiFace.Indices != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiFace.Indices);
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

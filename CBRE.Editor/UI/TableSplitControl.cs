@@ -126,7 +126,7 @@ namespace CBRE.Editor.UI
 
         public void ResetViews()
         {
-            var c = (int) Math.Floor(100m / _configuration.Columns);
+            var c = (int)Math.Floor(100m / _configuration.Columns);
             var r = (int)Math.Floor(100m / _configuration.Rows);
             for (var i = 0; i < ColumnCount; i++) ColumnStyles[i].Width = i == 0 ? 100 - (c * (ColumnCount - 1)) : c;
             for (var i = 0; i < RowCount; i++) RowStyles[i].Height = i == 0 ? 100 - (r * (RowCount - 1)) : r;

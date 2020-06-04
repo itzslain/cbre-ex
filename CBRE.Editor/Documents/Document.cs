@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using OpenTK;
 using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
@@ -22,15 +13,20 @@ using CBRE.Editor.Rendering.Helpers;
 using CBRE.Editor.Settings;
 using CBRE.Editor.Tools;
 using CBRE.Editor.UI;
-using CBRE.FileSystem;
 using CBRE.Graphics.Helpers;
-using CBRE.Providers;
-using CBRE.Providers.GameData;
 using CBRE.Providers.Map;
 using CBRE.Providers.Texture;
 using CBRE.Settings;
 using CBRE.Settings.Models;
 using CBRE.UI;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Path = System.IO.Path;
 
 namespace CBRE.Editor.Documents
@@ -127,7 +123,7 @@ namespace CBRE.Editor.Documents
             _memory.Set(name, obj);
         }
 
-        public T GetMemory<T>(string name, T def = default (T))
+        public T GetMemory<T>(string name, T def = default(T))
         {
             return _memory.Get(name, def);
         }
@@ -168,7 +164,7 @@ namespace CBRE.Editor.Documents
         public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)
         {
             path = forceOverride ? path : path ?? MapFile;
-            
+
             if (path != null)
             {
                 IEnumerable<string> noSaveExtensions = FileTypeRegistration.GetSupportedExtensions().Where(x => !x.CanSave).Select(x => x.Extension);
@@ -204,14 +200,14 @@ namespace CBRE.Editor.Documents
             {
                 if (Map.ActiveCamera == null)
                 {
-                    Map.ActiveCamera = !Map.Cameras.Any() ? new Camera{LookPosition = Coordinate.UnitX * Map.GridSpacing * 1.5m} : Map.Cameras.First();
+                    Map.ActiveCamera = !Map.Cameras.Any() ? new Camera { LookPosition = Coordinate.UnitX * Map.GridSpacing * 1.5m } : Map.Cameras.First();
                     if (!Map.Cameras.Contains(Map.ActiveCamera)) Map.Cameras.Add(Map.ActiveCamera);
                 }
                 var dist = (Map.ActiveCamera.LookPosition - Map.ActiveCamera.EyePosition).VectorMagnitude();
                 var loc = cam.Location;
                 var look = cam.LookAt - cam.Location;
                 look.Normalize();
-                look = loc + look * (float) dist;
+                look = loc + look * (float)dist;
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }

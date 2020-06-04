@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CBRE.Settings;
+using Microsoft.VisualBasic.ApplicationServices;
+using System;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.VisualBasic.ApplicationServices;
-using CBRE.Settings;
 
 namespace CBRE.Editor
 {

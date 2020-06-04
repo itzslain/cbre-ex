@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -114,10 +114,10 @@ namespace Assimp
         void IMarshalable<MeshAnimationChannel, AiMeshAnim>.ToNative(IntPtr thisPtr, out AiMeshAnim nativeValue)
         {
             nativeValue.Name = new AiString(m_name);
-            nativeValue.NumKeys = (uint) MeshKeyCount;
+            nativeValue.NumKeys = (uint)MeshKeyCount;
             nativeValue.Keys = IntPtr.Zero;
 
-            if(nativeValue.NumKeys > 0)
+            if (nativeValue.NumKeys > 0)
                 nativeValue.Keys = MemoryHelper.ToNativeArray<MeshKey>(m_meshKeys.ToArray());
         }
 
@@ -130,8 +130,8 @@ namespace Assimp
             m_name = nativeValue.Name.ToString();
             m_meshKeys.Clear();
 
-            if(nativeValue.NumKeys > 0 && nativeValue.Keys != IntPtr.Zero)
-                m_meshKeys.AddRange(MemoryHelper.FromNativeArray<MeshKey>(nativeValue.Keys, (int) nativeValue.NumKeys));
+            if (nativeValue.NumKeys > 0 && nativeValue.Keys != IntPtr.Zero)
+                m_meshKeys.AddRange(MemoryHelper.FromNativeArray<MeshKey>(nativeValue.Keys, (int)nativeValue.NumKeys));
         }
 
         /// <summary>
@@ -141,15 +141,15 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiMeshAnim aiMeshAnim = MemoryHelper.Read<AiMeshAnim>(nativeValue);
 
-            if(aiMeshAnim.NumKeys > 0 && aiMeshAnim.Keys != IntPtr.Zero)
+            if (aiMeshAnim.NumKeys > 0 && aiMeshAnim.Keys != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiMeshAnim.Keys);
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

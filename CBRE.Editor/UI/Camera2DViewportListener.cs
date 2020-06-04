@@ -1,13 +1,11 @@
-﻿using System;
+﻿using CBRE.Common.Mediator;
+using CBRE.DataStructures.Geometric;
+using CBRE.Editor.Documents;
+using CBRE.Extensions;
+using CBRE.UI;
+using System;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.DataStructures.Geometric;
-using CBRE.Extensions;
-using CBRE.Settings;
-using CBRE.UI;
-using System.Drawing;
-using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.UI
 {
@@ -16,7 +14,7 @@ namespace CBRE.Editor.UI
         public ViewportBase Viewport
         {
             get { return Viewport2D; }
-            set { Viewport2D = (Viewport2D) value; }
+            set { Viewport2D = (Viewport2D)value; }
         }
 
         public Viewport2D Viewport2D { get; set; }
@@ -83,12 +81,12 @@ namespace CBRE.Editor.UI
                 var last = str.Last();
                 if (Char.IsDigit(last))
                 {
-                    var press = (int) Char.GetNumericValue(last);
+                    var press = (int)Char.GetNumericValue(last);
                     if (press >= 0 && press <= 9)
                     {
                         if (press == 0) press = 10;
                         var num = Math.Max(press - 6, 6 - press);
-                        var pow = (decimal) Math.Pow(2, num);
+                        var pow = (decimal)Math.Pow(2, num);
                         var zoom = press < 6 ? 1 / pow : pow;
                         Viewport2D.Zoom = zoom;
                         Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
@@ -99,7 +97,7 @@ namespace CBRE.Editor.UI
 
         public void KeyPress(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseMove(ViewportEvent e)
@@ -176,12 +174,12 @@ namespace CBRE.Editor.UI
 
         public void MouseClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseDoubleClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseEnter(ViewportEvent e)
@@ -239,17 +237,17 @@ namespace CBRE.Editor.UI
 
         public void PreRender()
         {
-            
+
         }
 
         public void Render3D()
         {
-            
+
         }
 
         public void Render2D()
         {
-            
+
         }
 
         public void PostRender()

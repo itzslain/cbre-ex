@@ -1,8 +1,8 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Graphics;
-using CBRE.DataStructures.Geometric;
-using OpenTK;
 using CBRE.Graphics.Helpers;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using Matrix = CBRE.Graphics.Helpers.Matrix;
 
 namespace CBRE.UI
@@ -82,7 +82,7 @@ namespace CBRE.UI
 
         public override Matrix4 GetCameraMatrix()
         {
-             return Matrix4.LookAt(Camera.Location, Camera.LookAt, Vector3.UnitZ);
+            return Matrix4.LookAt(Camera.Location, Camera.LookAt, Vector3.UnitZ);
         }
 
         public override void SetViewport()

@@ -60,11 +60,11 @@ namespace Assimp
         {
             m_searchDirectories.Clear();
 
-            if(searchPaths != null && searchPaths.Length != 0)
+            if (searchPaths != null && searchPaths.Length != 0)
             {
-                foreach(String path in searchPaths)
+                foreach (String path in searchPaths)
                 {
-                    if(!String.IsNullOrEmpty(path) && Directory.Exists(path))
+                    if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
                         m_searchDirectories.Add(new DirectoryInfo(path));
                 }
             }
@@ -78,7 +78,7 @@ namespace Assimp
         {
             List<String> searchPaths = new List<String>();
 
-            foreach(DirectoryInfo dir in m_searchDirectories)
+            foreach (DirectoryInfo dir in m_searchDirectories)
             {
                 searchPaths.Add(dir.FullName);
             }
@@ -107,13 +107,13 @@ namespace Assimp
         {
             pathToFile = null;
 
-            if(String.IsNullOrEmpty(fileName) || m_searchDirectories.Count == 0)
+            if (String.IsNullOrEmpty(fileName) || m_searchDirectories.Count == 0)
                 return false;
 
-            foreach(DirectoryInfo dir in m_searchDirectories)
+            foreach (DirectoryInfo dir in m_searchDirectories)
             {
                 String fullPath = Path.Combine(dir.FullName, fileName);
-                if(File.Exists(fullPath))
+                if (File.Exists(fullPath))
                 {
                     pathToFile = fullPath;
                     return true;
@@ -145,7 +145,7 @@ namespace Assimp
         {
             m_parent = parent;
 
-            switch(fileMode)
+            switch (fileMode)
             {
                 case FileIOMode.Read:
                 case FileIOMode.ReadBinary:
@@ -162,43 +162,43 @@ namespace Assimp
 
         public override long Write(byte[] dataToWrite, long count)
         {
-            if(dataToWrite == null)
+            if (dataToWrite == null)
                 throw new ArgumentOutOfRangeException("dataToWrite", "Data to write cannot be null.");
 
-            if(count < 0 || dataToWrite.Length < count)
+            if (count < 0 || dataToWrite.Length < count)
                 throw new ArgumentOutOfRangeException("count", "Number of bytes to write is greater than data size.");
 
-            if(m_fileStream == null || !m_fileStream.CanWrite)
+            if (m_fileStream == null || !m_fileStream.CanWrite)
                 throw new IOException("Stream is not writable.");
 
-            m_fileStream.Write(dataToWrite, (int) m_fileStream.Position, (int) count);
+            m_fileStream.Write(dataToWrite, (int)m_fileStream.Position, (int)count);
 
             return count;
         }
 
         public override long Read(byte[] dataRead, long count)
         {
-            if(dataRead == null)
+            if (dataRead == null)
                 throw new ArgumentOutOfRangeException("dataRead", "Array to store data in cannot be null.");
 
-            if(count < 0 || dataRead.Length < count)
+            if (count < 0 || dataRead.Length < count)
                 throw new ArgumentOutOfRangeException("count", "Number of bytes to read is greater than data store size.");
 
-            if(m_fileStream == null || !m_fileStream.CanRead)
+            if (m_fileStream == null || !m_fileStream.CanRead)
                 throw new IOException("Stream is not readable.");
 
-            m_fileStream.Read(dataRead, (int) m_fileStream.Position, (int) count);
+            m_fileStream.Read(dataRead, (int)m_fileStream.Position, (int)count);
 
             return count;
         }
 
         public override ReturnCode Seek(long offset, Origin seekOrigin)
         {
-            if(m_fileStream == null || !m_fileStream.CanSeek)
+            if (m_fileStream == null || !m_fileStream.CanSeek)
                 throw new IOException("Stream does not support seeking.");
 
             SeekOrigin orig = SeekOrigin.Begin;
-            switch(seekOrigin)
+            switch (seekOrigin)
             {
                 case Origin.Set:
                     orig = SeekOrigin.Begin;
@@ -219,7 +219,7 @@ namespace Assimp
 
         public override long GetPosition()
         {
-            if(m_fileStream == null)
+            if (m_fileStream == null)
                 return -1;
 
             return m_fileStream.Position;
@@ -227,7 +227,7 @@ namespace Assimp
 
         public override long GetFileSize()
         {
-            if(m_fileStream == null)
+            if (m_fileStream == null)
                 return 0;
 
             return m_fileStream.Length;
@@ -235,7 +235,7 @@ namespace Assimp
 
         public override void Flush()
         {
-            if(m_fileStream == null)
+            if (m_fileStream == null)
                 return;
 
             m_fileStream.Flush();
@@ -243,9 +243,9 @@ namespace Assimp
 
         protected override void Dispose(bool disposing)
         {
-            if(!IsDisposed && disposing)
+            if (!IsDisposed && disposing)
             {
-                if(m_fileStream != null)
+                if (m_fileStream != null)
                     m_fileStream.Close();
 
                 m_fileStream = null;
@@ -259,10 +259,10 @@ namespace Assimp
             String fileName = Path.GetFileName(pathToFile);
 
             String foundPath;
-            if(m_parent.FindFile(fileName, out foundPath))
+            if (m_parent.FindFile(fileName, out foundPath))
                 pathToFile = foundPath;
 
-            if(File.Exists(pathToFile))
+            if (File.Exists(pathToFile))
                 m_fileStream = File.OpenRead(pathToFile);
         }
 

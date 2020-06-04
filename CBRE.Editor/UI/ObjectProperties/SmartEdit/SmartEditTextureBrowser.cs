@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using CBRE.DataStructures.GameData;
 using CBRE.Providers.Texture;
-using CBRE.Settings.Models;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {

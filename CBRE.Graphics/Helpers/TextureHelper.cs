@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CBRE.Common;
+using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace CBRE.Graphics.Helpers
@@ -78,14 +78,14 @@ namespace CBRE.Graphics.Helpers
         // http://aggregate.org/MAGIC/#Next%20Largest%20Power%20of%202
         private static int NextPowerOfTwo(int num)
         {
-            var x = (uint) num;
+            var x = (uint)num;
             x--;
             x |= (x >> 1);
             x |= (x >> 2);
             x |= (x >> 4);
             x |= (x >> 8);
             x |= (x >> 16);
-            return (int) (x + 1);
+            return (int)(x + 1);
         }
 
         private static List<ITexture> texturesToDispose = new List<ITexture>();
@@ -111,7 +111,8 @@ namespace CBRE.Graphics.Helpers
         {
             DisposeQueuedTextures();
 
-            if (Exists(name)) {
+            if (Exists(name))
+            {
                 Delete(name);
             }
             var actualBitmap = bitmap;
@@ -171,7 +172,7 @@ namespace CBRE.Graphics.Helpers
                 tempBuffer
                 );
             var fbo = CreateFrameBuffer();
-            var texobj = new GLTexture(tex, "RENDERTARGET"+LastRenderTargetID.ToString(), flags, fbo) { Width = width, Height = height };
+            var texobj = new GLTexture(tex, "RENDERTARGET" + LastRenderTargetID.ToString(), flags, fbo) { Width = width, Height = height };
             Textures.Add("RENDERTARGET" + LastRenderTargetID.ToString(), texobj); LastRenderTargetID++;
             return texobj;
         }
@@ -192,7 +193,7 @@ namespace CBRE.Graphics.Helpers
         private static void SetTextureParameters()
         {
             GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (DisableTextureFiltering ? TextureMinFilter.Linear : TextureMinFilter.LinearMipmapLinear));
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)(DisableTextureFiltering ? TextureMinFilter.Linear : TextureMinFilter.LinearMipmapLinear));
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
@@ -205,7 +206,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void Bind(string name)
         {
-            if (!Exists(name)) {
+            if (!Exists(name))
+            {
                 throw new Exception("Texture " + name + " doesn't exist");
             }
             Bind(Get(name).Reference);
@@ -256,7 +258,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void Delete(string name)
         {
-            if (Textures.ContainsKey(name)) {
+            if (Textures.ContainsKey(name))
+            {
                 DeleteTexture(Get(name).Reference);
                 Textures.Remove(name);
             }
@@ -264,7 +267,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void DeleteAll()
         {
-            foreach (var e in Textures) {
+            foreach (var e in Textures)
+            {
                 DeleteTexture(e.Value.Reference);
             }
             Textures.Clear();

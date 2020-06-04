@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Groups
 {
@@ -52,7 +52,7 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
         {
             foreach (var gp in _groupsAndParents)
             {
-                var group = new Group(gp.Key) {Colour = Colour.GetRandomGroupColour()};
+                var group = new Group(gp.Key) { Colour = Colour.GetRandomGroupColour() };
                 var parent = document.Map.WorldSpawn.FindByID(gp.Value);
                 group.SetParent(parent);
             }

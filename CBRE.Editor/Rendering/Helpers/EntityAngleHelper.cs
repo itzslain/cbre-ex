@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Documents;
 using CBRE.Extensions;
 using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace CBRE.Editor.Rendering.Helpers
 {

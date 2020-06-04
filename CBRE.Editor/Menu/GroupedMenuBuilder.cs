@@ -31,7 +31,7 @@ namespace CBRE.Editor.Menu
         public IEnumerable<ToolStripItem> Build()
         {
             //if (IsVisible != null && !IsVisible()) yield break;
-            var mi = new ToolStripMenuItem(Name) {Image = Image};
+            var mi = new ToolStripMenuItem(Name) { Image = Image };
             mi.DropDownItems.AddRange(SubMenus.SelectMany(x => x.Build()).ToArray());
             yield return mi;
         }

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Settings;
 using CBRE.UI;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.VMTool
 {
@@ -30,12 +30,12 @@ namespace CBRE.Editor.Tools.VMTool
 
         private bool AutomaticallyMerge()
         {
-            return ((StandardControl) Control).AutomaticallyMerge;
+            return ((StandardControl)Control).AutomaticallyMerge;
         }
 
         private void UpdateSplitEnabled()
         {
-            ((StandardControl) Control).SplitEnabled = CanSplit();
+            ((StandardControl)Control).SplitEnabled = CanSplit();
         }
 
         private bool CanSplit()
@@ -288,13 +288,13 @@ Select two (non-adjacent) points on a face to enable splitting.";
                 removedFaces += solid.Faces.RemoveAll(x => x.Vertices.Count < 3);
             }
 
-            ((StandardControl) Control).ShowMergeResult(mergedVertices, removedFaces);
+            ((StandardControl)Control).ShowMergeResult(mergedVertices, removedFaces);
             MainTool.SetDirty(true, true);
         }
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
-            
+
         }
 
         public override void MouseLeave(ViewportBase viewport, ViewportEvent e)

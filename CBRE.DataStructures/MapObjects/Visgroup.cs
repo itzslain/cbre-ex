@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.MapObjects
@@ -16,7 +16,7 @@ namespace CBRE.DataStructures.MapObjects
         public Visgroup Parent { get; set; }
         public List<Visgroup> Children { get; set; }
 
-        public virtual bool IsAutomatic { get { return false; }}
+        public virtual bool IsAutomatic { get { return false; } }
 
         public Visgroup()
         {
@@ -29,7 +29,7 @@ namespace CBRE.DataStructures.MapObjects
             Name = info.GetString("Name");
             Visible = info.GetBoolean("Visible");
             Colour = Color.FromArgb(info.GetInt32("Colour"));
-            Children = ((Visgroup[]) info.GetValue("Children", typeof (Visgroup[]))).ToList();
+            Children = ((Visgroup[])info.GetValue("Children", typeof(Visgroup[]))).ToList();
             Children.ForEach(x => x.Parent = this);
         }
 
@@ -45,13 +45,13 @@ namespace CBRE.DataStructures.MapObjects
         public virtual Visgroup Clone()
         {
             return new Visgroup
-                       {
-                           ID = ID,
-                           Name = Name,
-                           Visible = Visible,
-                           Colour = Colour,
-                           Children = Children.Select(x => x.Clone()).ToList()
-                       };
+            {
+                ID = ID,
+                Name = Name,
+                Visible = Visible,
+                Colour = Colour,
+                Children = Children.Select(x => x.Clone()).ToList()
+            };
         }
     }
 }

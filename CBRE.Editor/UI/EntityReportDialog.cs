@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Operations;
 using CBRE.Editor.Actions.MapObjects.Selection;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -101,7 +98,7 @@ namespace CBRE.Editor.UI
 
         private Entity GetSelected()
         {
-            return EntityList.SelectedItems.Count == 0 ? null : (Entity) EntityList.SelectedItems[0].Tag;
+            return EntityList.SelectedItems.Count == 0 ? null : (Entity)EntityList.SelectedItems[0].Tag;
         }
 
         private void SetSelected(MapObject selection)
@@ -143,7 +140,8 @@ namespace CBRE.Editor.UI
                                         {
                                             entity.EntityData.Name,
                                             targetname == null ? "" : targetname.Value
-                                        }) {Tag = entity};
+                                        })
+            { Tag = entity };
         }
 
         private bool DoFilters(Entity ent)
@@ -227,7 +225,7 @@ namespace CBRE.Editor.UI
         {
             var selected = GetSelected();
             if (selected == null) return;
-            DocumentManager.CurrentDocument.PerformAction("Delete entity", new Delete(new[] {selected.ID}));
+            DocumentManager.CurrentDocument.PerformAction("Delete entity", new Delete(new[] { selected.ID }));
         }
 
         private void OpenEntityProperties(object sender, EventArgs e)

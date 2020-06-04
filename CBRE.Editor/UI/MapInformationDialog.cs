@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
-using CBRE.Providers.Texture;
 
 namespace CBRE.Editor.UI
 {

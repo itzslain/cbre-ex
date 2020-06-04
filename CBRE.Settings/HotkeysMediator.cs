@@ -5,7 +5,7 @@ namespace CBRE.Settings
 {
     public class MenuLocationAttribute : Attribute
     {
-        
+
     }
 
     public enum HotkeysMediator
@@ -98,7 +98,7 @@ namespace CBRE.Settings
         FourViewFocusBottomRight,
         [Description("Maximize Current Viewport")]
         FourViewFocusCurrent,
-        
+
         [Description("Screenshot Current Viewport")]
         ScreenshotViewport,
 

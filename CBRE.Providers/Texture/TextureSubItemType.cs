@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CBRE.Providers.Texture
+﻿namespace CBRE.Providers.Texture
 {
     public enum TextureSubItemType
     {

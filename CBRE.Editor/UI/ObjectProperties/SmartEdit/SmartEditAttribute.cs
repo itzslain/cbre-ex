@@ -1,5 +1,5 @@
-using System;
 using CBRE.DataStructures.GameData;
+using System;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {

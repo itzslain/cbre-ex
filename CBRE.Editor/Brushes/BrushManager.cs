@@ -1,10 +1,9 @@
-﻿using System;
+﻿using CBRE.Editor.Brushes.Controls;
+using CBRE.Editor.UI.Sidebar;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.Editor.Brushes.Controls;
-using CBRE.Editor.UI.Sidebar;
 
 namespace CBRE.Editor.Brushes
 {
@@ -67,7 +66,7 @@ namespace CBRE.Editor.Brushes
 
         private static ComboBox FindComboBox(Control parent)
         {
-            if (parent is ComboBox) return (ComboBox) parent;
+            if (parent is ComboBox) return (ComboBox)parent;
             return parent.Controls.OfType<Control>().Select(FindComboBox).FirstOrDefault(x => x != null);
         }
 
@@ -77,7 +76,7 @@ namespace CBRE.Editor.Brushes
             _comboBox = FindComboBox(SidebarControl);
             if (_comboBox != null)
             {
-                _comboBox.SelectedIndexChanged += (sender, e) => UpdateSelectedBrush(Brushes[((ComboBox) sender).SelectedIndex]);
+                _comboBox.SelectedIndexChanged += (sender, e) => UpdateSelectedBrush(Brushes[((ComboBox)sender).SelectedIndex]);
             }
             UpdateBrushControl();
         }

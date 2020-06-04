@@ -1,14 +1,10 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.Graphics.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using CBRE.Common;
-using CBRE.FileSystem;
-using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Texture
 {
@@ -42,11 +38,11 @@ namespace CBRE.Providers.Texture
         {
             // Sprite provider ignores the black/whitelists
             var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
-            
+
             foreach (var dir in dirs)
             {
-                int slashInd = Math.Max(dir.LastIndexOf('/'),dir.LastIndexOf('\\'));
-                var tp = new TexturePackage(dir, dir.Remove(0,slashInd), this);
+                int slashInd = Math.Max(dir.LastIndexOf('/'), dir.LastIndexOf('\\'));
+                var tp = new TexturePackage(dir, dir.Remove(0, slashInd), this);
 
                 var sprs = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".png"));
                 if (!sprs.Any()) continue;
@@ -60,13 +56,13 @@ namespace CBRE.Providers.Texture
                     {
                         Bitmap bmp = new Bitmap(spr);
                         TextureFlags flags = TextureFlags.None;
-                        for (int x=0;x<4;x++)
+                        for (int x = 0; x < 4; x++)
                         {
-                            for (int y=0;y<4;y++)
+                            for (int y = 0; y < 4; y++)
                             {
-                                int mX = x * (bmp.Width-1) / 3;
-                                int mY = y * (bmp.Height-1) / 3;
-                                if (bmp.GetPixel(mX,mY).A != 255)
+                                int mX = x * (bmp.Width - 1) / 3;
+                                int mY = y * (bmp.Height - 1) / 3;
+                                if (bmp.GetPixel(mX, mY).A != 255)
                                 {
                                     flags = TextureFlags.Transparent;
                                     break;

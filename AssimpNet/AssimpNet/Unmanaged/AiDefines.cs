@@ -56,7 +56,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Default value for <see cref="AiConfigs.AI_CONFIG_PP_TUV_EVALUATE"/>
         /// </summary>
-        public const int AI_UVTRAFO_ALL = (int) (UVTransformFlags.Rotation | UVTransformFlags.Scaling | UVTransformFlags.Translation);
+        public const int AI_UVTRAFO_ALL = (int)(UVTransformFlags.Rotation | UVTransformFlags.Scaling | UVTransformFlags.Translation);
 
         #endregion
 

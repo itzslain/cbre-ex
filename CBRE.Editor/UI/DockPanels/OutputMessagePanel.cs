@@ -1,12 +1,7 @@
-﻿using System;
+﻿using CBRE.Common.Mediator;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
 
 namespace CBRE.Editor.UI.DockPanels
 {
@@ -29,7 +24,7 @@ namespace CBRE.Editor.UI.DockPanels
 
         private void OutputTypeChanged(object sender, EventArgs e)
         {
-            var type = (string) OutputType.SelectedItem;
+            var type = (string)OutputType.SelectedItem;
             if (type != _currentType)
             {
                 OutputBox.Clear();
@@ -76,7 +71,7 @@ namespace CBRE.Editor.UI.DockPanels
                 OutputBox.ScrollToCaret();
             }
         }
-        
+
         public void AddOutput(string type, OutputWord word)
         {
             if (!_words.ContainsKey(type)) _words.Add(type, new List<OutputWord>());
