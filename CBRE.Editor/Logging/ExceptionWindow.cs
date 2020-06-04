@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.Logging
@@ -23,6 +16,18 @@ namespace CBRE.Editor.Logging
             OperatingSystem.Text = info.OperatingSystem;
             CBREVersion.Text = info.ApplicationVersion;
             FullError.Text = info.FullStackTrace;
+
+            FullError.ForeColor = Color.Black;
+            FullError.BackColor = Color.White;
+
+            FrameworkVersion.ForeColor = Color.Black;
+            FrameworkVersion.BackColor = Color.White;
+
+            CBREVersion.ForeColor = Color.Black;
+            CBREVersion.BackColor = Color.White;
+
+            OperatingSystem.ForeColor = Color.Black;
+            OperatingSystem.BackColor = Color.White;
         }
         
         private void CancelButtonClicked(object sender, EventArgs e)
@@ -30,19 +35,9 @@ namespace CBRE.Editor.Logging
             Close();
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void copyButton_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void ExceptionWindow_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
+            System.Windows.Forms.Clipboard.SetText(FullError.Text);
         }
     }
 }

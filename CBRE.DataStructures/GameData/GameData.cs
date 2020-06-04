@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CBRE.DataStructures.GameData
 {
@@ -19,7 +18,7 @@ namespace CBRE.DataStructures.GameData
             MapSizeHigh = 16384;
             MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
-
+            
             var lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
             lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
             lightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { DefaultValue = "1.0" });
@@ -27,6 +26,7 @@ namespace CBRE.DataStructures.GameData
             lightDataObj.Properties.Add(new Property("hassprite", VariableType.Bool) { DefaultValue = "true" });
             lightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/lightbulb.spr"));
             Classes.Add(lightDataObj);
+            
             var spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
             spotlightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
             spotlightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { DefaultValue = "1.0" });
@@ -38,6 +38,7 @@ namespace CBRE.DataStructures.GameData
             Classes.Add(spotlightDataObj);
             Classes.Add(new GameDataObject("waypoint", "AI waypoint.", ClassType.Point));
             Classes.Add(new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point));
+
             var modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
             modelDataObj.Properties.Add(new Property("file", VariableType.Other) { DefaultValue = "" });
             modelDataObj.Properties.Add(new Property("angles", VariableType.Vector) { DefaultValue = "0 0 0" });

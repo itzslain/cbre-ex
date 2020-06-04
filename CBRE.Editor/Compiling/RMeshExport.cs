@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using System.Runtime.InteropServices;
-using System.Threading;
-using CBRE.DataStructures.Transformations;
 using System.IO;
 using CBRE.Common;
 using System.Windows.Forms;
