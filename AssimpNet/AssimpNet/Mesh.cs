@@ -640,6 +640,8 @@ namespace Assimp
             nativeValue.NumBones = (uint) BoneCount;
             nativeValue.NumFaces = (uint) FaceCount;
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
+            nativeValue.Method = 0;
+            nativeValue.Aabb = new AiAABB();
 
             if(nativeValue.NumVertices > 0)
             {

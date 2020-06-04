@@ -296,6 +296,18 @@ namespace Assimp.Unmanaged
         /// aiAnimMesh**, array of attachment meshes for vertex-based animation. NOT CURRENTLY IN USE.
         /// </summary>
         public IntPtr AnimMeshes;
+
+        public uint Method;
+
+        public AiAABB Aabb;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    [CLSCompliant(false)]
+    public struct AiAABB
+    {
+        public Vector3D Min;
+        public Vector3D Max;
     }
 
     /// <summary>
