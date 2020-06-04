@@ -48,7 +48,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(464, 25);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Oops! We got an unhandled exception.";
+            this.label1.Text = "Oops! Something went horribly wrong.";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label4
