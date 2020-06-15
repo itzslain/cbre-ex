@@ -186,7 +186,7 @@ namespace CBRE.Editor.Compiling
                         }
 
                         if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
-                        br.Write((short)vertCount);
+                        br.Write((ushort)vertCount);
                         foreach (Lightmap.LMFace face in tLmFaces)
                         {
                             for (int j = 0; j < face.Vertices.Count; j++)
@@ -240,7 +240,7 @@ namespace CBRE.Editor.Compiling
                     br.Write((byte)i);
 
                     if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
-                    br.Write((short)vertCount);
+                    br.Write((ushort)vertCount);
                     foreach (Face face in tTrptFaces)
                     {
                         for (int j = 0; j < face.Vertices.Count; j++)
@@ -294,7 +294,7 @@ namespace CBRE.Editor.Compiling
                 br.Write((byte)RM2Chunks.InvisibleGeometry);
                 
                 if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
-                br.Write((short)vertCount);
+                br.Write((ushort)vertCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     for (int j = 0; j < face.Vertices.Count; j++)
@@ -304,7 +304,7 @@ namespace CBRE.Editor.Compiling
                         br.Write((float)face.Vertices[j].Location.Y);
                     }
                 }
-                br.Write((short)triCount);
+                br.Write((ushort)triCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     foreach (uint ind in face.GetTriangleIndices())
