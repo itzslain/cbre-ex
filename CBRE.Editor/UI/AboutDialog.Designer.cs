@@ -168,11 +168,11 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(265, 159);
+            this.label6.Location = new System.Drawing.Point(292, 159);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(259, 13);
+            this.label6.Size = new System.Drawing.Size(199, 26);
             this.label6.TabIndex = 10;
-            this.label6.Text = "Thanks to Salvage and Bananaman043 for misc fixes";
+            this.label6.Text = "Thanks to Salvage, Bananaman043 and\nAesthetical for misc fixes and features";
             this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // AboutDialog

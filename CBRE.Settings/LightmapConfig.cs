@@ -17,9 +17,9 @@
 
         static LightmapConfig()
         {
-            DownscaleFactor = 10;
+            DownscaleFactor = 15;
             PlaneMargin = 1;
-            TextureDims = 2048;
+            TextureDims = 512;
             BlurRadius = 2;
 
             AmbientColorR = 30;
