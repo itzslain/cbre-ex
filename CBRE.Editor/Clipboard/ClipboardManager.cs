@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Providers;
 using CBRE.Providers.Map;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CBRE.Editor.Clipboard
 {

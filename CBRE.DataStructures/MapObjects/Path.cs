@@ -22,8 +22,8 @@ namespace CBRE.DataStructures.MapObjects
         {
             Name = info.GetString("Name");
             Type = info.GetString("Type");
-            Direction = (PathDirection) info.GetValue("Direction", typeof (PathDirection));
-            Nodes = ((PathNode[]) info.GetValue("Nodes", typeof (PathNode[]))).ToList();
+            Direction = (PathDirection)info.GetValue("Direction", typeof(PathDirection));
+            Nodes = ((PathNode[])info.GetValue("Nodes", typeof(PathNode[]))).ToList();
             Nodes.ForEach(x => x.Parent = this);
         }
 
@@ -38,11 +38,11 @@ namespace CBRE.DataStructures.MapObjects
         public Path Clone()
         {
             var p = new Path
-                        {
-                            Name = Name,
-                            Type = Type,
-                            Direction = Direction
-                        };
+            {
+                Name = Name,
+                Type = Type,
+                Direction = Direction
+            };
             foreach (var n in Nodes.Select(node => node.Clone()))
             {
                 n.Parent = p;

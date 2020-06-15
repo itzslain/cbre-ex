@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Win32;
 
 namespace CBRE.Editor.Settings
 {
@@ -98,9 +98,9 @@ namespace CBRE.Editor.Settings
 
         public static void RegisterDefaultFileTypes(IEnumerable<string> extensions)
         {
-            #if DEBUG
+#if DEBUG
                 return;
-            #endif
+#endif
 
             foreach (var e in extensions)
             {
@@ -112,9 +112,9 @@ namespace CBRE.Editor.Settings
 
         public static void RegisterFileTypes()
         {
-            #if DEBUG
+#if DEBUG
                 return;
-            #endif
+#endif
 
             try
             {

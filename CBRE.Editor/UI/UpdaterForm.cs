@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CBRE.Common.Mediator;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
 
 namespace CBRE.Editor.UI
 {
@@ -23,8 +23,8 @@ namespace CBRE.Editor.UI
 
             InitializeComponent();
 
-            Text = "Update Available! Current version: " + FileVersionInfo.GetVersionInfo(typeof (Editor).Assembly.Location).FileVersion;
-            
+            Text = "Update Available! Current version: " + FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location).FileVersion;
+
             StatusLabel.Text = "A new version of CBRE is available!\nWould you like to download it now?";
             ReleaseDetails.Text = _details.Name + "\r\n\r\n" + _details.Changelog.Replace("\r", "").Replace("\n", "\r\n");
         }

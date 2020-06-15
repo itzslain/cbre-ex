@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Actions;
@@ -16,6 +10,12 @@ using CBRE.Editor.Properties;
 using CBRE.Editor.Rendering.Immediate;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Select = CBRE.Settings.Select;
 
 namespace CBRE.Editor.Tools
@@ -339,7 +339,7 @@ namespace CBRE.Editor.Tools
         {
             if (_state == SketchState.None || _state == SketchState.Ready || _base == null) yield break;
 
-            var b = new Face(0) {Plane = _base.Plane};
+            var b = new Face(0) { Plane = _base.Plane };
             b.Vertices.AddRange(_base.Vertices.Select(x => new Vertex(x, b)));
             b.UpdateBoundingBox();
             yield return b;

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using CBRE.Editor.Documents;
+﻿using CBRE.Editor.Documents;
+using System.Collections.Generic;
 
 namespace CBRE.Editor.History
 {

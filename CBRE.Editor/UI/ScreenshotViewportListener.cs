@@ -1,9 +1,7 @@
-using System.Diagnostics;
+using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
-using CBRE.UI;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace CBRE.Editor.UI
@@ -20,7 +18,7 @@ namespace CBRE.Editor.UI
 
         public void KeyUp(ViewportEvent e)
         {
-            
+
         }
 
         public void KeyDown(ViewportEvent e)
@@ -35,62 +33,62 @@ namespace CBRE.Editor.UI
 
         public void MouseMove(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseWheel(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseUp(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseDown(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseDoubleClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseEnter(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseLeave(ViewportEvent e)
         {
-            
+
         }
 
         public void UpdateFrame(FrameInfo frame)
         {
-            
+
         }
 
         public void PreRender()
         {
-            
+
         }
 
         public void Render3D()
         {
-            
+
         }
 
         public void Render2D()
         {
-            
+
         }
 
         public void PostRender()

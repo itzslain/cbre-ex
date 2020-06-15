@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using System.Drawing;
+using CBRE.Graphics.Arrays;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using CBRE.Graphics.Arrays;
-using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CBRE.Editor.Rendering.Arrays
 {
@@ -76,7 +75,7 @@ namespace CBRE.Editor.Rendering.Arrays
             MakePoint(CBRE.Settings.Grid.BoundaryLines, _low, _low);
             MakePoint(CBRE.Settings.Grid.BoundaryLines, _high, _low);
 
-            PushSubset(Grid, (object) null);
+            PushSubset(Grid, (object)null);
         }
 
         private void MakePoint(Color colour, float x, float y, float z = 0)
@@ -92,7 +91,7 @@ namespace CBRE.Editor.Rendering.Arrays
                     LightmapUv = new Vector2(-500.0f, -500.0f),
                     IsSelected = 0
                 }
-            }), new uint[] {0});
+            }), new uint[] { 0 });
         }
     }
 }

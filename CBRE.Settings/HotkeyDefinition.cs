@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace CBRE.Settings
+﻿namespace CBRE.Settings
 {
     public class HotkeyDefinition
     {

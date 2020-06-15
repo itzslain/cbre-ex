@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
-using CBRE.Graphics.Helpers;
 using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Rendering.Helpers
 {
@@ -47,11 +43,11 @@ namespace CBRE.Editor.Rendering.Helpers
             double a = 192;
             if (CBRE.Settings.Select.CenterHandlesFollowCursor)
             {
-                var dist = (double) (center - _mousePos).VectorMagnitude();
+                var dist = (double)(center - _mousePos).VectorMagnitude();
                 if (dist >= _fadeDistance) return;
                 a = 192 * ((_fadeDistance - dist) / _fadeDistance);
             }
-            GL.Color4(Color.FromArgb((int) a, o.Colour));
+            GL.Color4(Color.FromArgb((int)a, o.Colour));
             GL.Vertex2(center.DX - _offset, center.DY - _offset);
             GL.Vertex2(center.DX + _offset, center.DY + _offset);
             GL.Vertex2(center.DX - _offset, center.DY + _offset);

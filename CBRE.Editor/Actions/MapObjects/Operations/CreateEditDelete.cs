@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Operations.EditOperations;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations
 {

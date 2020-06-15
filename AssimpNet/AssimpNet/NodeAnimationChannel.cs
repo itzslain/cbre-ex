@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -233,22 +233,22 @@ namespace Assimp
             nativeValue.Prestate = m_preState;
             nativeValue.PostState = m_postState;
 
-            nativeValue.NumPositionKeys = (uint) m_positionKeys.Count;
+            nativeValue.NumPositionKeys = (uint)m_positionKeys.Count;
             nativeValue.PositionKeys = IntPtr.Zero;
 
-            if(nativeValue.NumPositionKeys > 0)
+            if (nativeValue.NumPositionKeys > 0)
                 nativeValue.PositionKeys = MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys.ToArray());
 
-            nativeValue.NumRotationKeys = (uint) m_rotationKeys.Count;
+            nativeValue.NumRotationKeys = (uint)m_rotationKeys.Count;
             nativeValue.RotationKeys = IntPtr.Zero;
 
-            if(nativeValue.NumRotationKeys > 0)
+            if (nativeValue.NumRotationKeys > 0)
                 nativeValue.RotationKeys = MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys.ToArray());
 
-            nativeValue.NumScalingKeys = (uint) m_scalingKeys.Count;
+            nativeValue.NumScalingKeys = (uint)m_scalingKeys.Count;
             nativeValue.ScalingKeys = IntPtr.Zero;
 
-            if(nativeValue.NumScalingKeys > 0)
+            if (nativeValue.NumScalingKeys > 0)
                 nativeValue.ScalingKeys = MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys.ToArray());
         }
 
@@ -266,14 +266,14 @@ namespace Assimp
             m_rotationKeys.Clear();
             m_scalingKeys.Clear();
 
-            if(nativeValue.NumPositionKeys > 0 && nativeValue.PositionKeys != IntPtr.Zero)
-                m_positionKeys.AddRange(MemoryHelper.FromNativeArray<VectorKey>(nativeValue.PositionKeys, (int) nativeValue.NumPositionKeys));
+            if (nativeValue.NumPositionKeys > 0 && nativeValue.PositionKeys != IntPtr.Zero)
+                m_positionKeys.AddRange(MemoryHelper.FromNativeArray<VectorKey>(nativeValue.PositionKeys, (int)nativeValue.NumPositionKeys));
 
-            if(nativeValue.NumRotationKeys > 0 && nativeValue.RotationKeys != IntPtr.Zero)
-                m_rotationKeys.AddRange(MemoryHelper.FromNativeArray<QuaternionKey>(nativeValue.RotationKeys, (int) nativeValue.NumRotationKeys));
+            if (nativeValue.NumRotationKeys > 0 && nativeValue.RotationKeys != IntPtr.Zero)
+                m_rotationKeys.AddRange(MemoryHelper.FromNativeArray<QuaternionKey>(nativeValue.RotationKeys, (int)nativeValue.NumRotationKeys));
 
-            if(nativeValue.NumScalingKeys > 0 && nativeValue.ScalingKeys != IntPtr.Zero)
-                m_scalingKeys.AddRange(MemoryHelper.FromNativeArray<VectorKey>(nativeValue.ScalingKeys, (int) nativeValue.NumScalingKeys));
+            if (nativeValue.NumScalingKeys > 0 && nativeValue.ScalingKeys != IntPtr.Zero)
+                m_scalingKeys.AddRange(MemoryHelper.FromNativeArray<VectorKey>(nativeValue.ScalingKeys, (int)nativeValue.NumScalingKeys));
         }
 
         /// <summary>
@@ -283,21 +283,21 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiNodeAnim aiNodeAnim = MemoryHelper.Read<AiNodeAnim>(nativeValue);
 
-            if(aiNodeAnim.NumPositionKeys > 0 && aiNodeAnim.PositionKeys != IntPtr.Zero)
+            if (aiNodeAnim.NumPositionKeys > 0 && aiNodeAnim.PositionKeys != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiNodeAnim.PositionKeys);
 
-            if(aiNodeAnim.NumRotationKeys > 0 && aiNodeAnim.RotationKeys != IntPtr.Zero)
+            if (aiNodeAnim.NumRotationKeys > 0 && aiNodeAnim.RotationKeys != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiNodeAnim.RotationKeys);
 
-            if(aiNodeAnim.NumScalingKeys > 0 && aiNodeAnim.ScalingKeys != IntPtr.Zero)
+            if (aiNodeAnim.NumScalingKeys > 0 && aiNodeAnim.ScalingKeys != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiNodeAnim.ScalingKeys);
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

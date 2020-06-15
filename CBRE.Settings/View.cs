@@ -18,7 +18,7 @@ namespace CBRE.Settings
         public static int VertexPointSize { get; set; }
         public static bool OverrideVertexColour { get; set; }
         public static Color VertexOverrideColour { get; set; }
-        
+
         public static Color ViewportBackground { get; set; }
 
         public static int BackClippingPane { get; set; }

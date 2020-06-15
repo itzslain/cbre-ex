@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Graphics;
-using OpenTK.Graphics.OpenGL;
-using OpenTK;
-using System.Drawing;
 using CBRE.Graphics.Helpers;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Drawing;
+using System.Linq;
 
 namespace CBRE.UI
 {
@@ -145,7 +145,7 @@ namespace CBRE.UI
             Direction = direction;
             CenterScreen = new Coordinate(Width / 2m, Height / 2m, 0);
         }
-        
+
         public Viewport2D(ViewDirection direction, RenderContext context) : base(context)
         {
             Zoom = 1;
@@ -242,7 +242,7 @@ namespace CBRE.UI
 
         protected override void UpdateBeforeRender()
         {
-            GL.Scale(new Vector3((float) Zoom, (float) Zoom, 0));
+            GL.Scale(new Vector3((float)Zoom, (float)Zoom, 0));
             GL.Translate((float)-Position.X, (float)-Position.Y, 0);
             base.UpdateBeforeRender();
         }

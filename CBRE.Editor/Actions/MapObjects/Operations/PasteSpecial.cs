@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Enums;
 using CBRE.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations
 {
@@ -203,7 +203,7 @@ namespace CBRE.Editor.Actions.MapObjects.Operations
                     // Use one group per copy
                     var group = new Group(gen.GetNextObjectID());
                     copy.ForEach(x => x.SetParent(group));
-                    return new List<MapObject> {group};
+                    return new List<MapObject> { group };
                 case PasteSpecialGrouping.All:
                     // Use one group for all copies
                     copy.ForEach(x => x.SetParent(allGroup));

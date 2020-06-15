@@ -70,7 +70,7 @@ namespace CBRE.Packages.Pak
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
             {
-                return sr.ReadBytes((int) sr.BaseStream.Length);
+                return sr.ReadBytes((int)sr.BaseStream.Length);
             }
         }
 

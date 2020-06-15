@@ -55,7 +55,7 @@
             this.PrefixEntityNamesCheckbox = new System.Windows.Forms.CheckBox();
             this.EntityPrefix = new System.Windows.Forms.TextBox();
             this.OkButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.RotationY = new System.Windows.Forms.NumericUpDown();
             this.RotationZ = new System.Windows.Forms.NumericUpDown();
@@ -392,15 +392,15 @@
             this.OkButton.UseVisualStyleBackColor = true;
             this.OkButton.Click += new System.EventHandler(this.OkButtonClicked);
             // 
-            // CancelButton
+            // cancelButton
             // 
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(351, 257);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 16;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(351, 257);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 16;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
@@ -534,7 +534,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(438, 288);
             this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.OkButton);
             this.Controls.Add(this.PrefixEntityNamesCheckbox);
             this.Controls.Add(this.UniqueEntityNames);
@@ -596,7 +596,7 @@
         private System.Windows.Forms.CheckBox PrefixEntityNamesCheckbox;
         private System.Windows.Forms.TextBox EntityPrefix;
         private System.Windows.Forms.Button OkButton;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.NumericUpDown OffsetY;
         private System.Windows.Forms.NumericUpDown OffsetZ;
         private System.Windows.Forms.NumericUpDown OffsetX;

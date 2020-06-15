@@ -43,7 +43,7 @@ namespace CBRE.UI
             Sender = sender;
             KeyChar = e.KeyChar;
         }
-        
+
         public ViewportEvent(ViewportBase sender, MouseEventArgs e)
         {
             Sender = sender;

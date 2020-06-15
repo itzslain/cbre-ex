@@ -52,14 +52,14 @@ namespace Assimp
         {
             get
             {
-                if(index < 0 || index > Count)
+                if (index < 0 || index > Count)
                     return null;
 
                 return m_children[index];
             }
             set
             {
-                if(index < 0 || index > Count || value == null)
+                if (index < 0 || index > Count || value == null)
                     return;
 
                 m_children[index] = value;
@@ -95,7 +95,7 @@ namespace Assimp
         /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
         public void Add(Node item)
         {
-            if(item != null)
+            if (item != null)
             {
                 m_children.Add(item);
                 item.SetParent(m_parent);
@@ -108,12 +108,12 @@ namespace Assimp
         /// <param name="items">Item array</param>
         public void AddRange(Node[] items)
         {
-            if(items == null || items.Length == 0)
+            if (items == null || items.Length == 0)
                 return;
 
-            foreach(Node child in items)
+            foreach (Node child in items)
             {
-                if(child != null)
+                if (child != null)
                 {
                     m_children.Add(child);
                     child.SetParent(m_parent);
@@ -126,7 +126,7 @@ namespace Assimp
         /// </summary>
         public void Clear()
         {
-            foreach(Node node in m_children)
+            foreach (Node node in m_children)
             {
                 node.SetParent(null);
             }
@@ -176,7 +176,7 @@ namespace Assimp
         /// <param name="item">The object to insert into the <see cref="T:System.Collections.Generic.IList`1" />.</param>
         public void Insert(int index, Node item)
         {
-            if(index < 0 || index > Count || item == null)
+            if (index < 0 || index > Count || item == null)
                 return;
 
             m_children.Insert(index, item);
@@ -191,7 +191,7 @@ namespace Assimp
         {
             Node child = this[index];
 
-            if(child == null)
+            if (child == null)
             {
                 child.SetParent(null);
                 m_children.RemoveAt(index);
@@ -207,7 +207,7 @@ namespace Assimp
         /// </returns>
         public bool Remove(Node item)
         {
-            if(item != null && m_children.Remove(item))
+            if (item != null && m_children.Remove(item))
             {
                 item.SetParent(null);
                 return true;

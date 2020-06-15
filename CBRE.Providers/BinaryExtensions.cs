@@ -1,8 +1,8 @@
+using CBRE.DataStructures.Geometric;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.Providers
 {
@@ -35,7 +35,7 @@ namespace CBRE.Providers
         public static void WriteNullTerminatedString(this BinaryWriter bw, string str)
         {
             bw.Write(str.ToCharArray());
-            bw.Write((char) 0);
+            bw.Write((char)0);
         }
 
         public static byte[] ReadByteArray(this BinaryReader br, int num)
@@ -105,7 +105,7 @@ namespace CBRE.Providers
             // Hammer doesn't like RMF strings longer than 128 bytes...
             if (str == null) str = "";
             if (str.Length > MaxVariableStringLength) str = str.Substring(0, MaxVariableStringLength);
-            bw.Write((byte) (str.Length + 1));
+            bw.Write((byte)(str.Length + 1));
             bw.Write(str.ToCharArray());
             bw.Write('\0');
         }
@@ -113,12 +113,12 @@ namespace CBRE.Providers
 
         public static decimal ReadSingleAsDecimal(this BinaryReader br)
         {
-            return (decimal) br.ReadSingle();
+            return (decimal)br.ReadSingle();
         }
 
         public static void WriteDecimalAsSingle(this BinaryWriter bw, decimal dec)
         {
-            bw.Write((float) dec);
+            bw.Write((float)dec);
         }
 
         public static Coordinate ReadCoordinate(this BinaryReader br)

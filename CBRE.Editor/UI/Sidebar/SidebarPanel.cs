@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CBRE.Common;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CBRE.Common;
 
 namespace CBRE.Editor.UI.Sidebar
 {
@@ -12,7 +12,8 @@ namespace CBRE.Editor.UI.Sidebar
         public bool Hidden
         {
             get { return _hidden; }
-            set {
+            set
+            {
                 _hidden = value;
                 if (_hidden)
                 {
@@ -41,10 +42,10 @@ namespace CBRE.Editor.UI.Sidebar
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             _hidden = false;
-            _header = new SidebarHeader {Text = "This is a test", Expanded = !_hidden, Dock = DockStyle.Top};
+            _header = new SidebarHeader { Text = "This is a test", Expanded = !_hidden, Dock = DockStyle.Top };
             _header.Click += HeaderClicked;
 
-            _panel = new Panel{ Dock = DockStyle.Top, AutoSize = true};
+            _panel = new Panel { Dock = DockStyle.Top, AutoSize = true };
             Controls.Add(_panel);
             Controls.Add(_header);
         }
@@ -69,7 +70,8 @@ namespace CBRE.Editor.UI.Sidebar
         public bool Expanded
         {
             get { return _expanded; }
-            set {
+            set
+            {
                 _expanded = value;
                 Refresh();
             }

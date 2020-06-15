@@ -28,7 +28,7 @@ namespace CBRE.DataStructures.Geometric
 
         protected Vector(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Normal = (Coordinate) info.GetValue("Normal", typeof (Coordinate));
+            Normal = (Coordinate)info.GetValue("Normal", typeof(Coordinate));
             Distance = info.GetDecimal("Distance");
         }
 

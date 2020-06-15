@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.History
 {

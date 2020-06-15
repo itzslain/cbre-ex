@@ -20,8 +20,8 @@
 * THE SOFTWARE.
 */
 
-using System;
 using Assimp.Unmanaged;
+using System;
 
 namespace Assimp
 {
@@ -348,7 +348,7 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue != IntPtr.Zero && freeNative)
+            if (nativeValue != IntPtr.Zero && freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

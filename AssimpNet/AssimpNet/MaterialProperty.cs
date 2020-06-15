@@ -20,10 +20,10 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Diagnostics;
 using System.Text;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -147,7 +147,7 @@ namespace Assimp
         {
             get
             {
-                if(m_fullQualifiedNameNeedsUpdate)
+                if (m_fullQualifiedNameNeedsUpdate)
                 {
                     m_fullyQualifiedName = Material.CreateFullyQualifiedName(m_name, m_texType, m_texIndex);
                     m_fullQualifiedNameNeedsUpdate = false;
@@ -346,7 +346,7 @@ namespace Assimp
         /// <returns>Float</returns>
         public float GetFloatValue()
         {
-            if(m_type == PropertyType.Float || m_type == PropertyType.Integer)
+            if (m_type == PropertyType.Float || m_type == PropertyType.Integer)
                 return GetValueAs<float>();
 
             return 0;
@@ -359,7 +359,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetFloatValue(float value)
         {
-            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
+            if (m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueAs<float>(value);
@@ -371,7 +371,7 @@ namespace Assimp
         /// <returns>Integer</returns>
         public int GetIntegerValue()
         {
-            if(m_type == PropertyType.Float || m_type == PropertyType.Integer)
+            if (m_type == PropertyType.Float || m_type == PropertyType.Integer)
                 return GetValueAs<int>();
 
             return 0;
@@ -384,7 +384,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetIntegerValue(int value)
         {
-            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
+            if (m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueAs<int>(value);
@@ -396,7 +396,7 @@ namespace Assimp
         /// <returns>String</returns>
         public String GetStringValue()
         {
-            if(m_type != PropertyType.String)
+            if (m_type != PropertyType.String)
                 return null;
 
             return GetMaterialString(m_rawValue);
@@ -409,7 +409,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetStringValue(String value)
         {
-            if(m_type != PropertyType.String)
+            if (m_type != PropertyType.String)
                 return false;
 
             m_rawValue = SetMaterialString(value, m_rawValue);
@@ -423,7 +423,7 @@ namespace Assimp
         /// <returns>Float array</returns>
         public float[] GetFloatArrayValue(int count)
         {
-            if(m_type == PropertyType.Float || m_type == PropertyType.Integer)
+            if (m_type == PropertyType.Float || m_type == PropertyType.Integer)
                 return GetValueArrayAs<float>(count);
 
             return null;
@@ -435,7 +435,7 @@ namespace Assimp
         /// <returns>Float array</returns>
         public float[] GetFloatArrayValue()
         {
-            if(m_type == PropertyType.Float || m_type == PropertyType.Integer)
+            if (m_type == PropertyType.Float || m_type == PropertyType.Integer)
             {
                 int count = ByteCount / sizeof(float);
                 return GetValueArrayAs<float>(count);
@@ -451,7 +451,7 @@ namespace Assimp
         /// <returns>True if successful, otherwise false</returns>
         public bool SetFloatArrayValue(float[] values)
         {
-            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
+            if (m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueArrayAs<float>(values);
@@ -464,7 +464,7 @@ namespace Assimp
         /// <returns>Integer array</returns>
         public int[] GetIntegerArrayValue(int count)
         {
-            if(m_type == PropertyType.Float || m_type == PropertyType.Integer)
+            if (m_type == PropertyType.Float || m_type == PropertyType.Integer)
                 return GetValueArrayAs<int>(count);
 
             return null;
@@ -476,7 +476,7 @@ namespace Assimp
         /// <returns>Integer array</returns>
         public int[] GetIntegerArrayValue()
         {
-            if(m_type == PropertyType.Float || m_type == PropertyType.Integer)
+            if (m_type == PropertyType.Float || m_type == PropertyType.Integer)
             {
                 int count = ByteCount / sizeof(int);
                 return GetValueArrayAs<int>(count);
@@ -492,7 +492,7 @@ namespace Assimp
         /// <returns>True if successful, otherwise false</returns>
         public bool SetIntegerArrayValue(int[] values)
         {
-            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
+            if (m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueArrayAs<int>(values);
@@ -523,7 +523,7 @@ namespace Assimp
         /// <returns>Color3D</returns>
         public Color3D GetColor3DValue()
         {
-            if(m_type != PropertyType.Float)
+            if (m_type != PropertyType.Float)
                 return new Color3D();
 
             return GetValueAs<Color3D>();
@@ -536,7 +536,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetColor3DValue(Color3D value)
         {
-            if(m_type != PropertyType.Float)
+            if (m_type != PropertyType.Float)
                 return false;
 
             return SetValueAs<Color3D>(value);
@@ -548,20 +548,20 @@ namespace Assimp
         /// <returns>Color4D</returns>
         public Color4D GetColor4DValue()
         {
-            if(m_type != PropertyType.Float || m_rawValue == null)
+            if (m_type != PropertyType.Float || m_rawValue == null)
                 return new Color4D();
 
             //We may have a Color that's RGB, so still read it and set alpha to 1.0
             unsafe
             {
-                fixed(byte* ptr = m_rawValue)
+                fixed (byte* ptr = m_rawValue)
                 {
 
-                    if(m_rawValue.Length >= MemoryHelper.SizeOf<Color4D>())
+                    if (m_rawValue.Length >= MemoryHelper.SizeOf<Color4D>())
                     {
                         return MemoryHelper.Read<Color4D>(new IntPtr(ptr));
                     }
-                    else if(m_rawValue.Length >= MemoryHelper.SizeOf<Color3D>())
+                    else if (m_rawValue.Length >= MemoryHelper.SizeOf<Color3D>())
                     {
                         return new Color4D(MemoryHelper.Read<Color3D>(new IntPtr(ptr)), 1.0f);
                     }
@@ -579,7 +579,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetColor4DValue(Color4D value)
         {
-            if(m_type != PropertyType.Float)
+            if (m_type != PropertyType.Float)
                 return false;
 
             return SetValueAs<Color4D>(value);
@@ -589,10 +589,10 @@ namespace Assimp
         {
             int size = MemoryHelper.SizeOf<T>();
 
-            if(m_rawValue != null && (m_rawValue.Length >= (size * count)))
+            if (m_rawValue != null && (m_rawValue.Length >= (size * count)))
             {
                 T[] array = new T[count];
-                fixed(byte* ptr = m_rawValue)
+                fixed (byte* ptr = m_rawValue)
                 {
                     MemoryHelper.Read<T>(new IntPtr(ptr), array, 0, count);
                 }
@@ -607,9 +607,9 @@ namespace Assimp
         {
             int size = MemoryHelper.SizeOf<T>();
 
-            if(m_rawValue != null && m_rawValue.Length >= size)
+            if (m_rawValue != null && m_rawValue.Length >= size)
             {
-                fixed(byte* ptr = m_rawValue)
+                fixed (byte* ptr = m_rawValue)
                 {
                     return MemoryHelper.Read<T>(new IntPtr(ptr));
                 }
@@ -620,16 +620,16 @@ namespace Assimp
 
         private unsafe bool SetValueArrayAs<T>(T[] data) where T : struct
         {
-            if(data == null || data.Length == 0)
+            if (data == null || data.Length == 0)
                 return false;
 
             int size = MemoryHelper.SizeOf<T>(data);
 
             //Resize byte array if necessary
-            if(m_rawValue == null || m_rawValue.Length != size)
+            if (m_rawValue == null || m_rawValue.Length != size)
                 m_rawValue = new byte[size];
 
-            fixed(byte* ptr = m_rawValue)
+            fixed (byte* ptr = m_rawValue)
             {
                 MemoryHelper.Write<T>(new IntPtr(ptr), data, 0, data.Length);
             }
@@ -642,10 +642,10 @@ namespace Assimp
             int size = MemoryHelper.SizeOf<T>();
 
             //Resize byte array if necessary
-            if(m_rawValue == null || m_rawValue.Length != size)
+            if (m_rawValue == null || m_rawValue.Length != size)
                 m_rawValue = new byte[size];
 
-            fixed(byte* ptr = m_rawValue)
+            fixed (byte* ptr = m_rawValue)
             {
                 MemoryHelper.Write<T>(new IntPtr(ptr), ref value);
             }
@@ -655,17 +655,17 @@ namespace Assimp
 
         private static unsafe String GetMaterialString(byte[] matPropData)
         {
-            if(matPropData == null)
+            if (matPropData == null)
                 return String.Empty;
 
-            fixed(byte* ptr = &matPropData[0])
+            fixed (byte* ptr = &matPropData[0])
             {
                 //String is stored as 32 bit length prefix THEN followed by zero-terminated UTF8 data (basically need to reconstruct an AiString)
                 AiString aiString;
-                aiString.Length = (uint) MemoryHelper.Read<int>(new IntPtr(ptr));
+                aiString.Length = (uint)MemoryHelper.Read<int>(new IntPtr(ptr));
 
                 //Memcpy starting at dataPtr + sizeof(int) for length + 1 (to account for null terminator)
-                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int) aiString.Length + 1);
+                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int)aiString.Length + 1);
 
                 return aiString.GetString();
             }
@@ -673,21 +673,21 @@ namespace Assimp
 
         private static unsafe byte[] SetMaterialString(String value, byte[] existing)
         {
-            if(String.IsNullOrEmpty(value))
+            if (String.IsNullOrEmpty(value))
                 return null;
 
             int stringSize = Encoding.UTF8.GetByteCount(value);
 
-            if(stringSize < 0)
+            if (stringSize < 0)
                 return null;
 
             int size = stringSize + 1 + sizeof(int);
             byte[] data = existing;
 
-            if(existing == null || existing.Length != size)
+            if (existing == null || existing.Length != size)
                 data = new byte[size];
 
-            fixed(byte* bytePtr = &data[0])
+            fixed (byte* bytePtr = &data[0])
             {
                 MemoryHelper.Write<int>(new IntPtr(bytePtr), ref stringSize);
                 byte[] utfBytes = Encoding.UTF8.GetBytes(value);
@@ -723,14 +723,14 @@ namespace Assimp
         {
             nativeValue.Key = new AiString(m_name);
             nativeValue.Type = m_type;
-            nativeValue.Index = (uint) m_texIndex;
+            nativeValue.Index = (uint)m_texIndex;
             nativeValue.Semantic = m_texType;
             nativeValue.Data = IntPtr.Zero;
             nativeValue.DataLength = 0;
 
-            if(m_rawValue != null)
+            if (m_rawValue != null)
             {
-                nativeValue.DataLength = (uint) m_rawValue.Length;
+                nativeValue.DataLength = (uint)m_rawValue.Length;
                 nativeValue.Data = MemoryHelper.ToNativeArray<byte>(m_rawValue);
             }
         }
@@ -743,12 +743,12 @@ namespace Assimp
         {
             m_name = nativeValue.Key.GetString();
             m_type = nativeValue.Type;
-            m_texIndex = (int) nativeValue.Index;
+            m_texIndex = (int)nativeValue.Index;
             m_texType = nativeValue.Semantic;
             m_rawValue = null;
 
-            if(nativeValue.DataLength > 0 && nativeValue.Data != IntPtr.Zero)
-                m_rawValue = MemoryHelper.FromNativeArray<byte>(nativeValue.Data, (int) nativeValue.DataLength);
+            if (nativeValue.DataLength > 0 && nativeValue.Data != IntPtr.Zero)
+                m_rawValue = MemoryHelper.FromNativeArray<byte>(nativeValue.Data, (int)nativeValue.DataLength);
         }
 
         /// <summary>
@@ -758,15 +758,15 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiMaterialProperty aiMatProp = MemoryHelper.Read<AiMaterialProperty>(nativeValue);
 
-            if(aiMatProp.DataLength > 0 && aiMatProp.Data != IntPtr.Zero)
+            if (aiMatProp.DataLength > 0 && aiMatProp.Data != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiMatProp.Data);
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

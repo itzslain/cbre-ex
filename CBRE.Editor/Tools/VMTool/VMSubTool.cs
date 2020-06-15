@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using CBRE.Settings;
+using CBRE.UI;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using CBRE.DataStructures.Geometric;
-using CBRE.Settings;
-using CBRE.UI;
 
 namespace CBRE.Editor.Tools.VMTool
 {

@@ -1,40 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Taskbar;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes;
-using CBRE.Editor.Compiling;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Menu;
 using CBRE.Editor.Settings;
+using CBRE.Editor.Tools;
 using CBRE.Editor.UI;
 using CBRE.Editor.UI.Sidebar;
-using CBRE.FileSystem;
 using CBRE.Graphics.Helpers;
 using CBRE.Providers;
 using CBRE.Providers.GameData;
 using CBRE.Providers.Map;
-using CBRE.Editor.Tools;
 using CBRE.Providers.Model;
 using CBRE.Providers.Texture;
 using CBRE.QuickForms;
 using CBRE.Settings;
 using CBRE.Settings.Models;
 using CBRE.UI;
-using Hotkeys = CBRE.Editor.UI.Hotkeys;
+using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
-using Path = System.IO.Path;
 
 namespace CBRE.Editor
 {
@@ -92,7 +85,7 @@ namespace CBRE.Editor
             if (TaskbarManager.IsPlatformSupported)
             {
                 TaskbarManager.Instance.ApplicationId = FileTypeRegistration.ProgramId;
-                
+
                 _jumpList = JumpList.CreateJumpList();
                 _jumpList.KnownCategoryToDisplay = JumpListKnownCategoryType.Recent;
                 _jumpList.Refresh();
@@ -121,15 +114,15 @@ namespace CBRE.Editor
                     tl.GetIcon(),
                     (s, ea) => Mediator.Publish(HotkeysMediator.SwitchTool, tl.GetHotkeyToolType()),
                     tl.GetName())
-                        {
-                            Checked = (tl == ToolManager.ActiveTool),
-                            ToolTipText = tl.GetName() + (hotkey != null ? " (" +hotkey.Hotkey + ")" : ""),
-                            DisplayStyle = ToolStripItemDisplayStyle.Image,
-                            ImageScaling = ToolStripItemImageScaling.None,
-                            AutoSize = false,
-                            Width = 36,
-                            Height = 36
-                        }
+                {
+                    Checked = (tl == ToolManager.ActiveTool),
+                    ToolTipText = tl.GetName() + (hotkey != null ? " (" + hotkey.Hotkey + ")" : ""),
+                    DisplayStyle = ToolStripItemDisplayStyle.Image,
+                    ImageScaling = ToolStripItemImageScaling.None,
+                    AutoSize = false,
+                    Width = 36,
+                    Height = 36
+                }
                     );
             }
 
@@ -172,7 +165,7 @@ namespace CBRE.Editor
         #region Updates
         private String GetCurrentVersion()
         {
-            var info = typeof (Editor).Assembly.GetName().Version;
+            var info = typeof(Editor).Assembly.GetName().Version;
             return info.ToString();
         }
         #endregion
@@ -199,7 +192,7 @@ namespace CBRE.Editor
 
         private void EditorClosing(object sender, FormClosingEventArgs e)
         {
-            foreach(var doc in DocumentManager.Documents.ToArray())
+            foreach (var doc in DocumentManager.Documents.ToArray())
             {
                 if (!PromptForChanges(doc))
                 {
@@ -520,7 +513,7 @@ namespace CBRE.Editor
             StatusSelectionLabel.Text = "";
             if (DocumentManager.CurrentDocument == null) return;
 
-            var sel  = DocumentManager.CurrentDocument.Selection.GetSelectedParents().ToList();
+            var sel = DocumentManager.CurrentDocument.Selection.GetSelectedParents().ToList();
             var count = sel.Count;
             if (count == 0)
             {
@@ -636,14 +629,14 @@ namespace CBRE.Editor
             var screen = Screen.FromControl(this);
             var area = screen.Bounds;
 
-            using (var qf = new QuickForm("Select screenshot size") {UseShortcutKeys = true}
+            using (var qf = new QuickForm("Select screenshot size") { UseShortcutKeys = true }
                 .NumericUpDown("Width", 640, 5000, 0, area.Width)
                 .NumericUpDown("Height", 480, 5000, 0, area.Height)
                 .OkCancel())
             {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
-                var shot = ViewportManager.CreateScreenshot(focused, (int) qf.Decimal("Width"), (int) qf.Decimal("Height"));
+                var shot = ViewportManager.CreateScreenshot(focused, (int)qf.Decimal("Width"), (int)qf.Decimal("Height"));
                 if (shot == null) return;
 
                 var ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
@@ -713,7 +706,7 @@ namespace CBRE.Editor
                 _jumpList.Refresh();
             }
             var recents = SettingsManager.RecentFiles.OrderBy(x => x.Order).Where(x => x.Location != path).Take(9).ToList();
-            recents.Insert(0, new RecentFile { Location = path});
+            recents.Insert(0, new RecentFile { Location = path });
             for (var i = 0; i < recents.Count; i++)
             {
                 recents[i].Order = i;

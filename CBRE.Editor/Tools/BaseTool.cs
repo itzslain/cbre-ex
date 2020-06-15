@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.UI;
 using CBRE.Extensions;
 using CBRE.Settings;
 using CBRE.UI;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools
 {
@@ -59,7 +59,7 @@ namespace CBRE.Editor.Tools
             var lines = objects.SelectMany(x =>
             {
                 if (x is Entity) return x.BoundingBox.GetBoxLines();
-                if (x is Solid) return ((Solid) x).Faces.SelectMany(f => f.GetLines());
+                if (x is Solid) return ((Solid)x).Faces.SelectMany(f => f.GetLines());
                 return new Line[0];
             }).Select(x => new Line(vp.Flatten(x.Start), vp.Flatten(x.End))).ToList();
 

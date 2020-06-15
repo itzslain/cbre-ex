@@ -1,14 +1,8 @@
-﻿using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
+﻿using CBRE.Editor.Documents;
 using CBRE.Settings;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -30,7 +24,7 @@ namespace CBRE.Editor.Compiling
 
         private void textureDims_LostFocus(object sender, EventArgs e)
         {
-            int dims = -1; int.TryParse(((TextBox)sender).Text,out dims);
+            int dims = -1; int.TryParse(((TextBox)sender).Text, out dims);
             if (dims >= 512 && dims <= 4096)
             {
                 LightmapConfig.TextureDims = dims;
@@ -104,7 +98,7 @@ namespace CBRE.Editor.Compiling
         private void ambientRed_LostFocus(object sender, EventArgs e)
         {
             int r = -1; int.TryParse(((TextBox)sender).Text, out r);
-            if (r >=0 && r<=255)
+            if (r >= 0 && r <= 255)
             {
                 LightmapConfig.AmbientColorR = r;
                 ambientColorBox.BackColor = Color.FromArgb(LightmapConfig.AmbientColorR, LightmapConfig.AmbientColorG, LightmapConfig.AmbientColorB);
@@ -257,7 +251,7 @@ namespace CBRE.Editor.Compiling
                         thread.Abort();
                     }
                 }
-                
+
                 ProgressLog.Invoke((MethodInvoker)(() => ProgressLog.AppendText("\nCancelled by the user")));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
             }
@@ -280,7 +274,7 @@ namespace CBRE.Editor.Compiling
             }
         }
 
-        private void formClosing(object sender,FormClosingEventArgs args)
+        private void formClosing(object sender, FormClosingEventArgs args)
         {
             if (actionThread != null && actionThread.IsAlive)
             {

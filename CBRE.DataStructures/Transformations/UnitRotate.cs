@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Extensions;
+using System;
+using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.Transformations
 {
@@ -20,7 +20,7 @@ namespace CBRE.DataStructures.Transformations
         protected UnitRotate(SerializationInfo info, StreamingContext context)
         {
             Rotation = info.GetInt32("Rotation");
-            Axis = (Line) info.GetValue("Axis", typeof (Line));
+            Axis = (Line)info.GetValue("Axis", typeof(Line));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

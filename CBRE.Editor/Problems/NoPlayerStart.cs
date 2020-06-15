@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Actions.MapObjects.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Problems
 {
@@ -20,12 +20,12 @@ namespace CBRE.Editor.Problems
         public IAction Fix(Problem problem)
         {
             return new Create(problem.Map.WorldSpawn.ID, new Entity(problem.Map.IDGenerator.GetNextObjectID())
-                                  {
-                                      EntityData = new EntityData { Name = "info_player_start" },
-                                      ClassName = "info_player_start",
-                                      Colour = Colour.GetDefaultEntityColour(),
-                                      Origin = Coordinate.Zero
-                                  });
+            {
+                EntityData = new EntityData { Name = "info_player_start" },
+                ClassName = "info_player_start",
+                Colour = Colour.GetDefaultEntityColour(),
+                Origin = Coordinate.Zero
+            });
         }
     }
 }

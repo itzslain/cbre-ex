@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
 using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
@@ -34,9 +26,12 @@ using CBRE.QuickForms;
 using CBRE.QuickForms.Items;
 using CBRE.Settings;
 using CBRE.UI;
-using CBRE.Providers;
-using CBRE.Providers.Map;
-using Path = System.IO.Path;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
+using System.Windows.Forms;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
 namespace CBRE.Editor.Documents
@@ -428,7 +423,7 @@ namespace CBRE.Editor.Documents
                 }
             }
 
-            var qf = new QuickForm("Select wall width") { UseShortcutKeys = true } .NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
+            var qf = new QuickForm("Select wall width") { UseShortcutKeys = true }.NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
 
             decimal width;
             do
@@ -475,7 +470,7 @@ namespace CBRE.Editor.Documents
             var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
 
             Entity existing = null;
-                
+
             if (entities.Count == 1)
             {
                 var result = new QuickForms.QuickForm("Existing Entity in Selection") { Width = 400 }
@@ -494,9 +489,9 @@ namespace CBRE.Editor.Documents
             }
             else if (entities.Count > 1)
             {
-                var qf = new QuickForms.QuickForm("Multiple Entities Selected") {Width = 400}
+                var qf = new QuickForms.QuickForm("Multiple Entities Selected") { Width = 400 }
                     .Label("You have selected multiple entities, which one would you like to keep?")
-                    .ComboBox("Entity", entities.Select(x => new EntityContainer {Entity = x}))
+                    .ComboBox("Entity", entities.Select(x => new EntityContainer { Entity = x }))
                     .OkCancel();
                 var result = qf.ShowDialog();
                 if (result == DialogResult.OK)
@@ -535,7 +530,7 @@ namespace CBRE.Editor.Documents
 
                 // todo: get rid of all the other entities...
             }
-                
+
             var reparent = _document.Selection.GetSelectedParents().Where(x => x != existing).ToList();
             ac.Add(new Reparent(existing.ID, reparent));
             ac.Add(new Actions.MapObjects.Selection.Select(existing));
@@ -986,13 +981,13 @@ namespace CBRE.Editor.Documents
 
         public void VisgroupCreateNew()
         {
-            using (var qf = new QuickForm("Create New Visgroup") {UseShortcutKeys = true}.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel())
+            using (var qf = new QuickForm("Create New Visgroup") { UseShortcutKeys = true }.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel())
             {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
                 var ids = _document.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.ID).ToList();
                 var id = Math.Max(1, ids.Any() ? ids.Max() + 1 : 1);
-                
+
                 var name = qf.String("Name");
                 if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString(CultureInfo.InvariantCulture);
 
@@ -1003,10 +998,10 @@ namespace CBRE.Editor.Documents
                     Name = name,
                     Visible = true
                 };
-                IAction action = new CreateEditDeleteVisgroups(new[] {vg}, new Visgroup[0], new Visgroup[0]);
+                IAction action = new CreateEditDeleteVisgroups(new[] { vg }, new Visgroup[0], new Visgroup[0]);
                 if (qf.Bool("Add selection to visgroup") && !_document.Selection.IsEmpty())
                 {
-                    action = new ActionCollection(action, new EditObjectVisgroups(_document.Selection.GetSelectedObjects(), new[] {id}, new int[0]));
+                    action = new ActionCollection(action, new EditObjectVisgroups(_document.Selection.GetSelectedObjects(), new[] { id }, new int[0]));
                 }
                 _document.PerformAction("Create visgroup", action);
             }

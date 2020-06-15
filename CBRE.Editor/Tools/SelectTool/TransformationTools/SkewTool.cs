@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Windows.Forms;
-using OpenTK;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.UI;
+using OpenTK;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.SelectTool.TransformationTools
 {

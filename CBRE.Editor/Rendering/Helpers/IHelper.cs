@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.UI;
+using System.Collections.Generic;
 
 namespace CBRE.Editor.Rendering.Helpers
 {

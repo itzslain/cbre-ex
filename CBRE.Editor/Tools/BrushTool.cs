@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Actions.MapObjects.Operations;
 using CBRE.Editor.Actions.MapObjects.Selection;
+using CBRE.Editor.Brushes;
 using CBRE.Editor.Properties;
-using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Rendering.Immediate;
 using CBRE.Editor.UI;
 using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
-using CBRE.Editor.Brushes;
+using OpenTK.Graphics.OpenGL;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Select = CBRE.Settings.Select;
 
 namespace CBRE.Editor.Tools

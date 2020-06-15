@@ -41,7 +41,7 @@ namespace CBRE.DataStructures.Geometric
 
         protected QuaternionF(SerializationInfo info, StreamingContext context)
         {
-            Vector = (CoordinateF) info.GetValue("Vector", typeof (CoordinateF));
+            Vector = (CoordinateF)info.GetValue("Vector", typeof(CoordinateF));
             Scalar = info.GetSingle("Scalar");
         }
 
@@ -53,7 +53,7 @@ namespace CBRE.DataStructures.Geometric
 
         public float Magnitude()
         {
-            return (float) Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2) + Math.Pow(W, 2));
+            return (float)Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2) + Math.Pow(W, 2));
         }
 
         public QuaternionF Normalise()
@@ -69,7 +69,7 @@ namespace CBRE.DataStructures.Geometric
 
         public QuaternionF Inverse()
         {
-            var lengthSq = (float) (Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2) + Math.Pow(W, 2));
+            var lengthSq = (float)(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2) + Math.Pow(W, 2));
             if (Math.Abs(lengthSq - 0) > 0.0001)
             {
                 var i = 1f / lengthSq;
@@ -86,8 +86,8 @@ namespace CBRE.DataStructures.Geometric
         public Tuple<CoordinateF, float> GetAxisAngle()
         {
             var q = W > 1 ? Normalise() : this;
-            var angle = 2f * (float) Math.Acos(q.W);
-            var denom = (float) Math.Sqrt(1 - q.W * q.W);
+            var angle = 2f * (float)Math.Acos(q.W);
+            var denom = (float)Math.Sqrt(1 - q.W * q.W);
             var coord = denom <= 0.0001 ? CoordinateF.UnitX : q.Vector / denom;
             return Tuple.Create(coord, angle);
         }
@@ -95,20 +95,20 @@ namespace CBRE.DataStructures.Geometric
         public CoordinateF GetEulerAngles(bool homogenous = true)
         {
             // http://willperone.net/Code/quaternion.php
-            var sqw = W*W;
-            var sqx = X*X;
-            var sqy = Y*Y;
-            var sqz = Z*Z;
+            var sqw = W * W;
+            var sqx = X * X;
+            var sqy = Y * Y;
+            var sqz = Z * Z;
 
             return homogenous
                        ? new CoordinateF(
-                             (float) Math.Atan2(2 * (X * Y + Z * W), sqx - sqy - sqz + sqw),
-                             (float) Math.Asin(-2 * (X * Z - Y * W)),
-                             (float) Math.Atan2(2 * (Y * Z + X * W), -sqx - sqy + sqz + sqw))
+                             (float)Math.Atan2(2 * (X * Y + Z * W), sqx - sqy - sqz + sqw),
+                             (float)Math.Asin(-2 * (X * Z - Y * W)),
+                             (float)Math.Atan2(2 * (Y * Z + X * W), -sqx - sqy + sqz + sqw))
                        : new CoordinateF(
-                             (float) Math.Atan2(2 * (Z * Y + X * W), 1 - 2 * (sqx + sqy)),
-                             (float) Math.Asin(-2 * (X * Z - Y * W)),
-                             (float) Math.Atan2(2 * (X * Y + Z * W), 1 - 2 * (sqy + sqz)));
+                             (float)Math.Atan2(2 * (Z * Y + X * W), 1 - 2 * (sqx + sqy)),
+                             (float)Math.Asin(-2 * (X * Z - Y * W)),
+                             (float)Math.Atan2(2 * (X * Y + Z * W), 1 - 2 * (sqy + sqz)));
         }
 
         public MatrixF GetMatrix()
@@ -227,12 +227,12 @@ namespace CBRE.DataStructures.Geometric
         {
             // http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToQuaternionF/index.htm
             angles = angles / 2;
-            var sy = (float) Math.Sin(angles.Z);
-            var sp = (float) Math.Sin(angles.Y);
-            var sr = (float) Math.Sin(angles.X);
-            var cy = (float) Math.Cos(angles.Z);
-            var cp = (float) Math.Cos(angles.Y);
-            var cr = (float) Math.Cos(angles.X);
+            var sy = (float)Math.Sin(angles.Z);
+            var sp = (float)Math.Sin(angles.Y);
+            var sr = (float)Math.Sin(angles.X);
+            var cy = (float)Math.Cos(angles.Z);
+            var cp = (float)Math.Cos(angles.Y);
+            var cr = (float)Math.Cos(angles.X);
             return new QuaternionF(sr * cp * cy - cr * sp * sy,
                                   cr * sp * cy + sr * cp * sy,
                                   cr * cp * sy - sr * sp * cy,
@@ -290,11 +290,11 @@ namespace CBRE.DataStructures.Geometric
             if (cosHalfAngle < 0.99)
             {
                 // do proper slerp for big angles
-                var halfAngle = (float) Math.Acos(cosHalfAngle);
+                var halfAngle = (float)Math.Acos(cosHalfAngle);
                 var sinHalfAngle = (float)Math.Sin(halfAngle);
                 var oneOverSinHalfAngle = 1 / sinHalfAngle;
-                blendA = (float) Math.Sin(halfAngle * (1 - blend)) * oneOverSinHalfAngle;
-                blendB = (float) Math.Sin(halfAngle * blend) * oneOverSinHalfAngle;
+                blendA = (float)Math.Sin(halfAngle * (1 - blend)) * oneOverSinHalfAngle;
+                blendB = (float)Math.Sin(halfAngle * blend) * oneOverSinHalfAngle;
             }
             else
             {

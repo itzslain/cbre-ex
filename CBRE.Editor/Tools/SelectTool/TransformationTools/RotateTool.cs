@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using CBRE.Editor.Documents;
+﻿using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.Extensions;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.SelectTool.TransformationTools
 {

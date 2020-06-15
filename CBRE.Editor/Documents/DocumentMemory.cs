@@ -1,11 +1,10 @@
+using CBRE.DataStructures.Geometric;
+using CBRE.Editor.Tools.SelectTool;
+using CBRE.UI;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using OpenTK;
-using CBRE.DataStructures.Geometric;
-using CBRE.Editor.Tools;
-using CBRE.Editor.Tools.SelectTool;
-using CBRE.UI;
 
 namespace CBRE.Editor.Documents
 {
@@ -17,14 +16,14 @@ namespace CBRE.Editor.Documents
         public Type SelectedTool { get; set; }
         public PointF SplitterPosition { get; set; }
 
-        private Dictionary<string, object> _store; 
+        private Dictionary<string, object> _store;
 
         public DocumentMemory()
         {
             _positions = new Dictionary<Viewport2D.ViewDirection, Tuple<Coordinate, decimal>>();
             _cameraLocation = new Vector3(0, 0, 0);
             _cameraLookat = new Vector3(1, 0, 0);
-            SelectedTool = typeof (SelectTool);
+            SelectedTool = typeof(SelectTool);
             _store = new Dictionary<string, object>();
         }
 
@@ -86,11 +85,11 @@ namespace CBRE.Editor.Documents
             _store.Add(name, state);
         }
 
-        public T Get<T>(string name, T def = default (T))
+        public T Get<T>(string name, T def = default(T))
         {
             if (!_store.ContainsKey(name)) return def;
             var obj = _store[name];
-            return obj is T ? (T) obj : def;
+            return obj is T ? (T)obj : def;
         }
     }
 }

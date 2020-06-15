@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using CBRE.DataStructures.Geometric;
+using System.Collections.Generic;
 
 namespace CBRE.DataStructures.Models
 {
@@ -24,7 +24,7 @@ namespace CBRE.DataStructures.Models
         {
             Location = location;
             Normal = normal;
-            BoneWeightings = new List<BoneWeighting> {new BoneWeighting(bone, 1)};
+            BoneWeightings = new List<BoneWeighting> { new BoneWeighting(bone, 1) };
             TextureU = textureU;
             TextureV = textureV;
         }

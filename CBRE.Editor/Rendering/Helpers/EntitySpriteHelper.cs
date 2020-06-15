@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Extensions;
 using CBRE.Graphics.Helpers;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace CBRE.Editor.Rendering.Helpers
 {
@@ -23,7 +23,7 @@ namespace CBRE.Editor.Rendering.Helpers
 
         public bool IsValidFor(MapObject o)
         {
-            return !CBRE.Settings.View.DisableSpriteRendering && o is Entity && ((Entity) o).HasSprite();
+            return !CBRE.Settings.View.DisableSpriteRendering && o is Entity && ((Entity)o).HasSprite();
         }
 
         public void BeforeRender2D(Viewport2D viewport)
@@ -52,7 +52,7 @@ namespace CBRE.Editor.Rendering.Helpers
         {
             var right = vp.Camera.GetRight();
             var up = Vector3.Cross(right, (vp.Camera.LookAt - vp.Camera.Location).Normalized());
-            var entity = (Entity) o;
+            var entity = (Entity)o;
 
             var orig = new Vector3((float)entity.Origin.X, (float)entity.Origin.Y, (float)entity.Origin.Z);
             if (entity.IsSelected)

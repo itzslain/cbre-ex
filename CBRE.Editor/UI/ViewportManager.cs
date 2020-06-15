@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Rendering;
 using CBRE.Editor.UI.Layout;
 using CBRE.Graphics.Helpers;
 using CBRE.Graphics.Renderables;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -368,7 +368,7 @@ namespace CBRE.Editor.UI
             if (parent == null) return null;
 
             Viewports.Remove(viewport);
-            
+
             var newViewport = Create2D(direction);
             SubscribeExceptions(newViewport);
 
@@ -415,7 +415,7 @@ namespace CBRE.Editor.UI
             form.Width = width;
             form.Height = height;
             form.WindowState = FormWindowState.Maximized;
-            var panel = new Panel {Width = width, Height = height};
+            var panel = new Panel { Width = width, Height = height };
             form.Controls.Add(panel);
             panel.Controls.Add(viewport);
 

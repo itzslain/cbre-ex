@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using System.Runtime.InteropServices;
-using System.Threading;
-using CBRE.DataStructures.Transformations;
-using System.IO;
-using CBRE.Common;
-using System.Windows.Forms;
 using CBRE.Editor.Documents;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Compiling
 {
@@ -40,28 +34,28 @@ namespace CBRE.Editor.Compiling
             Spotlight = 6,
             Prop = 7
         };
-        
+
         enum RM2TextureLoadFlag
         {
             Opaque = 1,
             Alpha = 2
         };
-        
-        private static void WriteByteString(BinaryWriter writer,string str)
+
+        private static void WriteByteString(BinaryWriter writer, string str)
         {
             writer.Write((byte)str.Length);
-            for (int i=0;i<str.Length;i++)
+            for (int i = 0; i < str.Length; i++)
             {
                 writer.Write((byte)str[i]);
             }
         }
-        
-        public static void SaveToFile(string filename,Document document,ExportForm form)
+
+        public static void SaveToFile(string filename, Document document, ExportForm form)
         {
             var map = document.Map;
             string filepath = System.IO.Path.GetDirectoryName(filename);
             filename = System.IO.Path.GetFileName(filename);
-            filename = System.IO.Path.GetFileNameWithoutExtension(filename)+".rm2";
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename) + ".rm2";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
             List<Lightmap.LMFace> faces; int lmCount;
@@ -78,14 +72,14 @@ namespace CBRE.Editor.Compiling
                 return true;
             });
 
-            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name=="tooltextures/invisible_collision");
+            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name == "tooltextures/invisible_collision");
 
             string dir = CBRE.Settings.Directories.TextureDir;
             if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
             Lightmap.Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, true);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
-            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName!=null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
+            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
 
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
 
@@ -113,7 +107,8 @@ namespace CBRE.Editor.Compiling
                         if (connection < i) continue;
                         LineF line1 = new LineF(waypoints[i].Location, waypoints[connection].Location);
                         LineF line2 = new LineF(waypoints[connection].Location, waypoints[i].Location);
-                        if (face.GetIntersectionPoint(line1) != null || face.GetIntersectionPoint(line2) != null) {
+                        if (face.GetIntersectionPoint(line1) != null || face.GetIntersectionPoint(line2) != null)
+                        {
                             waypoints[i].Connections.RemoveAt(j);
                             j--;
                         }
@@ -135,12 +130,12 @@ namespace CBRE.Editor.Compiling
             byte flag = (byte)RM2TextureLoadFlag.Opaque;
             foreach (Lightmap.LMFace face in faces)
             {
-                if (!textures.Any(x => x.Item1==face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture,flag));
+                if (!textures.Any(x => x.Item1 == face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture, flag));
             }
             flag = (byte)RM2TextureLoadFlag.Alpha;
             foreach (Face face in transparentFaces)
             {
-                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte>(face.Texture.Name,flag));
+                if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte>(face.Texture.Name, flag));
             }
 
             br.Write((byte)RM2Chunks.Textures);
@@ -161,9 +156,9 @@ namespace CBRE.Editor.Compiling
             //into several for collision optimization.
             //Making each face its own collision object is too slow, and merging all of
             //them together is not optimal either.
-            for (int i=0;i<textures.Count;i++)
+            for (int i = 0; i < textures.Count; i++)
             {
-                for (int lmInd=0;lmInd < lmCount;lmInd++)
+                for (int lmInd = 0; lmInd < lmCount; lmInd++)
                 {
                     IEnumerable<Lightmap.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1 && x.LmIndex == lmInd);
                     vertCount = 0;
@@ -264,7 +259,7 @@ namespace CBRE.Editor.Compiling
                     foreach (Face face in tTrptFaces)
                     {
                         List<uint> indices = face.GetTriangleIndices().ToList();
-                        for (int k=0;k<indices.Count;k+=3)
+                        for (int k = 0; k < indices.Count; k += 3)
                         {
                             //hardcoded double sided surfaces
                             br.Write((short)indices[k]);
@@ -292,7 +287,7 @@ namespace CBRE.Editor.Compiling
                 }
 
                 br.Write((byte)RM2Chunks.InvisibleGeometry);
-                
+
                 if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
                 br.Write((ushort)vertCount);
                 foreach (Face face in invisibleCollisionFaces)

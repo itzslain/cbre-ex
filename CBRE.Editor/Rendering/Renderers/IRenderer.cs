@@ -1,11 +1,9 @@
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
+using CBRE.UI;
+using OpenTK;
 using System;
 using System.Collections.Generic;
-using OpenTK;
-using CBRE.DataStructures.MapObjects;
-using CBRE.DataStructures.Models;
-using CBRE.Editor.Documents;
-using CBRE.Graphics.Renderables;
-using CBRE.UI;
 
 namespace CBRE.Editor.Rendering.Renderers
 {

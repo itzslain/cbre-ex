@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.Transformations
 {
@@ -18,8 +18,8 @@ namespace CBRE.DataStructures.Transformations
 
         protected UnitScale(SerializationInfo info, StreamingContext context)
         {
-            Scalar = (Coordinate) info.GetValue("Scalar", typeof (Coordinate));
-            Origin = (Coordinate) info.GetValue("Origin", typeof (Coordinate));
+            Scalar = (Coordinate)info.GetValue("Scalar", typeof(Coordinate));
+            Origin = (Coordinate)info.GetValue("Origin", typeof(Coordinate));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

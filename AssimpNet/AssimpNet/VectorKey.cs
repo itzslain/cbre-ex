@@ -107,9 +107,9 @@ namespace Assimp
         /// </returns>
         public override bool Equals(object obj)
         {
-            if(obj is VectorKey)
+            if (obj is VectorKey)
             {
-                return Equals((VectorKey) obj);
+                return Equals((VectorKey)obj);
             }
             return false;
         }

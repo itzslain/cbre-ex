@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using CBRE.Common;
 using CBRE.Editor.Brushes.Controls;
 using CBRE.Extensions;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace CBRE.Editor.Brushes
 {
@@ -58,7 +58,7 @@ namespace CBRE.Editor.Brushes
         {
             var wallWidth = _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
-            var numSides = (int) _numSides.GetValue();
+            var numSides = (int)_numSides.GetValue();
             if (numSides < 3) yield break;
 
             // Very similar to the cylinder, except we have multiple solids this time

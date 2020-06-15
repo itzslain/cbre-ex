@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations
 {
@@ -98,7 +97,7 @@ namespace CBRE.Editor.Actions.MapObjects.Operations
             if (_textureOrIdChange)
             {
                 document.Map.UpdateAutoVisgroups(faces.Where(x => x != null).Select(x => x.Parent).Distinct(), false);
-                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);  
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
                 Mediator.Publish(EditorMediator.VisgroupsChanged);
             }
             else
@@ -110,7 +109,7 @@ namespace CBRE.Editor.Actions.MapObjects.Operations
         public void Perform(Document document)
         {
             _objects.ForEach(x => x.Perform(document));
-            
+
             var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
             if (_textureOrIdChange)
             {

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CBRE.Graphics.Helpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using CBRE.Graphics.Helpers;
+using System;
 
 namespace CBRE.Graphics
 {
@@ -39,7 +36,7 @@ namespace CBRE.Graphics
             var rot = Math.Atan2(temp.Y, temp.X);
             if (rot < 0) rot += 2 * Math.PI;
             if (rot > 2 * Math.PI) rot = rot % (2 * Math.PI);
-            return (decimal) rot;
+            return (decimal)rot;
         }
 
         public void SetRotation(decimal rotation)
@@ -57,7 +54,7 @@ namespace CBRE.Graphics
             var temp = (LookAt - Location);
             temp.Normalize();
             var elev = Math.Acos(temp.Z);
-            return (decimal) elev;
+            return (decimal)elev;
         }
 
         public void SetElevation(decimal elevation)
@@ -73,7 +70,7 @@ namespace CBRE.Graphics
 
         public void Pan(decimal degrees)
         {
-            var rad = degrees * ((decimal) Math.PI / 180);
+            var rad = degrees * ((decimal)Math.PI / 180);
             var rot = GetRotation();
             SetRotation(rot + rad);
         }

@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations
 {
@@ -53,7 +53,7 @@ namespace CBRE.Editor.Actions.MapObjects.Operations
                     // Clone and scale the solid
                     var scale = target.ComponentDivide(current);
                     var transform = new UnitScale(scale, origin);
-                    var carver = (Solid) solid.Clone();
+                    var carver = (Solid)solid.Clone();
                     carver.Transform(transform, document.Map.GetTransformFlags());
 
                     // For a negative width, we want the original solid to be the inside instead

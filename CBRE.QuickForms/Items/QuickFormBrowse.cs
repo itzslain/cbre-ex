@@ -38,10 +38,10 @@ namespace CBRE.QuickForms.Items
             t.Size = new Size(textBoxWidth, h);
             controls.Add(t);
 
-            var b = new Button {Text = "Browse", Width = 60, Anchor = AnchorStyles.Top | AnchorStyles.Right};
+            var b = new Button { Text = "Browse", Width = 60, Anchor = AnchorStyles.Top | AnchorStyles.Right };
             Location(b, qf, false);
             b.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - b.Width, b.Location.Y);
-            b.Click += (s,e) => ShowBrowseDialog(t);
+            b.Click += (s, e) => ShowBrowseDialog(t);
             controls.Add(b);
 
             return controls;
@@ -49,7 +49,7 @@ namespace CBRE.QuickForms.Items
 
         private void ShowBrowseDialog(Control textBox)
         {
-            using (var ofd = new OpenFileDialog {Filter = _filter, FileName = textBox.Text})
+            using (var ofd = new OpenFileDialog { Filter = _filter, FileName = textBox.Text })
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {

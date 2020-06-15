@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CBRE.DataStructures.MapObjects;
+﻿using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.UI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Rendering.Helpers
 {
@@ -18,7 +17,7 @@ namespace CBRE.Editor.Rendering.Helpers
     {
         private readonly Document _document;
         private readonly Dictionary<IHelper, List<MapObject>> _helperCache;
-        private List<IHelper> _helpers; 
+        private List<IHelper> _helpers;
 
         public HelperManager(Document document)
         {

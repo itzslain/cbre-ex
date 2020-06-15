@@ -1,8 +1,7 @@
-﻿using System;
+﻿using CBRE.Graphics.Renderables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using CBRE.Graphics.Renderables;
-using Enumerable = System.Linq.Enumerable;
 
 namespace CBRE.Graphics
 {
@@ -42,7 +41,7 @@ namespace CBRE.Graphics
 
         public T FindRenderable<T>() where T : IRenderable
         {
-            return Renderables.Where(r => typeof (T) == r.GetType()).Select(r => (T)r).FirstOrDefault();
+            return Renderables.Where(r => typeof(T) == r.GetType()).Select(r => (T)r).FirstOrDefault();
         }
 
         public void Dispose()

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CBRE.Common.Easings;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.Transformations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.Common.Easings;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.Transformations;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -16,7 +16,7 @@ namespace CBRE.DataStructures.MapObjects
         public decimal Elevation { get; set; }
         public bool SubDiv { get; set; }
         public DisplacementPoint[,] Points { get; set; }
-        public int Resolution { get { return (int) Math.Pow(2, Power); } }
+        public int Resolution { get { return (int)Math.Pow(2, Power); } }
 
         public Displacement(long id) : base(id)
         {
@@ -29,10 +29,10 @@ namespace CBRE.DataStructures.MapObjects
         protected Displacement(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             Power = info.GetInt32("Power");
-            StartPosition = (Coordinate) info.GetValue("StartPosition", typeof (Coordinate));
+            StartPosition = (Coordinate)info.GetValue("StartPosition", typeof(Coordinate));
             Elevation = info.GetDecimal("Elevation");
             SubDiv = info.GetBoolean("SubDiv");
-            Points = (DisplacementPoint[,]) info.GetValue("Points", typeof (DisplacementPoint[,]));
+            Points = (DisplacementPoint[,])info.GetValue("Points", typeof(DisplacementPoint[,]));
             Points.OfType<DisplacementPoint>().ToList().ForEach(x => x.Parent = this);
         }
 
@@ -95,7 +95,7 @@ namespace CBRE.DataStructures.MapObjects
         /// <returns>True if the given object contains a sewable displacement.</returns>
         private bool HasSewableDisplacement(MapObject obj)
         {
-            return (obj is Solid) && ((Solid) obj).Faces.OfType<Displacement>().Any(IsSewableTo);
+            return (obj is Solid) && ((Solid)obj).Faces.OfType<Displacement>().Any(IsSewableTo);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace CBRE.DataStructures.MapObjects
         public void SewTo(IEnumerable<Displacement> displacements, DisplacementSewType sewType,
             int numPointsFromEdgeToMove, Easing easingFunction)
         {
-            
+
         }
 
         public void CalculatePoints()
@@ -204,7 +204,7 @@ namespace CBRE.DataStructures.MapObjects
 
         public override IEnumerable<uint> GetTriangleIndices()
         {
-            var res = (uint) Resolution + 1;
+            var res = (uint)Resolution + 1;
             for (uint i = 0; i < res - 1; i++)
             {
                 var flip = (i % 2 != 0);
@@ -322,7 +322,7 @@ namespace CBRE.DataStructures.MapObjects
             base.Transform(transform, flags);
         }
 
-        public override Coordinate GetIntersectionPoint(Line line, bool ignoreDirection=false, bool ignoreSegment=false)
+        public override Coordinate GetIntersectionPoint(Line line, bool ignoreDirection = false, bool ignoreSegment = false)
         {
             // Return the first intersection we find, don't care where it is
             return GetTriangles()

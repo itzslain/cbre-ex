@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
-using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.Tools.VMTool
 {

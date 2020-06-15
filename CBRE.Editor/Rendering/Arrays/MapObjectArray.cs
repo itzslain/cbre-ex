@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using CBRE.DataStructures.Models;
 using CBRE.Editor.Extensions;
 using CBRE.Graphics.Arrays;
 using CBRE.Graphics.Helpers;
-using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using GL = OpenTK.Graphics.OpenGL.GL;
 
 namespace CBRE.Editor.Rendering.Arrays
@@ -55,7 +53,7 @@ namespace CBRE.Editor.Rendering.Arrays
             }
             foreach (var subset in GetSubsets<Entity>(Textured))
             {
-                var e = (Entity) subset.Instance;
+                var e = (Entity)subset.Instance;
                 if (!CBRE.Settings.View.DisableModelRendering && e.HasModel() && e.HideDistance() > (location - e.Origin).VectorMagnitude()) continue;
                 Render(context, PrimitiveType.Triangles, subset);
             }
@@ -79,7 +77,7 @@ namespace CBRE.Editor.Rendering.Arrays
                 select subset;
             foreach (var subset in sorted)
             {
-                var tex = ((Face) subset.Instance).Texture;
+                var tex = ((Face)subset.Instance).Texture;
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();
                 isTextured(tex.Texture != null);

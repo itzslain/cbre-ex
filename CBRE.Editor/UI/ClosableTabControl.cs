@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
@@ -49,7 +45,7 @@ namespace CBRE.Editor.UI
 
         protected override void OnControlAdded(ControlEventArgs e)
         {
-            ((TabPage) e.Control).ImageIndex = 0;
+            ((TabPage)e.Control).ImageIndex = 0;
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -151,7 +147,7 @@ namespace CBRE.Editor.UI
                 }
             }
             // Text
-            var textWidth = (int) g.MeasureString(tab.Text, Font).Width;
+            var textWidth = (int)g.MeasureString(tab.Text, Font).Width;
             var textLeft = rect.X + 14;
             var textRight = rect.Right - 26;
             var textRect = new Rectangle(textLeft + (textRight - textLeft - textWidth) / 2, rect.Y + 4, rect.Width - 26, rect.Height - 5);

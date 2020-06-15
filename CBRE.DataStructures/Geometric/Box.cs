@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CBRE.DataStructures.Transformations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Transformations;
 
 namespace CBRE.DataStructures.Geometric
 {
@@ -97,8 +97,8 @@ namespace CBRE.DataStructures.Geometric
 
         protected Box(SerializationInfo info, StreamingContext context)
         {
-            Start = (Coordinate) info.GetValue("Start", typeof (Coordinate));
-            End = (Coordinate) info.GetValue("End", typeof (Coordinate));
+            Start = (Coordinate)info.GetValue("Start", typeof(Coordinate));
+            End = (Coordinate)info.GetValue("End", typeof(Coordinate));
             Center = (Start + End) / 2;
         }
 

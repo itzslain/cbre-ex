@@ -86,7 +86,7 @@ namespace CBRE.Editor.UI.Sidebar
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             // todo: get proper focus here
-            ScrollBar.Value = Math.Max(0, Math.Min(ScrollBar.Value + -ScrollBar.SmallChange*e.Delta/Math.Abs(e.Delta), ScrollBar.Maximum - ScrollBar.LargeChange + 1));
+            ScrollBar.Value = Math.Max(0, Math.Min(ScrollBar.Value + -ScrollBar.SmallChange * e.Delta / Math.Abs(e.Delta), ScrollBar.Maximum - ScrollBar.LargeChange + 1));
             base.OnMouseWheel(e);
         }
     }

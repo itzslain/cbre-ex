@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.MapObjects;
@@ -11,7 +6,11 @@ using CBRE.Editor.Actions.MapObjects.Entities;
 using CBRE.Editor.Actions.Visgroups;
 using CBRE.Editor.UI.ObjectProperties.SmartEdit;
 using CBRE.QuickForms;
-using CBRE.Settings.Models;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.ObjectProperties
 {
@@ -50,7 +49,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             Objects = new List<MapObject>();
             _smartEditControls = new Dictionary<VariableType, SmartEditControl>();
 
-            _dumbEditControl = new DumbEditControl {Document = Document};
+            _dumbEditControl = new DumbEditControl { Document = Document };
             _dumbEditControl.ValueChanged += PropertyValueChanged;
             _dumbEditControl.NameChanged += PropertyNameChanged;
 
@@ -67,10 +66,10 @@ namespace CBRE.Editor.UI.ObjectProperties
                 .Where(x => x.GetCustomAttributes(typeof(SmartEditAttribute), false).Any());
             foreach (var type in types)
             {
-                var attrs = type.GetCustomAttributes(typeof (SmartEditAttribute), false);
+                var attrs = type.GetCustomAttributes(typeof(SmartEditAttribute), false);
                 foreach (SmartEditAttribute attr in attrs)
                 {
-                    var inst = (SmartEditControl) Activator.CreateInstance(type);
+                    var inst = (SmartEditControl)Activator.CreateInstance(type);
 
                     inst.Document = Document;
                     inst.ValueChanged += PropertyValueChanged;
@@ -85,8 +84,8 @@ namespace CBRE.Editor.UI.ObjectProperties
         {
             string actionText = null;
             var ac = new ActionCollection();
-            
-            
+
+
             // Check if it's actually editing keyvalues
             if (_values != null)
             {
@@ -263,13 +262,13 @@ namespace CBRE.Editor.UI.ObjectProperties
 
             if (retainCheckStates)
             {
-                 states = VisgroupPanel.GetAllCheckStates();
+                states = VisgroupPanel.GetAllCheckStates();
             }
             else
             {
                 states = Objects.SelectMany(x => x.Visgroups)
                     .GroupBy(x => x)
-                    .Select(x => new {ID = x.Key, Count = x.Count()})
+                    .Select(x => new { ID = x.Key, Count = x.Count() })
                     .Where(g => g.Count > 0)
                     .ToDictionary(g => g.ID, g => g.Count == Objects.Count
                                                       ? CheckState.Checked
@@ -306,7 +305,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             Mediator.UnsubscribeAll(this);
             base.OnClosed(e);
         }
-        
+
         private void RefreshData()
         {
             if (!Objects.Any())
@@ -332,7 +331,7 @@ namespace CBRE.Editor.UI.ObjectProperties
 
             if (!Tabs.TabPages.Contains(ClassInfoTab)) Tabs.TabPages.Insert(0, ClassInfoTab);
             if (!Tabs.TabPages.Contains(FlagsTab)) Tabs.TabPages.Insert(Tabs.TabPages.Count - 1, FlagsTab);
-            
+
             // TODO: don't even add these tabs in the first place
             Tabs.TabPages.Remove(InputsTab);
             Tabs.TabPages.Remove(OutputsTab);
@@ -529,7 +528,7 @@ namespace CBRE.Editor.UI.ObjectProperties
         private void PropertyValueChanged(object sender, string propertyname, string propertyvalue)
         {
             var val = _values.FirstOrDefault(x => x.OriginalKey == propertyname);
-            var li = KeyValuesList.Items.OfType<ListViewItem>().FirstOrDefault(x => ((string) x.Tag) == propertyname);
+            var li = KeyValuesList.Items.OfType<ListViewItem>().FirstOrDefault(x => ((string)x.Tag) == propertyname);
             if (val == null)
             {
                 if (li != null) KeyValuesList.Items.Remove(li);
@@ -577,11 +576,11 @@ namespace CBRE.Editor.UI.ObjectProperties
             if (_populating) return;
             PropertyValueChanged(sender, "angles", Angles.GetAnglePropertyString());
             if (KeyValuesList.SelectedIndices.Count > 0
-                && ((string) KeyValuesList.SelectedItems[0].Tag) == "angles"
+                && ((string)KeyValuesList.SelectedItems[0].Tag) == "angles"
                 && SmartEditControlPanel.Controls.Count > 0
                 && SmartEditControlPanel.Controls[0] is SmartEditControl)
             {
-                ((SmartEditControl) SmartEditControlPanel.Controls[0]).SetProperty("angles", "angles", Angles.GetAnglePropertyString(), null);
+                ((SmartEditControl)SmartEditControlPanel.Controls[0]).SetProperty("angles", "angles", Angles.GetAnglePropertyString(), null);
             }
         }
 

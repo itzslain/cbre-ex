@@ -1,21 +1,15 @@
-﻿using CBRE.DataStructures.Models;
+﻿using Assimp;
 using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.DataStructures.Models;
 using CBRE.FileSystem;
-using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Drawing;
-using Assimp;
-using Assimp.Configs;
-using OpenTK.Graphics.OpenGL;
-using Mesh = Assimp.Mesh;
-using System.Configuration;
-using CBRE.DataStructures.MapObjects;
-using Path = System.IO.Path;
 using Face = CBRE.DataStructures.MapObjects.Face;
-using CBRE.Common;
+using Mesh = Assimp.Mesh;
+using Path = System.IO.Path;
 
 namespace CBRE.Providers.Model
 {
@@ -55,7 +49,7 @@ namespace CBRE.Providers.Model
             var sledgeMesh = new DataStructures.Models.Mesh(0);
             List<MeshVertex> vertices = new List<MeshVertex>();
 
-            for (int i=0;i<assimpMesh.VertexCount;i++)
+            for (int i = 0; i < assimpMesh.VertexCount; i++)
             {
                 var assimpVertex = assimpMesh.Vertices[i];
                 assimpVertex = selfMatrix * assimpVertex;
@@ -101,7 +95,7 @@ namespace CBRE.Providers.Model
             if (scene.MaterialCount > 0)
             {
                 //TODO: handle several textures
-                for (int i=0;i<scene.MaterialCount;i++)
+                for (int i = 0; i < scene.MaterialCount; i++)
                 {
                     if (string.IsNullOrEmpty(scene.Materials[i].TextureDiffuse.FilePath)) { continue; }
                     string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[i].TextureDiffuse.FilePath);
@@ -151,7 +145,7 @@ namespace CBRE.Providers.Model
             return model;
         }
 
-        public static void SaveToFile(string filename,DataStructures.MapObjects.Map map,string format)
+        public static void SaveToFile(string filename, DataStructures.MapObjects.Map map, string format)
         {
             Scene scene = new Scene();
 

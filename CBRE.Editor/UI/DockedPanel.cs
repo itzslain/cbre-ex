@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CBRE.Common;
+using CBRE.Editor.Properties;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CBRE.Common;
-using CBRE.Editor.Properties;
 
 namespace CBRE.Editor.UI
 {
@@ -165,7 +162,7 @@ namespace CBRE.Editor.UI
             if (_resizing)
             {
                 SetDockSize(e);
-            } 
+            }
             else
             {
                 var ba = IsInButtonArea(e);

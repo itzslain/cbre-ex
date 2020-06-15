@@ -52,7 +52,7 @@ namespace CBRE.DataStructures.Geometric
 
         protected MatrixF(SerializationInfo info, StreamingContext context)
         {
-            Values = (float[]) info.GetValue("Values", typeof (float[]));
+            Values = (float[])info.GetValue("Values", typeof(float[]));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -221,8 +221,8 @@ namespace CBRE.DataStructures.Geometric
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (MatrixF)) return false;
-            return Equals((MatrixF) obj);
+            if (obj.GetType() != typeof(MatrixF)) return false;
+            return Equals((MatrixF)obj);
         }
 
         public override int GetHashCode()
@@ -258,7 +258,7 @@ namespace CBRE.DataStructures.Geometric
             return new MatrixF(mat.Values.Select(x => x * scalar).ToArray());
         }
 
-        public static MatrixF operator * (MatrixF left, MatrixF right)
+        public static MatrixF operator *(MatrixF left, MatrixF right)
         {
             return new MatrixF(
                 left.Values[0] * right.Values[0] + left.Values[1] * right.Values[4] + left.Values[2] * right.Values[8] + left.Values[3] * right.Values[12],
@@ -295,8 +295,8 @@ namespace CBRE.DataStructures.Geometric
 
         public static MatrixF Rotation(CoordinateF axis, float angle)
         {
-            var cos = (float) Math.Cos(-angle);
-            var sin = (float) Math.Sin(-angle);
+            var cos = (float)Math.Cos(-angle);
+            var sin = (float)Math.Sin(-angle);
             var t = 1f - cos;
             axis = axis.Normalise();
 
@@ -314,8 +314,8 @@ namespace CBRE.DataStructures.Geometric
 
         public static MatrixF RotationX(float angle)
         {
-            var cos = (float) Math.Cos(angle);
-            var sin = (float) Math.Sin(angle);
+            var cos = (float)Math.Cos(angle);
+            var sin = (float)Math.Sin(angle);
 
             return new MatrixF(1, 0, 0, 0,
                               0, cos, sin, 0,
@@ -325,8 +325,8 @@ namespace CBRE.DataStructures.Geometric
 
         public static MatrixF RotationY(float angle)
         {
-            var cos = (float) Math.Cos(angle);
-            var sin = (float) Math.Sin(angle);
+            var cos = (float)Math.Cos(angle);
+            var sin = (float)Math.Sin(angle);
 
             return new MatrixF(cos, 0, -sin, 0,
                               0, 1, 0, 0,
@@ -336,8 +336,8 @@ namespace CBRE.DataStructures.Geometric
 
         public static MatrixF RotationZ(float angle)
         {
-            var cos = (float) Math.Cos(angle);
-            var sin = (float) Math.Sin(angle);
+            var cos = (float)Math.Cos(angle);
+            var sin = (float)Math.Sin(angle);
 
             return new MatrixF(cos, sin, 0, 0,
                               -sin, cos, 0, 0,

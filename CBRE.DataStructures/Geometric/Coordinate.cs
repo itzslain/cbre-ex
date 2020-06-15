@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CBRE.Extensions;
+using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-using CBRE.Extensions;
 
 namespace CBRE.DataStructures.Geometric
 {

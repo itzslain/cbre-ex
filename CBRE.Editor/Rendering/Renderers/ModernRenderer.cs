@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Models;
 using CBRE.Editor.Documents;
@@ -14,8 +7,11 @@ using CBRE.Editor.Rendering.Arrays;
 using CBRE.Editor.Rendering.Shaders;
 using CBRE.Editor.UI;
 using CBRE.Extensions;
-using CBRE.Graphics.Helpers;
 using CBRE.UI;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Matrix = CBRE.DataStructures.Geometric.Matrix;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
@@ -109,7 +105,7 @@ namespace CBRE.Editor.Rendering.Renderers
             if (Document.Map.Show2DGrid)
             {
                 // Render grid
-                var vp2 = (Viewport2D) context;
+                var vp2 = (Viewport2D)context;
                 if (GridArrays.ContainsKey(vp2)) GridArrays[vp2].Render(context.Context);
             }
 
@@ -166,7 +162,7 @@ namespace CBRE.Editor.Rendering.Renderers
                 UpdatePartial(faces);
             }
 
-            var type = ((Viewport3D) context).Type;
+            var type = ((Viewport3D)context).Type;
             var opts = new Viewport3DRenderOptions
             {
                 Viewport = viewport,

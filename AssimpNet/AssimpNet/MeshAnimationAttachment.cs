@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -146,9 +146,9 @@ namespace Assimp
             get
             {
                 int count = 0;
-                for(int i = 0; i < m_colors.Length; i++)
+                for (int i = 0; i < m_colors.Length; i++)
                 {
-                    if(HasVertexColors(i))
+                    if (HasVertexColors(i))
                         count++;
                 }
 
@@ -166,9 +166,9 @@ namespace Assimp
             get
             {
                 int count = 0;
-                for(int i = 0; i < m_texCoords.Length; i++)
+                for (int i = 0; i < m_texCoords.Length; i++)
                 {
-                    if(HasTextureCoords(i))
+                    if (HasTextureCoords(i))
                         count++;
                 }
 
@@ -211,14 +211,14 @@ namespace Assimp
             m_bitangents = new List<Vector3D>();
             m_colors = new List<Color4D>[AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS];
 
-            for(int i = 0; i < m_colors.Length; i++)
+            for (int i = 0; i < m_colors.Length; i++)
             {
                 m_colors[i] = new List<Color4D>();
             }
 
             m_texCoords = new List<Vector3D>[AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS];
 
-            for(int i = 0; i < m_texCoords.Length; i++)
+            for (int i = 0; i < m_texCoords.Length; i++)
             {
                 m_texCoords[i] = new List<Vector3D>();
             }
@@ -233,12 +233,12 @@ namespace Assimp
         /// <returns>True if vertex colors are present in the channel.</returns>
         public bool HasVertexColors(int channelIndex)
         {
-            if(channelIndex >= m_colors.Length || channelIndex < 0)
+            if (channelIndex >= m_colors.Length || channelIndex < 0)
                 return false;
 
             List<Color4D> colors = m_colors[channelIndex];
 
-            if(colors != null)
+            if (colors != null)
                 return colors.Count > 0;
 
             return false;
@@ -253,12 +253,12 @@ namespace Assimp
         /// <returns>True if texture coordinates are present in the channel.</returns>
         public bool HasTextureCoords(int channelIndex)
         {
-            if(channelIndex >= m_texCoords.Length || channelIndex < 0)
+            if (channelIndex >= m_texCoords.Length || channelIndex < 0)
                 return false;
 
             List<Vector3D> texCoords = m_texCoords[channelIndex];
 
-            if(texCoords != null)
+            if (texCoords != null)
                 return texCoords.Count > 0;
 
             return false;
@@ -271,21 +271,21 @@ namespace Assimp
             m_tangents.Clear();
             m_bitangents.Clear();
 
-            for(int i = 0; i < m_colors.Length; i++)
+            for (int i = 0; i < m_colors.Length; i++)
             {
                 List<Color4D> colors = m_colors[i];
 
-                if(colors == null)
+                if (colors == null)
                     m_colors[i] = new List<Color4D>();
                 else
                     colors.Clear();
             }
 
-            for(int i = 0; i < m_texCoords.Length; i++)
+            for (int i = 0; i < m_texCoords.Length; i++)
             {
                 List<Vector3D> texCoords = m_texCoords[i];
 
-                if(texCoords == null)
+                if (texCoords == null)
                     m_texCoords[i] = new List<Vector3D>();
                 else
                     texCoords.Clear();
@@ -322,9 +322,9 @@ namespace Assimp
             nativeValue.BiTangents = IntPtr.Zero;
             nativeValue.Colors = new AiMeshColorArray();
             nativeValue.TextureCoords = new AiMeshTextureCoordinateArray();
-            nativeValue.NumVertices = (uint) VertexCount;
+            nativeValue.NumVertices = (uint)VertexCount;
 
-            if(VertexCount > 0)
+            if (VertexCount > 0)
             {
 
                 //Since we can have so many buffers of Vector3D with same length, lets re-use a buffer
@@ -332,21 +332,21 @@ namespace Assimp
 
                 nativeValue.Vertices = MemoryHelper.ToNativeArray<Vector3D>(CopyTo(m_vertices, copy));
 
-                if(HasNormals)
+                if (HasNormals)
                     nativeValue.Normals = MemoryHelper.ToNativeArray<Vector3D>(CopyTo(m_normals, copy));
 
-                if(HasTangentBasis)
+                if (HasTangentBasis)
                 {
                     nativeValue.Tangents = MemoryHelper.ToNativeArray<Vector3D>(CopyTo(m_tangents, copy));
                     nativeValue.BiTangents = MemoryHelper.ToNativeArray<Vector3D>(CopyTo(m_bitangents, copy));
                 }
 
                 //Vertex Color channels
-                for(int i = 0; i < m_colors.Length; i++)
+                for (int i = 0; i < m_colors.Length; i++)
                 {
                     List<Color4D> list = m_colors[i];
 
-                    if(list == null || list.Count == 0)
+                    if (list == null || list.Count == 0)
                     {
                         nativeValue.Colors[i] = IntPtr.Zero;
                     }
@@ -357,11 +357,11 @@ namespace Assimp
                 }
 
                 //Texture coordinate channels
-                for(int i = 0; i < m_texCoords.Length; i++)
+                for (int i = 0; i < m_texCoords.Length; i++)
                 {
                     List<Vector3D> list = m_texCoords[i];
 
-                    if(list == null || list.Count == 0)
+                    if (list == null || list.Count == 0)
                     {
                         nativeValue.TextureCoords[i] = IntPtr.Zero;
                     }
@@ -381,38 +381,38 @@ namespace Assimp
         {
             ClearBuffers();
 
-            int vertexCount = (int) nativeValue.NumVertices;
+            int vertexCount = (int)nativeValue.NumVertices;
 
-            if(vertexCount > 0)
+            if (vertexCount > 0)
             {
 
-                if(nativeValue.Vertices != IntPtr.Zero)
+                if (nativeValue.Vertices != IntPtr.Zero)
                     m_vertices.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.Vertices, vertexCount));
 
-                if(nativeValue.Normals != IntPtr.Zero)
+                if (nativeValue.Normals != IntPtr.Zero)
                     m_normals.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.Normals, vertexCount));
 
-                if(nativeValue.Tangents != IntPtr.Zero)
+                if (nativeValue.Tangents != IntPtr.Zero)
                     m_tangents.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.Tangents, vertexCount));
 
-                if(nativeValue.BiTangents != IntPtr.Zero)
+                if (nativeValue.BiTangents != IntPtr.Zero)
                     m_bitangents.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.BiTangents, vertexCount));
 
                 //Vertex Color channels
-                for(int i = 0; i < nativeValue.Colors.Length; i++)
+                for (int i = 0; i < nativeValue.Colors.Length; i++)
                 {
                     IntPtr colorPtr = nativeValue.Colors[i];
 
-                    if(colorPtr != IntPtr.Zero)
+                    if (colorPtr != IntPtr.Zero)
                         m_colors[i].AddRange(MemoryHelper.FromNativeArray<Color4D>(colorPtr, vertexCount));
                 }
 
                 //Texture coordinate channels
-                for(int i = 0; i < nativeValue.TextureCoords.Length; i++)
+                for (int i = 0; i < nativeValue.TextureCoords.Length; i++)
                 {
                     IntPtr texCoordsPtr = nativeValue.TextureCoords[i];
 
-                    if(texCoordsPtr != IntPtr.Zero)
+                    if (texCoordsPtr != IntPtr.Zero)
                         m_texCoords[i].AddRange(MemoryHelper.FromNativeArray<Vector3D>(texCoordsPtr, vertexCount));
                 }
             }
@@ -425,45 +425,45 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiAnimMesh aiAnimMesh = MemoryHelper.Read<AiAnimMesh>(nativeValue);
 
-            if(aiAnimMesh.NumVertices > 0)
+            if (aiAnimMesh.NumVertices > 0)
             {
-                if(aiAnimMesh.Vertices != IntPtr.Zero)
+                if (aiAnimMesh.Vertices != IntPtr.Zero)
                     MemoryHelper.FreeMemory(aiAnimMesh.Vertices);
 
-                if(aiAnimMesh.Normals != IntPtr.Zero)
+                if (aiAnimMesh.Normals != IntPtr.Zero)
                     MemoryHelper.FreeMemory(aiAnimMesh.Normals);
 
-                if(aiAnimMesh.Tangents != IntPtr.Zero)
+                if (aiAnimMesh.Tangents != IntPtr.Zero)
                     MemoryHelper.FreeMemory(aiAnimMesh.Tangents);
 
-                if(aiAnimMesh.BiTangents != IntPtr.Zero)
+                if (aiAnimMesh.BiTangents != IntPtr.Zero)
                     MemoryHelper.FreeMemory(aiAnimMesh.BiTangents);
 
                 //Vertex Color channels
-                for(int i = 0; i < aiAnimMesh.Colors.Length; i++)
+                for (int i = 0; i < aiAnimMesh.Colors.Length; i++)
                 {
                     IntPtr colorPtr = aiAnimMesh.Colors[i];
 
-                    if(colorPtr != IntPtr.Zero)
+                    if (colorPtr != IntPtr.Zero)
                         MemoryHelper.FreeMemory(colorPtr);
                 }
 
                 //Texture coordinate channels
-                for(int i = 0; i < aiAnimMesh.TextureCoords.Length; i++)
+                for (int i = 0; i < aiAnimMesh.TextureCoords.Length; i++)
                 {
                     IntPtr texCoordsPtr = aiAnimMesh.TextureCoords[i];
 
-                    if(texCoordsPtr != IntPtr.Zero)
+                    if (texCoordsPtr != IntPtr.Zero)
                         MemoryHelper.FreeMemory(texCoordsPtr);
                 }
             }
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

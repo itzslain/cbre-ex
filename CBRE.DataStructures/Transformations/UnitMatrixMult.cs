@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using CBRE.DataStructures.Geometric;
 using OpenTK;
-using CBRE.DataStructures.Geometric;
+using System;
+using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.Transformations
 {
@@ -10,7 +10,7 @@ namespace CBRE.DataStructures.Transformations
     {
         public Matrix Matrix { get; set; }
 
-        public UnitMatrixMult(decimal [] matrix)
+        public UnitMatrixMult(decimal[] matrix)
         {
             Matrix = new Matrix(matrix);
         }
@@ -33,7 +33,7 @@ namespace CBRE.DataStructures.Transformations
 
         protected UnitMatrixMult(SerializationInfo info, StreamingContext context)
         {
-            Matrix = (Matrix) info.GetValue("Matrix", typeof (Matrix));
+            Matrix = (Matrix)info.GetValue("Matrix", typeof(Matrix));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

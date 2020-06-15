@@ -49,7 +49,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.CopyKeyValues = new System.Windows.Forms.Button();
             this.CommentsTextbox = new System.Windows.Forms.TextBox();
             this.HelpTextbox = new System.Windows.Forms.TextBox();
-            this.HelpButton = new System.Windows.Forms.Button();
+            this.helpButton = new System.Windows.Forms.Button();
             this.KeyValuesList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -58,7 +58,6 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.Angles = new CBRE.Editor.UI.AngleControl();
             this.OutputsTab = new System.Windows.Forms.TabPage();
             this.OutputDelete = new System.Windows.Forms.Button();
             this.OutputPaste = new System.Windows.Forms.Button();
@@ -95,7 +94,6 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.FlagsTable = new System.Windows.Forms.CheckedListBox();
             this.VisgroupTab = new System.Windows.Forms.TabPage();
             this.EditVisgroupsButton = new System.Windows.Forms.Button();
-            this.VisgroupPanel = new CBRE.Editor.Visgroups.VisgroupPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
@@ -136,14 +134,13 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.ClassInfoTab.Controls.Add(this.CopyKeyValues);
             this.ClassInfoTab.Controls.Add(this.CommentsTextbox);
             this.ClassInfoTab.Controls.Add(this.HelpTextbox);
-            this.ClassInfoTab.Controls.Add(this.HelpButton);
+            this.ClassInfoTab.Controls.Add(this.helpButton);
             this.ClassInfoTab.Controls.Add(this.KeyValuesList);
             this.ClassInfoTab.Controls.Add(this.Class);
             this.ClassInfoTab.Controls.Add(this.label4);
             this.ClassInfoTab.Controls.Add(this.label3);
             this.ClassInfoTab.Controls.Add(this.label5);
             this.ClassInfoTab.Controls.Add(this.label1);
-            this.ClassInfoTab.Controls.Add(this.Angles);
             this.ClassInfoTab.Location = new System.Drawing.Point(4, 22);
             this.ClassInfoTab.Name = "ClassInfoTab";
             this.ClassInfoTab.Padding = new System.Windows.Forms.Padding(3);
@@ -262,14 +259,14 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.HelpTextbox.Size = new System.Drawing.Size(266, 91);
             this.HelpTextbox.TabIndex = 6;
             // 
-            // HelpButton
+            // helpButton
             // 
-            this.HelpButton.Location = new System.Drawing.Point(473, 7);
-            this.HelpButton.Name = "HelpButton";
-            this.HelpButton.Size = new System.Drawing.Size(74, 23);
-            this.HelpButton.TabIndex = 4;
-            this.HelpButton.Text = "Help";
-            this.HelpButton.UseVisualStyleBackColor = true;
+            this.helpButton.Location = new System.Drawing.Point(473, 7);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(74, 23);
+            this.helpButton.TabIndex = 4;
+            this.helpButton.Text = "Help";
+            this.helpButton.UseVisualStyleBackColor = true;
             // 
             // KeyValuesList
             // 
@@ -278,6 +275,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.columnHeader2});
             this.KeyValuesList.FullRowSelect = true;
             this.KeyValuesList.GridLines = true;
+            this.KeyValuesList.HideSelection = false;
             this.KeyValuesList.Location = new System.Drawing.Point(6, 73);
             this.KeyValuesList.MultiSelect = false;
             this.KeyValuesList.Name = "KeyValuesList";
@@ -343,16 +341,6 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.label1.TabIndex = 1;
             this.label1.Text = "Class:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // Angles
-            // 
-            this.Angles.Location = new System.Drawing.Point(553, 6);
-            this.Angles.Name = "Angles";
-            this.Angles.ShowLabel = false;
-            this.Angles.ShowTextBox = true;
-            this.Angles.Size = new System.Drawing.Size(115, 46);
-            this.Angles.TabIndex = 0;
-            this.Angles.AngleChangedEvent += new CBRE.Editor.UI.AngleControl.AngleChangedEventHandler(this.AnglesChanged);
             // 
             // OutputsTab
             // 
@@ -536,6 +524,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.columnHeader7,
             this.columnHeader10});
             this.OutputsList.GridLines = true;
+            this.OutputsList.HideSelection = false;
             this.OutputsList.Location = new System.Drawing.Point(6, 6);
             this.OutputsList.Name = "OutputsList";
             this.OutputsList.Size = new System.Drawing.Size(662, 193);
@@ -593,6 +582,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.columnHeader13,
             this.columnHeader14});
             this.InputsList.GridLines = true;
+            this.InputsList.HideSelection = false;
             this.InputsList.Location = new System.Drawing.Point(6, 6);
             this.InputsList.Name = "InputsList";
             this.InputsList.Size = new System.Drawing.Size(662, 368);
@@ -652,7 +642,6 @@ namespace CBRE.Editor.UI.ObjectProperties
             // VisgroupTab
             // 
             this.VisgroupTab.Controls.Add(this.EditVisgroupsButton);
-            this.VisgroupTab.Controls.Add(this.VisgroupPanel);
             this.VisgroupTab.Controls.Add(this.label11);
             this.VisgroupTab.Location = new System.Drawing.Point(4, 22);
             this.VisgroupTab.Name = "VisgroupTab";
@@ -672,21 +661,6 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.EditVisgroupsButton.Text = "Edit Visgroups";
             this.EditVisgroupsButton.UseVisualStyleBackColor = true;
             this.EditVisgroupsButton.Click += new System.EventHandler(this.EditVisgroupsClicked);
-            // 
-            // VisgroupPanel
-            // 
-            this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.VisgroupPanel.DisableAutomatic = true;
-            this.VisgroupPanel.HideAutomatic = false;
-            this.VisgroupPanel.Location = new System.Drawing.Point(6, 26);
-            this.VisgroupPanel.Name = "VisgroupPanel";
-            this.VisgroupPanel.ShowCheckboxes = true;
-            this.VisgroupPanel.ShowHidden = false;
-            this.VisgroupPanel.Size = new System.Drawing.Size(662, 319);
-            this.VisgroupPanel.SortAutomaticFirst = false;
-            this.VisgroupPanel.TabIndex = 2;
             // 
             // label11
             // 
@@ -727,7 +701,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.ApplyButtonClicked);
             // 
-            // EntityEditor
+            // ObjectPropertiesDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -757,6 +731,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             this.ResumeLayout(false);
 
 		}
+#pragma warning disable 0649
         private CBRE.Editor.UI.AngleControl Angles;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TabPage VisgroupTab;
@@ -792,7 +767,7 @@ namespace CBRE.Editor.UI.ObjectProperties
 		private System.Windows.Forms.Button OutputCopy;
 		private System.Windows.Forms.Button OutputPaste;
 		private System.Windows.Forms.Button OutputDelete;
-        private System.Windows.Forms.Button HelpButton;
+        private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.ListView KeyValuesList;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label3;
@@ -821,5 +796,6 @@ namespace CBRE.Editor.UI.ObjectProperties
         private System.Windows.Forms.Button button1;
         private Visgroups.VisgroupPanel VisgroupPanel;
         private System.Windows.Forms.Button EditVisgroupsButton;
-	}
+#pragma warning restore 0649
+    }
 }

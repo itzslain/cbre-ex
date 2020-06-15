@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Extensions;
+using CBRE.Graphics.Arrays;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using CBRE.Common;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
-using CBRE.DataStructures.Models;
-using CBRE.Editor.Extensions;
-using CBRE.Graphics.Arrays;
-using CBRE.Graphics.Helpers;
-using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Rendering.Arrays
 {
@@ -35,7 +31,7 @@ namespace CBRE.Editor.Rendering.Arrays
                 select subset;
             foreach (var subset in sorted)
             {
-                var tex = ((Face) subset.Instance).Texture;
+                var tex = ((Face)subset.Instance).Texture;
                 tex.Texture.Bind();
                 Render(context, PrimitiveType.Triangles, subset);
             }

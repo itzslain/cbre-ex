@@ -127,10 +127,10 @@ namespace Assimp
         {
             get
             {
-                switch(i)
+                switch (i)
                 {
                     case 1:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return A1;
@@ -142,7 +142,7 @@ namespace Assimp
                                 return 0;
                         }
                     case 2:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return B1;
@@ -154,7 +154,7 @@ namespace Assimp
                                 return 0;
                         }
                     case 3:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return C1;
@@ -171,10 +171,10 @@ namespace Assimp
             }
             set
             {
-                switch(i)
+                switch (i)
                 {
                     case 1:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 A1 = value;
@@ -188,7 +188,7 @@ namespace Assimp
                         }
                         break;
                     case 2:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 B1 = value;
@@ -202,7 +202,7 @@ namespace Assimp
                         }
                         break;
                     case 3:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 C1 = value;
@@ -286,7 +286,7 @@ namespace Assimp
         public void Inverse()
         {
             float det = Determinant();
-            if(det == 0.0f)
+            if (det == 0.0f)
             {
                 // Matrix not invertible. Setting all elements to NaN is not really
                 // correct in a mathematical sense but it is easy to debug for the
@@ -349,12 +349,12 @@ namespace Assimp
         /// <returns>The rotation matrix</returns>
         public static Matrix3x3 FromEulerAnglesXYZ(float x, float y, float z)
         {
-            float cr = (float) Math.Cos(x);
-            float sr = (float) Math.Sin(x);
-            float cp = (float) Math.Cos(y);
-            float sp = (float) Math.Sin(y);
-            float cy = (float) Math.Cos(z);
-            float sy = (float) Math.Sin(z);
+            float cr = (float)Math.Cos(x);
+            float sr = (float)Math.Sin(x);
+            float cp = (float)Math.Cos(y);
+            float sp = (float)Math.Sin(y);
+            float cy = (float)Math.Cos(z);
+            float sy = (float)Math.Sin(z);
 
             float srsp = sr * sp;
             float crsp = cr * sp;
@@ -398,8 +398,8 @@ namespace Assimp
                  |  0  sin(A)  cos(A) |	
             */
             Matrix3x3 m = Identity;
-            m.B2 = m.C3 = (float) Math.Cos(radians);
-            m.C2 = (float) Math.Sin(radians);
+            m.B2 = m.C3 = (float)Math.Cos(radians);
+            m.C2 = (float)Math.Sin(radians);
             m.B3 = -m.C2;
             return m;
         }
@@ -417,8 +417,8 @@ namespace Assimp
                  | -sin(A)  0   cos(A) |
             */
             Matrix3x3 m = Identity;
-            m.A1 = m.C3 = (float) Math.Cos(radians);
-            m.A3 = (float) Math.Sin(radians);
+            m.A1 = m.C3 = (float)Math.Cos(radians);
+            m.A3 = (float)Math.Sin(radians);
             m.C1 = -m.A3;
             return m;
         }
@@ -436,8 +436,8 @@ namespace Assimp
                  |  0        0        1 |
              */
             Matrix3x3 m = Identity;
-            m.A1 = m.B2 = (float) Math.Cos(radians);
-            m.B1 = (float) Math.Sin(radians);
+            m.A1 = m.B2 = (float)Math.Cos(radians);
+            m.B1 = (float)Math.Sin(radians);
             m.A2 = -m.B1;
             return m;
         }
@@ -454,8 +454,8 @@ namespace Assimp
             float y = axis.Y;
             float z = axis.Z;
 
-            float sin = (float) System.Math.Sin((double) radians);
-            float cos = (float) System.Math.Cos((double) radians);
+            float sin = (float)System.Math.Sin((double)radians);
+            float cos = (float)System.Math.Cos((double)radians);
 
             float xx = x * x;
             float yy = y * y;
@@ -513,7 +513,7 @@ namespace Assimp
             Matrix3x3 m = Identity;
 
             //"from" and "to" vectors almost parallel
-            if(f > 1.0f - 0.00001f)
+            if (f > 1.0f - 0.00001f)
             {
                 Vector3D u, v; //Temp variables
                 Vector3D x; //Vector almost orthogonal to "from"
@@ -522,9 +522,9 @@ namespace Assimp
                 x.Y = (from.Y > 0.0f) ? from.Y : -from.Y;
                 x.Z = (from.Z > 0.0f) ? from.Z : -from.Z;
 
-                if(x.X < x.Y)
+                if (x.X < x.Y)
                 {
-                    if(x.X < x.Z)
+                    if (x.X < x.Z)
                     {
                         x.X = 1.0f;
                         x.Y = 0.0f;
@@ -539,7 +539,7 @@ namespace Assimp
                 }
                 else
                 {
-                    if(x.Y < x.Z)
+                    if (x.Y < x.Z)
                     {
                         x.X = 0.0f;
                         x.Y = 1.0f;
@@ -565,9 +565,9 @@ namespace Assimp
                 float c2 = 2.0f / Vector3D.Dot(v, v);
                 float c3 = c1 * c2 * Vector3D.Dot(u, v);
 
-                for(int i = 1; i < 4; i++)
+                for (int i = 1; i < 4; i++)
                 {
-                    for(int j = 1; j < 4; j++)
+                    for (int j = 1; j < 4; j++)
                     {
                         //This is somewhat unreadable, but the indices for u, v vectors are "zero-based" while
                         //matrix indices are "one-based" always subtract by one to index those
@@ -696,9 +696,9 @@ namespace Assimp
         /// </returns>
         public override bool Equals(Object obj)
         {
-            if(obj is Matrix3x3)
+            if (obj is Matrix3x3)
             {
-                return Equals((Matrix3x3) obj);
+                return Equals((Matrix3x3)obj);
             }
             return false;
         }
@@ -725,8 +725,8 @@ namespace Assimp
         {
             CultureInfo info = CultureInfo.CurrentCulture;
             Object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info),
-				B1.ToString(info), B2.ToString(info), B3.ToString(info),
-				C1.ToString(info), C2.ToString(info), C3.ToString(info)};
+                B1.ToString(info), B2.ToString(info), B3.ToString(info),
+                C1.ToString(info), C2.ToString(info), C3.ToString(info)};
             return String.Format(info, "{{[A1:{0} A2:{1} A3:{2}] [B1:{3} B2:{4} B3:{5}] [C1:{6} C2:{7} C3:{8}]}}", args);
         }
     }

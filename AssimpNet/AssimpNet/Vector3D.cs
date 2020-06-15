@@ -59,7 +59,7 @@ namespace Assimp
         {
             get
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         return X;
@@ -73,7 +73,7 @@ namespace Assimp
             }
             set
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         X = value;
@@ -144,7 +144,7 @@ namespace Assimp
         /// <returns>Vector's length</returns>
         public float Length()
         {
-            return (float) Math.Sqrt(LengthSquared());
+            return (float)Math.Sqrt(LengthSquared());
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Assimp
         /// </summary>
         public void Normalize()
         {
-            float invLength = 1.0f / (float) Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
+            float invLength = 1.0f / (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
             X *= invLength;
             Y *= invLength;
             Z *= invLength;
@@ -393,9 +393,9 @@ namespace Assimp
         /// <returns>True if the object is a vector and the components are equal</returns>
         public override bool Equals(object obj)
         {
-            if(obj is Vector3D)
+            if (obj is Vector3D)
             {
-                return Equals((Vector3D) obj);
+                return Equals((Vector3D)obj);
             }
             return false;
         }

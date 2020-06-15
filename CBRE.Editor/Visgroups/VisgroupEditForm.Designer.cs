@@ -28,32 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.VisgroupPanel = new CBRE.Editor.Visgroups.VisgroupPanel();
             this.GroupName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.ColourPanel = new System.Windows.Forms.Panel();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.AddButton = new System.Windows.Forms.Button();
             this.RemoveButton = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // VisgroupPanel
-            // 
-            this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.VisgroupPanel.DisableAutomatic = false;
-            this.VisgroupPanel.HideAutomatic = true;
-            this.VisgroupPanel.Location = new System.Drawing.Point(12, 12);
-            this.VisgroupPanel.Name = "VisgroupPanel";
-            this.VisgroupPanel.ShowCheckboxes = false;
-            this.VisgroupPanel.ShowHidden = false;
-            this.VisgroupPanel.Size = new System.Drawing.Size(233, 323);
-            this.VisgroupPanel.SortAutomaticFirst = false;
-            this.VisgroupPanel.TabIndex = 0;
-            this.VisgroupPanel.VisgroupSelected += new CBRE.Editor.Visgroups.VisgroupPanel.VisgroupSelectedEventHandler(this.SelectionChanged);
             // 
             // GroupName
             // 
@@ -95,17 +78,17 @@
             this.ColourPanel.TabIndex = 4;
             this.ColourPanel.Click += new System.EventHandler(this.ColourClicked);
             // 
-            // CancelButton
+            // cancelButton
             // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(345, 312);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 5;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CloseButtonClicked);
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(345, 312);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 5;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.CloseButtonClicked);
             // 
             // AddButton
             // 
@@ -150,12 +133,11 @@
             this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.OkButton);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.ColourPanel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.GroupName);
-            this.Controls.Add(this.VisgroupPanel);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "VisgroupEditForm";
@@ -169,14 +151,16 @@
 
         #endregion
 
+#pragma warning disable 0649
         private VisgroupPanel VisgroupPanel;
         private System.Windows.Forms.TextBox GroupName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel ColourPanel;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.Button RemoveButton;
         private System.Windows.Forms.Button OkButton;
+#pragma warning restore 0649
     }
 }

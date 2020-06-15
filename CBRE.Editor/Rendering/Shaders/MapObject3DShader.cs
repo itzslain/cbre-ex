@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using CBRE.Graphics.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using CBRE.Graphics.Shaders;
+using System;
+using System.IO;
 
 namespace CBRE.Editor.Rendering.Shaders
 {
@@ -69,7 +69,7 @@ namespace CBRE.Editor.Rendering.Shaders
             LightmapEnabled = options.LightmapEnabled;
             IsLit = options.Shaded;
             Show3DGrid = options.ShowGrid;
-            GridSpacing = (float) options.GridSpacing;
+            GridSpacing = (float)options.GridSpacing;
         }
 
         public void Unbind()
