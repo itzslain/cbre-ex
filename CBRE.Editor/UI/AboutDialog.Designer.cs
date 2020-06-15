@@ -71,7 +71,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Georgia", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(304, 20);
+            this.label1.Location = new System.Drawing.Point(311, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(126, 46);
             this.label1.TabIndex = 3;
@@ -80,7 +80,7 @@
             // VersionLabel
             // 
             this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(436, 46);
+            this.VersionLabel.Location = new System.Drawing.Point(443, 46);
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(47, 13);
             this.VersionLabel.TabIndex = 4;
@@ -99,13 +99,12 @@
             // LTLink
             // 
             this.LTLink.AutoSize = true;
-            this.LTLink.Location = new System.Drawing.Point(354, 123);
+            this.LTLink.Location = new System.Drawing.Point(353, 123);
             this.LTLink.Name = "LTLink";
             this.LTLink.Size = new System.Drawing.Size(96, 13);
             this.LTLink.TabIndex = 6;
             this.LTLink.TabStop = true;
             this.LTLink.Text = "logic-and-trick.com";
-            this.LTLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LTLink_LinkClicked);
             // 
             // label3
             // 
@@ -160,7 +159,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(299, 66);
+            this.label11.Location = new System.Drawing.Point(309, 66);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(192, 13);
             this.label11.TabIndex = 9;
