@@ -172,7 +172,7 @@ namespace CBRE.Editor.Compiling
                             br.Write((byte)texName[k]);
                         }
 
-                        if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                        if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
                         br.Write((Int32)vertCount);
                         foreach (LMFace face in tLmFaces)
                         {
@@ -226,7 +226,7 @@ namespace CBRE.Editor.Compiling
                             br.Write((byte)texName[k]);
                         }
 
-                        if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                        if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
                         br.Write((Int32)vertCount);
                         foreach (Face face in tTrptFaces)
                         {
@@ -273,7 +273,7 @@ namespace CBRE.Editor.Compiling
                     triCount += face.GetTriangleIndices().Count() / 3;
                 }
 
-                if (vertCount > short.MaxValue) throw new Exception("Vertex overflow!");
+                if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
                 br.Write((Int32)vertCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
