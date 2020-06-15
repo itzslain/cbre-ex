@@ -24,32 +24,7 @@ namespace CBRE.Editor.UI
             GPLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://www.gnu.org/licenses/gpl-2.0.html");
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AboutDialog_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void GithubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
+        private void LTLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
 
         }
