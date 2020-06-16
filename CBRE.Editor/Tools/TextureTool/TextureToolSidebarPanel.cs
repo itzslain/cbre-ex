@@ -1,15 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.Editor.Brushes;
-using CBRE.Editor.Tools.SelectTool.TransformationTools;
-using CBRE.Settings;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
@@ -54,7 +44,7 @@ namespace CBRE.Editor.Tools.TextureTool
 
         private void RandomShiftXButtonClicked(object sender, EventArgs e)
         {
-            OnRandomiseXShiftValues((int) RandomShiftMin.Value, (int) RandomShiftMax.Value);
+            OnRandomiseXShiftValues((int)RandomShiftMin.Value, (int)RandomShiftMax.Value);
         }
 
         private void RandomShiftYButtonClicked(object sender, EventArgs e)
@@ -64,7 +54,7 @@ namespace CBRE.Editor.Tools.TextureTool
 
         private void TileFitButtonClicked(object sender, EventArgs e)
         {
-            OnTileFit((int) TileFitX.Value, (int) TileFitY.Value);
+            OnTileFit((int)TileFitX.Value, (int)TileFitY.Value);
         }
     }
 }

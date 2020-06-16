@@ -1,10 +1,4 @@
-﻿using CBRE.DataStructures.Geometric;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace CBRE.Editor.Compiling.Lightmap
+﻿namespace CBRE.Editor.Compiling.Lightmap
 {
     public struct Progress
     {

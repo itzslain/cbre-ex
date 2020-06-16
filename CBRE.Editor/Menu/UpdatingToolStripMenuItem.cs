@@ -1,8 +1,8 @@
+using CBRE.Common.Mediator;
+using CBRE.Settings;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.Settings;
 
 namespace CBRE.Editor.Menu
 {

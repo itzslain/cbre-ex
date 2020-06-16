@@ -20,10 +20,10 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -110,14 +110,14 @@ namespace Assimp
         /// <param name="stream">Stream to close</param>
         public virtual void CloseFile(IOStream stream)
         {
-            if(stream == null)
+            if (stream == null)
                 return;
 
-            if(m_openedFiles.ContainsKey(stream.AiFile))
+            if (m_openedFiles.ContainsKey(stream.AiFile))
             {
                 m_openedFiles.Remove(stream.AiFile);
 
-                if(!stream.IsDisposed)
+                if (!stream.IsDisposed)
                     stream.Close();
             }
         }
@@ -127,9 +127,9 @@ namespace Assimp
         /// </summary>
         public virtual void CloseAllFiles()
         {
-            foreach(KeyValuePair<IntPtr, IOStream> kv in m_openedFiles)
+            foreach (KeyValuePair<IntPtr, IOStream> kv in m_openedFiles)
             {
-                if(!kv.Value.IsDisposed)
+                if (!kv.Value.IsDisposed)
                     kv.Value.Close();
             }
             m_openedFiles.Clear();
@@ -150,15 +150,15 @@ namespace Assimp
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!m_isDisposed)
+            if (!m_isDisposed)
             {
-                if(m_fileIOPtr != IntPtr.Zero)
+                if (m_fileIOPtr != IntPtr.Zero)
                 {
                     MemoryHelper.FreeMemory(m_fileIOPtr);
                     m_fileIOPtr = IntPtr.Zero;
                 }
 
-                if(disposing)
+                if (disposing)
                 {
                     m_openProc = null;
                     m_closeProc = null;
@@ -170,16 +170,16 @@ namespace Assimp
 
         private IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
         {
-            if(m_fileIOPtr != fileIO)
+            if (m_fileIOPtr != fileIO)
                 return IntPtr.Zero;
 
             FileIOMode fileMode = ConvertFileMode(mode);
             IOStream iostream = OpenFile(pathToFile, fileMode);
             IntPtr aiFilePtr = IntPtr.Zero;
 
-            if(iostream != null)
+            if (iostream != null)
             {
-                if(iostream.IsValid)
+                if (iostream.IsValid)
                 {
                     aiFilePtr = iostream.AiFile;
                     m_openedFiles.Add(aiFilePtr, iostream);
@@ -195,11 +195,11 @@ namespace Assimp
 
         private void OnAiFileCloseProc(IntPtr fileIO, IntPtr file)
         {
-            if(m_fileIOPtr != fileIO)
+            if (m_fileIOPtr != fileIO)
                 return;
 
             IOStream iostream;
-            if(m_openedFiles.TryGetValue(file, out iostream))
+            if (m_openedFiles.TryGetValue(file, out iostream))
             {
                 CloseFile(iostream);
             }
@@ -209,7 +209,7 @@ namespace Assimp
         {
             FileIOMode fileMode = FileIOMode.Read;
 
-            switch(mode)
+            switch (mode)
             {
                 case "w":
                     fileMode = FileIOMode.Write;

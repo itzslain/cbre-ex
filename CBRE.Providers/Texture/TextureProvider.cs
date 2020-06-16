@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using CBRE.Graphics.Helpers;
+using System.Collections.Generic;
 using System.Linq;
-using CBRE.Graphics.Helpers;
-using System;
 
 namespace CBRE.Providers.Texture
 {
@@ -71,7 +70,7 @@ namespace CBRE.Providers.Texture
             foreach (var package in remove)
             {
                 Packages.Remove(package);
-                package.Provider.DeletePackages(new[] {package});
+                package.Provider.DeletePackages(new[] { package });
                 package.Dispose();
             }
         }
@@ -85,7 +84,7 @@ namespace CBRE.Providers.Texture
         public static void LoadTextureItems(IEnumerable<TextureItem> items)
         {
             var list = items.ToList();
-            
+
             foreach (var g in list.GroupBy(x => x.Package.Provider))
             {
                 LoadTextures(g.Key, g);

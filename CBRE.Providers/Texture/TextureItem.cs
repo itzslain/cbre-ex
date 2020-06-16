@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Graphics.Helpers;
+using System.Collections.Generic;
 
 namespace CBRE.Providers.Texture
 {
@@ -31,7 +31,7 @@ namespace CBRE.Providers.Texture
             Name = name;
             Flags = flags;
             var baseItem = new TextureSubItem(TextureSubItemType.Base, this, name, width, height);
-            _subItems = new Dictionary<TextureSubItemType, TextureSubItem> {{TextureSubItemType.Base, baseItem}};
+            _subItems = new Dictionary<TextureSubItemType, TextureSubItem> { { TextureSubItemType.Base, baseItem } };
         }
 
         public TextureItem(TexturePackage package, string name, TextureFlags flags, string primarySubItemName, int width, int height)
@@ -40,7 +40,7 @@ namespace CBRE.Providers.Texture
             Name = name;
             Flags = flags;
             var baseItem = new TextureSubItem(TextureSubItemType.Base, this, primarySubItemName, width, height);
-            _subItems = new Dictionary<TextureSubItemType, TextureSubItem> {{TextureSubItemType.Base, baseItem}};
+            _subItems = new Dictionary<TextureSubItemType, TextureSubItem> { { TextureSubItemType.Base, baseItem } };
         }
 
         public TextureItem(TexturePackage package, string name, TextureFlags flags)

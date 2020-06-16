@@ -29,7 +29,7 @@ namespace CBRE.Editor.Logging
             OperatingSystem.ForeColor = Color.Black;
             OperatingSystem.BackColor = Color.White;
         }
-        
+
         private void CancelButtonClicked(object sender, EventArgs e)
         {
             Close();

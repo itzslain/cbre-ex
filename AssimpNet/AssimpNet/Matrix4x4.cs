@@ -168,10 +168,10 @@ namespace Assimp
         {
             get
             {
-                switch(i)
+                switch (i)
                 {
                     case 1:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return A1;
@@ -185,7 +185,7 @@ namespace Assimp
                                 return 0;
                         }
                     case 2:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return B1;
@@ -199,7 +199,7 @@ namespace Assimp
                                 return 0;
                         }
                     case 3:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return C1;
@@ -213,7 +213,7 @@ namespace Assimp
                                 return 0;
                         }
                     case 4:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 return D1;
@@ -232,10 +232,10 @@ namespace Assimp
             }
             set
             {
-                switch(i)
+                switch (i)
                 {
                     case 1:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 A1 = value;
@@ -252,7 +252,7 @@ namespace Assimp
                         }
                         break;
                     case 2:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 B1 = value;
@@ -269,7 +269,7 @@ namespace Assimp
                         }
                         break;
                     case 3:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 C1 = value;
@@ -286,7 +286,7 @@ namespace Assimp
                         }
                         break;
                     case 4:
-                        switch(j)
+                        switch (j)
                         {
                             case 1:
                                 D1 = value;
@@ -412,7 +412,7 @@ namespace Assimp
         public void Inverse()
         {
             float det = Determinant();
-            if(det == 0.0f)
+            if (det == 0.0f)
             {
                 // Matrix not invertible. Setting all elements to NaN is not really
                 // correct in a mathematical sense but it is easy to debug for the
@@ -522,7 +522,7 @@ namespace Assimp
             scaling.Z = row3.Length();
 
             //Handle negative scaling
-            if(Determinant() < 0)
+            if (Determinant() < 0)
             {
                 scaling.X = -scaling.X;
                 scaling.Y = -scaling.Y;
@@ -530,17 +530,17 @@ namespace Assimp
             }
 
             //Remove scaling from the matrix
-            if(scaling.X != 0)
+            if (scaling.X != 0)
             {
                 row1 /= scaling.X;
             }
 
-            if(scaling.Y != 0)
+            if (scaling.Y != 0)
             {
                 row2 /= scaling.Y;
             }
 
-            if(scaling.Z != 0)
+            if (scaling.Z != 0)
             {
                 row3 /= scaling.Z;
             }
@@ -580,12 +580,12 @@ namespace Assimp
         /// <returns>The rotation matrix</returns>
         public static Matrix4x4 FromEulerAnglesXYZ(float x, float y, float z)
         {
-            float cr = (float) Math.Cos(x);
-            float sr = (float) Math.Sin(x);
-            float cp = (float) Math.Cos(y);
-            float sp = (float) Math.Sin(y);
-            float cy = (float) Math.Cos(z);
-            float sy = (float) Math.Sin(z);
+            float cr = (float)Math.Cos(x);
+            float sr = (float)Math.Sin(x);
+            float cp = (float)Math.Cos(y);
+            float sp = (float)Math.Sin(y);
+            float cy = (float)Math.Cos(z);
+            float sy = (float)Math.Sin(z);
 
             float srsp = sr * sp;
             float crsp = cr * sp;
@@ -638,8 +638,8 @@ namespace Assimp
                  |  0  0       0       1 |	
             */
             Matrix4x4 m = Identity;
-            m.B2 = m.C3 = (float) Math.Cos(radians);
-            m.C2 = (float) Math.Sin(radians);
+            m.B2 = m.C3 = (float)Math.Cos(radians);
+            m.C2 = (float)Math.Sin(radians);
             m.B3 = -m.C2;
             return m;
         }
@@ -658,8 +658,8 @@ namespace Assimp
                  |  0       0   0       1 |
             */
             Matrix4x4 m = Identity;
-            m.A1 = m.C3 = (float) Math.Cos(radians);
-            m.A3 = (float) Math.Sin(radians);
+            m.A1 = m.C3 = (float)Math.Cos(radians);
+            m.A3 = (float)Math.Sin(radians);
             m.C1 = -m.A3;
             return m;
         }
@@ -678,8 +678,8 @@ namespace Assimp
                  |  0        0        0   1 |	
              */
             Matrix4x4 m = Identity;
-            m.A1 = m.B2 = (float) Math.Cos(radians);
-            m.B1 = (float) Math.Sin(radians);
+            m.A1 = m.B2 = (float)Math.Cos(radians);
+            m.B1 = (float)Math.Sin(radians);
             m.A2 = -m.B1;
             return m;
         }
@@ -696,8 +696,8 @@ namespace Assimp
             float y = axis.Y;
             float z = axis.Z;
 
-            float sin = (float) System.Math.Sin((double) radians);
-            float cos = (float) System.Math.Cos((double) radians);
+            float sin = (float)System.Math.Sin((double)radians);
+            float cos = (float)System.Math.Cos((double)radians);
 
             float xx = x * x;
             float yy = y * y;
@@ -885,9 +885,9 @@ namespace Assimp
         /// </returns>
         public override bool Equals(Object obj)
         {
-            if(obj is Matrix4x4)
+            if (obj is Matrix4x4)
             {
-                return Equals((Matrix4x4) obj);
+                return Equals((Matrix4x4)obj);
             }
             return false;
         }
@@ -913,10 +913,10 @@ namespace Assimp
         public override String ToString()
         {
             CultureInfo info = CultureInfo.CurrentCulture;
-            Object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info), A4.ToString(info), 
-				B1.ToString(info), B2.ToString(info), B3.ToString(info), B4.ToString(info),
-				C1.ToString(info), C2.ToString(info), C3.ToString(info), C4.ToString(info), 
-				D1.ToString(info), D2.ToString(info), D3.ToString(info), D4.ToString(info) };
+            Object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info), A4.ToString(info),
+                B1.ToString(info), B2.ToString(info), B3.ToString(info), B4.ToString(info),
+                C1.ToString(info), C2.ToString(info), C3.ToString(info), C4.ToString(info),
+                D1.ToString(info), D2.ToString(info), D3.ToString(info), D4.ToString(info) };
             return String.Format(info, "{{[A1:{0} A2:{1} A3:{2} A4:{3}] [B1:{4} B2:{5} B3:{6} B4:{7}] [C1:{8} C2:{9} C3:{10} C4:{11}] [D1:{12} D2:{13} D3:{14} D4:{15}]}}", args);
         }
     }

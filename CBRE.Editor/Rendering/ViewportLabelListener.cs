@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
-using CBRE.Editor.UI;
-using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
-using View = CBRE.Settings.View;
-using GL = OpenTK.Graphics.OpenGL.GL;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
-
+using GL = OpenTK.Graphics.OpenGL.GL;
+using View = CBRE.Settings.View;
+#pragma warning disable 0612
 namespace CBRE.Editor.Rendering
 {
     // ReSharper disable CSharpWarnings::CS0612
@@ -60,7 +54,7 @@ namespace CBRE.Editor.Rendering
             }
             else if (Viewport is Viewport3D)
             {
-                var type = ((Viewport3D) Viewport).Type;
+                var type = ((Viewport3D)Viewport).Type;
                 _text = type.ToString();
             }
             if (_menu != null) _menu.Dispose();
@@ -71,11 +65,11 @@ namespace CBRE.Editor.Rendering
                                             CreateMenu("3D Shaded", Viewport3D.ViewType.Shaded, null),
                                             CreateMenu("3D Flat", Viewport3D.ViewType.Flat, null),
                                             CreateMenu("3D Wireframe", Viewport3D.ViewType.Wireframe, null),
-                                            new MenuItem("-"), 
+                                            new MenuItem("-"),
                                             CreateMenu("2D Top (x/z)", null, Viewport2D.ViewDirection.Top),
                                             CreateMenu("2D Side (x/y)", null, Viewport2D.ViewDirection.Side),
                                             CreateMenu("2D Front (z/y)", null, Viewport2D.ViewDirection.Front),
-                                            new MenuItem("-"), 
+                                            new MenuItem("-"),
                                             ScreenshotMenuItem()
                                         });
         }
@@ -93,18 +87,18 @@ namespace CBRE.Editor.Rendering
             menu.Click += (sender, e) => SwitchType(type, dir);
             if (dir.HasValue && Viewport is Viewport2D)
             {
-                var vpdir = ((Viewport2D) Viewport).Direction;
+                var vpdir = ((Viewport2D)Viewport).Direction;
                 menu.Checked = vpdir == dir.Value;
             }
             else if (type.HasValue && Viewport is Viewport3D)
             {
-                var vptype = ((Viewport3D) Viewport).Type;
+                var vptype = ((Viewport3D)Viewport).Type;
                 menu.Checked = vptype == type.Value;
             }
             return menu;
         }
 
-        private void SwitchType(Viewport3D.ViewType? type,  Viewport2D.ViewDirection? dir)
+        private void SwitchType(Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir)
         {
             var doc = DocumentManager.CurrentDocument;
             if (doc == null) return;
@@ -214,7 +208,7 @@ namespace CBRE.Editor.Rendering
 
         public void MouseClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseDoubleClick(ViewportEvent e)
@@ -248,3 +242,4 @@ namespace CBRE.Editor.Rendering
         }
     }
 }
+#pragma warning restore 0612

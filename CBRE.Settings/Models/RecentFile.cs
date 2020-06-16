@@ -1,5 +1,3 @@
-using CBRE.Providers;
-
 namespace CBRE.Settings.Models
 {
     public class RecentFile

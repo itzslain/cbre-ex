@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.UI;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.SelectTool.TransformationTools
 {
@@ -69,11 +69,11 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             var sel = document.Selection.GetSelectedParents().ToList();
             if (sel.Count == 1 && sel[0] is Entity && !sel[0].HasChildren)
             {
-                return viewport.Flatten(((Entity) sel[0]).Origin);
+                return viewport.Flatten(((Entity)sel[0]).Origin);
             }
             var st = viewport.Flatten(state.PreTransformBoxStart);
             var ed = viewport.Flatten(state.PreTransformBoxEnd);
-            var points = new[] {st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0)};
+            var points = new[] { st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0) };
             return points.OrderBy(x => (state.MoveStart - x).LengthSquared()).First();
         }
 
@@ -118,7 +118,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
                     break;
                 case BaseBoxTool.ResizeHandle.Center:
                     var cdiff = cend - cstart;
-                    
+
                     var distance = GetResizeDistance(viewport, e, state, document);
                     if (distance == null) cstart = viewport.Flatten(state.PreTransformBoxStart) + now - SnapIfNeeded(state.MoveStart, document);
                     else cstart = viewport.Flatten(state.PreTransformBoxStart) + distance;

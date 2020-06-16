@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CBRE.Extensions;
+using System;
 using System.Runtime.Serialization;
-using CBRE.Extensions;
 
 namespace CBRE.DataStructures.Geometric
 {
@@ -37,7 +37,7 @@ namespace CBRE.DataStructures.Geometric
 
         protected Quaternion(SerializationInfo info, StreamingContext context)
         {
-            Vector = (Coordinate) info.GetValue("Vector", typeof (Coordinate));
+            Vector = (Coordinate)info.GetValue("Vector", typeof(Coordinate));
             Scalar = info.GetDecimal("Scalar");
         }
 

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using OpenTK.Graphics;
-using Poly2Tri;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes.Controls;
+using Poly2Tri;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Linq;
 using Polygon = Poly2Tri.Polygon;
 
 namespace CBRE.Editor.Brushes
@@ -42,19 +40,19 @@ namespace CBRE.Editor.Brushes
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var width = box.Width;
-            var length = Math.Max(1, Math.Abs((int) box.Length));
+            var length = Math.Max(1, Math.Abs((int)box.Length));
             var height = box.Height;
-            var flatten = (float) _flattenFactor.Value;
+            var flatten = (float)_flattenFactor.Value;
             var text = _text.GetValue();
 
             var family = _fontChooser.GetFontFamily();
-            var style = Enum.GetValues(typeof (FontStyle)).OfType<FontStyle>().FirstOrDefault(fs => family.IsStyleAvailable(fs));
+            var style = Enum.GetValues(typeof(FontStyle)).OfType<FontStyle>().FirstOrDefault(fs => family.IsStyleAvailable(fs));
             if (!family.IsStyleAvailable(style)) family = FontFamily.GenericSansSerif;
 
             var set = new PolygonSet();
 
             var sizes = new List<RectangleF>();
-            using (var bmp = new Bitmap(1,1))
+            using (var bmp = new Bitmap(1, 1))
             {
                 using (var g = System.Drawing.Graphics.FromImage(bmp))
                 {
@@ -146,7 +144,7 @@ namespace CBRE.Editor.Brushes
             {
                 foreach (var t in polygon.Triangles)
                 {
-                    var points = t.Points.Select(x => new Coordinate((decimal) x.X, (decimal) x.Y, zOffset).Round(roundDecimals)).ToList();
+                    var points = t.Points.Select(x => new Coordinate((decimal)x.X, (decimal)x.Y, zOffset).Round(roundDecimals)).ToList();
 
                     var faces = new List<Coordinate[]>();
 
@@ -155,14 +153,14 @@ namespace CBRE.Editor.Brushes
                     for (var j = 0; j < points.Count; j++)
                     {
                         var next = (j + 1) % points.Count;
-                        faces.Add(new[] {points[j], points[j] + z, points[next] + z, points[next]});
+                        faces.Add(new[] { points[j], points[j] + z, points[next] + z, points[next] });
                     }
                     // Add the top and bottom faces
                     faces.Add(points.ToArray());
                     faces.Add(points.Select(x => x + z).Reverse().ToArray());
 
                     // Nothing new here, move along
-                    var solid = new Solid(generator.GetNextObjectID()) {Colour = Colour.GetRandomBrushColour()};
+                    var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
                     foreach (var arr in faces)
                     {
                         var face = new Face(generator.GetNextFaceID())
@@ -170,7 +168,7 @@ namespace CBRE.Editor.Brushes
                             Parent = solid,
                             Plane = new Plane(arr[0], arr[1], arr[2]),
                             Colour = solid.Colour,
-                            Texture = {Texture = texture}
+                            Texture = { Texture = texture }
                         };
                         face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
                         face.UpdateBoundingBox();

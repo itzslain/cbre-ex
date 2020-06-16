@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CBRE.DataStructures.GameData;
+﻿using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
-using CBRE.FileSystem;
-using CBRE.Providers.Model;
 using CBRE.Providers.Texture;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Extensions
 {

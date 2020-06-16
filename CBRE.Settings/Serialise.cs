@@ -11,7 +11,7 @@ namespace CBRE.Settings
     {
         private static IEnumerable<PropertyInfo> GetProperties()
         {
-            var list = new[] {typeof (Grid), typeof (Select), typeof (Steam), typeof (View), typeof(Directories), typeof(LightmapConfig), typeof(Layout)};
+            var list = new[] { typeof(Grid), typeof(Select), typeof(Steam), typeof(View), typeof(Directories), typeof(LightmapConfig), typeof(Layout) };
             return list.SelectMany(x => x.GetProperties(BindingFlags.Static | BindingFlags.Public));
         }
 
@@ -20,7 +20,7 @@ namespace CBRE.Settings
             if (obj == null) return "";
             if (obj is Color)
             {
-                var c = (Color) obj;
+                var c = (Color)obj;
                 return c.R + " " + c.G + " " + c.B;
             }
             return Convert.ToString(obj, CultureInfo.InvariantCulture);

@@ -1,9 +1,9 @@
+using CBRE.DataStructures.GameData;
+using CBRE.Editor.Properties;
 using System;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
-using CBRE.Editor.Properties;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {

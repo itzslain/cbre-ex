@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CBRE.Common.Mediator;
-using CBRE.DataStructures.MapObjects;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Editing
 {
@@ -111,7 +111,7 @@ namespace CBRE.Editor.Editing
 
         public void Deselect(MapObject obj)
         {
-            Deselect(new[] {obj});
+            Deselect(new[] { obj });
         }
 
         public void Deselect(IEnumerable<MapObject> objs)

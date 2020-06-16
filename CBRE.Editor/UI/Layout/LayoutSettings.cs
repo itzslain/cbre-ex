@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.Layout
@@ -110,15 +107,15 @@ namespace CBRE.Editor.UI.Layout
                         new Rectangle(0, 1, 1, 1),
                         new Rectangle(0, 2, 1, 1),
                         new Rectangle(0, 3, 1, 1),
-                        
+
                         new Rectangle(1, 0, 1, 1),
                         new Rectangle(2, 0, 1, 1),
 
                         new Rectangle(1, 1, 2, 2),
-                        
+
                         new Rectangle(1, 3, 1, 1),
                         new Rectangle(2, 3, 1, 1),
-                        
+
                         new Rectangle(3, 0, 1, 1),
                         new Rectangle(3, 1, 1, 1),
                         new Rectangle(3, 2, 1, 1),
@@ -185,7 +182,7 @@ namespace CBRE.Editor.UI.Layout
         #endregion
 
 
-        private List<ViewportWindowConfiguration> _configurations; 
+        private List<ViewportWindowConfiguration> _configurations;
         public LayoutSettings(IEnumerable<ViewportWindowConfiguration> configs)
         {
             InitializeComponent();
@@ -268,7 +265,7 @@ namespace CBRE.Editor.UI.Layout
 
         private void PanelDragDrop(object sender, DragEventArgs e)
         {
-            var startPoint = (Point) e.Data.GetData(typeof (Point));
+            var startPoint = (Point)e.Data.GetData(typeof(Point));
             var pos = TableLayout.GetPositionFromControl((Control)sender);
             var endPoint = new Point(pos.Column, pos.Row);
 
@@ -359,7 +356,7 @@ namespace CBRE.Editor.UI.Layout
             {
                 for (var j = 0; j < cells.GetLength(1); j++)
                 {
-                    if (!cells[i,j]) configuration.Rectangles.Add(new Rectangle(j, i, 1, 1));
+                    if (!cells[i, j]) configuration.Rectangles.Add(new Rectangle(j, i, 1, 1));
                 }
             }
         }
@@ -377,13 +374,13 @@ namespace CBRE.Editor.UI.Layout
 
         private void RowsValueChanged(object sender, EventArgs e)
         {
-            SelectedConfiguration.Configuration.Rows = (int) Rows.Value;
+            SelectedConfiguration.Configuration.Rows = (int)Rows.Value;
             UpdateTableLayout();
         }
 
         private void ColumnsValueChanged(object sender, EventArgs e)
         {
-            SelectedConfiguration.Configuration.Columns = (int) Columns.Value;
+            SelectedConfiguration.Configuration.Columns = (int)Columns.Value;
             UpdateTableLayout();
         }
     }

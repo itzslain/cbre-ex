@@ -20,10 +20,9 @@
 * THE SOFTWARE.
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Assimp.Unmanaged;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Assimp
@@ -57,31 +56,31 @@ namespace Assimp
         void IMarshalable<Metadata, AiMetadata>.ToNative(IntPtr thisPtr, out AiMetadata nativeValue)
         {
             nativeValue = new AiMetadata();
-            nativeValue.NumProperties = (uint) Count;
+            nativeValue.NumProperties = (uint)Count;
 
             AiString[] keys = new AiString[Count];
             AiMetadataEntry[] entries = new AiMetadataEntry[Count];
             int index = 0;
-            foreach(KeyValuePair<String, Entry> kv in this)
+            foreach (KeyValuePair<String, Entry> kv in this)
             {
                 AiMetadataEntry entry = new AiMetadataEntry();
                 entry.DataType = kv.Value.DataType;
 
-                switch(kv.Value.DataType)
+                switch (kv.Value.DataType)
                 {
                     case MetaDataType.Bool:
                         entry.Data = MemoryHelper.AllocateMemory(sizeof(bool));
-                        bool boolValue = (bool) kv.Value.Data;
+                        bool boolValue = (bool)kv.Value.Data;
                         MemoryHelper.Write<bool>(entry.Data, ref boolValue);
                         break;
                     case MetaDataType.Float:
                         entry.Data = MemoryHelper.AllocateMemory(sizeof(float));
-                        float floatValue = (float) kv.Value.Data;
+                        float floatValue = (float)kv.Value.Data;
                         MemoryHelper.Write<float>(entry.Data, ref floatValue);
                         break;
                     case MetaDataType.Int:
                         entry.Data = MemoryHelper.AllocateMemory(sizeof(int));
-                        int intValue = (int) kv.Value.Data;
+                        int intValue = (int)kv.Value.Data;
                         MemoryHelper.Write<int>(entry.Data, ref intValue);
                         break;
                     case MetaDataType.String:
@@ -91,12 +90,12 @@ namespace Assimp
                         break;
                     case MetaDataType.UInt64:
                         entry.Data = MemoryHelper.AllocateMemory(sizeof(UInt64));
-                        UInt64 uint64Value = (UInt64) kv.Value.Data;
+                        UInt64 uint64Value = (UInt64)kv.Value.Data;
                         MemoryHelper.Write<UInt64>(entry.Data, ref uint64Value);
                         break;
                     case MetaDataType.Vector3D:
                         entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Vector3D>());
-                        Vector3D vectorValue = (Vector3D) kv.Value.Data;
+                        Vector3D vectorValue = (Vector3D)kv.Value.Data;
                         MemoryHelper.Write<Vector3D>(entry.Data, ref vectorValue);
                         break;
                 }
@@ -118,22 +117,22 @@ namespace Assimp
         {
             Clear();
 
-            if(nativeValue.NumProperties == 0 || nativeValue.keys == IntPtr.Zero || nativeValue.Values == IntPtr.Zero)
+            if (nativeValue.NumProperties == 0 || nativeValue.keys == IntPtr.Zero || nativeValue.Values == IntPtr.Zero)
                 return;
 
-            AiString[] keys = MemoryHelper.FromNativeArray<AiString>(nativeValue.keys, (int) nativeValue.NumProperties);
-            AiMetadataEntry[] entries = MemoryHelper.FromNativeArray<AiMetadataEntry>(nativeValue.Values, (int) nativeValue.NumProperties);
+            AiString[] keys = MemoryHelper.FromNativeArray<AiString>(nativeValue.keys, (int)nativeValue.NumProperties);
+            AiMetadataEntry[] entries = MemoryHelper.FromNativeArray<AiMetadataEntry>(nativeValue.Values, (int)nativeValue.NumProperties);
 
-            for(int i = 0; i < nativeValue.NumProperties; i++)
+            for (int i = 0; i < nativeValue.NumProperties; i++)
             {
                 String key = keys[i].GetString();
                 AiMetadataEntry entry = entries[i];
 
-                if(String.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
+                if (String.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
                     continue;
 
                 Object data = null;
-                switch(entry.DataType)
+                switch (entry.DataType)
                 {
                     case MetaDataType.Bool:
                         data = MemoryHelper.Read<bool>(entry.Data);
@@ -156,7 +155,7 @@ namespace Assimp
                         break;
                 }
 
-                if(data != null)
+                if (data != null)
                     Add(key, new Entry(entry.DataType, data));
             }
         }
@@ -168,28 +167,28 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiMetadata aiMetadata = MemoryHelper.MarshalStructure<AiMetadata>(nativeValue);
 
-            if(aiMetadata.keys != IntPtr.Zero)
+            if (aiMetadata.keys != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiMetadata.keys);
 
-            if(aiMetadata.Values != IntPtr.Zero)
+            if (aiMetadata.Values != IntPtr.Zero)
             {
-                AiMetadataEntry[] entries = MemoryHelper.FromNativeArray<AiMetadataEntry>(aiMetadata.Values, (int) aiMetadata.NumProperties);
+                AiMetadataEntry[] entries = MemoryHelper.FromNativeArray<AiMetadataEntry>(aiMetadata.Values, (int)aiMetadata.NumProperties);
 
-                foreach(AiMetadataEntry entry in entries)
+                foreach (AiMetadataEntry entry in entries)
                 {
-                    if(entry.Data != IntPtr.Zero)
+                    if (entry.Data != IntPtr.Zero)
                         MemoryHelper.FreeMemory(entry.Data);
                 }
 
                 MemoryHelper.FreeMemory(aiMetadata.Values);
             }
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 
@@ -266,7 +265,7 @@ namespace Assimp
             public T? DataAs<T>() where T : struct
             {
                 Type dataTypeType = null;
-                switch(m_dataType)
+                switch (m_dataType)
                 {
                     case MetaDataType.Bool:
                         dataTypeType = typeof(bool);
@@ -288,8 +287,8 @@ namespace Assimp
                         break;
                 }
 
-                if(dataTypeType == typeof(T))
-                    return (T) m_data;
+                if (dataTypeType == typeof(T))
+                    return (T)m_data;
 
                 return null;
             }
@@ -301,8 +300,8 @@ namespace Assimp
             /// <returns>True if the specified <see cref="System.Object" /> is equal to this instance; otherwise, false.</returns>
             public override bool Equals(object obj)
             {
-                if(obj is Entry)
-                    return Equals((Entry) obj);
+                if (obj is Entry)
+                    return Equals((Entry)obj);
 
                 return false;
             }
@@ -314,7 +313,7 @@ namespace Assimp
             /// <returns>True if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
             public bool Equals(Entry other)
             {
-                if(other.DataType != DataType)
+                if (other.DataType != DataType)
                     return false;
 
                 return Object.Equals(other.Data, Data);

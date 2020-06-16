@@ -1,6 +1,4 @@
-﻿using CBRE.Providers;
-
-namespace CBRE.Settings.Models
+﻿namespace CBRE.Settings.Models
 {
     public enum Engine
     {

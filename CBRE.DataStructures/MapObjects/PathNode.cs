@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -22,10 +22,10 @@ namespace CBRE.DataStructures.MapObjects
 
         protected PathNode(SerializationInfo info, StreamingContext context)
         {
-            Position = (Coordinate) info.GetValue("Position", typeof (Coordinate));
+            Position = (Coordinate)info.GetValue("Position", typeof(Coordinate));
             ID = info.GetInt32("ID");
             Name = info.GetString("Name");
-            Properties = ((Property[]) info.GetValue("Properties", typeof (Property[]))).ToList();
+            Properties = ((Property[])info.GetValue("Properties", typeof(Property[]))).ToList();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -39,12 +39,12 @@ namespace CBRE.DataStructures.MapObjects
         public PathNode Clone()
         {
             var node = new PathNode
-                           {
-                               Position = Position.Clone(),
-                               ID = ID,
-                               Name = Name,
-                               Parent = Parent
-                           };
+            {
+                Position = Position.Clone(),
+                ID = ID,
+                Name = Name,
+                Parent = Parent
+            };
             node.Properties.AddRange(Properties.Select(x => x.Clone()));
             return node;
         }

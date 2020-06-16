@@ -24,13 +24,13 @@ http://stackoverflow.com/questions/616718/how-do-i-get-common-file-type-icons-in
 http://stackoverflow.com/questions/1599235/how-do-i-fetch-the-folder-icon-on-windows-7-using-shell32-shgetfileinfo
 */
 
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
 
 namespace CBRE.Editor.UI.FileSystem
 {
@@ -169,7 +169,7 @@ namespace CBRE.Editor.UI.FileSystem
         /// </returns>
         [DllImport("Shell32", CharSet = CharSet.Auto)]
         extern static int ExtractIconEx(
-            [MarshalAs(UnmanagedType.LPTStr)] 
+            [MarshalAs(UnmanagedType.LPTStr)]
             string lpszFile,
             int nIconIndex,
             IntPtr[] phIconLarge,
@@ -453,16 +453,16 @@ namespace CBRE.Editor.UI.FileSystem
 
             var fromHandle = Icon.FromHandle(fileInfo.hIcon).Clone();
             DestroyIcon(fileInfo.hIcon);
-            return (Icon) fromHandle;
+            return (Icon)fromHandle;
         }
 
         public static Icon GetFolderIcon(SystemIconSize size, SystemFolderType systemFolderType)
         {
             var fileInfo = new SHFILEINFO();
 
-            SHGetFileInfo(System.Environment.CurrentDirectory, (int) FILE_ATTRIBUTE_DIRECTORY, out fileInfo,
+            SHGetFileInfo(System.Environment.CurrentDirectory, (int)FILE_ATTRIBUTE_DIRECTORY, out fileInfo,
                           Marshal.SizeOf(fileInfo),
-                          FileInfoFlags.SHGFI_ICON | FileInfoFlags.SHGFI_USEFILEATTRIBUTES | (FileInfoFlags) size |
+                          FileInfoFlags.SHGFI_ICON | FileInfoFlags.SHGFI_USEFILEATTRIBUTES | (FileInfoFlags)size |
                           (FileInfoFlags)systemFolderType);
 
             var fromHandle = Icon.FromHandle(fileInfo.hIcon).Clone();

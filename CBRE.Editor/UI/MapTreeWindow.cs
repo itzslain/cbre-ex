@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.DataStructures.GameData;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Selection;
 using CBRE.Editor.Documents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -178,7 +173,7 @@ namespace CBRE.Editor.UI
                 var list = GetTagProperties(MapTree.SelectedNode.Tag);
                 foreach (var kv in list)
                 {
-                    Properties.Items.Add(new ListViewItem(new[] {kv.Item1, kv.Item2}));
+                    Properties.Items.Add(new ListViewItem(new[] { kv.Item1, kv.Item2 }));
                 }
                 Properties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
@@ -189,7 +184,7 @@ namespace CBRE.Editor.UI
             var list = new List<Tuple<string, string>>();
             if (tag is MapObject)
             {
-                var mo = (MapObject) tag;
+                var mo = (MapObject)tag;
                 var ed = mo.GetEntityData();
                 if (ed != null)
                 {

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -44,10 +44,10 @@ namespace CBRE.DataStructures.MapObjects
         {
             XIndex = info.GetInt32("XIndex");
             YIndex = info.GetInt32("YIndex");
-            CurrentPosition = (Vertex) info.GetValue("CurrentPosition", typeof (Vertex));
-            InitialPosition = (Coordinate) info.GetValue("InitialPosition", typeof (Coordinate));
-            Displacement = (Vector) info.GetValue("Displacement", typeof (Vector));
-            OffsetDisplacement = (Vector) info.GetValue("OffsetDisplacement", typeof (Vector));
+            CurrentPosition = (Vertex)info.GetValue("CurrentPosition", typeof(Vertex));
+            InitialPosition = (Coordinate)info.GetValue("InitialPosition", typeof(Coordinate));
+            Displacement = (Vector)info.GetValue("Displacement", typeof(Vector));
+            OffsetDisplacement = (Vector)info.GetValue("OffsetDisplacement", typeof(Vector));
             Alpha = info.GetDecimal("Alpha");
         }
 

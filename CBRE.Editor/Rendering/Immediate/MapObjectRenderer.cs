@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Graphics.Helpers;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace CBRE.Editor.Rendering.Immediate
 {
@@ -72,7 +72,7 @@ namespace CBRE.Editor.Rendering.Immediate
                                 Transparent = GetOpacity(f.Texture.Texture, f) < 0.9 || (f.Texture.Texture != null && f.Texture.Texture.HasTransparency())
                             }
                                 into g
-                                select g;
+                            select g;
             foreach (var g in texgroups.OrderBy(x => x.Key.Transparent ? 1 : 0))
             {
                 var texture = false;

@@ -57,7 +57,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     bool.TryParse(x.EntityData.GetPropertyValue("hassprite") ?? "true", out hasSprite);
                     float innerCos = 0.5f;
                     float.TryParse(x.EntityData.GetPropertyValue("innerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out innerCos);
-                    innerCos = (float)Math.Cos(innerCos*(float)Math.PI / 180.0f);
+                    innerCos = (float)Math.Cos(innerCos * (float)Math.PI / 180.0f);
                     float outerCos = 0.75f;
                     float.TryParse(x.EntityData.GetPropertyValue("outerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out outerCos);
                     outerCos = (float)Math.Cos(outerCos * (float)Math.PI / 180.0f);

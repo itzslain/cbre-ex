@@ -1,5 +1,5 @@
-﻿using System;
-using OpenTK;
+﻿using OpenTK;
+using System;
 
 namespace CBRE.DataStructures.Geometric
 {
@@ -29,7 +29,7 @@ namespace CBRE.DataStructures.Geometric
             result.X = viewport[0] + viewport[2] * (result.X + 1) / 2;
             result.Y = viewport[1] + viewport[3] * (result.Y + 1) / 2;
             result.Z = (result.Z + 1) / 2;
-            return new Coordinate((decimal) result.X, (decimal) result.Y, (decimal) result.Z);
+            return new Coordinate((decimal)result.X, (decimal)result.Y, (decimal)result.Z);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace CBRE.DataStructures.Geometric
             var vector = Vector4d.Transform(source, matrix);
             if (Math.Abs(vector.W - 0) < 0.00001) return null;
             var result = Vector3d.Divide(vector.Xyz, vector.W);
-            return new Coordinate((decimal) result.X, (decimal) result.Y, (decimal) result.Z);
+            return new Coordinate((decimal)result.X, (decimal)result.Y, (decimal)result.Z);
         }
     }
 }

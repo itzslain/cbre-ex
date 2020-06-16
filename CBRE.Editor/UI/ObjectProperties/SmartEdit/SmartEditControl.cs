@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Windows.Forms;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {

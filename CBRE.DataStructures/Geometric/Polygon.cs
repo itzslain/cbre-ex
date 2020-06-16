@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CBRE.DataStructures.Transformations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Transformations;
 
 namespace CBRE.DataStructures.Geometric
 {
@@ -54,8 +54,8 @@ namespace CBRE.DataStructures.Geometric
 
         protected Polygon(SerializationInfo info, StreamingContext context)
         {
-            Vertices = ((Coordinate[]) info.GetValue("Vertices", typeof (Coordinate[]))).ToList();
-            Plane = (Plane) info.GetValue("Plane", typeof (Plane));
+            Vertices = ((Coordinate[])info.GetValue("Vertices", typeof(Coordinate[]))).ToList();
+            Plane = (Plane)info.GetValue("Plane", typeof(Plane));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

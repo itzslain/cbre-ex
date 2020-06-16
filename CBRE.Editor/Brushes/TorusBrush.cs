@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using CBRE.Common;
-using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Brushes.Controls;
 using CBRE.Extensions;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace CBRE.Editor.Brushes
 {
@@ -32,11 +31,11 @@ namespace CBRE.Editor.Brushes
             _crossStartAngle = new NumericControl(this) { LabelText = "Cross sec. start", Minimum = 0, Maximum = 359, Value = 0 };
             _crossMakeHollow = new BooleanControl(this) { LabelText = "Make hollow", Checked = false };
             _crossArc = new NumericControl(this) { LabelText = "Cross sec. arc", Minimum = 1, Maximum = 360, Value = 360, Enabled = false };
-            _crossWallWidth = new NumericControl(this) { LabelText = "Hollow wall width", Minimum = 1, Maximum = 1024, Value = 16, Precision = 1, Enabled = false};
+            _crossWallWidth = new NumericControl(this) { LabelText = "Hollow wall width", Minimum = 1, Maximum = 1024, Value = 16, Precision = 1, Enabled = false };
             _ringSides = new NumericControl(this) { LabelText = "Ring sides" };
             _ringArc = new NumericControl(this) { LabelText = "Ring arc", Minimum = 1, Maximum = 1080, Value = 360 };
             _ringStartAngle = new NumericControl(this) { LabelText = "Ring start", Minimum = 0, Maximum = 359, Value = 0 };
-            _rotationHeight = new NumericControl(this) { LabelText = "Rotation height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1};
+            _rotationHeight = new NumericControl(this) { LabelText = "Rotation height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
             _crossMakeHollow.ValuesChanged += (s, b) => _crossWallWidth.Enabled = _crossArc.Enabled = _crossMakeHollow.GetValue();
         }
 

@@ -23,7 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-
+#pragma warning disable 3021
 namespace Assimp.Unmanaged
 {
     /// <summary>
@@ -261,7 +261,7 @@ namespace Assimp.Unmanaged
         /// Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
         public AiMeshUVComponentArray NumUVComponents;
- 
+
         /// <summary>
         /// aiFace*, array of faces.
         /// </summary>
@@ -353,12 +353,12 @@ namespace Assimp.Unmanaged
 
             int count = hintChars.Length;
 
-            fixed(sbyte* charPtr = FormatHint)
+            fixed (sbyte* charPtr = FormatHint)
             {
-                charPtr[0] = (sbyte) ((count > 0) ? hintChars[0] : '\0');
-                charPtr[1] = (sbyte) ((count > 1) ? hintChars[1] : '\0');
-                charPtr[2] = (sbyte) ((count > 2) ? hintChars[2] : '\0');
-                charPtr[3] = (sbyte) '\0';
+                charPtr[0] = (sbyte)((count > 0) ? hintChars[0] : '\0');
+                charPtr[1] = (sbyte)((count > 1) ? hintChars[1] : '\0');
+                charPtr[2] = (sbyte)((count > 2) ? hintChars[2] : '\0');
+                charPtr[3] = (sbyte)'\0';
             }
         }
 
@@ -368,7 +368,7 @@ namespace Assimp.Unmanaged
         /// <returns>The format hint</returns>
         public String GetFormatHint()
         {
-            fixed(sbyte* charPtr = FormatHint)
+            fixed (sbyte* charPtr = FormatHint)
             {
                 return new String(charPtr);
             }
@@ -644,7 +644,7 @@ namespace Assimp.Unmanaged
         /// Direction up.
         /// </summary>
         public Vector3D Up;
-        
+
         /// <summary>
         /// Attenuation constant value.
         /// </summary>
@@ -775,13 +775,13 @@ namespace Assimp.Unmanaged
         /// <returns>AiString string data</returns>
         public unsafe String GetString()
         {
-            int length = (int) Length;
+            int length = (int)Length;
 
-            if(length > 0)
+            if (length > 0)
             {
                 byte[] copy = new byte[length];
 
-                fixed(byte* bytePtr = Data)
+                fixed (byte* bytePtr = Data)
                 {
                     MemoryHelper.Read<byte>(new IntPtr(bytePtr), copy, 0, length);
                 }
@@ -802,28 +802,28 @@ namespace Assimp.Unmanaged
         /// <returns>True if the operation was successful, false otherwise.</returns>
         public unsafe bool SetString(String data)
         {
-            if(String.IsNullOrEmpty(data))
+            if (String.IsNullOrEmpty(data))
             {
                 Length = 0;
-                fixed(byte* bytePtr = Data)
+                fixed (byte* bytePtr = Data)
                     MemoryHelper.ClearMemory(new IntPtr(bytePtr), 0, AiDefines.MAX_LENGTH);
 
                 return true;
             }
 
             //Note: aiTypes.h specifies aiString is UTF-8 encoded string.
-            if(Encoding.UTF8.GetByteCount(data) <= AiDefines.MAX_LENGTH)
+            if (Encoding.UTF8.GetByteCount(data) <= AiDefines.MAX_LENGTH)
             {
                 byte[] copy = Encoding.UTF8.GetBytes(data);
 
                 //Write bytes to data field
-                if(copy.Length > 0)
+                if (copy.Length > 0)
                 {
-                    fixed(byte* bytePtr = Data)
+                    fixed (byte* bytePtr = Data)
                         MemoryHelper.Write<byte>(new IntPtr(bytePtr), copy, 0, copy.Length);
                 }
 
-                Length = (uint) copy.Length;
+                Length = (uint)copy.Length;
 
                 return true;
             }
@@ -1187,7 +1187,7 @@ namespace Assimp.Unmanaged
         {
             get
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         return m_ptr0;
@@ -1211,7 +1211,7 @@ namespace Assimp.Unmanaged
             }
             set
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         m_ptr0 = value;
@@ -1272,7 +1272,7 @@ namespace Assimp.Unmanaged
         {
             get
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         return m_ptr0;
@@ -1296,7 +1296,7 @@ namespace Assimp.Unmanaged
             }
             set
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         m_ptr0 = value;
@@ -1357,7 +1357,7 @@ namespace Assimp.Unmanaged
         {
             get
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         return m_uvw0;
@@ -1381,7 +1381,7 @@ namespace Assimp.Unmanaged
             }
             set
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         m_uvw0 = value;
@@ -1414,3 +1414,4 @@ namespace Assimp.Unmanaged
 
     #endregion
 }
+#pragma warning restore 3021

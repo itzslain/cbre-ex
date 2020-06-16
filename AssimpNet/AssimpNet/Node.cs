@@ -1,4 +1,4 @@
- /*
+/*
 * Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -207,15 +207,15 @@ namespace Assimp
         /// <returns>The node or null if it does not exist</returns>
         public Node FindNode(String name)
         {
-            if(name.Equals(m_name))
+            if (name.Equals(m_name))
                 return this;
 
-            if(HasChildren)
+            if (HasChildren)
             {
-                foreach(Node child in m_children)
+                foreach (Node child in m_children)
                 {
                     Node found = child.FindNode(name);
-                    if(found != null)
+                    if (found != null)
                         return found;
                 }
             }
@@ -225,7 +225,7 @@ namespace Assimp
 
         private IntPtr ToNativeRecursive(IntPtr parentPtr, Node node)
         {
-            if(node == null)
+            if (node == null)
                 return IntPtr.Zero;
 
             int sizeofNative = MemoryHelper.SizeOf<AiNode>();
@@ -239,7 +239,7 @@ namespace Assimp
             nativeValue.Transformation = node.m_transform;
             nativeValue.Parent = parentPtr;
 
-            nativeValue.NumMeshes = (uint) node.m_meshes.Count;
+            nativeValue.NumMeshes = (uint)node.m_meshes.Count;
             nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes.ToArray());
             nativeValue.MetaData = IntPtr.Zero;
 
@@ -248,18 +248,18 @@ namespace Assimp
                 nativeValue.MetaData = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metaData);
 
             //Now descend through the children
-            nativeValue.NumChildren = (uint) node.m_children.Count;
+            nativeValue.NumChildren = (uint)node.m_children.Count;
 
-            int numChildren = (int) nativeValue.NumChildren;
+            int numChildren = (int)nativeValue.NumChildren;
             int stride = IntPtr.Size;
 
             IntPtr childrenPtr = IntPtr.Zero;
 
-            if(numChildren > 0)
+            if (numChildren > 0)
             {
                 childrenPtr = MemoryHelper.AllocateMemory(numChildren * IntPtr.Size);
 
-                for(int i = 0; i < numChildren; i++)
+                for (int i = 0; i < numChildren; i++)
                 {
                     IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
                     Node child = node.m_children[i];
@@ -267,7 +267,7 @@ namespace Assimp
                     IntPtr childPtr = IntPtr.Zero;
 
                     //Recursively create the children and its children
-                    if(child != null)
+                    if (child != null)
                     {
                         childPtr = ToNativeRecursive(nodePtr, child);
                     }
@@ -305,30 +305,30 @@ namespace Assimp
             nativeValue.Transformation = m_transform;
             nativeValue.Parent = IntPtr.Zero;
 
-            nativeValue.NumMeshes = (uint) m_meshes.Count;
+            nativeValue.NumMeshes = (uint)m_meshes.Count;
             nativeValue.Meshes = IntPtr.Zero;
             nativeValue.MetaData = IntPtr.Zero;
 
             //If has metadata, create it, otherwise it should be NULL
-            if(m_metaData.Count > 0)
+            if (m_metaData.Count > 0)
                 nativeValue.MetaData = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metaData);
 
-            if(nativeValue.NumMeshes > 0)
+            if (nativeValue.NumMeshes > 0)
                 nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes.ToArray());
 
             //Now descend through the children
-            nativeValue.NumChildren = (uint) m_children.Count;
+            nativeValue.NumChildren = (uint)m_children.Count;
 
-            int numChildren = (int) nativeValue.NumChildren;
+            int numChildren = (int)nativeValue.NumChildren;
             int stride = IntPtr.Size;
 
             IntPtr childrenPtr = IntPtr.Zero;
 
-            if(numChildren > 0)
+            if (numChildren > 0)
             {
                 childrenPtr = MemoryHelper.AllocateMemory(numChildren * IntPtr.Size);
 
-                for(int i = 0; i < numChildren; i++)
+                for (int i = 0; i < numChildren; i++)
                 {
                     IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
                     Node child = m_children[i];
@@ -336,7 +336,7 @@ namespace Assimp
                     IntPtr childPtr = IntPtr.Zero;
 
                     //Recursively create the children and its children
-                    if(child != null)
+                    if (child != null)
                     {
                         childPtr = ToNativeRecursive(thisPtr, child);
                     }
@@ -363,18 +363,18 @@ namespace Assimp
             m_meshes.Clear();
             m_metaData.Clear();
 
-            if(nativeValue.MetaData != IntPtr.Zero)
+            if (nativeValue.MetaData != IntPtr.Zero)
             {
                 Metadata data = MemoryHelper.FromNativePointer<Metadata, AiMetadata>(nativeValue.MetaData);
-                foreach(KeyValuePair<String, Metadata.Entry> kv in data)
+                foreach (KeyValuePair<String, Metadata.Entry> kv in data)
                     m_metaData.Add(kv.Key, kv.Value);
             }
 
-            if(nativeValue.NumMeshes > 0 && nativeValue.Meshes != IntPtr.Zero)
-                m_meshes.AddRange(MemoryHelper.FromNativeArray<int>(nativeValue.Meshes, (int) nativeValue.NumMeshes));
+            if (nativeValue.NumMeshes > 0 && nativeValue.Meshes != IntPtr.Zero)
+                m_meshes.AddRange(MemoryHelper.FromNativeArray<int>(nativeValue.Meshes, (int)nativeValue.NumMeshes));
 
-            if(nativeValue.NumChildren > 0 && nativeValue.Children != IntPtr.Zero)
-                m_children.AddRange(MemoryHelper.FromNativeArray<Node, AiNode>(nativeValue.Children, (int) nativeValue.NumChildren, true));
+            if (nativeValue.NumChildren > 0 && nativeValue.Children != IntPtr.Zero)
+                m_children.AddRange(MemoryHelper.FromNativeArray<Node, AiNode>(nativeValue.Children, (int)nativeValue.NumChildren, true));
         }
 
         /// <summary>
@@ -384,21 +384,21 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiNode aiNode = MemoryHelper.Read<AiNode>(nativeValue);
 
-            if(aiNode.NumMeshes > 0 && aiNode.Meshes != IntPtr.Zero)
+            if (aiNode.NumMeshes > 0 && aiNode.Meshes != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiNode.Meshes);
 
-            if(aiNode.NumChildren > 0 && aiNode.Children != IntPtr.Zero)
-                MemoryHelper.FreeNativeArray<AiNode>(aiNode.Children, (int) aiNode.NumChildren, FreeNative, true);
+            if (aiNode.NumChildren > 0 && aiNode.Children != IntPtr.Zero)
+                MemoryHelper.FreeNativeArray<AiNode>(aiNode.Children, (int)aiNode.NumChildren, FreeNative, true);
 
-            if(aiNode.MetaData != IntPtr.Zero)
+            if (aiNode.MetaData != IntPtr.Zero)
                 Metadata.FreeNative(aiNode.MetaData, true);
 
-            if(freeNative)
+            if (freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }
 

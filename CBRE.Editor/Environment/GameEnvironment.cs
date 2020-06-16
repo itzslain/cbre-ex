@@ -1,11 +1,10 @@
-﻿using System;
+﻿using CBRE.FileSystem;
+using CBRE.Settings;
+using CBRE.Settings.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CBRE.FileSystem;
-using CBRE.Settings;
-using CBRE.Settings.Models;
 
 namespace CBRE.Editor.Environment
 {
@@ -52,7 +51,7 @@ namespace CBRE.Editor.Environment
             {
                 yield return b.Path;
             }
-            
+
             // Editor location to the path, for sprites and the like
             yield return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         }

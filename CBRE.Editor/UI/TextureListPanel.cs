@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CBRE.Editor.Documents;
+using CBRE.Providers.Texture;
+using CBRE.UI;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CBRE.Editor.Documents;
-using CBRE.Providers.Texture;
-using CBRE.UI;
 
 namespace CBRE.Editor.UI
 {
@@ -143,7 +143,7 @@ namespace CBRE.Editor.UI
             AllowSelection = true;
             AllowMultipleSelection = true;
 
-            _scrollBar = new VScrollBar {Dock = DockStyle.Right};
+            _scrollBar = new VScrollBar { Dock = DockStyle.Right };
             _scrollBar.ValueChanged += (sender, e) => Refresh();
             _textures = new List<TextureItem>();
             _selection = new List<TextureItem>();
@@ -200,7 +200,7 @@ namespace CBRE.Editor.UI
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            
+
             if (!AllowSelection) return;
             if (!AllowMultipleSelection || !KeyboardState.Ctrl) _selection.Clear();
 
@@ -233,7 +233,7 @@ namespace CBRE.Editor.UI
                 var count = Math.Abs(clickedIndex - bef) + 1;
                 _selection.AddRange(GetTextures().ToList().GetRange(start, count).Where(i => !_selection.Contains(i)));
             }
-            else 
+            else
             {
                 _selection.Add(item);
                 _lastSelectedItem = item;
@@ -454,7 +454,7 @@ namespace CBRE.Editor.UI
             {
                 _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
             }
-            
+
             Refresh();
         }
 

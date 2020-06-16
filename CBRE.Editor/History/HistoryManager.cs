@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
 
 namespace CBRE.Editor.History
 {
     public class HistoryManager
     {
         private readonly Document _document;
-        private readonly Stack<HistoryStack> _stacks; 
+        private readonly Stack<HistoryStack> _stacks;
 
         public long TotalActionsSinceLastSave { get; set; }
         public long TotalActionsSinceLastAutoSave { get; set; }

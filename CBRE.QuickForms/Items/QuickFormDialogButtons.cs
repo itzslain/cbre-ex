@@ -42,7 +42,7 @@ namespace CBRE.QuickForms.Items
                 var result = _results[i];
 
                 var button = new Button();
-                if (action != null) button.Click += (sender, e) => action(((Control) sender).Parent as QuickForm);
+                if (action != null) button.Click += (sender, e) => action(((Control)sender).Parent as QuickForm);
                 button.Click += (s, e) => qf.DialogResult = result;
                 button.Click += qf.Close;
                 button.Anchor = AnchorStyles.Top | AnchorStyles.Right;

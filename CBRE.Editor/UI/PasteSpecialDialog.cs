@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Enums;
+using System;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -17,7 +11,7 @@ namespace CBRE.Editor.UI
 
         public int NumberOfCopies
         {
-            get { return (int) NumCopies.Value; }
+            get { return (int)NumCopies.Value; }
             set { NumCopies.Value = value; }
         }
 

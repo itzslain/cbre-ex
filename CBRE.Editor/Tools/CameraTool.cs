@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Properties;
 using CBRE.Editor.UI;
 using CBRE.Graphics;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Camera = CBRE.DataStructures.MapObjects.Camera;
 
 namespace CBRE.Editor.Tools
@@ -91,7 +91,7 @@ namespace CBRE.Editor.Tools
             var pos = new Coordinate((decimal)cam.Location.X, (decimal)cam.Location.Y, (decimal)cam.Location.Z);
             var look = new Coordinate((decimal)cam.LookAt.X, (decimal)cam.LookAt.Y, (decimal)cam.LookAt.Z);
 
-            var dir = (look - pos).Normalise()*20;
+            var dir = (look - pos).Normalise() * 20;
             return Tuple.Create(pos, pos + dir);
         }
 
@@ -102,7 +102,7 @@ namespace CBRE.Editor.Tools
 
             look = (look - position).Normalise() + position;
             cam.Location = new Vector3((float)position.X, (float)position.Y, (float)position.Z);
-            cam.LookAt = new Vector3((float) look.X, (float) look.Y, (float) look.Z);
+            cam.LookAt = new Vector3((float)look.X, (float)look.Y, (float)look.Z);
         }
 
         private State GetStateAtPoint(int x, int y, Viewport2D viewport, out Camera activeCamera)
@@ -128,7 +128,7 @@ namespace CBRE.Editor.Tools
             var c = GetViewportCamera();
             if (!Document.Map.Cameras.Any())
             {
-                Document.Map.Cameras.Add(new Camera { EyePosition = c.Item1, LookPosition = c.Item2});
+                Document.Map.Cameras.Add(new Camera { EyePosition = c.Item1, LookPosition = c.Item2 });
             }
             if (Document.Map.ActiveCamera == null || !Document.Map.Cameras.Contains(Document.Map.ActiveCamera))
             {

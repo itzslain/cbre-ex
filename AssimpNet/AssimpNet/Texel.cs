@@ -109,9 +109,9 @@ namespace Assimp
         /// </returns>
         public override bool Equals(object obj)
         {
-            if(obj is Texel)
+            if (obj is Texel)
             {
-                return Equals((Texel) obj);
+                return Equals((Texel)obj);
             }
             return false;
         }

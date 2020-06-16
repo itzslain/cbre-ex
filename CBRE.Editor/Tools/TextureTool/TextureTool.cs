@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
@@ -18,6 +12,12 @@ using CBRE.Graphics.Helpers;
 using CBRE.Providers.Texture;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
@@ -126,10 +126,10 @@ namespace CBRE.Editor.Tools.TextureTool
             if (Document.Selection.IsEmpty()) return;
             var boxAlignMode = (justifymode == JustifyMode.Fit)
                                    ? Face.BoxAlignMode.Center // Don't care about the align mode when centering
-                                   : (Face.BoxAlignMode) Enum.Parse(typeof (Face.BoxAlignMode), justifymode.ToString());
+                                   : (Face.BoxAlignMode)Enum.Parse(typeof(Face.BoxAlignMode), justifymode.ToString());
             Cloud cloud = null;
             Action<Document, Face> action;
-            if (treatasone) 
+            if (treatasone)
             {
                 // If we treat as one, it means we want to align to one great big cloud
                 cloud = new Cloud(Document.Selection.GetSelectedFaces().SelectMany(x => x.Vertices).Select(x => x.Location));
@@ -298,7 +298,7 @@ namespace CBRE.Editor.Tools.TextureTool
             var ray = vp.CastRayFromScreen(e.X, e.Y);
             var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray).OfType<Solid>();
             var clickedFace = hits.SelectMany(f => f.Faces)
-                .Select(x => new {Item = x, Intersection = x.GetIntersectionPoint(ray)})
+                .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
                 .Where(x => x.Intersection != null)
                 .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                 .Select(x => x.Item)
@@ -374,8 +374,8 @@ namespace CBRE.Editor.Tools.TextureTool
                     var up = vp.Camera.GetUp();
                     var loc = vp.Camera.Location;
                     var point = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
-                    var uaxis = new Coordinate((decimal) right.X, (decimal) right.Y, (decimal) right.Z);
-                    var vaxis = new Coordinate((decimal) up.X, (decimal) up.Y, (decimal) up.Z);
+                    var uaxis = new Coordinate((decimal)right.X, (decimal)right.Y, (decimal)right.Z);
+                    var vaxis = new Coordinate((decimal)up.X, (decimal)up.Y, (decimal)up.Z);
                     ac.Add(new EditFace(faces, (document, face) =>
                                                     {
                                                         face.Texture.XScale = 1;

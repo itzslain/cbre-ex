@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CBRE.Editor.Documents;
+using CBRE.Providers.Texture;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.Editor.Documents;
-using CBRE.Providers.Texture;
 
 namespace CBRE.Editor.UI
 {
@@ -18,7 +18,7 @@ namespace CBRE.Editor.UI
             public bool DrawBorder { get; set; }
 
             public override string ToString()
-            { 
+            {
                 return Item.Name;
             }
         }
@@ -37,8 +37,8 @@ namespace CBRE.Editor.UI
             DropDownClosed += CloseStream;
             _packages = new List<TexturePackage>();
 
-            _fontHeight = (int) Font.GetHeight();
-            FontChanged += (s, e) => _fontHeight = (int) Font.GetHeight();
+            _fontHeight = (int)Font.GetHeight();
+            FontChanged += (s, e) => _fontHeight = (int)Font.GetHeight();
         }
 
         private void OpenStream(object sender, EventArgs e)
@@ -57,7 +57,7 @@ namespace CBRE.Editor.UI
 
         protected override void OnSelectionChangeCommitted(EventArgs e)
         {
-            var si = (TextureComboBoxItem) SelectedItem;
+            var si = (TextureComboBoxItem)SelectedItem;
             SetHistory(si.Item);
             base.OnSelectionChangeCommitted(e);
         }
@@ -71,7 +71,7 @@ namespace CBRE.Editor.UI
             FixHistoryBorder();
             SelectedItem = rem;
         }
-        
+
         public TextureItem GetSelectedTexture()
         {
             var si = SelectedItem as TextureComboBoxItem;
@@ -161,7 +161,7 @@ namespace CBRE.Editor.UI
         private static TextureComboBoxItem GetTexture(string name, bool isHistory)
         {
             var item = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.TextureCollection.GetItem(name);
-            return new TextureComboBoxItem {DrawBorder = false, IsHistory = isHistory, Item = item};
+            return new TextureComboBoxItem { DrawBorder = false, IsHistory = isHistory, Item = item };
         }
 
         private TextureComboBoxItem GetTexture(TextureItem item, bool isHistory)
@@ -189,7 +189,7 @@ namespace CBRE.Editor.UI
         {
             if (e.Index < 0) return;
 
-            var item = (TextureComboBoxItem) Items[e.Index];
+            var item = (TextureComboBoxItem)Items[e.Index];
 
             e.DrawBackground();
 
@@ -201,7 +201,7 @@ namespace CBRE.Editor.UI
                     e.Graphics.DrawString(item.Item.Name, e.Font, brush, e.Bounds.X, e.Bounds.Y);
                 }
             }
-            else 
+            else
             {
                 // Drop down is open and we're painting in the drop down area
                 var bmp = _streamSource.GetImage(item.Item);
@@ -214,7 +214,7 @@ namespace CBRE.Editor.UI
         private void OwnerDrawItem(System.Drawing.Graphics g, Image bmp, TextureItem ti, Rectangle bounds, Color textColour, Font font, bool drawBorder)
         {
             if (bmp == null) return;
-            var lineHeight = (int) Font.GetHeight();
+            var lineHeight = (int)Font.GetHeight();
             var imageSize = bounds.Height - lineHeight - 9;
 
             var iw = bmp.Width;

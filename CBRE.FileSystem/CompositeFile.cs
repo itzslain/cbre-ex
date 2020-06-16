@@ -100,7 +100,7 @@ namespace CBRE.FileSystem
 
         private IEnumerable<IFile> MergeByName(IEnumerable<IFile> files)
         {
-            return files.GroupBy(x => new {Name = x.Name.ToLower(), x.IsContainer})
+            return files.GroupBy(x => new { Name = x.Name.ToLower(), x.IsContainer })
                 .Where(x => x.Any())
                 .Select(x => new CompositeFile(this, x));
         }

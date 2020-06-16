@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Runtime.InteropServices;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -147,15 +147,15 @@ namespace Assimp
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!m_isDiposed)
+            if (!m_isDiposed)
             {
-                if(m_filePtr != IntPtr.Zero)
+                if (m_filePtr != IntPtr.Zero)
                 {
                     MemoryHelper.FreeMemory(m_filePtr);
                     m_filePtr = IntPtr.Zero;
                 }
 
-                if(disposing)
+                if (disposing)
                 {
                     m_writeProc = null;
                     m_readProc = null;
@@ -221,15 +221,15 @@ namespace Assimp
 
         private UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
         {
-            if(m_filePtr != file)
+            if (m_filePtr != file)
                 return UIntPtr.Zero;
 
-            long longSize = (long) sizeOfElemInBytes.ToUInt64();
-            long longNum = (long) numElements.ToUInt64();
+            long longSize = (long)sizeOfElemInBytes.ToUInt64();
+            long longNum = (long)numElements.ToUInt64();
             long count = longSize * longNum;
 
             byte[] byteBuffer = GetByteBuffer(longSize, longNum);
-            MemoryHelper.Read<byte>(dataToWrite, byteBuffer, 0, (int) count);
+            MemoryHelper.Read<byte>(dataToWrite, byteBuffer, 0, (int)count);
 
             long actualCount = 0;
 
@@ -237,18 +237,18 @@ namespace Assimp
             {
                 actualCount = Write(byteBuffer, count);
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+            catch (Exception) { /*Assimp will report an IO error*/ }
 
-            return new UIntPtr((ulong) actualCount);
+            return new UIntPtr((ulong)actualCount);
         }
 
         private UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
         {
-            if(m_filePtr != file)
+            if (m_filePtr != file)
                 return UIntPtr.Zero;
 
-            long longSize = (long) sizeOfElemInBytes.ToUInt64();
-            long longNum = (long) numElements.ToUInt64();
+            long longSize = (long)sizeOfElemInBytes.ToUInt64();
+            long longNum = (long)numElements.ToUInt64();
             long count = longSize * longNum;
 
             byte[] byteBuffer = GetByteBuffer(longSize, longNum);
@@ -258,16 +258,16 @@ namespace Assimp
             try
             {
                 actualCount = Read(byteBuffer, count);
-                MemoryHelper.Write<byte>(dataRead, byteBuffer, 0, (int) actualCount);
+                MemoryHelper.Write<byte>(dataRead, byteBuffer, 0, (int)actualCount);
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+            catch (Exception) { /*Assimp will report an IO error*/ }
 
-            return new UIntPtr((ulong) actualCount);
+            return new UIntPtr((ulong)actualCount);
         }
 
         private UIntPtr OnAiFileTellProc(IntPtr file)
         {
-            if(m_filePtr != file)
+            if (m_filePtr != file)
                 return UIntPtr.Zero;
 
             long pos = 0;
@@ -276,14 +276,14 @@ namespace Assimp
             {
                 pos = GetPosition();
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+            catch (Exception) { /*Assimp will report an IO error*/ }
 
-            return new UIntPtr((ulong) pos);
+            return new UIntPtr((ulong)pos);
         }
 
         private UIntPtr OnAiFileSizeProc(IntPtr file)
         {
-            if(m_filePtr != file)
+            if (m_filePtr != file)
                 return UIntPtr.Zero;
 
             long fileSize = 0;
@@ -292,43 +292,43 @@ namespace Assimp
             {
                 fileSize = GetFileSize();
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+            catch (Exception) { /*Assimp will report an IO error*/ }
 
-            return new UIntPtr((ulong) fileSize);
+            return new UIntPtr((ulong)fileSize);
         }
 
         private ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin)
         {
-            if(m_filePtr != file)
+            if (m_filePtr != file)
                 return ReturnCode.Failure;
 
             ReturnCode code = ReturnCode.Failure;
 
             try
             {
-                code = Seek((long) offset.ToUInt64(), seekOrigin);
+                code = Seek((long)offset.ToUInt64(), seekOrigin);
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+            catch (Exception) { /*Assimp will report an IO error*/ }
 
             return code;
         }
 
         private void OnAiFileFlushProc(IntPtr file)
         {
-            if(m_filePtr != file)
+            if (m_filePtr != file)
                 return;
 
             try
             {
                 Flush();
             }
-            catch(Exception) { }
+            catch (Exception) { }
         }
 
         private byte[] GetByteBuffer(long sizeOfElemInBytes, long numElements)
         {
             //Only create a new buffer if we need it to grow or first time, otherwise re-use it
-            if(m_byteBuffer == null || (m_byteBuffer.Length < sizeOfElemInBytes * numElements))
+            if (m_byteBuffer == null || (m_byteBuffer.Length < sizeOfElemInBytes * numElements))
                 m_byteBuffer = new byte[sizeOfElemInBytes * numElements];
 
             return m_byteBuffer;

@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
+using Assimp.Unmanaged;
 using System;
 using System.Text;
-using Assimp.Unmanaged;
 
 namespace Assimp.Configs
 {
@@ -143,7 +143,7 @@ namespace Assimp.Configs
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore)
         {
-            if(propStore != IntPtr.Zero)
+            if (propStore != IntPtr.Zero)
             {
                 AssimpLibrary.Instance.SetImportPropertyInteger(propStore, Name, m_value);
             }
@@ -219,7 +219,7 @@ namespace Assimp.Configs
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore)
         {
-            if(propStore != IntPtr.Zero)
+            if (propStore != IntPtr.Zero)
             {
                 AssimpLibrary.Instance.SetImportPropertyFloat(propStore, Name, m_value);
             }
@@ -295,7 +295,7 @@ namespace Assimp.Configs
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore)
         {
-            if(propStore != IntPtr.Zero)
+            if (propStore != IntPtr.Zero)
             {
                 AssimpLibrary.Instance.SetImportPropertyMatrix(propStore, Name, m_value);
             }
@@ -371,7 +371,7 @@ namespace Assimp.Configs
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore)
         {
-            if(propStore != IntPtr.Zero)
+            if (propStore != IntPtr.Zero)
             {
                 int aiBool = (m_value) ? 1 : 0;
                 AssimpLibrary.Instance.SetImportPropertyInteger(propStore, Name, aiBool);
@@ -448,7 +448,7 @@ namespace Assimp.Configs
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore)
         {
-            if(propStore != IntPtr.Zero)
+            if (propStore != IntPtr.Zero)
             {
                 AssimpLibrary.Instance.SetImportPropertyString(propStore, Name, m_value);
             }
@@ -461,15 +461,15 @@ namespace Assimp.Configs
         /// <returns>White-space delimited list as a string</returns>
         protected static String ProcessNames(String[] names)
         {
-            if(names == null || names.Length == 0)
+            if (names == null || names.Length == 0)
             {
                 return String.Empty;
             }
 
             StringBuilder builder = new StringBuilder();
-            foreach(String name in names)
+            foreach (String name in names)
             {
-                if(!String.IsNullOrEmpty(name))
+                if (!String.IsNullOrEmpty(name))
                 {
                     builder.Append(name);
                     builder.Append(' ');
@@ -968,7 +968,7 @@ namespace Assimp.Configs
         /// </summary>
         /// <param name="componentsToExclude">Bit-wise combination of components to exclude.</param>
         public RemoveComponentConfig(ExcludeComponent componentsToExclude)
-            : base(RemoveComponentConfigName, (int) componentsToExclude, (int) ExcludeComponent.None) { }
+            : base(RemoveComponentConfigName, (int)componentsToExclude, (int)ExcludeComponent.None) { }
     }
 
     /// <summary>
@@ -995,7 +995,7 @@ namespace Assimp.Configs
         /// </summary>
         /// <param name="typesToRemove">Bit-wise combination of primitive types to remove</param>
         public SortByPrimitiveTypeConfig(PrimitiveType typesToRemove)
-            : base(SortByPrimitiveTypeConfigName, (int) typesToRemove, 0) { }
+            : base(SortByPrimitiveTypeConfigName, (int)typesToRemove, 0) { }
     }
 
     /// <summary>
@@ -1049,7 +1049,7 @@ namespace Assimp.Configs
         /// </summary>
         /// <param name="transformFlags">Bit-wise combination specifying which UV transforms that should be evaluated.</param>
         public TransformUVConfig(UVTransformFlags transformFlags)
-            : base(TransformUVConfigName, (int) transformFlags, (int) AiDefines.AI_UVTRAFO_ALL) { }
+            : base(TransformUVConfigName, (int)transformFlags, (int)AiDefines.AI_UVTRAFO_ALL) { }
     }
 
     /// <summary>
@@ -1211,7 +1211,7 @@ namespace Assimp.Configs
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore)
         {
-            if(propStore != IntPtr.Zero)
+            if (propStore != IntPtr.Zero)
             {
                 //Technically this is TWO configs, a boolean that we want to do it and a config with the actual matrix. Most likely if we're setting the actual matrix, then we really do want
                 //to apply the root transformation, so this config actually represents two configs.

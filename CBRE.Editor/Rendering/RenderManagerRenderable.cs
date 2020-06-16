@@ -1,6 +1,6 @@
-using OpenTK;
 using CBRE.Graphics.Renderables;
 using CBRE.UI;
+using OpenTK;
 
 namespace CBRE.Editor.Rendering
 {

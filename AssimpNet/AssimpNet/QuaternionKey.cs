@@ -107,9 +107,9 @@ namespace Assimp
         /// </returns>
         public override bool Equals(object obj)
         {
-            if(obj is QuaternionKey)
+            if (obj is QuaternionKey)
             {
-                return Equals((QuaternionKey) obj);
+                return Equals((QuaternionKey)obj);
             }
             return false;
         }

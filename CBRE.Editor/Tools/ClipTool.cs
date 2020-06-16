@@ -1,18 +1,18 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Actions.MapObjects.Operations;
+using CBRE.Editor.Properties;
+using CBRE.Graphics;
+using CBRE.Graphics.Helpers;
+using CBRE.Settings;
+using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
-using CBRE.Editor.Actions.MapObjects.Operations;
-using CBRE.Editor.Properties;
-using CBRE.Graphics;
-using CBRE.Settings;
-using CBRE.UI;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Graphics.Helpers;
 using Matrix = CBRE.Graphics.Helpers.Matrix;
 
 namespace CBRE.Editor.Tools
@@ -95,7 +95,7 @@ namespace CBRE.Editor.Tools
         public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
             if (!(vp is Viewport2D)) return;
-            var viewport = (Viewport2D) vp;
+            var viewport = (Viewport2D)vp;
             _prevState = _state;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
@@ -230,8 +230,8 @@ namespace CBRE.Editor.Tools
 
         public override void Render(ViewportBase viewport)
         {
-            if (viewport is Viewport2D) Render2D((Viewport2D) viewport);
-            if (viewport is Viewport3D) Render3D((Viewport3D) viewport);
+            if (viewport is Viewport2D) Render2D((Viewport2D)viewport);
+            if (viewport is Viewport3D) Render3D((Viewport3D)viewport);
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
@@ -242,7 +242,7 @@ namespace CBRE.Editor.Tools
                 case HotkeysMediator.OperationsPaste:
                     return HotkeyInterceptResult.SwitchToSelectTool;
                 case HotkeysMediator.SwitchTool:
-                    if (parameters is HotkeyTool && (HotkeyTool) parameters == GetHotkeyToolType())
+                    if (parameters is HotkeyTool && (HotkeyTool)parameters == GetHotkeyToolType())
                     {
                         CycleClipSide();
                         return HotkeyInterceptResult.Abort;
@@ -254,9 +254,9 @@ namespace CBRE.Editor.Tools
 
         private void CycleClipSide()
         {
-            var side = (int) _side;
-            side = (side + 1) % (Enum.GetValues(typeof (ClipSide)).Length);
-            _side = (ClipSide) side;
+            var side = (int)_side;
+            side = (side + 1) % (Enum.GetValues(typeof(ClipSide)).Length);
+            _side = (ClipSide)side;
         }
 
         private void Render2D(Viewport2D vp)
@@ -266,7 +266,7 @@ namespace CBRE.Editor.Tools
                 || _clipPlanePoint2 == null
                 || _clipPlanePoint3 == null) return; // Nothing to draw at this point
 
-            var z = (double) vp.Zoom;
+            var z = (double)vp.Zoom;
             var p1 = vp.Flatten(_clipPlanePoint1);
             var p2 = vp.Flatten(_clipPlanePoint2);
             var p3 = vp.Flatten(_clipPlanePoint3);

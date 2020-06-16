@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using CBRE.Extensions;
 using OpenTK;
-using CBRE.Extensions;
+using System;
+using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.Geometric
 {
@@ -53,7 +53,7 @@ namespace CBRE.DataStructures.Geometric
 
         protected Matrix(SerializationInfo info, StreamingContext context)
         {
-            Values = (decimal[]) info.GetValue("Values", typeof (decimal[]));
+            Values = (decimal[])info.GetValue("Values", typeof(decimal[]));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -266,8 +266,8 @@ namespace CBRE.DataStructures.Geometric
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Matrix)) return false;
-            return Equals((Matrix) obj);
+            if (obj.GetType() != typeof(Matrix)) return false;
+            return Equals((Matrix)obj);
         }
 
         public override int GetHashCode()
@@ -293,7 +293,7 @@ namespace CBRE.DataStructures.Geometric
                 right[11] + left.X * right[2] + left.Y * right[6] + left.Z * right[10]);
         }
 
-        public static Matrix operator * (Matrix left, Matrix right)
+        public static Matrix operator *(Matrix left, Matrix right)
         {
             return new Matrix(
                 left.Values[0] * right.Values[0] + left.Values[1] * right.Values[4] + left.Values[2] * right.Values[8] + left.Values[3] * right.Values[12],

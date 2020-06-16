@@ -66,7 +66,7 @@ namespace Assimp
         {
             get
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         return R;
@@ -82,7 +82,7 @@ namespace Assimp
             }
             set
             {
-                switch(index)
+                switch (index)
                 {
                     case 0:
                         R = value;
@@ -175,9 +175,9 @@ namespace Assimp
         {
             //Don't care about alpha
             float epsilon = 10e-3f;
-            return (float) Math.Abs(R) < epsilon
-                && (float) Math.Abs(G) < epsilon
-                && (float) Math.Abs(B) < epsilon;
+            return (float)Math.Abs(R) < epsilon
+                && (float)Math.Abs(G) < epsilon
+                && (float)Math.Abs(B) < epsilon;
         }
 
         /// <summary>
@@ -397,9 +397,9 @@ namespace Assimp
         /// <returns>True if the object is a color and the components are equal</returns>
         public override bool Equals(object obj)
         {
-            if(obj is Color4D)
+            if (obj is Color4D)
             {
-                return Equals((Color4D) obj);
+                return Equals((Color4D)obj);
             }
             return false;
         }

@@ -1,7 +1,7 @@
+using CBRE.DataStructures.MapObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CBRE.DataStructures.MapObjects;
 
 namespace CBRE.Editor.Problems
 {
@@ -11,8 +11,8 @@ namespace CBRE.Editor.Problems
 
         static ProblemChecker()
         {
-            Checkers = typeof (IProblemCheck).Assembly.GetTypes()
-                .Where(x => typeof (IProblemCheck).IsAssignableFrom(x))
+            Checkers = typeof(IProblemCheck).Assembly.GetTypes()
+                .Where(x => typeof(IProblemCheck).IsAssignableFrom(x))
                 .Where(x => !x.IsInterface)
                 .Select(Activator.CreateInstance)
                 .OfType<IProblemCheck>()

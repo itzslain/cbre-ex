@@ -1,17 +1,17 @@
-﻿using System;
+﻿using CBRE.QuickForms.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.QuickForms.Items;
 
 namespace CBRE.QuickForms
 {
-	/// <summary>
-	/// QuickForms is input dialogs for the lazy.
-	/// It allows quick composition of disposable forms.
-	/// </summary>
-	public sealed class QuickForm : Form
-	{
+    /// <summary>
+    /// QuickForms is input dialogs for the lazy.
+    /// It allows quick composition of disposable forms.
+    /// </summary>
+    public sealed class QuickForm : Form
+    {
         /// <summary>
         /// Change the standard height of each item in the form.
         /// </summary>
@@ -29,31 +29,31 @@ namespace CBRE.QuickForms
         /// </summary>
 	    public int CurrentOffset { get; private set; }
 
-	    /// <summary>
-	    /// Get or set the width of item labels. This is not used 
-	    /// for a Label item, which takes the full width.
-	    /// </summary>
-	    public int LabelWidth { get; set; }
+        /// <summary>
+        /// Get or set the width of item labels. This is not used 
+        /// for a Label item, which takes the full width.
+        /// </summary>
+        public int LabelWidth { get; set; }
 
-	    public bool UseShortcutKeys { get; set; }
+        public bool UseShortcutKeys { get; set; }
 
         /// <summary>
         /// Create a form with the specified title.
         /// </summary>
         /// <param name="title">The title of the form</param>
 	    public QuickForm(string title)
-	    {
-			_items = new List<QuickFormItem>();
-			LabelWidth = 100;
-			CurrentOffset = ItemPadding;
-			Text = title;
-			FormBorderStyle = FormBorderStyle.FixedDialog;
-			ShowInTaskbar = false;
-			MinimizeBox = false;
-			MaximizeBox = false;
+        {
+            _items = new List<QuickFormItem>();
+            LabelWidth = 100;
+            CurrentOffset = ItemPadding;
+            Text = title;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            ShowInTaskbar = false;
+            MinimizeBox = false;
+            MaximizeBox = false;
             UseShortcutKeys = false;
             KeyPreview = true;
-	    }
+        }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -72,26 +72,26 @@ namespace CBRE.QuickForms
             }
             base.OnKeyDown(e);
         }
-		
-		protected override void OnLoad(EventArgs e)
-		{
-			ClientSize = new System.Drawing.Size(ClientSize.Width, CurrentOffset + ItemPadding);
-		    var nonlabel = Controls.OfType<Control>().FirstOrDefault(x => !(x is Label));
+
+        protected override void OnLoad(EventArgs e)
+        {
+            ClientSize = new System.Drawing.Size(ClientSize.Width, CurrentOffset + ItemPadding);
+            var nonlabel = Controls.OfType<Control>().FirstOrDefault(x => !(x is Label));
             if (nonlabel != null) nonlabel.Focus();
-			base.OnLoad(e);
-		}
-		
+            base.OnLoad(e);
+        }
+
         /// <summary>
         /// Add an item to the form.
         /// </summary>
         /// <param name="item">The item to add</param>
-		public void AddItem(QuickFormItem item)
-		{
-			_items.Add(item);
-			var ctl = item.GetControls(this);
-		    Controls.AddRange(ctl.ToArray());
-			CurrentOffset += ItemHeight + ItemPadding;
-		}
+        public void AddItem(QuickFormItem item)
+        {
+            _items.Add(item);
+            var ctl = item.GetControls(this);
+            Controls.AddRange(ctl.ToArray());
+            CurrentOffset += ItemHeight + ItemPadding;
+        }
 
         /// <summary>
         /// Add an item to the form.
@@ -104,25 +104,25 @@ namespace CBRE.QuickForms
             return this;
         }
 
-	    /// <summary>
-	    /// Add a textbox to the form.
-	    /// </summary>
-	    /// <param name="name">The name of the textbox</param>
-	    /// <param name="value">The default value of the textbox</param>
-	    /// <returns>This object, for method chaining</returns>
-	    public QuickForm TextBox(string name, string value = "")
+        /// <summary>
+        /// Add a textbox to the form.
+        /// </summary>
+        /// <param name="name">The name of the textbox</param>
+        /// <param name="value">The default value of the textbox</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm TextBox(string name, string value = "")
         {
             AddItem(new QuickFormTextBox(name, value));
             return this;
         }
 
-	    /// <summary>
-	    /// Add a browse textbox to the form.
-	    /// </summary>
-	    /// <param name="name">The name of the textbox</param>
-	    /// <param name="filter">The filter for the open file dialog</param>
-	    /// <returns>This object, for method chaining</returns>
-	    public QuickForm Browse(string name, string filter)
+        /// <summary>
+        /// Add a browse textbox to the form.
+        /// </summary>
+        /// <param name="name">The name of the textbox</param>
+        /// <param name="filter">The filter for the open file dialog</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm Browse(string name, string filter)
         {
             AddItem(new QuickFormBrowse(name, filter));
             return this;
@@ -134,21 +134,21 @@ namespace CBRE.QuickForms
         /// <param name="text">The text of the label</param>
         /// <returns>This object, for method chaining</returns>
         public QuickForm Label(string text)
-		{
+        {
             AddItem(new QuickFormLabel(text));
             return this;
-		}
+        }
 
-	    /// <summary>
-	    /// Add a NumericUpDown to the form.
-	    /// </summary>
-	    /// <param name="name">The name of the control</param>
-	    /// <param name="min">The minimum value of the control</param>
-	    /// <param name="max">The maximum value of the control</param>
-	    /// <param name="decimals">The number of decimals for the control</param>
-	    /// <param name="value">The default value of the control</param>
-	    /// <returns>This object, for method chaining</returns>
-	    public QuickForm NumericUpDown(string name, int min, int max, int decimals, decimal value = 0)
+        /// <summary>
+        /// Add a NumericUpDown to the form.
+        /// </summary>
+        /// <param name="name">The name of the control</param>
+        /// <param name="min">The minimum value of the control</param>
+        /// <param name="max">The maximum value of the control</param>
+        /// <param name="decimals">The number of decimals for the control</param>
+        /// <param name="value">The default value of the control</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm NumericUpDown(string name, int min, int max, int decimals, decimal value = 0)
         {
             AddItem(new QuickFormNumericUpDown(name, min, max, decimals, value));
             return this;
@@ -166,17 +166,17 @@ namespace CBRE.QuickForms
             return this;
         }
 
-	    /// <summary>
-	    /// Add a checkbox to the form.
-	    /// </summary>
-	    /// <param name="name">The name of the control</param>
-	    /// <param name="value">The initial value of the checkbox</param>
-	    /// <returns>This object, for method chaining</returns>
-	    public QuickForm CheckBox(string name, bool value = false)
-		{
+        /// <summary>
+        /// Add a checkbox to the form.
+        /// </summary>
+        /// <param name="name">The name of the control</param>
+        /// <param name="value">The initial value of the checkbox</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm CheckBox(string name, bool value = false)
+        {
             AddItem(new QuickFormCheckBox(name, value));
             return this;
-		}
+        }
 
         /// <summary>
         /// Add OK and Cancel buttons to the control
@@ -185,10 +185,10 @@ namespace CBRE.QuickForms
         /// <param name="cancel">The action to perform when cancel is clicked</param>
         /// <returns>This object, for method chaining</returns>
         public QuickForm OkCancel(Action<QuickForm> ok = null, Action<QuickForm> cancel = null)
-		{
+        {
             AddItem(new QuickFormOkCancel(ok, cancel));
             return this;
-		}
+        }
 
         /// <summary>
         /// Add a button to the control
@@ -197,25 +197,25 @@ namespace CBRE.QuickForms
         /// <param name="action">The action to perform when the button is clicked</param>
         /// <returns>This object, for method chaining</returns>
         public QuickForm Button(string text, Action action)
-		{
+        {
             AddItem(new QuickFormButton(text, action));
             return this;
-		}
+        }
 
-		public void Close(object sender, EventArgs e)
-		{
-			Close();
-		}
-		
+        public void Close(object sender, EventArgs e)
+        {
+            Close();
+        }
+
         /// <summary>
         /// Get a control by name
         /// </summary>
         /// <param name="name">The name of the control</param>
         /// <returns>The control, or null if it was not found</returns>
-		public Control GetControl(string name)
-		{
-		    return Controls.OfType<Control>().FirstOrDefault(c => c.Name == name);
-		}
+        public Control GetControl(string name)
+        {
+            return Controls.OfType<Control>().FirstOrDefault(c => c.Name == name);
+        }
 
         /// <summary>
         /// Get a string value from a control
@@ -223,11 +223,11 @@ namespace CBRE.QuickForms
         /// <param name="name">The name of the control</param>
         /// <returns>The string value</returns>
 	    public string String(string name)
-		{
-			var c = GetControl(name);
-			if (c != null) return c.Text;
-			throw new Exception("Control " + name + " not found!");
-		}
+        {
+            var c = GetControl(name);
+            if (c != null) return c.Text;
+            throw new Exception("Control " + name + " not found!");
+        }
 
         /// <summary>
         /// Get a decimal value from a control
@@ -235,11 +235,11 @@ namespace CBRE.QuickForms
         /// <param name="name">The name of the control</param>
         /// <returns>The decimal value</returns>
 		public decimal Decimal(string name)
-		{
-			var c = GetControl(name);
-			if (c != null) return ((NumericUpDown) c).Value;
-			throw new Exception("Control " + name + " not found!");
-		}
+        {
+            var c = GetControl(name);
+            if (c != null) return ((NumericUpDown)c).Value;
+            throw new Exception("Control " + name + " not found!");
+        }
 
         /// <summary>
         /// Get a boolean value from a control
@@ -247,11 +247,11 @@ namespace CBRE.QuickForms
         /// <param name="name">The name of the control</param>
         /// <returns>The boolean value</returns>
 		public bool Bool(string name)
-		{
-			var c = GetControl(name);
-			if (c != null) return ((CheckBox) c).Checked;
-			throw new Exception("Control " + name + " not found!");
-		}
+        {
+            var c = GetControl(name);
+            if (c != null) return ((CheckBox)c).Checked;
+            throw new Exception("Control " + name + " not found!");
+        }
 
         /// <summary>
         /// Get an object from a control
@@ -264,5 +264,5 @@ namespace CBRE.QuickForms
             if (c != null) return ((ComboBox)c).SelectedItem;
             throw new Exception("Control " + name + " not found!");
         }
-	}
+    }
 }

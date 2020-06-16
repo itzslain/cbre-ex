@@ -1,8 +1,8 @@
-﻿using System;
+﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
 using IGraphicsContext = OpenTK.Graphics.IGraphicsContext;
 
 namespace CBRE.Graphics.Arrays
@@ -43,7 +43,7 @@ namespace CBRE.Graphics.Arrays
         protected VBO(IEnumerable<TIn> data)
         {
             Specification = new ArraySpecification(typeof(TOut));
-            _size = Marshal.SizeOf(typeof (TOut));
+            _size = Marshal.SizeOf(typeof(TOut));
 
             _data = new List<TOut>();
             _indices = new Dictionary<int, List<uint>>();
@@ -149,7 +149,7 @@ namespace CBRE.Graphics.Arrays
             _subsetState.Add(groupId, list.Count);
         }
 
-        protected void PushSubset<T>(int groupId, T context) where T : class 
+        protected void PushSubset<T>(int groupId, T context) where T : class
         {
             if (!_subsetState.ContainsKey(groupId)) throw new Exception("No subset exists for this group.");
 
@@ -175,7 +175,7 @@ namespace CBRE.Graphics.Arrays
         protected IEnumerable<Subset> GetSubsets<T>(int groupId)
         {
             if (!_subsets.ContainsKey(groupId)) return new List<Subset>();
-            var t = typeof (T);
+            var t = typeof(T);
             return _subsets[groupId].Where(x => x.Type == t);
         }
 
@@ -201,7 +201,7 @@ namespace CBRE.Graphics.Arrays
         {
             var index = _data.Count;
             _data.AddRange(data);
-            return (uint) index;
+            return (uint)index;
         }
 
         protected static IEnumerable<uint> Triangulate(int num)

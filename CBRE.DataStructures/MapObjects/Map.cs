@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.DataStructures.GameData;
+using CBRE.DataStructures.Geometric;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using CBRE.Common;
-using CBRE.DataStructures.GameData;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -50,12 +50,12 @@ namespace CBRE.DataStructures.MapObjects
         protected Map(SerializationInfo info, StreamingContext context)
         {
             Version = info.GetDecimal("Version");
-            Visgroups = ((Visgroup[]) info.GetValue("Visgroups", typeof (Visgroup[]))).ToList();
-            Cameras = ((Camera[]) info.GetValue("Cameras", typeof (Camera[]))).ToList();
+            Visgroups = ((Visgroup[])info.GetValue("Visgroups", typeof(Visgroup[]))).ToList();
+            Cameras = ((Camera[])info.GetValue("Cameras", typeof(Camera[]))).ToList();
             var activeCamera = info.GetInt32("ActiveCameraID");
             ActiveCamera = activeCamera >= 0 ? Cameras[activeCamera] : null;
-            WorldSpawn = (World) info.GetValue("WorldSpawn", typeof (World));
-            IDGenerator = (IDGenerator) info.GetValue("IDGenerator", typeof (IDGenerator));
+            WorldSpawn = (World)info.GetValue("WorldSpawn", typeof(World));
+            IDGenerator = (IDGenerator)info.GetValue("IDGenerator", typeof(IDGenerator));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -86,7 +86,7 @@ namespace CBRE.DataStructures.MapObjects
 
             if (all.OfType<Solid>().Any(x => x.Faces.Any(y => y is Displacement)))
                 yield return MapFeature.Displacements;
-            
+
             // Not implemented yet
             // yield return MapFeature.Instances;
 
@@ -123,16 +123,16 @@ namespace CBRE.DataStructures.MapObjects
         {
             if (obj is Entity && obj.ChildCount == 0)
             {
-                var ent = (Entity) obj;
+                var ent = (Entity)obj;
                 if (ent.EntityData.Name == "infodecal")
                 {
                     var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
-                    if (tex != null) return new[] {tex.Value};
+                    if (tex != null) return new[] { tex.Value };
                 }
             }
             else if (obj is Solid)
             {
-                return ((Solid) obj).Faces.Select(f => f.Texture.Name);
+                return ((Solid)obj).Faces.Select(f => f.Texture.Name);
             }
 
             return obj.GetChildren().SelectMany(GetAllTexturesRecursive);
@@ -158,7 +158,7 @@ namespace CBRE.DataStructures.MapObjects
 
             // Auto visgroup
             var auto = AutoVisgroup.GetDefaultAutoVisgroup();
-            var quickHide = new AutoVisgroup {ID = int.MinValue, IsHidden = true, Name = "Autohide", Parent = auto, Visible = false};
+            var quickHide = new AutoVisgroup { ID = int.MinValue, IsHidden = true, Name = "Autohide", Parent = auto, Visible = false };
             auto.Children.Add(quickHide);
             Visgroups.Add(auto);
             UpdateAutoVisgroups(all, false);
@@ -218,7 +218,7 @@ namespace CBRE.DataStructures.MapObjects
             {
                 if (obj is Entity)
                 {
-                    var ent = (Entity) obj;
+                    var ent = (Entity)obj;
                     if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var gd =
@@ -230,7 +230,7 @@ namespace CBRE.DataStructures.MapObjects
                 }
                 else if (obj is Solid)
                 {
-                    var s = ((Solid) obj);
+                    var s = ((Solid)obj);
                     var disp = HideDisplacementSolids && s.Faces.Any(x => x is Displacement);
                     s.Faces.ForEach(f =>
                     {

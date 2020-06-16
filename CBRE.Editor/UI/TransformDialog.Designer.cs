@@ -30,7 +30,7 @@
         {
             this.Rotate = new System.Windows.Forms.RadioButton();
             this.Translate = new System.Windows.Forms.RadioButton();
-            this.Scale = new System.Windows.Forms.RadioButton();
+            this.scale = new System.Windows.Forms.RadioButton();
             this.ValueY = new System.Windows.Forms.NumericUpDown();
             this.ValueZ = new System.Windows.Forms.NumericUpDown();
             this.ValueX = new System.Windows.Forms.NumericUpDown();
@@ -43,7 +43,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.ValueY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ValueZ)).BeginInit();
@@ -74,16 +74,16 @@
             this.Translate.UseVisualStyleBackColor = true;
             this.Translate.Click += new System.EventHandler(this.TypeChanged);
             // 
-            // Scale
+            // scale
             // 
-            this.Scale.AutoSize = true;
-            this.Scale.Location = new System.Drawing.Point(12, 64);
-            this.Scale.Name = "Scale";
-            this.Scale.Size = new System.Drawing.Size(52, 17);
-            this.Scale.TabIndex = 0;
-            this.Scale.Text = "Scale";
-            this.Scale.UseVisualStyleBackColor = true;
-            this.Scale.Click += new System.EventHandler(this.TypeChanged);
+            this.scale.AutoSize = true;
+            this.scale.Location = new System.Drawing.Point(12, 64);
+            this.scale.Name = "scale";
+            this.scale.Size = new System.Drawing.Size(52, 17);
+            this.scale.TabIndex = 0;
+            this.scale.Text = "Scale";
+            this.scale.UseVisualStyleBackColor = true;
+            this.scale.Click += new System.EventHandler(this.TypeChanged);
             // 
             // ValueY
             // 
@@ -220,15 +220,15 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "X:";
             // 
-            // CancelButton
+            // cancelButton
             // 
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(135, 89);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 27;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(135, 89);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 27;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
             // 
             // OkButton
             // 
@@ -246,7 +246,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(278, 120);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.OkButton);
             this.Controls.Add(this.ValueY);
             this.Controls.Add(this.ValueZ);
@@ -260,7 +260,7 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.Scale);
+            this.Controls.Add(this.scale);
             this.Controls.Add(this.Translate);
             this.Controls.Add(this.Rotate);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -281,7 +281,7 @@
 
         private System.Windows.Forms.RadioButton Rotate;
         private System.Windows.Forms.RadioButton Translate;
-        private System.Windows.Forms.RadioButton Scale;
+        private System.Windows.Forms.RadioButton scale;
         private System.Windows.Forms.NumericUpDown ValueY;
         private System.Windows.Forms.NumericUpDown ValueZ;
         private System.Windows.Forms.NumericUpDown ValueX;
@@ -294,7 +294,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button OkButton;
     }
 }

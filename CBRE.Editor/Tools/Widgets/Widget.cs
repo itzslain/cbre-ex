@@ -1,8 +1,8 @@
-using System;
-using System.Drawing;
-using OpenTK;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using System;
+using System.Drawing;
 
 namespace CBRE.Editor.Tools.Widgets
 {

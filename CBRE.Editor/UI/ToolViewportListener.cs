@@ -1,8 +1,7 @@
-﻿using System;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.UI;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Tools;
+using CBRE.UI;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
@@ -56,7 +55,7 @@ namespace CBRE.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            if (e.Button == MouseButtons.Right && Viewport is Viewport2D) Mediator.Publish(EditorMediator.ViewportRightClick, new object[] {Viewport, e});
+            if (e.Button == MouseButtons.Right && Viewport is Viewport2D) Mediator.Publish(EditorMediator.ViewportRightClick, new object[] { Viewport, e });
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseUp(Viewport, e);
         }
@@ -105,17 +104,17 @@ namespace CBRE.Editor.UI
 
         public void Render3D()
         {
-            
+
         }
 
         public void Render2D()
         {
-            
+
         }
 
         public void PostRender()
         {
-            
+
         }
     }
 }

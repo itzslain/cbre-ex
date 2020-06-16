@@ -1,14 +1,14 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using CBRE.Graphics;
+using CBRE.Graphics.Helpers;
+using OpenTK;
+using OpenTK.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using OpenTK;
-using OpenTK.Graphics;
-using CBRE.DataStructures.Geometric;
-using CBRE.Graphics;
 using System.Windows.Forms;
-using CBRE.Graphics.Helpers;
 using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
 using GL = OpenTK.Graphics.OpenGL.GL;
 using KeyPressEventArgs = System.Windows.Forms.KeyPressEventArgs;
@@ -115,7 +115,7 @@ namespace CBRE.UI
                 }
             }
             Listeners.Clear();
-            
+
             RenderContext.Dispose();
             UpdateTimer.Dispose();
             _stopwatch.Stop();
@@ -225,7 +225,7 @@ namespace CBRE.UI
                 RenderContext.Render(this);
                 UpdateAfterRender();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 OnRenderException(ex);
             }
@@ -301,7 +301,7 @@ namespace CBRE.UI
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            ListenerDoEvent(new ViewportEvent(this, e),  (l, v) => l.MouseWheel(v));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseWheel(v));
         }
 
         protected override void OnMouseEnter(EventArgs e)

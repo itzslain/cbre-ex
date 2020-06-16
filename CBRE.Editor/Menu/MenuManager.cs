@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Properties;
 using CBRE.Settings;
 using CBRE.Settings.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Menu
 {
@@ -51,7 +50,7 @@ namespace CBRE.Editor.Menu
             Func<bool> mapOpen = () => DocumentManager.CurrentDocument != null;
             Add("File", new SimpleMenuBuilder("New", HotkeysMediator.FileNew) { Image = Resources.Menu_New, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Open", HotkeysMediator.FileOpen) { Image = Resources.Menu_Open, ShowInToolStrip = true });
-            Add("File", new SimpleMenuBuilder("Close", HotkeysMediator.FileClose) {IsVisible = mapOpen, Image = Resources.Menu_Close, ShowInToolStrip = true});
+            Add("File", new SimpleMenuBuilder("Close", HotkeysMediator.FileClose) { IsVisible = mapOpen, Image = Resources.Menu_Close, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Save", HotkeysMediator.FileSave) { IsVisible = mapOpen, Image = Resources.Menu_Save, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Save As...", HotkeysMediator.FileSaveAs) { Image = Resources.Menu_SaveAs, IsVisible = mapOpen });
             //Add("File", new SimpleMenuBuilder("Export...", HotkeysMediator.FileExport) { Image = Resources.Menu_Export, IsVisible = mapOpen });
@@ -60,7 +59,7 @@ namespace CBRE.Editor.Menu
             Add("File", new RecentFilesMenu());
             Add("File", new MenuSplitter());
             Add("File", new SimpleMenuBuilder("Exit", EditorMediator.Exit));
-            
+
             Func<bool> canUndo = () => mapOpen() && DocumentManager.CurrentDocument.History.CanUndo();
             Func<bool> canRedo = () => mapOpen() && DocumentManager.CurrentDocument.History.CanRedo();
             Func<string> undoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetUndoString() : "Undo";
@@ -87,7 +86,8 @@ namespace CBRE.Editor.Menu
             Add("Map", new GroupedMenuBuilder("Grid Settings",
                                               new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { Image = Resources.Menu_SmallerGrid, IsVisible = mapOpen, ShowInToolStrip = true },
                                               new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { Image = Resources.Menu_LargerGrid, IsVisible = mapOpen, ShowInToolStrip = true }
-                           ) { IsVisible = mapOpen });
+                           )
+            { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { Image = Resources.Menu_SmallerGrid, IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { Image = Resources.Menu_LargerGrid, IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
@@ -142,17 +142,19 @@ namespace CBRE.Editor.Menu
                                                 new SimpleMenuBuilder("To Y Axis Max", HotkeysMediator.AlignYMax) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("To Z Axis Min", HotkeysMediator.AlignZMin) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("To Z Axis Max", HotkeysMediator.AlignZMax) { IsVisible = mapOpen, IsActive = itemsSelected }
-                             ) { Image = Resources.Menu_Align, IsVisible = mapOpen });
+                             )
+            { Image = Resources.Menu_Align, IsVisible = mapOpen });
             Add("Tools", new GroupedMenuBuilder("Flip Objects",
                                                 new SimpleMenuBuilder("X Axis", HotkeysMediator.FlipX) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("Y Axis", HotkeysMediator.FlipY) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("Z Axis", HotkeysMediator.FlipZ) { IsVisible = mapOpen, IsActive = itemsSelected }
-                             ) { Image = Resources.Menu_Flip, IsVisible = mapOpen });
+                             )
+            { Image = Resources.Menu_Flip, IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings) { Image = Resources.Menu_Options, ShowInToolStrip = true });
 
-            Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) {Image = Resources.Menu_NewWindow});
-            Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) {Image = Resources.Menu_WindowSettings});
+            Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) { Image = Resources.Menu_NewWindow });
+            Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) { Image = Resources.Menu_WindowSettings });
 
             Add("Help", new SimpleMenuBuilder("About...", EditorMediator.About));
         }
@@ -205,7 +207,7 @@ namespace CBRE.Editor.Menu
                 .ToList();
             foreach (var kv in MenuItems.Reverse())
             {
-                var ts = removeToolbar.FirstOrDefault(x => x.Name == kv.Key) ?? new ToolStrip {Name = kv.Key};
+                var ts = removeToolbar.FirstOrDefault(x => x.Name == kv.Key) ?? new ToolStrip { Name = kv.Key };
                 // TODO Match by name, only remove items that don't match
                 ts.Items.Clear();
                 ts.Items.AddRange(kv.Value.Where(x => x.ShowInToolStrip).SelectMany(x => x.BuildToolStrip()).ToArray());

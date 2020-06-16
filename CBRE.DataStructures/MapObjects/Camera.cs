@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -18,8 +18,8 @@ namespace CBRE.DataStructures.MapObjects
 
         protected Camera(SerializationInfo info, StreamingContext context)
         {
-            EyePosition = (Coordinate) info.GetValue("EyePosition", typeof (Coordinate));
-            LookPosition = (Coordinate) info.GetValue("LookPosition", typeof (Coordinate));
+            EyePosition = (Coordinate)info.GetValue("EyePosition", typeof(Coordinate));
+            LookPosition = (Coordinate)info.GetValue("LookPosition", typeof(Coordinate));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

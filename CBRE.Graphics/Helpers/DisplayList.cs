@@ -1,6 +1,6 @@
-﻿using System;
+﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
 
 namespace CBRE.Graphics.Helpers
 {
@@ -24,7 +24,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void Create(string name)
         {
-            if (Lists.ContainsKey(name)) {
+            if (Lists.ContainsKey(name))
+            {
                 Delete(name);
             }
             var num = GL.GenLists(1);
@@ -33,9 +34,12 @@ namespace CBRE.Graphics.Helpers
 
         public static void Begin(string name)
         {
-            if (!Lists.ContainsKey(name)) {
+            if (!Lists.ContainsKey(name))
+            {
                 throw new Exception("This list does not exist!");
-            } else if (CurrentList != null) {
+            }
+            else if (CurrentList != null)
+            {
                 throw new Exception("Another list (" + CurrentList + ") is already in progress!");
             }
             GL.NewList(Lists[name], ListMode.Compile);
@@ -44,9 +48,12 @@ namespace CBRE.Graphics.Helpers
 
         public static void End(string name)
         {
-            if (CurrentList == null) {
+            if (CurrentList == null)
+            {
                 throw new Exception("There is currently no list in progress to end");
-            } else if (CurrentList != name) {
+            }
+            else if (CurrentList != name)
+            {
                 throw new Exception("Cannot end " + name + ", as " + CurrentList + " is the current list.");
             }
             GL.EndList();
@@ -55,7 +62,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void Call(string name)
         {
-            if (!Lists.ContainsKey(name)) {
+            if (!Lists.ContainsKey(name))
+            {
                 throw new Exception("This list does not exist!");
             }
             GL.CallList(Lists[name]);
@@ -63,7 +71,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void Delete(string name)
         {
-            if (Lists.ContainsKey(name)) {
+            if (Lists.ContainsKey(name))
+            {
                 GL.DeleteLists(Lists[name], 1);
                 Lists.Remove(name);
             }
@@ -71,7 +80,8 @@ namespace CBRE.Graphics.Helpers
 
         public static void DeleteAll()
         {
-            foreach (var e in Lists) {
+            foreach (var e in Lists)
+            {
                 GL.DeleteLists(e.Value, 1);
             }
             Lists.Clear();

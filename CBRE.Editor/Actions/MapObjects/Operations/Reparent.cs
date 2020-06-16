@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations
 {
@@ -19,16 +18,16 @@ namespace CBRE.Editor.Actions.MapObjects.Operations
         public bool ModifiesState { get { return true; } }
 
         private readonly long _parentId;
-        private List<ReparentReference> _objects; 
+        private List<ReparentReference> _objects;
 
         public Reparent(long parentId, IEnumerable<MapObject> objects)
         {
             _parentId = parentId;
             _objects = objects.Select(x => new ReparentReference
-                                               {
-                                                   ID = x.ID,
-                                                   OriginalParentID = x.Parent.ID
-                                               }).ToList();
+            {
+                ID = x.ID,
+                OriginalParentID = x.Parent.ID
+            }).ToList();
         }
 
         public void Dispose()

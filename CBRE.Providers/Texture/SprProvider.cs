@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.Graphics.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -6,9 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using CBRE.Common;
-using CBRE.FileSystem;
-using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Texture
 {
@@ -30,8 +29,8 @@ namespace CBRE.Providers.Texture
                 if (idst != "IDSP") return Size.Empty;
                 var version = br.ReadInt32();
                 if (version != 2) return Size.Empty;
-                var type = (SpriteOrientation) br.ReadInt32();
-                var texFormat = (SpriteRenderMode) br.ReadInt32();
+                var type = (SpriteOrientation)br.ReadInt32();
+                var texFormat = (SpriteRenderMode)br.ReadInt32();
                 var boundingRadius = br.ReadSingle();
                 var width = br.ReadInt32();
                 var height = br.ReadInt32();
@@ -49,8 +48,8 @@ namespace CBRE.Providers.Texture
                 if (idst != "IDSP") return null;
                 var version = br.ReadInt32();
                 if (version != 2) return null;
-                var type = (SpriteOrientation) br.ReadInt32();
-                var texFormat = (SpriteRenderMode) br.ReadInt32();
+                var type = (SpriteOrientation)br.ReadInt32();
+                var texFormat = (SpriteRenderMode)br.ReadInt32();
                 var boundingRadius = br.ReadSingle();
                 var width = br.ReadInt32();
                 var height = br.ReadInt32();
@@ -93,12 +92,12 @@ namespace CBRE.Providers.Texture
                     var c = colours[i];
                     if (texFormat == SpriteRenderMode.Additive)
                     {
-                        var a = (int) ((c.R + c.G + c.B) / 3f);
+                        var a = (int)((c.R + c.G + c.B) / 3f);
                         c = Color.FromArgb(a, c);
                     }
                     else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255)
                     {
-                        var a = (int) ((c.R + c.G + c.B) / 3f);
+                        var a = (int)((c.R + c.G + c.B) / 3f);
                         c = Color.FromArgb(a, last);
                     }
                     pal.Entries[i] = c;
@@ -139,7 +138,7 @@ namespace CBRE.Providers.Texture
         {
             // Sprite provider ignores the black/whitelists
             var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
-            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this) {IsBrowsable = false};
+            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this) { IsBrowsable = false };
             foreach (var dir in dirs)
             {
                 var sprs = Directory.GetFiles(dir, "*.spr", SearchOption.AllDirectories);

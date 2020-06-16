@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using CBRE.Common;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
 
 namespace CBRE.Providers.Map
 {
@@ -79,7 +79,7 @@ namespace CBRE.Providers.Map
                 Plane = new Plane(Coordinate.Parse(parts[1], parts[2], parts[3]),
                     Coordinate.Parse(parts[6], parts[7], parts[8]),
                     Coordinate.Parse(parts[11], parts[12], parts[13])),
-                Texture = {Name = parts[15]}
+                Texture = { Name = parts[15] }
             };
 
             // Cater for older-style map formats
@@ -305,7 +305,7 @@ namespace CBRE.Providers.Map
                 var map = new DataStructures.MapObjects.Map();
                 var allentities = ReadAllEntities(reader, map.IDGenerator);
                 var worldspawn = allentities.FirstOrDefault(x => x.EntityData.Name == "worldspawn")
-                                 ?? new Entity(0) {EntityData = {Name = "worldspawn"}};
+                                 ?? new Entity(0) { EntityData = { Name = "worldspawn" } };
                 allentities.Remove(worldspawn);
                 map.WorldSpawn.EntityData = worldspawn.EntityData;
                 allentities.ForEach(x => x.SetParent(map.WorldSpawn, false));

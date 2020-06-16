@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
+using CBRE.DataStructures.Geometric;
 using CBRE.Graphics.Helpers;
 using CBRE.UI;
-using System.Drawing;
-using CBRE.DataStructures.Geometric;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using TextPrinter = OpenTK.Graphics.TextPrinter;
 using TextQuality = OpenTK.Graphics.TextQuality;
-
+#pragma warning disable 0612
 namespace CBRE.Editor.Tools
 {
     public abstract class BaseBoxTool : BaseTool
@@ -28,9 +28,9 @@ namespace CBRE.Editor.Tools
 
         public enum ResizeHandle
         {
-            TopLeft,    Top,     TopRight,
-            Left,       Center,  Right,
-            BottomLeft, Bottom,  BottomRight
+            TopLeft, Top, TopRight,
+            Left, Center, Right,
+            BottomLeft, Bottom, BottomRight
         }
 
         public class BoxState
@@ -61,7 +61,7 @@ namespace CBRE.Editor.Tools
             {
                 if (Action != BoxAction.Drawing && Action != BoxAction.Resizing) return;
                 if (!(ActiveViewport is Viewport2D)) return;
-                var vp = (Viewport2D) ActiveViewport;
+                var vp = (Viewport2D)ActiveViewport;
 
                 if (BoxStart.X > BoxEnd.X)
                 {
@@ -97,7 +97,7 @@ namespace CBRE.Editor.Tools
                 var str = Handle.ToString();
                 if (str.Contains(one))
                 {
-                    Handle = (ResizeHandle) Enum.Parse(typeof (ResizeHandle), str.Replace(one, two));
+                    Handle = (ResizeHandle)Enum.Parse(typeof(ResizeHandle), str.Replace(one, two));
                 }
                 else if (str.Contains(two))
                 {
@@ -160,7 +160,7 @@ namespace CBRE.Editor.Tools
 
         // Class Variables
         protected const decimal HandleWidth = 12;
-        
+
         protected TextPrinter _printer; //TODO replace all TextPrinters with something not obsolete?
         protected Font _printerFont;
 
@@ -193,7 +193,7 @@ namespace CBRE.Editor.Tools
             if (e.Button != MouseButtons.Left) return;
             if (!(viewport is Viewport2D)) return;
             State.ClickStart = new Point(e.X, e.Y);
-            var vp = (Viewport2D) viewport;
+            var vp = (Viewport2D)viewport;
             switch (State.Action)
             {
                 case BoxAction.ReadyToDraw:
@@ -243,7 +243,7 @@ namespace CBRE.Editor.Tools
         // Mouse Up
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
-            if (viewport is Viewport3D) MouseUp3D((Viewport3D) viewport, e);
+            if (viewport is Viewport3D) MouseUp3D((Viewport3D)viewport, e);
             Editor.Instance.CaptureAltPresses = false;
             if (e.Button != MouseButtons.Left) return;
             if (!(viewport is Viewport2D)) return;
@@ -309,11 +309,11 @@ namespace CBRE.Editor.Tools
         // Mouse Move
         public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
-            if (viewport is Viewport3D) MouseMove3D((Viewport3D) viewport, e);
+            if (viewport is Viewport3D) MouseMove3D((Viewport3D)viewport, e);
             if (!(viewport is Viewport2D)) return;
             if (!State.IsValidAndApplicable(viewport)) return;
             if (Math.Abs(e.X - State.ClickStart.X) <= 2 && Math.Abs(e.Y - State.ClickStart.Y) <= 2) return;
-            var vp = (Viewport2D) viewport;
+            var vp = (Viewport2D)viewport;
             switch (State.Action)
             {
                 case BoxAction.Drawing:
@@ -469,7 +469,7 @@ namespace CBRE.Editor.Tools
                     break;
                 case ResizeHandle.Bottom:
                     cstart.Y = now.Y;
-                    break; 
+                    break;
                 case ResizeHandle.BottomRight:
                     cend.X = now.X;
                     cstart.Y = now.Y;
@@ -640,7 +640,7 @@ namespace CBRE.Editor.Tools
             var start = GetResizeOrigin(viewport);
             if (start == null) return;
             const int size = 6;
-            var dist = (double) (size / viewport.Zoom);
+            var dist = (double)(size / viewport.Zoom);
 
             var origin = start + viewport.Flatten(State.BoxStart - State.PreTransformBoxStart);
             GL.Begin(PrimitiveType.Lines);
@@ -884,3 +884,4 @@ namespace CBRE.Editor.Tools
         }
     }
 }
+#pragma warning restore 0612

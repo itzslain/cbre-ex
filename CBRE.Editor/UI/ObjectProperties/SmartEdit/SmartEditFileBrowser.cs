@@ -1,9 +1,9 @@
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using CBRE.DataStructures.GameData;
 using CBRE.Editor.UI.FileSystem;
 using CBRE.FileSystem;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {

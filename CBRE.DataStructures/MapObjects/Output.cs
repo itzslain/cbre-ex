@@ -40,14 +40,14 @@ namespace CBRE.DataStructures.MapObjects
         public Output Clone()
         {
             return new Output
-                       {
-                           Name = Name,
-                           Target = Target,
-                           Input = Input,
-                           Parameter = Parameter,
-                           Delay = Delay,
-                           OnceOnly = OnceOnly
-                       };
+            {
+                Name = Name,
+                Target = Target,
+                Input = Input,
+                Parameter = Parameter,
+                Delay = Delay,
+                OnceOnly = OnceOnly
+            };
         }
     }
 }

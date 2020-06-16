@@ -1,23 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Windows.Forms;
 using CBRE.Common.Mediator;
-using CBRE.DataStructures.GameData;
-using CBRE.Editor.Compiling;
 using CBRE.Editor.Extensions;
-using CBRE.Providers.GameData;
 using CBRE.QuickForms;
 using CBRE.Settings;
-using System.Linq;
 using CBRE.Settings.Models;
 using CBRE.UI;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Settings
 {
@@ -26,7 +21,7 @@ namespace CBRE.Editor.Settings
     /// </summary>
     public partial class SettingsForm : Form
     {
-        private List<Hotkey> _hotkeys; 
+        private List<Hotkey> _hotkeys;
 
         public SettingsForm()
         {
@@ -232,21 +227,21 @@ namespace CBRE.Editor.Settings
 
         private void ReIndex()
         {
-            
+
         }
 
         private void UpdateBuildTree()
         {
-            
+
         }
 
         private void UpdateGameTree()
         {
-            
+
         }
 
         #endregion
-        
+
         #region Controls
 
         public void SelectTab(int index)
@@ -268,13 +263,13 @@ namespace CBRE.Editor.Settings
 
         private CheckBox AddSetting(Expression<Func<bool>> prop, string text)
         {
-            var expression = (MemberExpression) prop.Body;
-            var property = (PropertyInfo) expression.Member;
+            var expression = (MemberExpression)prop.Body;
+            var property = (PropertyInfo)expression.Member;
             var checkbox = new CheckBox
             {
                 Text = text,
                 AutoSize = true,
-                Checked = (bool) property.GetValue(null, null),
+                Checked = (bool)property.GetValue(null, null),
                 Tag = prop,
                 Padding = new Padding(10, 0, 0, 0)
             };
@@ -365,7 +360,7 @@ namespace CBRE.Editor.Settings
                 Value = Convert.ToDecimal(property.GetValue(null, null)),
                 Width = 50
             };
-            updown.ValueChanged += (s, e) => property.SetValue(null, (int) updown.Value, null);
+            updown.ValueChanged += (s, e) => property.SetValue(null, (int)updown.Value, null);
             var label = new Label
             {
                 AutoSize = true,
@@ -391,7 +386,7 @@ namespace CBRE.Editor.Settings
             var property = (PropertyInfo)expression.Member;
             var colour = new Panel
             {
-                BackColor = (Color) property.GetValue(null, null),
+                BackColor = (Color)property.GetValue(null, null),
                 Height = 20,
                 Width = 50,
                 BorderStyle = BorderStyle.Fixed3D
@@ -495,7 +490,7 @@ namespace CBRE.Editor.Settings
             AddSetting(() => CBRE.Settings.Select.UndoStackSize, 1, 1000, "Undo stack size (caution: setting too high may result in an out of memory crash!)");
             AddSetting(() => CBRE.Settings.Select.SkipSelectionInUndoStack, "Fast-forward selection operations when performing undo/redo (selection, deselection)");
             AddSetting(() => CBRE.Settings.Select.SkipVisibilityInUndoStack, "Fast-forward visibility operations when performing undo/redo (visgroup visibility, quick show/hide)");
-            
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = CBRE.Settings.View.CrosshairCursorIn2DViews;
             DrawEntityNames.Checked = CBRE.Settings.View.DrawEntityNames;
@@ -541,7 +536,7 @@ namespace CBRE.Editor.Settings
             ForwardSpeedUpDown.Value = ForwardSpeed.Value = CBRE.Settings.View.ForwardSpeed;
             ForwardSpeedChanged(null, null);
 
-            TimeToTopSpeed.Value = (int) (CBRE.Settings.View.TimeToTopSpeed / 100);
+            TimeToTopSpeed.Value = (int)(CBRE.Settings.View.TimeToTopSpeed / 100);
             TimeToTopSpeedUpDown.Value = CBRE.Settings.View.TimeToTopSpeed / 1000;
             TimeToTopSpeedChanged(null, null);
 
@@ -550,7 +545,7 @@ namespace CBRE.Editor.Settings
             MouseWheelMoveDistance.Value = CBRE.Settings.View.MouseWheelMoveDistance;
 
             CameraFOV.Value = CBRE.Settings.View.CameraFOV;
-            
+
             // Hotkeys
             UpdateHotkeyList();
 
@@ -589,7 +584,7 @@ namespace CBRE.Editor.Settings
             Grid.BoundaryLines = GridBoundaryColour.BackColor;
             Grid.Highlight1 = GridHighlight1Colour.BackColor;
             Grid.Highlight2 = GridHighlight2Colour.BackColor;
-            Grid.Highlight1LineNum = (int) GridHighlight1Distance.Value;
+            Grid.Highlight1LineNum = (int)GridHighlight1Distance.Value;
             Grid.Highlight2UnitNum = int.Parse(Convert.ToString(GridHighlight2UnitNum.Text));
             Grid.Highlight1On = GridHighlight1On.Checked;
             Grid.Highlight2On = GridHighlight2On.Checked;
@@ -606,15 +601,15 @@ namespace CBRE.Editor.Settings
             CBRE.Settings.View.InvertY = InvertMouseY.Checked;
             CBRE.Settings.View.MouseWheelMoveDistance = MouseWheelMoveDistance.Value;
 
-            CBRE.Settings.View.CameraFOV = (int) CameraFOV.Value;
-            
+            CBRE.Settings.View.CameraFOV = (int)CameraFOV.Value;
+
             // Hotkeys
             SettingsManager.Hotkeys.Clear();
             SettingsManager.Hotkeys.AddRange(_hotkeys);
             Hotkeys.SetupHotkeys(SettingsManager.Hotkeys);
-            
+
             SettingsManager.Write();
-            
+
             Mediator.Publish(EditorMediator.SettingsChanged);
         }
 
@@ -656,7 +651,7 @@ namespace CBRE.Editor.Settings
 
         private void TabChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void BackClippingPaneChanged(object sender, EventArgs e)
@@ -666,7 +661,7 @@ namespace CBRE.Editor.Settings
 
         private void BackClippingPlaneUpDownValueChanged(object sender, EventArgs e)
         {
-            if (BackClippingPlaneUpDown.Value != BackClippingPane.Value) BackClippingPane.Value = (int) BackClippingPlaneUpDown.Value;
+            if (BackClippingPlaneUpDown.Value != BackClippingPane.Value) BackClippingPane.Value = (int)BackClippingPlaneUpDown.Value;
         }
 
         private void ModelRenderDistanceChanged(object sender, EventArgs e)
@@ -711,7 +706,7 @@ namespace CBRE.Editor.Settings
 
         private void SteamInstallDirBrowseClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SteamUsernameChanged(object sender, EventArgs e)
@@ -727,130 +722,130 @@ namespace CBRE.Editor.Settings
 
         private void UpdateSteamUsernames()
         {
-            
+
         }
 
         private void RemoveGameClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void AddGameClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void AddBuildClicked(object sender, EventArgs e)
         {
-           
+
         }
 
         private void RemoveBuildClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         #endregion
 
         #region Selected Game
-        
+
         private void GameSelected(object sender, TreeViewEventArgs e)
         {
-            
+
         }
 
         private void UpdateSelectedGame()
         {
-            
+
         }
 
         private void SelectedGameUpdateAdditionalPackages()
         {
-            
+
         }
 
         private void SelectedGameUpdateFgds()
         {
-            
+
         }
 
         private void SelectedGameEngineChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameUpdateSteamGames()
         {
-            
+
         }
 
         private void SelectedGameWonDirChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameNameChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameUseDiffAutosaveDirChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameDirBrowseClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameMapDirBrowseClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameDiffAutosaveDirBrowseClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameAddFgdClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameRemoveFgdClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameOverrideMapSizeChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameAddAdditionalPackageFileClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameAddAdditionalPackageFolderClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         private void SelectedGameRemoveAdditionalPackageClicked(object sender, EventArgs e)
         {
-            
+
         }
 
         #endregion
-        
+
         #region Hotkeys
 
         private class HotkeyQuickFormItem : QuickForms.Items.QuickFormTextBox
@@ -868,7 +863,7 @@ namespace CBRE.Editor.Settings
             private void HotkeyDown(object sender, KeyEventArgs e)
             {
                 e.SuppressKeyPress = e.Handled = true;
-                ((TextBox) sender).Text = KeyboardState.KeysToString(e.KeyData);
+                ((TextBox)sender).Text = KeyboardState.KeysToString(e.KeyData);
             }
         }
         private void UpdateHotkeyList()
@@ -886,7 +881,8 @@ namespace CBRE.Editor.Settings
                                                               String.IsNullOrWhiteSpace(hotkey.HotkeyString)
                                                                   ? "<unassigned>"
                                                                   : hotkey.HotkeyString
-                                                          }) {Tag = hotkey});
+                                                          })
+                { Tag = hotkey });
             }
             HotkeyList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             if (idx >= 0 && idx < HotkeyList.Items.Count) HotkeyList.Items[idx].Selected = true;
@@ -986,7 +982,7 @@ namespace CBRE.Editor.Settings
                     return;
                 }
             }
-            var def = (HotkeyDefinition) HotkeyActionList.SelectedItem;
+            var def = (HotkeyDefinition)HotkeyActionList.SelectedItem;
             var blank = _hotkeys.FirstOrDefault(x => x.ID == def.ID && String.IsNullOrWhiteSpace(x.HotkeyString));
             if (blank == null) _hotkeys.Add(new Hotkey { ID = def.ID, HotkeyString = key });
             else blank.HotkeyString = key;
@@ -1014,7 +1010,7 @@ namespace CBRE.Editor.Settings
             {
                 foreach (var hk in def.DefaultHotkeys)
                 {
-                    _hotkeys.Add(new Hotkey {ID = def.ID, HotkeyString = hk});
+                    _hotkeys.Add(new Hotkey { ID = def.ID, HotkeyString = hk });
                 }
             }
             UpdateHotkeyList();

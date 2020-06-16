@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using CBRE.Common.Mediator;
+using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
 
 namespace CBRE.Editor.UI
 {
@@ -17,7 +11,7 @@ namespace CBRE.Editor.UI
         {
             InitializeComponent();
 
-            VersionLabel.Text = FileVersionInfo.GetVersionInfo(typeof (Editor).Assembly.Location).FileVersion;
+            VersionLabel.Text = FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location).FileVersion;
 
             LTLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://logic-and-trick.com");
             GithubLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/juanjp600/sledge");

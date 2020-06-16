@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows.Forms;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.UI;
-using CBRE.Editor.Rendering;
 
 namespace CBRE.Editor.UI
 {
@@ -11,7 +8,7 @@ namespace CBRE.Editor.UI
         public ViewportBase Viewport
         {
             get { return Viewport2D; }
-            set { Viewport2D = (Viewport2D) value; }
+            set { Viewport2D = (Viewport2D)value; }
         }
 
         private Viewport2D Viewport2D { get; set; }

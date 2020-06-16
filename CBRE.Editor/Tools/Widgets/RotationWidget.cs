@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.DataStructures;
+﻿using CBRE.DataStructures;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Extensions;
@@ -13,6 +6,13 @@ using CBRE.Extensions;
 using CBRE.Graphics;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.Widgets
 {
@@ -100,7 +100,7 @@ namespace CBRE.Editor.Tools.Widgets
         {
             var ccl = new Coordinate((decimal)viewport.Camera.Location.X, (decimal)viewport.Camera.Location.Y, (decimal)viewport.Camera.Location.Z);
             var ccla = new Coordinate((decimal)viewport.Camera.LookAt.X, (decimal)viewport.Camera.LookAt.Y, (decimal)viewport.Camera.LookAt.Z);
-            
+
             var cache = _cachedLines.FirstOrDefault(x => x.Viewport3D == viewport);
             if (cache == null)
             {
@@ -253,7 +253,7 @@ namespace CBRE.Editor.Tools.Widgets
         {
             if (viewport is Viewport2D)
             {
-                var vp2 = (Viewport2D) viewport;
+                var vp2 = (Viewport2D)viewport;
                 if (_movingPivot)
                 {
                     var pp = SnapToSelection(vp2.ScreenToWorld(e.X, vp2.Height - e.Y), vp2);
@@ -358,7 +358,7 @@ namespace CBRE.Editor.Tools.Widgets
 
             if (viewport is Viewport2D)
             {
-                Render2D((Viewport2D) viewport);
+                Render2D((Viewport2D)viewport);
                 return;
             }
 
@@ -418,7 +418,7 @@ namespace CBRE.Editor.Tools.Widgets
             {
                 GL.Begin(PrimitiveType.Lines);
 
-                var zero = new Vector3((float) _pivotPoint.DX, (float) _pivotPoint.DY, (float) _pivotPoint.DZ);
+                var zero = new Vector3((float)_pivotPoint.DX, (float)_pivotPoint.DY, (float)_pivotPoint.DZ);
 
                 GL.Color4(c);
                 GL.Vertex3(zero - axis * 100000);

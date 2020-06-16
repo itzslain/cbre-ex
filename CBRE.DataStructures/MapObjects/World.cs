@@ -14,12 +14,12 @@ namespace CBRE.DataStructures.MapObjects
         public World(long id) : base(id)
         {
             Paths = new List<Path>();
-            EntityData = new EntityData {Name = "worldspawn"};
+            EntityData = new EntityData { Name = "worldspawn" };
         }
 
         protected World(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            EntityData = (EntityData) info.GetValue("EntityData", typeof (EntityData));
+            EntityData = (EntityData)info.GetValue("EntityData", typeof(EntityData));
             Paths = ((Path[])info.GetValue("Paths", typeof(Path[]))).ToList();
         }
 

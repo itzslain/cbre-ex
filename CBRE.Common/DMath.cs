@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace CBRE.Extensions
 {
@@ -14,12 +13,12 @@ namespace CBRE.Extensions
 
         public static decimal Sqrt(decimal val)
         {
-            return (decimal)Math.Sqrt((double) val);
+            return (decimal)Math.Sqrt((double)val);
         }
 
         public static decimal Pow(decimal b, decimal e)
         {
-            return (decimal)Math.Pow((double) b, (double) e);
+            return (decimal)Math.Pow((double)b, (double)e);
         }
 
         public static decimal Tan(decimal angle)
@@ -39,7 +38,7 @@ namespace CBRE.Extensions
 
         public static decimal Cos(decimal angle)
         {
-            return (decimal)Math.Cos((double) angle);
+            return (decimal)Math.Cos((double)angle);
         }
 
         public static decimal Sin(decimal angle)
@@ -54,7 +53,7 @@ namespace CBRE.Extensions
 
         public static decimal Acos(decimal value)
         {
-            return (decimal)Math.Acos((double) value);
+            return (decimal)Math.Acos((double)value);
         }
 
         public static decimal DegreesToRadians(decimal degrees)

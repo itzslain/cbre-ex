@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
-using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CBRE.Editor.Settings
 {
@@ -32,12 +28,12 @@ namespace CBRE.Editor.Settings
         private static void Execute(params string[] parameters)
         {
             var psi = new ProcessStartInfo("CBRE.Editor.Elevate.exe")
-                          {
-                              Arguments = String.Join(" ", parameters),
-                              UseShellExecute = true,
-                              Verb = "runas",
-                              WindowStyle = ProcessWindowStyle.Hidden
-                          };
+            {
+                Arguments = String.Join(" ", parameters),
+                UseShellExecute = true,
+                Verb = "runas",
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
             try
             {

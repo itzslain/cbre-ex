@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace CBRE.Editor
 {

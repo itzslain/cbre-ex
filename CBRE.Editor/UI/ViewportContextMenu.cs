@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
 using CBRE.UI;
+using System;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using OpenTK;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.UI;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.SelectTool.TransformationTools
 {
@@ -17,7 +17,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
         public abstract string GetTransformName();
         public abstract Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle);
         public abstract IEnumerable<Widget> GetWidgets(Document document);
-        
+
         /// <summary>
         /// Get a list of handles and their standard offset positions
         /// </summary>

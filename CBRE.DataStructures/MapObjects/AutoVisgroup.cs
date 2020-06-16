@@ -1,6 +1,6 @@
+using CBRE.DataStructures.MapObjects.VisgroupFilters;
 using System;
 using System.Linq;
-using CBRE.DataStructures.MapObjects.VisgroupFilters;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -27,43 +27,43 @@ namespace CBRE.DataStructures.MapObjects
 
         public static AutoVisgroup GetDefaultAutoVisgroup()
         {
-            var filters = typeof (IVisgroupFilter).Assembly.GetTypes()
-                .Where(x => typeof (IVisgroupFilter).IsAssignableFrom(x))
+            var filters = typeof(IVisgroupFilter).Assembly.GetTypes()
+                .Where(x => typeof(IVisgroupFilter).IsAssignableFrom(x))
                 .Where(x => !x.IsInterface)
                 .Select(Activator.CreateInstance)
                 .OfType<IVisgroupFilter>();
             var i = -1;
             var auto = new AutoVisgroup
-                           {
-                               ID = i--,
-                               IsHidden = false,
-                               Name = "Auto",
-                               Visible = true
-                           };
+            {
+                ID = i--,
+                IsHidden = false,
+                Name = "Auto",
+                Visible = true
+            };
             foreach (var f in filters)
             {
                 var parent = auto.Children.OfType<AutoVisgroup>().FirstOrDefault(x => x.Name == f.Group);
                 if (parent == null)
                 {
                     parent = new AutoVisgroup
-                                 {
-                                     ID = i--,
-                                     IsHidden = false,
-                                     Name = f.Group,
-                                     Visible = true,
-                                     Parent = auto
-                                 };
+                    {
+                        ID = i--,
+                        IsHidden = false,
+                        Name = f.Group,
+                        Visible = true,
+                        Parent = auto
+                    };
                     auto.Children.Add(parent);
                 }
                 var vg = new AutoVisgroup
-                             {
-                                 ID = i--,
-                                 Filter = f.IsMatch,
-                                 IsHidden = false,
-                                 Name = f.Name,
-                                 Visible = true,
-                                 Parent = parent
-                             };
+                {
+                    ID = i--,
+                    Filter = f.IsMatch,
+                    IsHidden = false,
+                    Name = f.Name,
+                    Visible = true,
+                    Parent = parent
+                };
                 parent.Children.Add(vg);
             }
             return auto;

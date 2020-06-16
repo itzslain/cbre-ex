@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using CBRE.Common;
 using CBRE.Editor.Brushes.Controls;
 using CBRE.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Brushes
 {
@@ -31,7 +31,7 @@ namespace CBRE.Editor.Brushes
 
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
-            var numSides = (int) _numSides.GetValue();
+            var numSides = (int)_numSides.GetValue();
             if (numSides < 3) yield break;
 
             // This is all very similar to the cylinder brush.
@@ -57,7 +57,7 @@ namespace CBRE.Editor.Brushes
             for (var i = 0; i < numSides; i++)
             {
                 var next = (i + 1) % numSides;
-                faces.Add(new[] {points[i], point, points[next]});
+                faces.Add(new[] { points[i], point, points[next] });
             }
             faces.Add(points.ToArray());
 

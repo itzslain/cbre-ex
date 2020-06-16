@@ -1,3 +1,5 @@
+using CBRE.FileSystem;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -5,8 +7,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using OpenTK;
-using CBRE.FileSystem;
 
 namespace CBRE.Providers.Texture.Vtf
 {
@@ -60,7 +60,7 @@ namespace CBRE.Providers.Texture.Vtf
                 var width = br.ReadUInt16();
                 var height = br.ReadUInt16();
 
-                var flags = (VtfImageFlag) br.ReadUInt32();
+                var flags = (VtfImageFlag)br.ReadUInt32();
 
                 var numFrames = br.ReadUInt16();
                 var firstFrame = br.ReadUInt16();
@@ -73,9 +73,9 @@ namespace CBRE.Providers.Texture.Vtf
 
                 var bumpmapScale = br.ReadSingle();
 
-                var highResImageFormat = (VtfImageFormat) br.ReadUInt32();
+                var highResImageFormat = (VtfImageFormat)br.ReadUInt32();
                 var mipmapCount = br.ReadByte();
-                var lowResImageFormat = (VtfImageFormat) br.ReadUInt32();
+                var lowResImageFormat = (VtfImageFormat)br.ReadUInt32();
                 var lowResWidth = br.ReadByte();
                 var lowResHeight = br.ReadByte();
 
@@ -126,7 +126,7 @@ namespace CBRE.Providers.Texture.Vtf
                 if (lowResImageFormat != VtfImageFormat.None)
                 {
                     br.BaseStream.Position = thumbnailPos;
-                    var thumbnail = br.ReadBytes((int) thumbnailSize);
+                    var thumbnail = br.ReadBytes((int)thumbnailSize);
                     //var thumbImage = LoadImage(br, lowResWidth, lowResHeight, lowResImageFormat);
                     //return thumbImage;
                 }
@@ -134,14 +134,14 @@ namespace CBRE.Providers.Texture.Vtf
                 var mipNum = 0;
                 if (maxWidth > 0 || maxHeight > 0) mipNum = GetMipToLoad(width, height, maxWidth > 0 ? maxWidth : width, maxHeight > 0 ? maxHeight : height, mipmapCount);
 
-               var wid = MipmapResize(width, mipNum);
-               var hei = MipmapResize(height, mipNum);
-               var offset = GetImageDataLocation(0, 0, 0, mipNum, highResImageFormat, width, height, numFrames, faces, depth, mipmapCount);
-               br.BaseStream.Position = offset + dataPos;
-                        
-               var img = LoadImage(br, (uint) wid, (uint) hei, highResImageFormat);
-               //img.Save(String.Format(@"D:\Github\sledge\_Resources\VTF\_test_fr{0}_fa{1}_sl{2}_m{3}.png", frame, face, slice, mip));
-               return new BitmapRef(img); //TODO: mark as disposable?
+                var wid = MipmapResize(width, mipNum);
+                var hei = MipmapResize(height, mipNum);
+                var offset = GetImageDataLocation(0, 0, 0, mipNum, highResImageFormat, width, height, numFrames, faces, depth, mipmapCount);
+                br.BaseStream.Position = offset + dataPos;
+
+                var img = LoadImage(br, (uint)wid, (uint)hei, highResImageFormat);
+                //img.Save(String.Format(@"D:\Github\sledge\_Resources\VTF\_test_fr{0}_fa{1}_sl{2}_m{3}.png", frame, face, slice, mip));
+                return new BitmapRef(img); //TODO: mark as disposable?
             }
         }
 
@@ -251,8 +251,8 @@ namespace CBRE.Providers.Texture.Vtf
                 mul = mul / (1 + mul);
                 mul /= y;
 
-                hr = (float) Math.Pow((y + 1.403f * v) * mul, 2.25f);
-                hg = (float) Math.Pow((y - 0.344f * u - 0.714f * v) * mul, 2.25f);
+                hr = (float)Math.Pow((y + 1.403f * v) * mul, 2.25f);
+                hg = (float)Math.Pow((y - 0.344f * u - 0.714f * v) * mul, 2.25f);
                 hb = (float)Math.Pow((y + 1.770f * u) * mul, 2.25f);
 
                 if (hr < 0) hr = 0;
@@ -330,7 +330,7 @@ namespace CBRE.Providers.Texture.Vtf
         private static void DecompressDxt1(byte[] buffer, BinaryReader br, uint width, uint height)
         {
             var num = ((width + 3) / 4) * ((height + 3) / 4) * 8;
-            var all = br.ReadBytes((int) num);
+            var all = br.ReadBytes((int)num);
             var pos = 0;
             var c = new byte[16];
             for (var y = 0; y < height; y += 4)
@@ -357,8 +357,8 @@ namespace CBRE.Providers.Texture.Vtf
                     {
                         // No alpha channel
 
-                        c[8 ] = (byte)((2 * c[0] + c[4]) / 3);
-                        c[9 ] = (byte)((2 * c[1] + c[5]) / 3);
+                        c[8] = (byte)((2 * c[0] + c[4]) / 3);
+                        c[9] = (byte)((2 * c[1] + c[5]) / 3);
                         c[10] = (byte)((2 * c[2] + c[6]) / 3);
                         c[11] = 255;
 
@@ -412,7 +412,7 @@ namespace CBRE.Providers.Texture.Vtf
         private static void DecompressDxt5(byte[] buffer, BinaryReader br, uint width, uint height)
         {
             var num = ((width + 3) / 4) * ((height + 3) / 4) * 16;
-            var all = br.ReadBytes((int) num);
+            var all = br.ReadBytes((int)num);
             var pos = 0;
             var c = new byte[16];
             var a = new int[8];
@@ -489,7 +489,7 @@ namespace CBRE.Providers.Texture.Vtf
                             {
                                 var index = bytes & 0x0003;
                                 index *= 4;
-                                var alpha = (byte) a[aindex & 0x07];
+                                var alpha = (byte)a[aindex & 0x07];
                                 var pointer = ypos * width * 4 + xpos * 4;
                                 buffer[pointer + 0] = c[index + 2]; // b
                                 buffer[pointer + 1] = c[index + 1]; // g
@@ -514,7 +514,7 @@ namespace CBRE.Providers.Texture.Vtf
             var w = MipmapResize(width, mipLevel);
             var h = MipmapResize(height, mipLevel);
             var d = MipmapResize(depth, mipLevel);
-            return ComputeImageSize((uint) w, (uint) h, (uint) d, format);
+            return ComputeImageSize((uint)w, (uint)h, (uint)d, format);
         }
 
         private static uint ComputeImageSize(uint width, uint height, uint depth, VtfImageFormat imageFormat)

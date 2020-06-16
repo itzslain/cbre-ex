@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Documents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Editor.Extensions
 {

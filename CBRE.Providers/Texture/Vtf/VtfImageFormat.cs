@@ -34,13 +34,13 @@
         Rgb323232F,
         Rgba32323232F,
         NvDst16,
-        NvDst24,	
+        NvDst24,
         NvIntz,
         NvRawz,
         AtiDst16,
         AtiDst24,
         NvNull,
-        Ati2N,	
+        Ati2N,
         Ati1N,
     }
 

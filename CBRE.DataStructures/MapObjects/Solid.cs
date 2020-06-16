@@ -1,9 +1,9 @@
-﻿using System;
+﻿using CBRE.DataStructures.Geometric;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects
 {
@@ -12,7 +12,8 @@ namespace CBRE.DataStructures.MapObjects
     {
         public List<Face> Faces { get; private set; }
 
-        public override Color Colour {
+        public override Color Colour
+        {
             get { return base.Colour; }
             set
             {
@@ -28,7 +29,7 @@ namespace CBRE.DataStructures.MapObjects
 
         protected Solid(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Faces = ((Face[]) info.GetValue("Faces", typeof (Face[]))).ToList();
+            Faces = ((Face[])info.GetValue("Faces", typeof(Face[]))).ToList();
             Faces.ForEach(x => x.Parent = this);
         }
 
@@ -207,7 +208,7 @@ namespace CBRE.DataStructures.MapObjects
                 }
 
                 // The final polygon is the face
-                var face = new Face(generator.GetNextFaceID()) { Plane = poly.Plane , Parent = solid };
+                var face = new Face(generator.GetNextFaceID()) { Plane = poly.Plane, Parent = solid };
                 face.Vertices.AddRange(poly.Vertices.Select(x => new Vertex(x.Round(2), face))); // Round vertices a bit for sanity
                 face.UpdateBoundingBox();
                 face.AlignTextureToWorld();

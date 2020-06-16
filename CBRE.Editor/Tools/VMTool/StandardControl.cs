@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CBRE.Common.Easings;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CBRE.Common.Easings;
 
 namespace CBRE.Editor.Tools.VMTool
 {
@@ -122,9 +122,9 @@ namespace CBRE.Editor.Tools.VMTool
         {
             var val = _easing.Evaluate((_remaining * 1m) / _fadeTime);
             val = Math.Min(1, Math.Max(0, val));
-            var a = (int) (val * 255);
+            var a = (int)(val * 255);
             var c = Color.FromArgb(a, ForeColor);
-            
+
             using (var brush = new SolidBrush(c))
             {
                 e.Graphics.DrawString(Text, Font, brush, ClientRectangle);

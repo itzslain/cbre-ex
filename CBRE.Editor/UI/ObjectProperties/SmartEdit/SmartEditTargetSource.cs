@@ -1,7 +1,7 @@
+using CBRE.DataStructures.GameData;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {
@@ -18,14 +18,14 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
             Controls.Add(_textBox);
 
             _validationLabel = new Label
-                                   {
-                                       Text = "",
-                                       AutoSize = false,
-                                       Height = 18,
-                                       Width = 250,
-                                       TextAlign = ContentAlignment.BottomLeft,
-                                       ForeColor = Color.Red
-                                   };
+            {
+                Text = "",
+                AutoSize = false,
+                Height = 18,
+                Width = 250,
+                TextAlign = ContentAlignment.BottomLeft,
+                ForeColor = Color.Red
+            };
             Controls.Add(_validationLabel);
         }
 

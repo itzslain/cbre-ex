@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
@@ -21,6 +14,13 @@ using CBRE.Editor.UI.ObjectProperties;
 using CBRE.Graphics;
 using CBRE.Settings;
 using CBRE.UI;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.SelectTool
 {
@@ -353,7 +353,7 @@ namespace CBRE.Editor.Tools.SelectTool
         {
             // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
             if (KeyboardState.IsKeyDown(Keys.Space)) return;
-            
+
             if (WidgetAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
 
             if (CBRE.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
@@ -420,7 +420,7 @@ namespace CBRE.Editor.Tools.SelectTool
             ChosenItemFor3DSelection = IntersectingObjectsFor3DSelection.FirstOrDefault();
 
             // If Ctrl is down and the object is already selected, we should deselect it instead.
-            var list = new[] {ChosenItemFor3DSelection};
+            var list = new[] { ChosenItemFor3DSelection };
             var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
             SetSelected(desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, IgnoreGrouping());
 
@@ -501,7 +501,7 @@ namespace CBRE.Editor.Tools.SelectTool
         #endregion
 
         #region 2D interaction
-        
+
         protected override Cursor CursorForHandle(ResizeHandle handle)
         {
             var def = base.CursorForHandle(handle);
@@ -682,7 +682,7 @@ namespace CBRE.Editor.Tools.SelectTool
                 var sel = Document.Selection.GetSelectedParents().ToList();
                 if (sel.Count == 1 && sel[0] is Entity && !sel[0].HasChildren)
                 {
-                    return viewport.Flatten(((Entity) sel[0]).Origin);
+                    return viewport.Flatten(((Entity)sel[0]).Origin);
                 }
             }
             return base.GetResizeOrigin(viewport);
@@ -718,7 +718,7 @@ namespace CBRE.Editor.Tools.SelectTool
             if (nudge != null && vp != null && (State.Action == BoxAction.ReadyToResize || State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty())
             {
                 var translate = vp.Expand(nudge);
-                var transformation = Matrix4.CreateTranslation((float) translate.X, (float) translate.Y, (float) translate.Z);
+                var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
                 ExecuteTransform("Nudge", CreateMatrixMultTransformation(transformation), KeyboardState.Shift);
                 SelectionChanged();
             }

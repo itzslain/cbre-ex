@@ -1,8 +1,8 @@
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Actions;
 
 namespace CBRE.Editor.Problems
 {

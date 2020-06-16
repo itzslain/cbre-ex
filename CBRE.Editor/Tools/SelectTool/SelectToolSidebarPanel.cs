@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
-using CBRE.Editor.Brushes;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Tools.SelectTool.TransformationTools;
 using CBRE.Settings;
+using System;
+using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.SelectTool
 {

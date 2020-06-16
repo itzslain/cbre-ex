@@ -52,21 +52,21 @@ namespace CBRE.Packages.Wad
 
         private void ReadTextureEntries(BinaryReader br)
         {
-            var validTypes = Enum.GetValues(typeof (WadEntryType)).OfType<WadEntryType>().Select(x => (byte) x).ToArray();
+            var validTypes = Enum.GetValues(typeof(WadEntryType)).OfType<WadEntryType>().Select(x => (byte)x).ToArray();
             br.BaseStream.Position = LumpOffset;
             for (int i = 0; i < NumTextures; i++)
             {
                 var offset = br.ReadUInt32();
                 var compressedLength = br.ReadUInt32();
                 var fullLength = br.ReadUInt32();
-                var type =  br.ReadByte();
+                var type = br.ReadByte();
                 var compressionType = br.ReadByte();
                 br.ReadBytes(2); // struct padding
                 var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
                 if (Entries.Any(x => x.Name == name)) continue; // Don't add duplicates
-                Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
+                Entries.Add(new WadEntry(this, name, (WadEntryType)type, offset, compressionType, compressedLength, fullLength));
             }
         }
 
@@ -93,7 +93,7 @@ namespace CBRE.Packages.Wad
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
             {
-                return sr.ReadBytes((int) sr.BaseStream.Length);
+                return sr.ReadBytes((int)sr.BaseStream.Length);
             }
         }
 
@@ -139,15 +139,15 @@ namespace CBRE.Packages.Wad
                     paletteSize = br.ReadUInt16();
                     paletteDataOffset = br.BaseStream.Position;
                     break;
-                    /*
-                case WadEntryType.Font:
-                    width = br.ReadUInt32();
-                    height = br.ReadUInt32();
-                    textureDataOffset = br.BaseStream.Position + 8 + (256 * 4);
-                    br.BaseStream.Position += 8 + (256 * 4) + (width * height); // Skip font data, texture data
-                    paletteSize = br.ReadUInt16();
-                    paletteDataOffset = br.BaseStream.Position;
-                    break;*/
+                /*
+            case WadEntryType.Font:
+                width = br.ReadUInt32();
+                height = br.ReadUInt32();
+                textureDataOffset = br.BaseStream.Position + 8 + (256 * 4);
+                br.BaseStream.Position += 8 + (256 * 4) + (width * height); // Skip font data, texture data
+                paletteSize = br.ReadUInt16();
+                paletteDataOffset = br.BaseStream.Position;
+                break;*/
                 default:
                     throw new ArgumentOutOfRangeException();
             }

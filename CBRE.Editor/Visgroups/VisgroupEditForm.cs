@@ -1,18 +1,18 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CBRE.Common;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.Visgroups
 {
     public partial class VisgroupEditForm : Form
     {
         private readonly List<Visgroup> _visgroups;
-        private readonly List<Visgroup> _deleted; 
+        private readonly List<Visgroup> _deleted;
 
         public VisgroupEditForm(Document doc)
         {
@@ -63,12 +63,12 @@ namespace CBRE.Editor.Visgroups
         private void AddGroup(object sender, EventArgs e)
         {
             var newGroup = new Visgroup
-                               {
-                                   ID = GetNewID(),
-                                   Colour = Colour.GetRandomLightColour(),
-                                   Name = "New Group",
-                                   Visible = true
-                               };
+            {
+                ID = GetNewID(),
+                Colour = Colour.GetRandomLightColour(),
+                Name = "New Group",
+                Visible = true
+            };
             _visgroups.Add(newGroup);
             UpdateVisgroups();
             VisgroupPanel.SetSelectedVisgroup(newGroup.ID);
@@ -101,7 +101,7 @@ namespace CBRE.Editor.Visgroups
             var id = VisgroupPanel.GetSelectedVisgroup();
             if (!id.HasValue) return;
             var vg = _visgroups.First(x => x.ID == id.Value);
-            using (var cp = new ColorDialog {Color = vg.Colour})
+            using (var cp = new ColorDialog { Color = vg.Colour })
             {
                 if (cp.ShowDialog() == DialogResult.OK)
                 {

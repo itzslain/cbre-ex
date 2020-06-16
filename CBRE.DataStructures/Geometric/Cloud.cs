@@ -33,11 +33,11 @@ namespace CBRE.DataStructures.Geometric
                 if (MinZ == null || p.Z < MinZ.Z) MinZ = p;
                 if (MaxX == null || p.X > MaxX.X) MaxX = p;
                 if (MaxY == null || p.Y > MaxY.Y) MaxY = p;
-                if (MaxZ == null || p.Z > MaxZ.Z) MaxZ = p; 
+                if (MaxZ == null || p.Z > MaxZ.Z) MaxZ = p;
             }
         }
 
-        protected Cloud(SerializationInfo info, StreamingContext context) : this((Coordinate[]) info.GetValue("Points", typeof(Coordinate[])))
+        protected Cloud(SerializationInfo info, StreamingContext context) : this((Coordinate[])info.GetValue("Points", typeof(Coordinate[])))
         {
 
         }

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.FileSystem;
 using CBRE.Graphics.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CBRE.Providers.Model
 {

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using CBRE.Common.Easings;
+﻿using CBRE.Common.Easings;
 using CBRE.Common.Mediator;
+using CBRE.Editor.Tools;
 using CBRE.Graphics;
+using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
-using CBRE.Editor.Tools;
-using CBRE.Graphics.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 using KeyboardState = CBRE.UI.KeyboardState;
 
 namespace CBRE.Editor.UI
@@ -188,7 +188,7 @@ namespace CBRE.Editor.UI
         {
             if (!Viewport.IsUnlocked(this)) return;
             FreeLook = false;
-            
+
             if (FreeLookToggle)
             {
                 FreeLook = true;
@@ -197,7 +197,7 @@ namespace CBRE.Editor.UI
             {
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
-                
+
                 if (ToolManager.ActiveTool is CameraTool)
                 {
                     FreeLook = left || right;
@@ -286,8 +286,8 @@ namespace CBRE.Editor.UI
                 Camera.Tilt(dy / fovdiv);
             }
 
-            LastKnownX = Viewport.Width/2;
-            LastKnownY = Viewport.Height/2;
+            LastKnownX = Viewport.Width / 2;
+            LastKnownY = Viewport.Height / 2;
             Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
         }
 
@@ -310,12 +310,12 @@ namespace CBRE.Editor.UI
 
         public void MouseClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseDoubleClick(ViewportEvent e)
         {
-            
+
         }
 
         public void MouseEnter(ViewportEvent e)
@@ -327,8 +327,8 @@ namespace CBRE.Editor.UI
         {
             if (FreeLook)
             {
-                LastKnownX = Viewport.Width/2;
-                LastKnownY = Viewport.Height/2;
+                LastKnownX = Viewport.Width / 2;
+                LastKnownY = Viewport.Height / 2;
                 Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
 
             }

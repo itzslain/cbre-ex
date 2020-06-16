@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CBRE.UI;
 using System.Windows.Forms;
-using CBRE.UI;
 
 namespace CBRE.Editor.UI
 {
