@@ -180,8 +180,8 @@ namespace CBRE.Editor.Compiling
                             br.Write((byte)lmInd);
                         }
 
-                        if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
-                        br.Write((ushort)vertCount);
+                        if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
+                        br.Write((UInt16)vertCount);
                         foreach (Lightmap.LMFace face in tLmFaces)
                         {
                             for (int j = 0; j < face.Vertices.Count; j++)
@@ -205,12 +205,12 @@ namespace CBRE.Editor.Compiling
                                 br.Write((face.Vertices[j].LMV - vSub) * lmMul);
                             }
                         }
-                        br.Write((short)triCount);
+                        br.Write((UInt16)triCount);
                         foreach (Lightmap.LMFace face in tLmFaces)
                         {
                             foreach (uint ind in face.GetTriangleIndices())
                             {
-                                br.Write((short)(ind + vertOffset));
+                                br.Write((UInt16)(ind + vertOffset));
                             }
 
                             vertOffset += face.Vertices.Count;
@@ -228,14 +228,14 @@ namespace CBRE.Editor.Compiling
                     foreach (Face face in tTrptFaces)
                     {
                         vertCount += face.Vertices.Count;
-                        triCount += face.GetTriangleIndices().Count() * 2 / 3;
+                        triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
                     br.Write((byte)RM2Chunks.VisibleGeometry);
                     br.Write((byte)i);
 
-                    if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
-                    br.Write((ushort)vertCount);
+                    if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
+                    br.Write((UInt16)vertCount);
                     foreach (Face face in tTrptFaces)
                     {
                         for (int j = 0; j < face.Vertices.Count; j++)
@@ -255,19 +255,12 @@ namespace CBRE.Editor.Compiling
                             br.Write(0.0f);
                         }
                     }
-                    br.Write((short)triCount);
+                    br.Write((UInt16)triCount);
                     foreach (Face face in tTrptFaces)
                     {
-                        List<uint> indices = face.GetTriangleIndices().ToList();
-                        for (int k = 0; k < indices.Count; k += 3)
+                        foreach (uint ind in face.GetTriangleIndices())
                         {
-                            //hardcoded double sided surfaces
-                            br.Write((short)indices[k]);
-                            br.Write((short)indices[k + 1]);
-                            br.Write((short)indices[k + 2]);
-                            br.Write((short)indices[k]);
-                            br.Write((short)indices[k + 2]);
-                            br.Write((short)indices[k + 1]);
+                            br.Write((UInt16)(ind + vertOffset));
                         }
 
                         vertOffset += face.Vertices.Count;
@@ -288,8 +281,8 @@ namespace CBRE.Editor.Compiling
 
                 br.Write((byte)RM2Chunks.InvisibleGeometry);
 
-                if (vertCount > ushort.MaxValue) throw new Exception("Vertex overflow!");
-                br.Write((ushort)vertCount);
+                if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
+                br.Write((UInt16)vertCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     for (int j = 0; j < face.Vertices.Count; j++)
@@ -299,12 +292,12 @@ namespace CBRE.Editor.Compiling
                         br.Write((float)face.Vertices[j].Location.Y);
                     }
                 }
-                br.Write((ushort)triCount);
+                br.Write((UInt16)triCount);
                 foreach (Face face in invisibleCollisionFaces)
                 {
                     foreach (uint ind in face.GetTriangleIndices())
                     {
-                        br.Write((short)(ind + vertOffset));
+                        br.Write((UInt16)(ind + vertOffset));
                     }
 
                     vertOffset += face.Vertices.Count;
