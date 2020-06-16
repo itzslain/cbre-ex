@@ -40,12 +40,12 @@ namespace CBRE.Providers.Map
             BinaryReader br = new BinaryReader(stream);
 
             //header
-            UInt16 mapVersion = br.ReadUInt16();
+            ushort mapVersion = br.ReadUInt16();
             byte mapFlags = br.ReadByte();
-            Int32 nameCount = br.ReadInt32();
-            Int32 nameOffset = br.ReadInt32();
-            Int32 objectCount = br.ReadInt32();
-            Int32 objectOffset = br.ReadInt32();
+            int nameCount = br.ReadInt32();
+            int nameOffset = br.ReadInt32();
+            int objectCount = br.ReadInt32();
+            int objectOffset = br.ReadInt32();
 
             //get names, needed to understand the objects
             List<string> names = new List<string>();
@@ -75,8 +75,8 @@ namespace CBRE.Providers.Map
                 {
                     byte flags = br.ReadByte();
 
-                    Int32 groupNameInd = br.ReadInt32() - 1;
-                    Int32 objectNameInd = br.ReadInt32() - 1;
+                    int groupNameInd = br.ReadInt32()-1;
+                    int objectNameInd = br.ReadInt32()-1;
 
                     byte limbCount = br.ReadByte();
 
@@ -85,9 +85,9 @@ namespace CBRE.Providers.Map
                 else if (name == "material")
                 {
                     byte materialFlags = br.ReadByte();
-                    Int32 groupIndex = br.ReadInt32();
+                    int groupIndex = br.ReadInt32();
                     string objectName = names[br.ReadInt32() - 1];
-                    Int32 extensionNameIndex = -1;
+                    int extensionNameIndex = -1;
                     if ((materialFlags & 2) != 0)
                     {
                         extensionNameIndex = br.ReadInt32(); //TODO: what the heck is this
@@ -122,17 +122,12 @@ namespace CBRE.Providers.Map
                     entity.EntityData.Name = "model";
                     entity.Colour = Colour.GetDefaultEntityColour();
 
-                    Int32 keyCount = br.ReadInt32();
+                    int keyCount = br.ReadInt32();
                     for (int j = 0; j < keyCount; j++)
                     {
-                        Int32 keyNameInd = br.ReadInt32() - 1;
-                        Int32 keyValueInd = br.ReadInt32() - 1;
-                        if (names[keyNameInd] == "classname")
-                        {
-                            //entity.ClassName = names[keyValueInd];
-                            //entity.EntityData.Name = names[keyValueInd];
-                        }
-                        else
+                        int keyNameInd = br.ReadInt32() - 1;
+                        int keyValueInd = br.ReadInt32() - 1;
+                        if (names[keyNameInd] != "classname")
                         {
                             newProperty = new Property();
                             newProperty.Key = names[keyNameInd];
@@ -146,13 +141,13 @@ namespace CBRE.Providers.Map
                             entity.EntityData.Properties.Add(newProperty);
                         }
                     }
-                    Int32 group = br.ReadInt32();
-                    Int32 visgroup = br.ReadInt32();
+                    int group = br.ReadInt32();
+                    int visgroup = br.ReadInt32();
 
                     byte red = br.ReadByte(); byte green = br.ReadByte(); byte blue = br.ReadByte();
 
-                    Int32 meshRefIndex = br.ReadInt32() - 1;
-
+                    int meshRefIndex = br.ReadInt32()-1;
+                    
                     float x = br.ReadSingle();
                     float z = br.ReadSingle();
                     float y = br.ReadSingle();
@@ -212,11 +207,11 @@ namespace CBRE.Providers.Map
                     entity.Colour = Colour.GetDefaultEntityColour();
                     entity.Origin = new Coordinate((decimal)x, (decimal)y, (decimal)z);
 
-                    Int32 keyCount = br.ReadInt32();
-                    for (int j = 0; j < keyCount; j++)
+                    int keyCount = br.ReadInt32();
+                    for (int j=0;j<keyCount;j++)
                     {
-                        Int32 keyNameInd = br.ReadInt32() - 1;
-                        Int32 keyValueInd = br.ReadInt32() - 1;
+                        int keyNameInd = br.ReadInt32()-1;
+                        int keyValueInd = br.ReadInt32()-1;
                         if (names[keyNameInd] == "classname")
                         {
                             entity.ClassName = names[keyValueInd];
@@ -230,8 +225,8 @@ namespace CBRE.Providers.Map
                             entity.EntityData.Properties.Add(newProperty);
                         }
                     }
-                    Int32 group = br.ReadInt32();
-                    Int32 visgroup = br.ReadInt32();
+                    int group = br.ReadInt32();
+                    int visgroup = br.ReadInt32();
 
                     entity.UpdateBoundingBox();
                     entity.SetParent(map.WorldSpawn);
@@ -241,11 +236,11 @@ namespace CBRE.Providers.Map
                     bool invisibleCollision = false;
 
                     byte brushFlags = br.ReadByte(); //TODO: ???
-                    Int32 keys = br.ReadInt32();
-                    for (int j = 0; j < keys; j++)
+                    int keys = br.ReadInt32();
+                    for (int j=0;j<keys;j++)
                     {
-                        Int32 keyNameInd = br.ReadInt32();
-                        Int32 keyValueInd = br.ReadInt32();
+                        int keyNameInd = br.ReadInt32();
+                        int keyValueInd = br.ReadInt32();
                         string keyName = names[keyNameInd - 1];
                         if (keyName.Equals("classname", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -256,8 +251,8 @@ namespace CBRE.Providers.Map
                             }
                         }
                     }
-                    Int32 groupIndex = br.ReadInt32();
-                    Int32 visgroupIndex = br.ReadInt32();
+                    int groupIndex = br.ReadInt32();
+                    int visgroupIndex = br.ReadInt32();
 
                     byte red = br.ReadByte(); byte green = br.ReadByte(); byte blue = br.ReadByte();
 
@@ -286,10 +281,10 @@ namespace CBRE.Providers.Map
 
                         float luxelSize = br.ReadSingle();
 
-                        Int32 smoothGroupInd = br.ReadInt32();
-                        Int32 materialInd = br.ReadInt32() - 1;
+                        int smoothGroupInd = br.ReadInt32();
+                        int materialInd = br.ReadInt32()-1;
 
-                        Int32 lightmapInd = -1;
+                        int lightmapInd = -1;
                         if ((faceFlags & 16) != 0)
                         {
                             lightmapInd = br.ReadInt32();
@@ -472,7 +467,7 @@ namespace CBRE.Providers.Map
 
         protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map)
         {
-            throw new Exception("don't save to 3dw, ew");
+            throw new NotImplementedException("Saving to .3dw isn't supported.");
         }
 
         protected override IEnumerable<MapFeature> GetFormatFeatures()

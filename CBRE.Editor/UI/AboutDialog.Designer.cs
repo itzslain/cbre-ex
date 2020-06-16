@@ -71,17 +71,16 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Georgia", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(274, 20);
+            this.label1.Location = new System.Drawing.Point(311, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(126, 46);
             this.label1.TabIndex = 3;
             this.label1.Text = "CBRE";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // VersionLabel
             // 
             this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(470, 38);
+            this.VersionLabel.Location = new System.Drawing.Point(443, 46);
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(47, 13);
             this.VersionLabel.TabIndex = 4;
@@ -90,17 +89,17 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(309, 110);
+            this.label2.Location = new System.Drawing.Point(316, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(175, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Based on Sledge by Daniel Walder ";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
+            this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // LTLink
             // 
             this.LTLink.AutoSize = true;
-            this.LTLink.Location = new System.Drawing.Point(349, 123);
+            this.LTLink.Location = new System.Drawing.Point(353, 123);
             this.LTLink.Name = "LTLink";
             this.LTLink.Size = new System.Drawing.Size(96, 13);
             this.LTLink.TabIndex = 6;
@@ -110,27 +109,27 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(292, 206);
+            this.label3.Location = new System.Drawing.Point(293, 206);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(231, 13);
             this.label3.TabIndex = 5;
             this.label3.Text = "Open source software - licensed under the GPL";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // GithubLink
             // 
             this.GithubLink.AutoSize = true;
-            this.GithubLink.Location = new System.Drawing.Point(378, 219);
+            this.GithubLink.Location = new System.Drawing.Point(366, 219);
             this.GithubLink.Name = "GithubLink";
-            this.GithubLink.Size = new System.Drawing.Size(146, 13);
+            this.GithubLink.Size = new System.Drawing.Size(136, 13);
             this.GithubLink.TabIndex = 6;
             this.GithubLink.TabStop = true;
-            this.GithubLink.Text = "github.com/juanjp600/sledge";
-            this.GithubLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.GithubLink_LinkClicked);
+            this.GithubLink.Text = "github.com/juanjp600/cbre\r\n";
             // 
             // GPLLink
             // 
             this.GPLLink.AutoSize = true;
-            this.GPLLink.Location = new System.Drawing.Point(378, 232);
+            this.GPLLink.Location = new System.Drawing.Point(367, 232);
             this.GPLLink.Name = "GPLLink";
             this.GPLLink.Size = new System.Drawing.Size(145, 13);
             this.GPLLink.TabIndex = 6;
@@ -140,40 +139,41 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(328, 219);
+            this.label4.Location = new System.Drawing.Point(316, 219);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 5;
             this.label4.Text = "Source:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(325, 232);
+            this.label5.Location = new System.Drawing.Point(316, 232);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 13);
             this.label5.TabIndex = 5;
             this.label5.Text = "License:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(292, 66);
+            this.label11.Location = new System.Drawing.Point(309, 66);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(192, 13);
             this.label11.TabIndex = 9;
             this.label11.Text = "Made by juanjp600 for use with SCPCB";
-            this.label11.Click += new System.EventHandler(this.label11_Click);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(292, 159);
+            this.label6.Location = new System.Drawing.Point(303, 158);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(199, 26);
             this.label6.TabIndex = 10;
             this.label6.Text = "Thanks to Salvage, Bananaman043 and\nAesthetical for misc fixes and features";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
+            this.label6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // AboutDialog
             // 
@@ -201,7 +201,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About CBRE";
-            this.Load += new System.EventHandler(this.AboutDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
