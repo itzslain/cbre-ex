@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.Logging
@@ -28,6 +29,28 @@ namespace CBRE.Editor.Logging
 
             OperatingSystem.ForeColor = Color.Black;
             OperatingSystem.BackColor = Color.White;
+
+            //TRY TO WRITE A LOG FILE, IF IT FAILS, DONT DO ANYTHING
+            try
+            {
+                string fn = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
+                using (StreamWriter sw = new StreamWriter($"Error Logs\\{fn}.txt"))
+                {
+                    string content = "CBRE found an error and has written a log below.\n" +
+                                     "-------------------------------------------------\n" +
+                                     $".NET Version: {info.RuntimeVersion}\n" +
+                                     $"Operating System: {info.OperatingSystem}\n" +
+                                     $"CBRE Version: {info.ApplicationVersion}\n" +
+                                     "------------------ERROR MESSAGE------------------\n" +
+                                     info.FullStackTrace;
+                    sw.Write(content);
+                }
+                label2.Text = "A log file has been written in the Error Logs folder.";
+            }
+            catch (Exception)
+            {
+                label2.Text = "Couldn't write a log file to the Error Logs folder.";
+            }
         }
 
         private void CancelButtonClicked(object sender, EventArgs e)
