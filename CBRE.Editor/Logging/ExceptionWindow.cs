@@ -30,13 +30,13 @@ namespace CBRE.Editor.Logging
             OperatingSystem.ForeColor = Color.Black;
             OperatingSystem.BackColor = Color.White;
 
-            //TRY TO WRITE A LOG FILE, IF IT FAILS, DONT DO ANYTHING
             try
             {
+                Directory.CreateDirectory("Error Logs");
                 string fn = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
                 using (StreamWriter sw = new StreamWriter($"Error Logs\\{fn}.txt"))
                 {
-                    string content = "CBRE found an error and has written a log below.\n" +
+                    string content = "CBRE has encountered an error. Details are found below.\n" +
                                      "-------------------------------------------------\n" +
                                      $".NET Version: {info.RuntimeVersion}\n" +
                                      $"Operating System: {info.OperatingSystem}\n" +
@@ -45,11 +45,11 @@ namespace CBRE.Editor.Logging
                                      info.FullStackTrace;
                     sw.Write(content);
                 }
-                label2.Text = "A log file has been written in the Error Logs folder.";
+                label2.Text = $"Details have been written to \"Error Logs/{fn}.txt\"";
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                label2.Text = "Couldn't write a log file to the Error Logs folder.";
+                label2.Text = $"Couldn't write error log: {e.Message}";
             }
         }
 
