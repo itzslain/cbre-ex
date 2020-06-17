@@ -39,6 +39,7 @@
             this.FullError = new System.Windows.Forms.TextBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.copyButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -54,7 +55,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 46);
+            this.label4.Location = new System.Drawing.Point(9, 74);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(70, 13);
             this.label4.TabIndex = 2;
@@ -64,7 +65,7 @@
             // 
             this.FrameworkVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FrameworkVersion.Location = new System.Drawing.Point(135, 43);
+            this.FrameworkVersion.Location = new System.Drawing.Point(135, 71);
             this.FrameworkVersion.Name = "FrameworkVersion";
             this.FrameworkVersion.ReadOnly = true;
             this.FrameworkVersion.Size = new System.Drawing.Size(337, 20);
@@ -73,7 +74,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 69);
+            this.label5.Location = new System.Drawing.Point(12, 100);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(90, 13);
             this.label5.TabIndex = 2;
@@ -83,7 +84,7 @@
             // 
             this.OperatingSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OperatingSystem.Location = new System.Drawing.Point(135, 66);
+            this.OperatingSystem.Location = new System.Drawing.Point(135, 97);
             this.OperatingSystem.Name = "OperatingSystem";
             this.OperatingSystem.ReadOnly = true;
             this.OperatingSystem.Size = new System.Drawing.Size(337, 20);
@@ -92,7 +93,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 91);
+            this.label6.Location = new System.Drawing.Point(12, 126);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 2;
@@ -102,7 +103,7 @@
             // 
             this.CBREVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CBREVersion.Location = new System.Drawing.Point(135, 88);
+            this.CBREVersion.Location = new System.Drawing.Point(135, 123);
             this.CBREVersion.Name = "CBREVersion";
             this.CBREVersion.ReadOnly = true;
             this.CBREVersion.Size = new System.Drawing.Size(337, 20);
@@ -111,7 +112,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 115);
+            this.label7.Location = new System.Drawing.Point(12, 149);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 13);
             this.label7.TabIndex = 2;
@@ -122,18 +123,18 @@
             this.FullError.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FullError.Location = new System.Drawing.Point(135, 112);
+            this.FullError.Location = new System.Drawing.Point(135, 149);
             this.FullError.Multiline = true;
             this.FullError.Name = "FullError";
             this.FullError.ReadOnly = true;
             this.FullError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.FullError.Size = new System.Drawing.Size(337, 324);
+            this.FullError.Size = new System.Drawing.Size(337, 318);
             this.FullError.TabIndex = 3;
             // 
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cancelButton.Location = new System.Drawing.Point(8, 413);
+            this.cancelButton.Location = new System.Drawing.Point(8, 444);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(121, 23);
             this.cancelButton.TabIndex = 4;
@@ -144,7 +145,7 @@
             // copyButton
             // 
             this.copyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.copyButton.Location = new System.Drawing.Point(8, 384);
+            this.copyButton.Location = new System.Drawing.Point(8, 415);
             this.copyButton.Name = "copyButton";
             this.copyButton.Size = new System.Drawing.Size(121, 23);
             this.copyButton.TabIndex = 5;
@@ -152,11 +153,21 @@
             this.copyButton.UseVisualStyleBackColor = true;
             this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(9, 40);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(454, 25);
+            this.label2.TabIndex = 6;
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // ExceptionWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 448);
+            this.ClientSize = new System.Drawing.Size(484, 479);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.copyButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.FullError);
@@ -193,5 +204,6 @@
         private System.Windows.Forms.TextBox FullError;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button copyButton;
+        private System.Windows.Forms.Label label2;
     }
 }
