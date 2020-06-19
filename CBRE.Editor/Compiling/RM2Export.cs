@@ -74,8 +74,6 @@ namespace CBRE.Editor.Compiling
 
             IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name == "tooltextures/invisible_collision");
 
-            string dir = CBRE.Settings.Directories.TextureDir;
-            if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
             Lightmap.Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, true);
             lmPath = System.IO.Path.GetFileName(lmPath);
 

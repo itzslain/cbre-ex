@@ -155,12 +155,15 @@ namespace CBRE.Editor.Settings
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabDirectories = new System.Windows.Forms.TabPage();
-            this.modelPath = new System.Windows.Forms.TextBox();
-            this.texturePath = new System.Windows.Forms.TextBox();
-            this.browseModels = new System.Windows.Forms.Button();
-            this.browseTextures = new System.Windows.Forms.Button();
-            this.modelsLabel = new System.Windows.Forms.Label();
-            this.texturesLabel = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.textureDirsDataGrid = new System.Windows.Forms.DataGridView();
+            this.deleteButtons = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.textureDirs = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.browseButtons = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.modelDirsDataGrid = new System.Windows.Forms.DataGridView();
+            this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewButtonColumn2 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();
@@ -200,6 +203,9 @@ namespace CBRE.Editor.Settings
             this.tabGeneral.SuspendLayout();
             this.tbcSettings.SuspendLayout();
             this.tabDirectories.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textureDirsDataGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.modelDirsDataGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox15
@@ -1602,12 +1608,7 @@ namespace CBRE.Editor.Settings
             // 
             // tabDirectories
             // 
-            this.tabDirectories.Controls.Add(this.modelPath);
-            this.tabDirectories.Controls.Add(this.texturePath);
-            this.tabDirectories.Controls.Add(this.browseModels);
-            this.tabDirectories.Controls.Add(this.browseTextures);
-            this.tabDirectories.Controls.Add(this.modelsLabel);
-            this.tabDirectories.Controls.Add(this.texturesLabel);
+            this.tabDirectories.Controls.Add(this.tableLayoutPanel1);
             this.tabDirectories.Location = new System.Drawing.Point(4, 22);
             this.tabDirectories.Name = "tabDirectories";
             this.tabDirectories.Size = new System.Drawing.Size(736, 511);
@@ -1615,65 +1616,114 @@ namespace CBRE.Editor.Settings
             this.tabDirectories.Text = "Directories";
             this.tabDirectories.UseVisualStyleBackColor = true;
             // 
-            // modelPath
+            // tableLayoutPanel1
             // 
-            this.modelPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.modelPath.Location = new System.Drawing.Point(75, 47);
-            this.modelPath.Name = "modelPath";
-            this.modelPath.Size = new System.Drawing.Size(568, 20);
-            this.modelPath.TabIndex = 5;
-            this.modelPath.TextChanged += new System.EventHandler(this.modelPath_TextChanged);
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.textureDirsDataGrid, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.modelDirsDataGrid, 0, 1);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(729, 504);
+            this.tableLayoutPanel1.TabIndex = 2;
             // 
-            // texturePath
+            // textureDirsDataGrid
             // 
-            this.texturePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textureDirsDataGrid.AllowUserToAddRows = false;
+            this.textureDirsDataGrid.AllowUserToResizeColumns = false;
+            this.textureDirsDataGrid.AllowUserToResizeRows = false;
+            this.textureDirsDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.texturePath.Location = new System.Drawing.Point(75, 15);
-            this.texturePath.Name = "texturePath";
-            this.texturePath.Size = new System.Drawing.Size(568, 20);
-            this.texturePath.TabIndex = 4;
-            this.texturePath.TextChanged += new System.EventHandler(this.texturePath_TextChanged);
+            this.textureDirsDataGrid.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.textureDirsDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.textureDirsDataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.deleteButtons,
+            this.textureDirs,
+            this.browseButtons});
+            this.textureDirsDataGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.textureDirsDataGrid.Location = new System.Drawing.Point(3, 3);
+            this.textureDirsDataGrid.Name = "textureDirsDataGrid";
+            this.textureDirsDataGrid.RowHeadersVisible = false;
+            this.textureDirsDataGrid.Size = new System.Drawing.Size(723, 246);
+            this.textureDirsDataGrid.TabIndex = 0;
             // 
-            // browseModels
+            // deleteButtons
             // 
-            this.browseModels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.browseModels.Location = new System.Drawing.Point(649, 45);
-            this.browseModels.Name = "browseModels";
-            this.browseModels.Size = new System.Drawing.Size(75, 23);
-            this.browseModels.TabIndex = 3;
-            this.browseModels.Text = "Browse...";
-            this.browseModels.UseVisualStyleBackColor = true;
-            this.browseModels.Click += new System.EventHandler(this.browseModels_Click);
+            this.deleteButtons.HeaderText = "";
+            this.deleteButtons.MinimumWidth = 24;
+            this.deleteButtons.Name = "deleteButtons";
+            this.deleteButtons.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.deleteButtons.Width = 24;
             // 
-            // browseTextures
+            // textureDirs
             // 
-            this.browseTextures.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.browseTextures.Location = new System.Drawing.Point(649, 12);
-            this.browseTextures.Name = "browseTextures";
-            this.browseTextures.Size = new System.Drawing.Size(75, 23);
-            this.browseTextures.TabIndex = 2;
-            this.browseTextures.Text = "Browse...";
-            this.browseTextures.UseVisualStyleBackColor = true;
-            this.browseTextures.Click += new System.EventHandler(this.browseTextures_Click);
+            this.textureDirs.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.textureDirs.HeaderText = "Texture directories";
+            this.textureDirs.Name = "textureDirs";
+            this.textureDirs.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.textureDirs.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // modelsLabel
+            // browseButtons
             // 
-            this.modelsLabel.AutoSize = true;
-            this.modelsLabel.Location = new System.Drawing.Point(21, 50);
-            this.modelsLabel.Name = "modelsLabel";
-            this.modelsLabel.Size = new System.Drawing.Size(41, 13);
-            this.modelsLabel.TabIndex = 1;
-            this.modelsLabel.Text = "Models";
+            this.browseButtons.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.browseButtons.HeaderText = "";
+            this.browseButtons.MinimumWidth = 50;
+            this.browseButtons.Name = "browseButtons";
+            this.browseButtons.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.browseButtons.Width = 50;
             // 
-            // texturesLabel
+            // modelDirsDataGrid
             // 
-            this.texturesLabel.AutoSize = true;
-            this.texturesLabel.Location = new System.Drawing.Point(21, 18);
-            this.texturesLabel.Name = "texturesLabel";
-            this.texturesLabel.Size = new System.Drawing.Size(48, 13);
-            this.texturesLabel.TabIndex = 0;
-            this.texturesLabel.Text = "Textures";
+            this.modelDirsDataGrid.AllowUserToAddRows = false;
+            this.modelDirsDataGrid.AllowUserToResizeColumns = false;
+            this.modelDirsDataGrid.AllowUserToResizeRows = false;
+            this.modelDirsDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.modelDirsDataGrid.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.modelDirsDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.modelDirsDataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewButtonColumn1,
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewButtonColumn2});
+            this.modelDirsDataGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.modelDirsDataGrid.Location = new System.Drawing.Point(3, 255);
+            this.modelDirsDataGrid.Name = "modelDirsDataGrid";
+            this.modelDirsDataGrid.RowHeadersVisible = false;
+            this.modelDirsDataGrid.Size = new System.Drawing.Size(723, 246);
+            this.modelDirsDataGrid.TabIndex = 1;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            this.dataGridViewButtonColumn1.HeaderText = "";
+            this.dataGridViewButtonColumn1.MinimumWidth = 24;
+            this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            this.dataGridViewButtonColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewButtonColumn1.Width = 24;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.HeaderText = "Model directories";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // dataGridViewButtonColumn2
+            // 
+            this.dataGridViewButtonColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewButtonColumn2.HeaderText = "";
+            this.dataGridViewButtonColumn2.MinimumWidth = 50;
+            this.dataGridViewButtonColumn2.Name = "dataGridViewButtonColumn2";
+            this.dataGridViewButtonColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewButtonColumn2.Width = 50;
             // 
             // SettingsForm
             // 
@@ -1733,11 +1783,14 @@ namespace CBRE.Editor.Settings
             this.tabGeneral.ResumeLayout(false);
             this.tbcSettings.ResumeLayout(false);
             this.tabDirectories.ResumeLayout(false);
-            this.tabDirectories.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.textureDirsDataGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.modelDirsDataGrid)).EndInit();
             this.ResumeLayout(false);
 
 		}
-		private System.Windows.Forms.GroupBox groupBox1;
+
+        private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox15;
 		private System.Windows.Forms.Button btnCancelSettings;
@@ -1855,11 +1908,14 @@ namespace CBRE.Editor.Settings
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TabControl tbcSettings;
         private System.Windows.Forms.TabPage tabDirectories;
-        private System.Windows.Forms.TextBox modelPath;
-        private System.Windows.Forms.TextBox texturePath;
-        private System.Windows.Forms.Button browseModels;
-        private System.Windows.Forms.Button browseTextures;
-        private System.Windows.Forms.Label modelsLabel;
-        private System.Windows.Forms.Label texturesLabel;
+        private System.Windows.Forms.DataGridView modelDirsDataGrid;
+        private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.DataGridView textureDirsDataGrid;
+        private System.Windows.Forms.DataGridViewButtonColumn deleteButtons;
+        private System.Windows.Forms.DataGridViewTextBoxColumn textureDirs;
+        private System.Windows.Forms.DataGridViewButtonColumn browseButtons;
     }
 }

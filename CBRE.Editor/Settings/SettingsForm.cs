@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -37,6 +38,8 @@ namespace CBRE.Editor.Settings
             AddFileTypeBoxes();
 
             UpdateData();
+
+            SetupDirectoryDataGrids();
 
             BindConfigControls();
         }
@@ -223,6 +226,84 @@ namespace CBRE.Editor.Settings
         private void UpdateData()
         {
             _hotkeys = Hotkeys.GetHotkeys().Select(x => new Hotkey { ID = x.ID, HotkeyString = x.HotkeyString }).ToList();
+        }
+
+        private void SetupDirectoryDataGrids()
+        {
+            textureDirsDataGrid.CellEndEdit += TextureDirsDataGrid_CellEndEdit;
+            textureDirsDataGrid.EditingControlShowing += TextureDirsDataGrid_EditingControlShowing;
+            textureDirsDataGrid.CellClick += TextureDirsDataGrid_CellClick;
+
+            modelDirsDataGrid.CellEndEdit += ModelDirsDataGrid_CellEndEdit;
+            modelDirsDataGrid.EditingControlShowing += ModelDirsDataGrid_EditingControlShowing;
+            modelDirsDataGrid.CellClick += ModelDirsDataGrid_CellClick;
+
+            foreach (string dir in Directories.TextureDirs)
+            {
+                if (string.IsNullOrEmpty(dir)) { continue; }
+                AddDirsRow(textureDirsDataGrid, dir);
+            }
+            AddDirsRow(textureDirsDataGrid, "");
+
+
+            foreach (string dir in Directories.ModelDirs)
+            {
+                if (string.IsNullOrEmpty(dir)) { continue; }
+                AddDirsRow(modelDirsDataGrid, dir);
+            }
+            AddDirsRow(modelDirsDataGrid, "");
+        }
+
+        private void TextureDirsDataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 2)
+            {
+                OpenBrowseDirDialog((dir) =>
+                {
+                    textureDirsDataGrid.Rows[e.RowIndex].Cells[1].Value = dir;
+                    DirsChanged(textureDirsDataGrid);
+                });
+            }
+            else if (e.ColumnIndex == 0)
+            {
+                textureDirsDataGrid.Rows[e.RowIndex].Cells[1].Value = "";
+                DirsChanged(textureDirsDataGrid);
+            }
+        }
+
+        private void ModelDirsDataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 2)
+            {
+                OpenBrowseDirDialog((dir) =>
+                {
+                    modelDirsDataGrid.Rows[e.RowIndex].Cells[1].Value = dir;
+                    DirsChanged(modelDirsDataGrid);
+                });
+            }
+            else if (e.ColumnIndex == 0)
+            {
+                modelDirsDataGrid.Rows[e.RowIndex].Cells[1].Value = "";
+                DirsChanged(modelDirsDataGrid);
+            }
+        }
+
+        private void TextureDirsDataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control is DataGridViewTextBoxEditingControl tb)
+            {
+                tb.PreviewKeyDown -= TextureDirsDataGrid_KeyDown;
+                tb.PreviewKeyDown += TextureDirsDataGrid_KeyDown;
+            }
+        }
+
+        private void ModelDirsDataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control is DataGridViewTextBoxEditingControl tb)
+            {
+                tb.PreviewKeyDown -= ModelDirsDataGrid_KeyDown;
+                tb.PreviewKeyDown += ModelDirsDataGrid_KeyDown;
+            }
         }
 
         private void ReIndex()
@@ -550,8 +631,6 @@ namespace CBRE.Editor.Settings
             UpdateHotkeyList();
 
             //Directories
-            texturePath.Text = CBRE.Settings.Directories.TextureDir;
-            modelPath.Text = CBRE.Settings.Directories.ModelDir;
         }
 
         private void Apply()
@@ -607,6 +686,26 @@ namespace CBRE.Editor.Settings
             SettingsManager.Hotkeys.Clear();
             SettingsManager.Hotkeys.AddRange(_hotkeys);
             Hotkeys.SetupHotkeys(SettingsManager.Hotkeys);
+
+            // Directories
+            Directories.TextureDirs.Clear();
+            for (int i = 0; i < textureDirsDataGrid.Rows.Count; i++)
+            {
+                string dir = textureDirsDataGrid.Rows[i].Cells[1].Value as string;
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    Directories.TextureDirs.Add(dir);
+                }
+            }
+            Directories.ModelDirs.Clear();
+            for (int i = 0; i < modelDirsDataGrid.Rows.Count; i++)
+            {
+                string dir = modelDirsDataGrid.Rows[i].Cells[1].Value as string;
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    Directories.ModelDirs.Add(dir);
+                }
+            }
 
             SettingsManager.Write();
 
@@ -1017,36 +1116,85 @@ namespace CBRE.Editor.Settings
         }
         #endregion
 
-        private void browseTextures_Click(object sender, EventArgs e)
+        private void OpenBrowseDirDialog(Action<string> callback)
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
             dialog.IsFolderPicker = true;
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                texturePath.Text = dialog.FileName;
-                Directories.TextureDir = dialog.FileName;
+                BeginInvoke(new MethodInvoker(() => callback?.Invoke(dialog.FileName)));
             }
         }
 
-        private void browseModels_Click(object sender, EventArgs e)
+        private void TextureDirsDataGrid_CellEndEdit(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            BeginInvoke(new MethodInvoker(() => DirsChanged(textureDirsDataGrid)));
+        }
+
+        private void TextureDirsDataGrid_KeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
             {
-                modelPath.Text = dialog.FileName;
-                Directories.ModelDir = dialog.FileName;
+                BeginInvoke(new MethodInvoker(() => DirsChanged(textureDirsDataGrid)));
             }
         }
 
-        private void texturePath_TextChanged(object sender, EventArgs e)
+        private void ModelDirsDataGrid_CellEndEdit(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
         {
-            Directories.TextureDir = texturePath.Text;
+            BeginInvoke(new MethodInvoker(() => DirsChanged(modelDirsDataGrid)));
         }
 
-        private void modelPath_TextChanged(object sender, EventArgs e)
+        private void ModelDirsDataGrid_KeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            Directories.ModelDir = modelPath.Text;
+            if (e.KeyCode == Keys.Enter)
+            {
+                BeginInvoke(new MethodInvoker(() => DirsChanged(modelDirsDataGrid)));
+            }
+        }
+
+        private void DirsChanged(DataGridView dataGridView)
+        {
+            for (int i = 0; i < dataGridView.Rows.Count; i++)
+            {
+                var row = dataGridView.Rows[i];
+                string dir = row.Cells[1].Value as string;
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    dir = dir.Replace('\\', '/');
+                    if (dir.Last() != '/')
+                    {
+                        dir += "/";
+                    }
+                }
+                if (Directory.Exists(dir))
+                {
+                    row.Cells[1].Value = dir;
+                    if (i >= dataGridView.Rows.Count - 1)
+                    {
+                        int newRowInd = AddDirsRow(dataGridView, "");
+                        if (dataGridView.CurrentRow.Index == i)
+                        {
+                            dataGridView.CurrentCell =
+                                dataGridView.Rows[newRowInd].Cells[1];
+                        }
+                    }
+                }
+                else if (i < dataGridView.Rows.Count - 1)
+                {
+                    dataGridView.Rows.RemoveAt(i);
+                    i--;
+                }
+                else
+                {
+                    row.Cells[1].Value = "";
+                }
+            }
+        }
+
+        private int AddDirsRow(DataGridView dataGridView, string dir)
+        {
+            int r = dataGridView.Rows.Add("X", dir, "...");
+            return r;
         }
     }
 }

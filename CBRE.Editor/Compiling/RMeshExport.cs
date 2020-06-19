@@ -72,8 +72,6 @@ namespace CBRE.Editor.Compiling
 
             IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name == "tooltextures/invisible_collision");
 
-            string dir = CBRE.Settings.Directories.TextureDir;
-            if (dir.Last() != '/' && dir.Last() != '\\') dir += "/";
             Lightmap.Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
@@ -98,9 +96,6 @@ namespace CBRE.Editor.Compiling
             br.Write((byte)'h');
 
             //textures
-            string texDir = Directories.TextureDir;
-            if (texDir[texDir.Length - 1] != '/' && texDir[texDir.Length - 1] != '\\') texDir += "/";
-
             List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>> textures = new List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>>();
             RMeshLoadFlags loadFlag = RMeshLoadFlags.COLOR; RMeshBlendFlags blendFlag = RMeshBlendFlags.DIFFUSE;
             foreach (LMFace face in faces)
@@ -135,9 +130,7 @@ namespace CBRE.Editor.Compiling
 
             for (int i = 0; i < textures.Count; i++)
             {
-                string texName = "";
-                if (File.Exists(texDir + textures[i].Item1 + ".png")) texName = textures[i].Item1 + ".png";
-                if (File.Exists(texDir + textures[i].Item1 + ".jpg")) texName = textures[i].Item1 + ".jpg";
+                string texName = Directories.GetTextureExtension(textures[i].Item1);
 
                 for (int lmInd = 0; lmInd < lmCount; lmInd++)
                 {

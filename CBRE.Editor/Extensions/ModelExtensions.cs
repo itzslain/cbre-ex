@@ -72,7 +72,7 @@ namespace CBRE.Editor.Extensions
             }
             else
             {
-                var file = new NativeFile(Directories.ModelDir + "/" + model); //TODO: try to understand how this originally worked? //document.Environment.Root.TraversePath(model);
+                var file = new NativeFile(Directories.GetModelPath(model));
                 if (file == null || !ModelProvider.CanLoad(file))
                 {
                     // Model not valid, get rid of it
@@ -110,17 +110,7 @@ namespace CBRE.Editor.Extensions
         {
             if (entity.ClassName == "model")
             {
-                IEnumerable<string> extensions = new string[] { ".b3d", ".x", ".fbx" };
-                string propPath = Directories.ModelDir.Replace("\\", "/");
-                if (string.IsNullOrEmpty(propPath)) { return null; }
-                if (propPath.Last() != '/') { propPath += "/"; }
-                string propName = System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
-                propPath += propName;
-                extensions = extensions.Where(ext => System.IO.File.Exists(propPath + ext));
-                if (extensions.Any())
-                {
-                    return propName + extensions.First();
-                }
+                return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
             }
 
             return null;

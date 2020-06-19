@@ -23,6 +23,10 @@ namespace CBRE.Settings
                 var c = (Color)obj;
                 return c.R + " " + c.G + " " + c.B;
             }
+            if (obj is List<string> list)
+            {
+                return string.Join("|", list);
+            }
             return Convert.ToString(obj, CultureInfo.InvariantCulture);
         }
 
@@ -46,6 +50,11 @@ namespace CBRE.Settings
                 int.TryParse(spl[1], out g);
                 int.TryParse(spl[2], out b);
                 return Color.FromArgb(r, g, b);
+            }
+            if (t == typeof(List<string>))
+            {
+                if (string.IsNullOrEmpty(str)) { return new List<string>(); }
+                return str.Split('|').ToList();
             }
             return Convert.ChangeType(str, t, CultureInfo.InvariantCulture);
         }

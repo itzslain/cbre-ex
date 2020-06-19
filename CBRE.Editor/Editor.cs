@@ -144,7 +144,7 @@ namespace CBRE.Editor
 
             Mediator.MediatorException += (mthd, ex) => Logging.Logger.ShowException(ex.Exception, "Mediator Error: " + ex.Message);
 
-            if (string.IsNullOrEmpty(Directories.TextureDir))
+            if (!Directories.TextureDirs.Any())
             {
                 OpenSettings(4);
             }

@@ -43,8 +43,14 @@ namespace CBRE.Editor.Environment
 
         public IEnumerable<string> GetGameDirectories()
         {
-            if (!string.IsNullOrWhiteSpace(CBRE.Settings.Directories.TextureDir)) yield return CBRE.Settings.Directories.TextureDir;
-            if (!string.IsNullOrWhiteSpace(CBRE.Settings.Directories.ModelDir)) yield return CBRE.Settings.Directories.ModelDir;
+            foreach (string dir in Directories.TextureDirs)
+            {
+                yield return dir;
+            }
+            foreach (string dir in Directories.ModelDirs)
+            {
+                yield return dir;
+            }
 
             var b = Build;
             if (b != null && b.IncludePathInEnvironment)
