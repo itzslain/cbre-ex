@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CBRE Editor")]
-[assembly: AssemblyDescription("CBRE Editor")]
+[assembly: AssemblyTitle("CBRE")]
+[assembly: AssemblyDescription("CBRE")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CBRE")]
-[assembly: AssemblyProduct("CBRE Editor")]
+[assembly: AssemblyProduct("CBRE")]
 [assembly: AssemblyCopyright("Copyright © juanjp600 2020, based on Sledge by http://logic-and-trick.com 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
