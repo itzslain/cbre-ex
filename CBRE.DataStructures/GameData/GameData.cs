@@ -20,29 +20,29 @@ namespace CBRE.DataStructures.GameData
             Classes = new List<GameDataObject>();
 
             var lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
-            lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
-            lightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { DefaultValue = "1.0" });
-            lightDataObj.Properties.Add(new Property("range", VariableType.Float) { DefaultValue = "1.0" });
-            lightDataObj.Properties.Add(new Property("hassprite", VariableType.Bool) { DefaultValue = "true" });
+            lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { ShortDescription = "Color", DefaultValue = "255 255 255" });
+            lightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { ShortDescription = "Intensity", DefaultValue = "1.0" });
+            lightDataObj.Properties.Add(new Property("range", VariableType.Float) { ShortDescription = "Range", DefaultValue = "1.0" });
+            lightDataObj.Properties.Add(new Property("hassprite", VariableType.Bool) { ShortDescription = "Has sprite", DefaultValue = "Yes" });
             lightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/lightbulb.spr"));
             Classes.Add(lightDataObj);
 
             var spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
-            spotlightDataObj.Properties.Add(new Property("color", VariableType.Color255) { DefaultValue = "255 255 255" });
-            spotlightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { DefaultValue = "1.0" });
-            spotlightDataObj.Properties.Add(new Property("range", VariableType.Float) { DefaultValue = "1.0" });
-            spotlightDataObj.Properties.Add(new Property("hassprite", VariableType.Bool) { DefaultValue = "true" });
-            spotlightDataObj.Properties.Add(new Property("innerconeangle", VariableType.Float) { DefaultValue = "45" });
-            spotlightDataObj.Properties.Add(new Property("outerconeangle", VariableType.Float) { DefaultValue = "90" });
-            spotlightDataObj.Properties.Add(new Property("angles", VariableType.Vector) { DefaultValue = "0 0 0" });
+            spotlightDataObj.Properties.Add(new Property("color", VariableType.Color255) { ShortDescription = "Color", DefaultValue = "255 255 255" });
+            spotlightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { ShortDescription = "Intensity", DefaultValue = "1.0" });
+            spotlightDataObj.Properties.Add(new Property("range", VariableType.Float) { ShortDescription = "Range", DefaultValue = "1.0" });
+            spotlightDataObj.Properties.Add(new Property("hassprite", VariableType.Bool) { ShortDescription = "Has sprite", DefaultValue = "Yes" });
+            spotlightDataObj.Properties.Add(new Property("innerconeangle", VariableType.Float) { ShortDescription = "Inner cone angle", DefaultValue = "45" });
+            spotlightDataObj.Properties.Add(new Property("outerconeangle", VariableType.Float) { ShortDescription = "Outer cone angle", DefaultValue = "90" });
+            spotlightDataObj.Properties.Add(new Property("angles", VariableType.Vector) { ShortDescription = "Rotation", DefaultValue = "0 0 0" });
             Classes.Add(spotlightDataObj);
             Classes.Add(new GameDataObject("waypoint", "AI waypoint.", ClassType.Point));
             Classes.Add(new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point));
 
             var modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
-            modelDataObj.Properties.Add(new Property("file", VariableType.Other) { DefaultValue = "" });
-            modelDataObj.Properties.Add(new Property("angles", VariableType.Vector) { DefaultValue = "0 0 0" });
-            modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { DefaultValue = "1 1 1" });
+            modelDataObj.Properties.Add(new Property("file", VariableType.Other) { ShortDescription = "File", DefaultValue = "" });
+            modelDataObj.Properties.Add(new Property("angles", VariableType.Vector) { ShortDescription = "Rotation", DefaultValue = "0 0 0" });
+            modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { ShortDescription = "Scale", DefaultValue = "1 1 1" });
             Classes.Add(modelDataObj);
 
             var noShadowObj = new GameDataObject("noshadow", "Disables shadow casting for this brush.", ClassType.Solid);

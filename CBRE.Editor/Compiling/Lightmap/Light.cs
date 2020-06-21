@@ -23,6 +23,11 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         public static void FindLights(Map map, out List<Light> lightEntities)
         {
+            Predicate<string> parseBooleanProperty = (prop) =>
+            {
+                return prop.Equals("yes", StringComparison.OrdinalIgnoreCase) || prop.Equals("true", StringComparison.OrdinalIgnoreCase);
+            };
+
             lightEntities = new List<Light>();
             lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
                 .Select(x =>
@@ -31,8 +36,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range);
                     float intensity = 1.0f;
                     float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity);
-                    bool hasSprite = true;
-                    bool.TryParse(x.EntityData.GetPropertyValue("hassprite") ?? "true", out hasSprite);
+                    bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
 
                     return new Light()
                     {
@@ -53,8 +57,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range);
                     float intensity = 1.0f;
                     float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity);
-                    bool hasSprite = true;
-                    bool.TryParse(x.EntityData.GetPropertyValue("hassprite") ?? "true", out hasSprite);
+                    bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
                     float innerCos = 0.5f;
                     float.TryParse(x.EntityData.GetPropertyValue("innerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out innerCos);
                     innerCos = (float)Math.Cos(innerCos * (float)Math.PI / 180.0f);
