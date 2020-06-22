@@ -165,7 +165,7 @@ namespace CBRE.Providers.Model
                 Material material = new Material();
                 material.Name = texture;
                 TextureSlot textureSlot = new TextureSlot(texture +
-                    (File.Exists(texture + ".png") ? ".png" : (File.Exists(texture + ".jpg") ? ".jpg" : ".jpeg")),
+                    (File.Exists(texture + ".png") ? ".png" : (File.Exists(texture + ".jpeg") ? ".jpeg" : ".jpg")),
                     TextureType.Diffuse,
                     0,
                     TextureMapping.Plane,
