@@ -32,10 +32,16 @@ namespace CBRE.Editor.Compiling.Lightmap
             lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "light").OfType<Entity>()
                 .Select(x =>
                 {
-                    float range = 100.0f;
-                    float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range);
-                    float intensity = 1.0f;
-                    float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity);
+                    float range;
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range))
+                    {
+                        range = 100.0f;
+                    }
+                    float intensity;
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity))
+                    {
+                        intensity = 1.0f;
+                    }
                     bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
 
                     return new Light()
@@ -53,17 +59,27 @@ namespace CBRE.Editor.Compiling.Lightmap
             lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "spotlight").OfType<Entity>()
                 .Select(x =>
                 {
-                    float range = 100.0f;
-                    float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range);
-                    float intensity = 1.0f;
-                    float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity);
+                    float range;
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range))
+                    {
+                        range = 100.0f;
+                    }
+                    float intensity;
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity))
+                    {
+                        intensity = 1.0f;
+                    }
                     bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
                     float innerCos = 0.5f;
-                    float.TryParse(x.EntityData.GetPropertyValue("innerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out innerCos);
-                    innerCos = (float)Math.Cos(innerCos * (float)Math.PI / 180.0f);
+                    if (float.TryParse(x.EntityData.GetPropertyValue("innerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out innerCos))
+                    {
+                        innerCos = (float)Math.Cos(innerCos * (float)Math.PI / 180.0f);
+                    }
                     float outerCos = 0.75f;
-                    float.TryParse(x.EntityData.GetPropertyValue("outerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out outerCos);
-                    outerCos = (float)Math.Cos(outerCos * (float)Math.PI / 180.0f);
+                    if (float.TryParse(x.EntityData.GetPropertyValue("outerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out outerCos))
+                    {
+                        outerCos = (float)Math.Cos(outerCos * (float)Math.PI / 180.0f);
+                    }
 
                     Light light = new Light()
                     {
