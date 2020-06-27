@@ -780,6 +780,9 @@
     <None Include="Resources\Menu_ExportRmesh.png" />
     <None Include="Resources\CBRE_Icon.png" />
     <None Include="Resources\CBRE.ico" />
+    <None Include="Sprites\waypoint.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="ToolTextures\BLOCK_LIGHT.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
