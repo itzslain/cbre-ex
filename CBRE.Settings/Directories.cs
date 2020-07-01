@@ -51,7 +51,7 @@ namespace CBRE.Settings
                     if (File.Exists(fullFilename)) { return fullFilename; }
                 }
             }
-            return filename;
+            return null;
         }
     }
 }

@@ -41,8 +41,9 @@ namespace CBRE.Providers.Texture
 
             foreach (var dir in dirs)
             {
-                int slashInd = Math.Max(dir.LastIndexOf('/'), dir.LastIndexOf('\\'));
-                var tp = new TexturePackage(dir, dir.Remove(0, slashInd), this);
+                string relPath = dir;
+                if (relPath.Length > 25) { relPath = "..." + relPath.Substring(relPath.Length - 23); }
+                var tp = new TexturePackage(dir, relPath, this);
 
                 var sprs = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".png"));
                 if (!sprs.Any()) continue;
@@ -86,14 +87,14 @@ namespace CBRE.Providers.Texture
 
         public override ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
         {
-            return new JpegTextureStreamSource(packages);
+            return new MiscTextureStreamSource(packages);
         }
 
-        private class JpegTextureStreamSource : ITextureStreamSource
+        private class MiscTextureStreamSource : ITextureStreamSource
         {
             private readonly List<TexturePackage> _packages;
 
-            public JpegTextureStreamSource(IEnumerable<TexturePackage> packages)
+            public MiscTextureStreamSource(IEnumerable<TexturePackage> packages)
             {
                 _packages = packages.ToList();
             }

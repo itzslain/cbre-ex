@@ -165,7 +165,7 @@ namespace CBRE.Editor.Compiling
                             br.Write((byte)texName[k]);
                         }
 
-                        if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
+                        if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow: "+texName);
                         br.Write((Int32)vertCount);
                         foreach (LMFace face in tLmFaces)
                         {

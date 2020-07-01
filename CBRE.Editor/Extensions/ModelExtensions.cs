@@ -72,7 +72,12 @@ namespace CBRE.Editor.Extensions
             }
             else
             {
-                var file = new NativeFile(Directories.GetModelPath(model));
+                string modelPath = Directories.GetModelPath(model);
+                NativeFile file = null;
+                if (!string.IsNullOrEmpty(modelPath))
+                {
+                    file = new NativeFile(modelPath);
+                }
                 if (file == null || !ModelProvider.CanLoad(file))
                 {
                     // Model not valid, get rid of it
