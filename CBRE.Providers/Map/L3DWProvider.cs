@@ -323,35 +323,6 @@ namespace CBRE.Providers.Map
 
                             newFace.UpdateBoundingBox();
 
-                            /*if ((faceFlags & 4) == 0)
-                            {
-                                Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
-                                entity.Colour = Color.Lime;
-                                entity.Origin = newFace.BoundingBox.Center;
-                                entity.UpdateBoundingBox();
-                                entity.SetParent(map.WorldSpawn);
-
-                                Property newProperty = new Property();
-                                newProperty.Key = "normal";
-                                newProperty.Value = newFace.Plane.Normal.ToString();
-                                entity.EntityData.Properties.Add(newProperty);
-
-                                var direction = newFace.Plane.GetClosestAxisToNormal();
-                                var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
-                                var uAxis = newFace.Plane.Normal.Cross(tempV).Normalise();
-                                var vAxis = uAxis.Cross(newFace.Plane.Normal).Normalise();
-
-                                newProperty = new Property();
-                                newProperty.Key = "uaxis";
-                                newProperty.Value = uAxis.ToString();
-                                entity.EntityData.Properties.Add(newProperty);
-
-                                newProperty = new Property();
-                                newProperty.Key = "vaxis";
-                                newProperty.Value = vAxis.ToString();
-                                entity.EntityData.Properties.Add(newProperty);
-                            }*/
-
                             Coordinate uNorm = new Coordinate(uTexPlane0, uTexPlane2, uTexPlane1).Normalise();
                             Coordinate vNorm = new Coordinate(vTexPlane0, vTexPlane2, vTexPlane1).Normalise();
                             if (Math.Abs((double)(uNorm.LengthSquared() - vNorm.LengthSquared())) > 0.001) throw new Exception(uNorm.LengthSquared().ToString() + " " + vNorm.LengthSquared().ToString());
@@ -360,16 +331,48 @@ namespace CBRE.Providers.Map
                                                     invisibleCollision ? "tooltextures/invisible_collision" :
                                                                           materials[materialInd];
                             newFace.AlignTextureToWorld();
-                            //TODO: add warning?
-                            //if (texRotY != texRotX) throw new Exception((texRotX - texRotY).ToString());
 
-                            newFace.Texture.UAxis = uNorm * (decimal)Math.Cos(-texRotY * Math.PI / 180.0) + vNorm * (decimal)Math.Sin(-texRotY * Math.PI / 180.0);
-                            newFace.Texture.VAxis = vNorm * (decimal)Math.Cos(-texRotY * Math.PI / 180.0) - uNorm * (decimal)Math.Sin(-texRotY * Math.PI / 180.0);
+                            newFace.Texture.UAxis = uNorm * (decimal)Math.Cos(-texRotX * Math.PI / 180.0) + vNorm * (decimal)Math.Sin(-texRotX * Math.PI / 180.0);
+                            newFace.Texture.VAxis = vNorm * (decimal)Math.Cos(-texRotX * Math.PI / 180.0) - uNorm * (decimal)Math.Sin(-texRotX * Math.PI / 180.0);
+
+                            //huh?????
+                            if (Math.Abs(texScaleX) < 0.0001m)
+                            {
+                                if (Math.Abs(texScaleY) < 0.0001m)
+                                {
+                                    texScaleX = 1m;
+                                    texScaleY = 1m;
+                                }
+                                else
+                                {
+                                    texScaleX = texScaleY;
+                                }
+                            }
+                            else if (Math.Abs(texScaleY) < 0.0001m)
+                            {
+                                texScaleY = texScaleX;
+                            }
                             newFace.Texture.XScale = texScaleX / 2;
                             newFace.Texture.YScale = texScaleY / 2;
                             newFace.Texture.XShift = -texPosX * 2 / texScaleX;
                             newFace.Texture.YShift = texPosY * 2 / texScaleY;
-                            newFace.Texture.Rotation = (decimal)texRotY;
+                            newFace.Texture.Rotation = (decimal)texRotX;
+
+                            //seriously, what the FUCK???????????
+                            if ((texRotX - texRotY) > 120.0f)
+                            {
+                                newFace.Texture.XScale *= -1m;
+                                newFace.Texture.YScale *= -1m;
+                                newFace.Texture.Rotation -= 180m;
+                                newFace.Texture.UAxis = -newFace.Texture.UAxis;
+                            }
+                            else if ((texRotY - texRotX) > 120.0f)
+                            {
+                                newFace.Texture.XScale *= -1m;
+                                newFace.Texture.YScale *= -1m;
+                                newFace.Texture.Rotation -= 180m;
+                                newFace.Texture.VAxis = -newFace.Texture.VAxis;
+                            }
 
                             newFace.Transform(new UnitScale(Coordinate.One, newFace.BoundingBox.Center), TransformFlags.None);
 
