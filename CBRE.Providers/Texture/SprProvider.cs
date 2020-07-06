@@ -121,9 +121,10 @@ namespace CBRE.Providers.Texture
         {
             foreach (var item in items)
             {
+                string name = item.Name.Substring("sprites/".Length);
                 foreach (var root in item.Package.PackageRoot.Split(';'))
                 {
-                    var file = Path.Combine(root, item.Name);
+                    var file = Path.Combine(root, name);
                     if (File.Exists(file))
                     {
                         var bmp = Parse(file);
@@ -134,20 +135,20 @@ namespace CBRE.Providers.Texture
             }
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<TextureCategory> sourceRoots)
         {
             // Sprite provider ignores the black/whitelists
-            var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
-            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this) { IsBrowsable = false };
+            var dirs = sourceRoots.Where(sr => Directory.Exists(sr.Path));
+            var tp = new TexturePackage(String.Join(";", dirs.Select(d => d.Path)), "Sprites", this) { IsBrowsable = false };
             foreach (var dir in dirs)
             {
-                var sprs = Directory.GetFiles(dir, "*.spr", SearchOption.AllDirectories);
+                var sprs = Directory.GetFiles(dir.Path, "*.spr", SearchOption.AllDirectories);
                 if (!sprs.Any()) continue;
 
                 foreach (var spr in sprs)
                 {
                     var size = GetSize(spr);
-                    var rel = Path.GetFullPath(spr).Substring(dir.Length).TrimStart('/', '\\').Replace('\\', '/');
+                    var rel = "sprites/"+Path.GetFullPath(spr).Substring(dir.Path.Length).TrimStart('/', '\\').Replace('\\', '/');
                     tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), TextureFlags.Transparent, size.Width, size.Height));
                 }
             }
@@ -183,7 +184,8 @@ namespace CBRE.Providers.Texture
             {
                 foreach (var root in item.Package.PackageRoot.Split(';'))
                 {
-                    var file = Path.Combine(root, item.Name);
+                    string name = item.Name.Substring("sprites/".Length);
+                    var file = Path.Combine(root, name);
                     if (File.Exists(file)) return Parse(file);
                 }
                 return null;

@@ -1,4 +1,5 @@
 ﻿using CBRE.Graphics.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,23 +41,28 @@ namespace CBRE.Providers.Texture
 
         #endregion
 
+        public struct TextureCategory
+        {
+            public string Path;
+            public string CategoryName;
+            public string Prefix;
+        }
+
         protected string CachePath { get; private set; }
-        public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist);
+        public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<TextureCategory> sourceRoots);
         public abstract void DeletePackages(IEnumerable<TexturePackage> packages);
         public abstract void LoadTextures(IEnumerable<TextureItem> items);
         public abstract ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages);
 
-        public static TextureCollection CreateCollection(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
+        public static TextureCollection CreateCollection(IEnumerable<TextureCategory> sourceRoots)
         {
             var list = sourceRoots.ToList();
-            var additional = additionalPackages == null ? new List<string>() : additionalPackages.ToList();
-            var wl = whitelist == null ? new List<string>() : whitelist.ToList();
-            var bl = blacklist == null ? new List<string>() : blacklist.ToList();
             var pkgs = new List<TexturePackage>();
             foreach (var provider in RegisteredProviders)
             {
-                pkgs.AddRange(provider.CreatePackages(list, additional, bl, wl));
+                pkgs.AddRange(provider.CreatePackages(list));
             }
+
             var tc = new TextureCollection(pkgs);
             Packages.AddRange(pkgs);
             Collections.Add(tc);

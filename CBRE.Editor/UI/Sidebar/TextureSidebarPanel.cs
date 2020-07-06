@@ -3,6 +3,7 @@ using CBRE.Editor.Documents;
 using CBRE.Providers.Texture;
 using CBRE.Settings;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -71,8 +72,11 @@ namespace CBRE.Editor.UI.Sidebar
             var index = GroupComboBox.SelectedIndex;
             GroupComboBox.Items.Clear();
             GroupComboBox.Items.Add("All Textures");
+            var takenNames = new HashSet<string>();
             foreach (var package in doc.TextureCollection.Packages)
             {
+                if (takenNames.Contains(package.PackageRelativePath)) { continue; }
+                takenNames.Add(package.PackageRelativePath);
                 GroupComboBox.Items.Add(package);
             }
             if (index < 0 || index >= GroupComboBox.Items.Count) index = 0;

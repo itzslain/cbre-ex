@@ -75,8 +75,11 @@ namespace CBRE.Editor.Compiling
         {
             using (SaveFileDialog save = new SaveFileDialog())
             {
-                var filter = "SCP-CB v1.4 RM2 (*.rm2)|*.rm2";
-                filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
+                var filter = "";
+#if RM2
+                filter += "SCP-CB v1.4 RM2 (*.rm2)|*.rm2|";
+#endif
+                filter += "SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
                 filter += "|Autodesk Filmbox (*.fbx)|*.fbx";
                 filter += "|Wavefront Object (*.obj)|*.obj";
                 filter += "|Stereolithography (*.stl)|*.stl";

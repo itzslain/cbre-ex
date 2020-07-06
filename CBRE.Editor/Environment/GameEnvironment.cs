@@ -1,6 +1,8 @@
 ﻿using CBRE.FileSystem;
+using CBRE.Providers.Texture;
 using CBRE.Settings;
 using CBRE.Settings.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,6 +41,33 @@ namespace CBRE.Editor.Environment
         public GameEnvironment(Game game)
         {
             Game = game;
+        }
+
+        public IEnumerable<TextureProvider.TextureCategory> GetTextureCategories()
+        {
+            for (int i=0;i<Directories.TextureDirs.Count;i++)
+            {
+                string dir = Directories.TextureDirs[i];
+                yield return new TextureProvider.TextureCategory
+                {
+                    Path = dir,
+                    CategoryName = $"Texture dir {i}"
+                };
+            }
+
+            string exeDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            yield return new TextureProvider.TextureCategory
+            {
+                Path = Path.Combine(exeDir, "ToolTextures"),
+                CategoryName = "Tool textures",
+                Prefix = "tooltextures/"
+            };
+            yield return new TextureProvider.TextureCategory
+            {
+                Path = Path.Combine(exeDir, "Sprites"),
+                CategoryName = "Sprites",
+                Prefix = "sprites/"
+            };
         }
 
         public IEnumerable<string> GetGameDirectories()

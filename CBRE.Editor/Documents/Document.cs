@@ -93,7 +93,7 @@ namespace CBRE.Editor.Documents
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
 
-            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages, Game.GetTextureBlacklist(), Game.GetTextureWhitelist());
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetTextureCategories());
             /* .Union(GameData.MaterialExclusions) */ // todo material exclusions
 
             var texList = Map.GetAllTextures();

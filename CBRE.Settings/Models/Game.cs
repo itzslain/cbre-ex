@@ -31,13 +31,11 @@ namespace CBRE.Settings.Models
         public int OverrideMapSizeLow { get; set; }
         public int OverrideMapSizeHigh { get; set; }
 
-        public List<string> AdditionalPackages { get; set; }
         public string PackageBlacklist { get; set; }
         public string PackageWhitelist { get; set; }
 
         public Game()
         {
-            AdditionalPackages = new List<string>();
             AutosaveTime = 5;
             AutosaveLimit = 5;
             AutosaveOnlyOnChanged = true;
@@ -71,18 +69,6 @@ namespace CBRE.Settings.Models
         {
             //TODO: remove?
             return "";
-        }
-
-        public IEnumerable<string> GetTextureBlacklist()
-        {
-            var bl = new List<string>();
-            bl.AddRange((PackageBlacklist ?? "").Trim().Split('\n').Select(x => x.Trim()).Where(x => !String.IsNullOrWhiteSpace(x)));
-            return bl;
-        }
-
-        public IEnumerable<string> GetTextureWhitelist()
-        {
-            return (PackageWhitelist ?? "").Trim().Split('\n').Select(x => x.Trim()).Where(x => !String.IsNullOrWhiteSpace(x));
         }
     }
 }

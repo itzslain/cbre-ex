@@ -41,7 +41,10 @@ namespace CBRE.DataStructures.GameData
             waypointDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/waypoint"));
             Classes.Add(waypointDataObj);
 
-            Classes.Add(new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point));
+            var soundEmitterDataObj = new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point);
+            soundEmitterDataObj.Properties.Add(new Property("sound", VariableType.Integer) { ShortDescription = "Ambience index", DefaultValue = "1" });
+            soundEmitterDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/speaker.spr"));
+            Classes.Add(soundEmitterDataObj);
 
             var modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
             modelDataObj.Properties.Add(new Property("file", VariableType.Other) { ShortDescription = "File", DefaultValue = "" });

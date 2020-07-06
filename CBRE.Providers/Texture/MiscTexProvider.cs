@@ -34,24 +34,23 @@ namespace CBRE.Providers.Texture
             }
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<TextureCategory> sourceRoots)
         {
             // Sprite provider ignores the black/whitelists
-            var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
+            var dirs = sourceRoots.Where(sr => Directory.Exists(sr.Path));
 
             foreach (var dir in dirs)
             {
-                string relPath = dir;
-                if (relPath.Length > 25) { relPath = "..." + relPath.Substring(relPath.Length - 23); }
-                var tp = new TexturePackage(dir, relPath, this);
+                var tp = new TexturePackage(dir.Path, dir.CategoryName, this);
 
-                var sprs = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".png"));
+                var sprs = Directory.GetFiles(dir.Path, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".png"));
                 if (!sprs.Any()) continue;
 
                 foreach (var spr in sprs)
                 {
-                    var rel = Path.GetFullPath(spr).Substring(dir.Length).TrimStart('/', '\\').Replace('\\', '/');
+                    var rel = Path.GetFullPath(spr).Substring(dir.Path.Length).TrimStart('/', '\\').Replace('\\', '/');
                     rel = rel.Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "").ToLower();
+                    rel = dir.Prefix + rel;
 
                     if (!loadedImages.ContainsKey(rel))
                     {
