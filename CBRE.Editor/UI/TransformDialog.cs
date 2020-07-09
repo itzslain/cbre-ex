@@ -12,12 +12,12 @@ namespace CBRE.Editor.UI
 
         public Coordinate TransformValue
         {
-            get { return new Coordinate(ValueX.Value, ValueY.Value, ValueZ.Value); }
+            get { return new Coordinate(ValueX.Value, ValueZ.Value, ValueY.Value); }
             set
             {
                 ValueX.Value = value.X;
-                ValueY.Value = value.Y;
-                ValueZ.Value = value.Z;
+                ValueZ.Value = value.Y;
+                ValueY.Value = value.Z;
             }
         }
 

@@ -138,16 +138,16 @@ namespace CBRE.Editor.Menu
             Add("Tools", new GroupedMenuBuilder("Align Objects",
                                                 new SimpleMenuBuilder("To X Axis Min", HotkeysMediator.AlignXMin) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("To X Axis Max", HotkeysMediator.AlignXMax) { IsVisible = mapOpen, IsActive = itemsSelected },
-                                                new SimpleMenuBuilder("To Y Axis Min", HotkeysMediator.AlignYMin) { IsVisible = mapOpen, IsActive = itemsSelected },
-                                                new SimpleMenuBuilder("To Y Axis Max", HotkeysMediator.AlignYMax) { IsVisible = mapOpen, IsActive = itemsSelected },
-                                                new SimpleMenuBuilder("To Z Axis Min", HotkeysMediator.AlignZMin) { IsVisible = mapOpen, IsActive = itemsSelected },
-                                                new SimpleMenuBuilder("To Z Axis Max", HotkeysMediator.AlignZMax) { IsVisible = mapOpen, IsActive = itemsSelected }
+                                                new SimpleMenuBuilder("To Y Axis Min", HotkeysMediator.AlignZMin) { IsVisible = mapOpen, IsActive = itemsSelected },
+                                                new SimpleMenuBuilder("To Y Axis Max", HotkeysMediator.AlignZMax) { IsVisible = mapOpen, IsActive = itemsSelected },
+                                                new SimpleMenuBuilder("To Z Axis Min", HotkeysMediator.AlignYMin) { IsVisible = mapOpen, IsActive = itemsSelected },
+                                                new SimpleMenuBuilder("To Z Axis Max", HotkeysMediator.AlignYMax) { IsVisible = mapOpen, IsActive = itemsSelected }
                              )
             { Image = Resources.Menu_Align, IsVisible = mapOpen });
             Add("Tools", new GroupedMenuBuilder("Flip Objects",
                                                 new SimpleMenuBuilder("X Axis", HotkeysMediator.FlipX) { IsVisible = mapOpen, IsActive = itemsSelected },
-                                                new SimpleMenuBuilder("Y Axis", HotkeysMediator.FlipY) { IsVisible = mapOpen, IsActive = itemsSelected },
-                                                new SimpleMenuBuilder("Z Axis", HotkeysMediator.FlipZ) { IsVisible = mapOpen, IsActive = itemsSelected }
+                                                new SimpleMenuBuilder("Y Axis", HotkeysMediator.FlipZ) { IsVisible = mapOpen, IsActive = itemsSelected },
+                                                new SimpleMenuBuilder("Z Axis", HotkeysMediator.FlipY) { IsVisible = mapOpen, IsActive = itemsSelected }
                              )
             { Image = Resources.Menu_Flip, IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
