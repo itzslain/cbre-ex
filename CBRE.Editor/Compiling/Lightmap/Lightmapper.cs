@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -442,7 +443,8 @@ namespace CBRE.Editor.Compiling.Lightmap
                 {
                     threadExceptions.Add(new LMThreadException(e));
                 }
-            });
+            })
+            { CurrentCulture = CultureInfo.InvariantCulture };
         }
 
         private static void RenderLightOntoFace(Document doc, float[][] bitmaps, List<Light> lights, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces)
