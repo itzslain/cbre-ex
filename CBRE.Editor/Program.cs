@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -13,6 +14,8 @@ namespace CBRE.Editor
         [STAThread]
         static void Main()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             RegisterHandlers();

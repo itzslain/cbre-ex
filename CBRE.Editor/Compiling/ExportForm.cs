@@ -2,6 +2,7 @@
 using CBRE.Settings;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -67,7 +68,7 @@ namespace CBRE.Editor.Compiling
             ProgressLog.Text = "Rendering lightmap";
             ProgressBar.Enabled = true;
 
-            actionThread = new Thread(() => { PerformAction(false); });
+            actionThread = new Thread(() => { PerformAction(false); }) { CurrentCulture = CultureInfo.InvariantCulture };
             actionThread.Start();
         }
 
@@ -92,7 +93,7 @@ namespace CBRE.Editor.Compiling
                     ProgressLog.Text = "Exporting to " + save.FileName;
                     ProgressBar.Enabled = true;
 
-                    actionThread = new Thread(() => { PerformAction(true); });
+                    actionThread = new Thread(() => { PerformAction(true); }) { CurrentCulture = CultureInfo.InvariantCulture };
                     actionThread.Start();
                 }
             }
