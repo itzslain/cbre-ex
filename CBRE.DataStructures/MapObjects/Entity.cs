@@ -24,7 +24,7 @@ namespace CBRE.DataStructures.MapObjects
             
             set
             {
-                EntityData.SetPropertyCoordinate("position", value);
+                EntityData.SetPropertyValue("position", value.ToDataString());
 			}
         }
 

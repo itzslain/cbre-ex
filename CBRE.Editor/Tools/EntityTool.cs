@@ -227,9 +227,9 @@ namespace CBRE.Editor.Tools
             {
                 EntityData = new EntityData(gd),
                 ClassName = gd.Name,
-                Colour = colour
+                Colour = colour,
+                Origin = origin
             };
-            entity.Origin = origin;
 
             if (Select.SelectCreatedEntity) entity.IsSelected = true;
 
