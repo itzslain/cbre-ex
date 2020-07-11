@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.Compiling
@@ -37,15 +38,6 @@ namespace CBRE.Editor.Compiling
             DIFFUSE = 1,
             LM = 2
         };
-
-        private static void WriteByteString(BinaryWriter writer, string str)
-        {
-            writer.Write((byte)str.Length);
-            for (int i = 0; i < str.Length; i++)
-            {
-                writer.Write((byte)str[i]);
-            }
-        }
 
         public static void SaveToFile(string filename, Document document, ExportForm form)
         {
@@ -85,15 +77,7 @@ namespace CBRE.Editor.Compiling
             BinaryWriter br = new BinaryWriter(stream);
 
             //header
-            br.Write((Int32)8);
-            br.Write((byte)'R');
-            br.Write((byte)'o');
-            br.Write((byte)'o');
-            br.Write((byte)'m');
-            br.Write((byte)'M');
-            br.Write((byte)'e');
-            br.Write((byte)'s');
-            br.Write((byte)'h');
+            br.WriteB3DString("RoomMesh");
 
             //textures
             List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>> textures = new List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>>();
@@ -152,18 +136,11 @@ namespace CBRE.Editor.Compiling
                         br.Write(flag);
                         string currLmPath = lmPath + (lmCount > 1 ? "_" + lmInd.ToString() : "");
                         currLmPath += ".png";
-                        br.Write((Int32)currLmPath.Length);
-                        for (int k = 0; k < currLmPath.Length; k++)
-                        {
-                            br.Write((byte)currLmPath[k]);
-                        }
+                        br.WriteB3DString(currLmPath);
+
                         flag = 1;
                         br.Write(flag);
-                        br.Write((Int32)texName.Length);
-                        for (int k = 0; k < texName.Length; k++)
-                        {
-                            br.Write((byte)texName[k]);
-                        }
+                        br.WriteB3DString(texName);
 
                         if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow: "+texName);
                         br.Write((Int32)vertCount);
@@ -213,11 +190,7 @@ namespace CBRE.Editor.Compiling
                         br.Write(flag);
                         flag = 3;
                         br.Write(flag);
-                        br.Write((Int32)texName.Length);
-                        for (int k = 0; k < texName.Length; k++)
-                        {
-                            br.Write((byte)texName[k]);
-                        }
+                        br.WriteB3DString(texName);
 
                         if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
                         br.Write((Int32)vertCount);
@@ -297,12 +270,7 @@ namespace CBRE.Editor.Compiling
 
             foreach (Light light in lights)
             {
-                br.Write((Int32)5);
-                br.Write((byte)'l');
-                br.Write((byte)'i');
-                br.Write((byte)'g');
-                br.Write((byte)'h');
-                br.Write((byte)'t');
+                br.WriteB3DString("light");
 
                 br.Write(light.Origin.X);
                 br.Write(light.Origin.Z);
@@ -322,15 +290,7 @@ namespace CBRE.Editor.Compiling
 
             foreach (Waypoint wp in waypoints)
             {
-                br.Write((Int32)8);
-                br.Write((byte)'w');
-                br.Write((byte)'a');
-                br.Write((byte)'y');
-                br.Write((byte)'p');
-                br.Write((byte)'o');
-                br.Write((byte)'i');
-                br.Write((byte)'n');
-                br.Write((byte)'t');
+                br.WriteB3DString("waypoint");
 
                 br.Write(wp.Location.X);
                 br.Write(wp.Location.Z);
@@ -339,19 +299,7 @@ namespace CBRE.Editor.Compiling
 
             foreach (Entity soundEmitter in soundEmitters)
             {
-                br.Write((Int32)12);
-                br.Write((byte)'s');
-                br.Write((byte)'o');
-                br.Write((byte)'u');
-                br.Write((byte)'n');
-                br.Write((byte)'d');
-                br.Write((byte)'e');
-                br.Write((byte)'m');
-                br.Write((byte)'i');
-                br.Write((byte)'t');
-                br.Write((byte)'t');
-                br.Write((byte)'e');
-                br.Write((byte)'r');
+                br.WriteB3DString("soundemitter");
 
                 br.Write((float)soundEmitter.Origin.X);
                 br.Write((float)soundEmitter.Origin.Z);
@@ -364,19 +312,14 @@ namespace CBRE.Editor.Compiling
 
             foreach (Entity prop in props)
             {
-                br.Write((Int32)5);
-                br.Write((byte)'m');
-                br.Write((byte)'o');
-                br.Write((byte)'d');
-                br.Write((byte)'e');
-                br.Write((byte)'l');
+                br.WriteB3DString("model");
 
-                string modelName = prop.EntityData.GetPropertyValue("file") + ".x";
-                br.Write((Int32)modelName.Length);
-                for (int k = 0; k < modelName.Length; k++)
+                string modelName = prop.EntityData.GetPropertyValue("file");
+                if (!modelName.Contains('.'))
                 {
-                    br.Write((byte)modelName[k]);
+                    modelName = System.IO.Path.GetFileName(Directories.GetModelPath(modelName));
                 }
+                br.WriteB3DString(modelName);
 
                 br.Write((float)prop.Origin.X);
                 br.Write((float)prop.Origin.Z);

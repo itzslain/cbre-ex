@@ -2,6 +2,7 @@
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using CBRE.Packages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,15 +41,6 @@ namespace CBRE.Editor.Compiling
             Opaque = 1,
             Alpha = 2
         };
-
-        private static void WriteByteString(BinaryWriter writer, string str)
-        {
-            writer.Write((byte)str.Length);
-            for (int i = 0; i < str.Length; i++)
-            {
-                writer.Write((byte)str[i]);
-            }
-        }
 
         public static void SaveToFile(string filename, Document document, ExportForm form)
         {
@@ -141,7 +133,7 @@ namespace CBRE.Editor.Compiling
             br.Write((byte)textures.Count);
             foreach (Tuple<string, byte> tex in textures)
             {
-                WriteByteString(br, tex.Item1);
+                br.WriteByteString(tex.Item1);
                 br.Write(tex.Item2);
             }
 
@@ -150,10 +142,6 @@ namespace CBRE.Editor.Compiling
             int vertOffset;
             int triCount;
 
-            //TODO: find a clever way of splitting up meshes with the same texture
-            //into several for collision optimization.
-            //Making each face its own collision object is too slow, and merging all of
-            //them together is not optimal either.
             for (int i = 0; i < textures.Count; i++)
             {
                 for (int lmInd = 0; lmInd < lmCount; lmInd++)
@@ -337,7 +325,7 @@ namespace CBRE.Editor.Compiling
             {
                 br.Write((byte)RM2Chunks.Prop);
 
-                WriteByteString(br, prop.EntityData.GetPropertyValue("file"));
+                br.WriteByteString(System.IO.Path.GetFileNameWithoutExtension(prop.EntityData.GetPropertyValue("file")));
 
                 br.Write((float)prop.Origin.X);
                 br.Write((float)prop.Origin.Z);
