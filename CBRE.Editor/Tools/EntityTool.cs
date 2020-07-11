@@ -229,7 +229,7 @@ namespace CBRE.Editor.Tools
                 ClassName = gd.Name,
                 Colour = colour
             };
-            entity.Origin = origin
+            entity.Origin = origin;
 
             if (Select.SelectCreatedEntity) entity.IsSelected = true;
 
