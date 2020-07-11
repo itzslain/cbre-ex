@@ -44,9 +44,8 @@ namespace CBRE.Editor.Compiling.Lightmap
                     }
                     bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
 
-                    return new Light()
+                    Light l = new Light()
                     {
-                        Origin = new CoordinateF(x.Origin),
                         Range = range,
                         Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
                         Intensity = intensity,
@@ -55,6 +54,8 @@ namespace CBRE.Editor.Compiling.Lightmap
                         innerCos = null,
                         outerCos = null
                     };
+                    l.Origin = new CoordinateF(x.Origin);
+                    return l;
                 }));
             lightEntities.AddRange(map.WorldSpawn.Find(q => q.ClassName == "spotlight").OfType<Entity>()
                 .Select(x =>
