@@ -79,5 +79,11 @@ namespace CBRE.DataStructures.MapObjects
             var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
             return prop == null ? def : prop.GetCoordinate(def);
         }
+
+        public void SetPropertyCoordinate(string key, Coordinate value)
+        {
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            prop.Value = value.ToDataString(); // Should NEVER be null
+        }
     }
 }

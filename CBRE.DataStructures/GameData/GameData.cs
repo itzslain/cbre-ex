@@ -55,6 +55,13 @@ namespace CBRE.DataStructures.GameData
             var noShadowObj = new GameDataObject("noshadow", "Disables shadow casting for this brush.", ClassType.Solid);
             Classes.Add(noShadowObj);
 
+            Property p = new Property("position", VariableType.Vector) { ShortDescription = "Position", DefaultValue = "0 0 0" };
+            foreach (GameDataObject gdo in Classes) {
+                if (gdo.ClassType != ClassType.Solid) {
+                    gdo.Properties.Add(p);
+                }
+			}
+
             Includes = new List<string>();
             MaterialExclusions = new List<string>();
             AutoVisgroups = new List<AutoVisgroupSection>();

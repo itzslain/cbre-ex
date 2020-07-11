@@ -15,11 +15,21 @@ namespace CBRE.DataStructures.MapObjects
     {
         public GameDataObject GameData { get; set; }
         public EntityData EntityData { get; set; }
-        public Coordinate Origin { get; set; }
+        public Coordinate Origin
+        {
+            get
+            {
+                return EntityData.GetPropertyCoordinate("position");
+			}
+            
+            set
+            {
+                EntityData.SetPropertyCoordinate("position", value);
+			}
+        }
 
         public Entity(long id) : base(id)
         {
-            Origin = new Coordinate(0, 0, 0);
             EntityData = new EntityData();
         }
 
@@ -41,8 +51,7 @@ namespace CBRE.DataStructures.MapObjects
             var e = new Entity(generator.GetNextObjectID())
             {
                 GameData = GameData,
-                EntityData = EntityData.Clone(),
-                Origin = Origin.Clone()
+                EntityData = EntityData.Clone()
             };
             CopyBase(e, generator);
             return e;
@@ -54,13 +63,12 @@ namespace CBRE.DataStructures.MapObjects
             var e = o as Entity;
             if (e == null) return;
             GameData = e.GameData;
-            Origin = e.Origin.Clone();
             EntityData = e.EntityData.Clone();
         }
 
         public override MapObject Clone()
         {
-            var e = new Entity(ID) { GameData = GameData, EntityData = EntityData.Clone(), Origin = Origin.Clone() };
+            var e = new Entity(ID) { GameData = GameData, EntityData = EntityData.Clone() };
             CopyBase(e, null, true);
             return e;
         }
@@ -71,7 +79,6 @@ namespace CBRE.DataStructures.MapObjects
             var e = o as Entity;
             if (e == null) return;
             GameData = e.GameData;
-            Origin = e.Origin.Clone();
             EntityData = e.EntityData.Clone();
         }
 

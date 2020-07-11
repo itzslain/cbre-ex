@@ -271,6 +271,10 @@ namespace CBRE.DataStructures.Geometric
             return "(" + _x.ToString("0.0000", CultureInfo.InvariantCulture) + " " + _y.ToString("0.0000", CultureInfo.InvariantCulture) + " " + _z.ToString("0.0000", CultureInfo.InvariantCulture) + ")";
         }
 
+        public string ToDataString() {
+            return _x.ToString(CultureInfo.InvariantCulture) + " " + _y.ToString(CultureInfo.InvariantCulture) + " " + _z.ToString(CultureInfo.InvariantCulture);
+        }
+
         public Coordinate Clone()
         {
             return new Coordinate(_x, _y, _z);
