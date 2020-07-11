@@ -59,14 +59,18 @@ namespace CBRE.Editor.UI.Sidebar
 
         private void SetCheckState(int visgroupId, ICollection<MapObject> visItems)
         {
-            var numHidden = visItems.Count(x => x.IsVisgroupHidden);
+            if (visItems.Count > 0) // Only override default checkbox behavior if necessary
+            {
+                var numHidden = visItems.Count(x => x.IsVisgroupHidden);
 
-            CheckState state;
-            if (numHidden == visItems.Count) state = CheckState.Unchecked; // All hidden
-            else if (numHidden > 0) state = CheckState.Indeterminate; // Some hidden
-            else state = CheckState.Checked; // None hidden
-
-            VisgroupPanel.SetCheckState(visgroupId, state);
+                CheckState state;
+                if (numHidden == visItems.Count && numHidden != 0) state = CheckState.Unchecked; // All hidden
+                else if (numHidden > 0) state = CheckState.Indeterminate; // Some hidden
+                else state = CheckState.Checked; // None hidden
+                VisgroupPanel.SetCheckState(visgroupId, state);
+            } else {
+                VisgroupPanel.SetCheckState(visgroupId, CheckState.Indeterminate);
+            }
         }
 
         private static List<MapObject> GetVisgroupItems(int visgroupId, Document doc)
