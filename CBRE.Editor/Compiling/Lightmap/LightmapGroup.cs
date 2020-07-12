@@ -19,18 +19,8 @@ namespace CBRE.Editor.Compiling.Lightmap {
         public int writeX;
         public int writeY;
 
-#if DEBUG
-        public bool DebugBreakpoint = false;
-#endif
-
         private void CalculateInitialUV() {
             if (uAxis == null || vAxis == null) {
-#if DEBUG
-                if (DebugBreakpoint) {
-                    int breakHerePls = 2222222;
-                }
-#endif
-
                 var direction = Plane.GetClosestAxisToNormal();
                 var tempV = direction == CoordinateF.UnitZ ? -CoordinateF.UnitY : -CoordinateF.UnitZ;
                 uAxis = Plane.Normal.Cross(tempV).Normalise();
