@@ -29,8 +29,8 @@ namespace CBRE.Providers.Map
 
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".rmf", true, CultureInfo.InvariantCulture)
-                || filename.EndsWith(".rmx", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".rmf", StringComparison.OrdinalIgnoreCase)
+                || filename.EndsWith(".rmx", StringComparison.OrdinalIgnoreCase);
         }
 
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)

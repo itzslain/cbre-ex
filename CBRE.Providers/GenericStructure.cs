@@ -116,7 +116,7 @@ namespace CBRE.Providers
         {
             var prop = this[name];
             int d;
-            if (int.TryParse(prop, NumberStyles.Integer, CultureInfo.InvariantCulture, out d))
+            if (int.TryParse(prop, out d))
             {
                 return d;
             }
@@ -127,7 +127,7 @@ namespace CBRE.Providers
         {
             var prop = this[name];
             long d;
-            if (long.TryParse(prop, NumberStyles.Integer, CultureInfo.InvariantCulture, out d))
+            if (long.TryParse(prop, out d))
             {
                 return d;
             }
@@ -138,7 +138,7 @@ namespace CBRE.Providers
         {
             var prop = this[name];
             decimal d;
-            if (decimal.TryParse(prop, NumberStyles.Float, CultureInfo.InvariantCulture, out d))
+            if (decimal.TryParse(prop, out d))
             {
                 return d;
             }
@@ -154,7 +154,7 @@ namespace CBRE.Providers
             for (var i = 0; i < count; i++)
             {
                 decimal d;
-                if (decimal.TryParse(split[i], NumberStyles.Float, CultureInfo.InvariantCulture, out d))
+                if (decimal.TryParse(split[i], out d))
                 {
                     defaultValue[i] = d;
                 }
@@ -169,15 +169,15 @@ namespace CBRE.Providers
             if (prop == null || prop.Count(c => c == ' ') != 8) return defaultValue;
             var split = prop.Replace("(", "").Replace(")", "").Split(' ');
             decimal x1, x2, x3, y1, y2, y3, z1, z2, z3;
-            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x1)
-                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y1)
-                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z1)
-                && decimal.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out x2)
-                && decimal.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out y2)
-                && decimal.TryParse(split[5], NumberStyles.Float, CultureInfo.InvariantCulture, out z2)
-                && decimal.TryParse(split[6], NumberStyles.Float, CultureInfo.InvariantCulture, out x3)
-                && decimal.TryParse(split[7], NumberStyles.Float, CultureInfo.InvariantCulture, out y3)
-                && decimal.TryParse(split[8], NumberStyles.Float, CultureInfo.InvariantCulture, out z3))
+            if (decimal.TryParse(split[0], out x1)
+                && decimal.TryParse(split[1], out y1)
+                && decimal.TryParse(split[2], out z1)
+                && decimal.TryParse(split[3], out x2)
+                && decimal.TryParse(split[4], out y2)
+                && decimal.TryParse(split[5], out z2)
+                && decimal.TryParse(split[6], out x3)
+                && decimal.TryParse(split[7], out y3)
+                && decimal.TryParse(split[8], out z3))
             {
                 return new Plane(
                     new Coordinate(x1, y1, z1).Round(),
@@ -194,9 +194,9 @@ namespace CBRE.Providers
             if (prop == null || prop.Count(c => c == ' ') != 2) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "").Split(' ');
             decimal x, y, z;
-            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+            if (decimal.TryParse(split[0], out x)
+                && decimal.TryParse(split[1], out y)
+                && decimal.TryParse(split[2], out z))
             {
                 return new Coordinate(x, y, z);
             }
@@ -212,9 +212,9 @@ namespace CBRE.Providers
             for (var i = 0; i < count; i++)
             {
                 decimal x, y, z;
-                if (decimal.TryParse(split[i * 3], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                    && decimal.TryParse(split[i * 3 + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                    && decimal.TryParse(split[i * 3 + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+                if (decimal.TryParse(split[i * 3], out x)
+                    && decimal.TryParse(split[i * 3 + 1], out y)
+                    && decimal.TryParse(split[i * 3 + 2], out z))
                 {
                     defaultValue[i] = new Coordinate(x, y, z);
                 }
@@ -229,11 +229,11 @@ namespace CBRE.Providers
             if (prop == null || prop.Count(c => c == ' ') != 4) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Split(' ');
             decimal x, y, z, sh, sc;
-            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z)
-                && decimal.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out sh)
-                && decimal.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out sc))
+            if (decimal.TryParse(split[0], out x)
+                && decimal.TryParse(split[1], out y)
+                && decimal.TryParse(split[2], out z)
+                && decimal.TryParse(split[3], out sh)
+                && decimal.TryParse(split[4], out sc))
             {
                 return Tuple.Create(new Coordinate(x, y, z), sh, sc);
             }
@@ -246,9 +246,9 @@ namespace CBRE.Providers
             if (prop == null || prop.Count(x => x == ' ') != 2) return defaultValue;
             var split = prop.Split(' ');
             int r, g, b;
-            if (int.TryParse(split[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out r)
-                && int.TryParse(split[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out g)
-                && int.TryParse(split[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out b))
+            if (int.TryParse(split[0], out r)
+                && int.TryParse(split[1], out g)
+                && int.TryParse(split[2], out b))
             {
                 return Color.FromArgb(r, g, b);
             }
@@ -291,7 +291,7 @@ namespace CBRE.Providers
             if (encounteredObjects.Contains(obj))
             {
                 var rf = new GenericStructure("Serialise.Reference");
-                rf.AddProperty("Serialise.Reference.Index", (encounteredObjects.IndexOf(obj) + 1).ToString(CultureInfo.InvariantCulture));
+                rf.AddProperty("Serialise.Reference.Index", (encounteredObjects.IndexOf(obj) + 1).ToString());
                 return rf;
             }
 
@@ -304,7 +304,7 @@ namespace CBRE.Providers
                 if (ty == typeof(bool)) name += "Boolean";
                 else if (ty == typeof(char) || ty == typeof(string)) name += "String";
                 else name += "Numeric";
-                return new GenericStructure(name) { Properties = { new GenericStructureProperty("Primitive.Value", Convert.ToString(obj, CultureInfo.InvariantCulture)) } };
+                return new GenericStructure(name) { Properties = { new GenericStructureProperty("Primitive.Value", Convert.ToString(obj)) } };
             }
 
             if (ty == typeof(DateTime))
@@ -315,7 +315,7 @@ namespace CBRE.Providers
             if (ty == typeof(Color))
             {
                 var color = (Color)obj;
-                var col = String.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3}", color.R, color.G, color.B, color.A);
+                var col = String.Format("{0} {1} {2} {3}", color.R, color.G, color.B, color.A);
                 return new GenericStructure("Primitives.Colour") { Properties = { new GenericStructureProperty("Primitive.Value", col) } };
             }
 
@@ -351,14 +351,14 @@ namespace CBRE.Providers
             {
                 var children = enumerable.OfType<object>().Select(x => SerialiseHelper(x, encounteredObjects));
                 var list = new GenericStructure("Serialise.List");
-                list.AddProperty("Serialise.Reference", index.ToString(CultureInfo.InvariantCulture));
+                list.AddProperty("Serialise.Reference", index.ToString());
                 list.Children.AddRange(children);
                 return list;
             }
 
             // Handle complex types
             var gs = new GenericStructure(ty.FullName);
-            gs.AddProperty("Serialise.Reference", index.ToString(CultureInfo.InvariantCulture));
+            gs.AddProperty("Serialise.Reference", index.ToString());
             foreach (var pi in ty.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 if (!pi.CanRead) continue;
@@ -486,7 +486,7 @@ namespace CBRE.Providers
                 case "String":
                     return value;
                 case "Numeric":
-                    return Decimal.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
+                    return Decimal.Parse(value, NumberStyles.Float);
                 case "DateTime":
                     return DateTime.ParseExact(value, "u", CultureInfo.InvariantCulture);
                 case "Colour":
@@ -496,7 +496,8 @@ namespace CBRE.Providers
                 case "Box":
                     return new Box(
                         Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
-                        Coordinate.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
+                        Coordinate.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')'))
+                    );
                 case "Plane":
                     return new Plane(Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), Decimal.Parse(spl[3]));
                 case "Rectangle":

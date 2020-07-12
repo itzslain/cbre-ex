@@ -219,7 +219,7 @@ namespace CBRE.DataStructures.MapObjects
                 if (obj is Entity)
                 {
                     var ent = (Entity)obj;
-                    if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.InvariantCultureIgnoreCase))
+                    if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         var gd =
                             gameData.Classes.FirstOrDefault(

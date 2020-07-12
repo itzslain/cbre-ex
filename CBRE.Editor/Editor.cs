@@ -212,7 +212,7 @@ namespace CBRE.Editor
             {
                 var supported = FileTypeRegistration.GetSupportedExtensions();
                 var files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
-                    .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.InvariantCultureIgnoreCase)))
+                    .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
                 foreach (var file in files) LoadFile(file);
             }
@@ -225,7 +225,7 @@ namespace CBRE.Editor
             {
                 var supported = FileTypeRegistration.GetSupportedExtensions();
                 var files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
-                    .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.InvariantCultureIgnoreCase)))
+                    .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
                 drgevent.Effect = files.Any() ? DragDropEffects.Link : DragDropEffects.None;
             }
@@ -535,7 +535,7 @@ namespace CBRE.Editor
             }
             else
             {
-                StatusSelectionLabel.Text = count.ToString(CultureInfo.InvariantCulture) + " objects selected";
+                StatusSelectionLabel.Text = count.ToString() + " objects selected";
             }
         }
 

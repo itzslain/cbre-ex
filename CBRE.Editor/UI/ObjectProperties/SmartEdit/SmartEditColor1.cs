@@ -28,9 +28,9 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
             float r = 0, g = 0, b = 0;
             if (spl.Length >= 3)
             {
-                float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out r);
-                float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out g);
-                float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out b);
+                float.TryParse(spl[0], out r);
+                float.TryParse(spl[1], out g);
+                float.TryParse(spl[2], out b);
             }
             r *= 255;
             g *= 255;
@@ -43,9 +43,9 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
                     g = cd.Color.G / 255f;
                     b = cd.Color.B / 255f;
                     if (spl.Length < 3) spl = new string[3];
-                    spl[0] = r.ToString(CultureInfo.InvariantCulture);
-                    spl[1] = g.ToString(CultureInfo.InvariantCulture);
-                    spl[2] = b.ToString(CultureInfo.InvariantCulture);
+                    spl[0] = r.ToString();
+                    spl[1] = g.ToString();
+                    spl[2] = b.ToString();
                     _textBox.Text = String.Join(" ", spl);
                 }
             }

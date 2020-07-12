@@ -33,12 +33,12 @@ namespace CBRE.Editor.Compiling.Lightmap
                 .Select(x =>
                 {
                     float range;
-                    if (!float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range))
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("range"), out range))
                     {
                         range = 100.0f;
                     }
                     float intensity;
-                    if (!float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity))
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("intensity"), out intensity))
                     {
                         intensity = 1.0f;
                     }
@@ -60,23 +60,23 @@ namespace CBRE.Editor.Compiling.Lightmap
                 .Select(x =>
                 {
                     float range;
-                    if (!float.TryParse(x.EntityData.GetPropertyValue("range"), NumberStyles.Float, CultureInfo.InvariantCulture, out range))
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("range"), out range))
                     {
                         range = 100.0f;
                     }
                     float intensity;
-                    if (!float.TryParse(x.EntityData.GetPropertyValue("intensity"), NumberStyles.Float, CultureInfo.InvariantCulture, out intensity))
+                    if (!float.TryParse(x.EntityData.GetPropertyValue("intensity"), out intensity))
                     {
                         intensity = 1.0f;
                     }
                     bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
                     float innerCos = 0.5f;
-                    if (float.TryParse(x.EntityData.GetPropertyValue("innerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out innerCos))
+                    if (float.TryParse(x.EntityData.GetPropertyValue("innerconeangle"), out innerCos))
                     {
                         innerCos = (float)Math.Cos(innerCos * (float)Math.PI / 180.0f);
                     }
                     float outerCos = 0.75f;
-                    if (float.TryParse(x.EntityData.GetPropertyValue("outerconeangle"), NumberStyles.Float, CultureInfo.InvariantCulture, out outerCos))
+                    if (float.TryParse(x.EntityData.GetPropertyValue("outerconeangle"), out outerCos))
                     {
                         outerCos = (float)Math.Cos(outerCos * (float)Math.PI / 180.0f);
                     }

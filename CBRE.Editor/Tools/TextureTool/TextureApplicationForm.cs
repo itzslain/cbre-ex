@@ -263,7 +263,7 @@ namespace CBRE.Editor.Tools.TextureTool
 
             // If the texture is in the list of selected faces, select the texture in that list
             var sl = SelectedTexturesList.GetTextures();
-            if (sl.Any(x => String.Equals(x.Name, item.Name, StringComparison.InvariantCultureIgnoreCase)))
+            if (sl.Any(x => String.Equals(x.Name, item.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 SelectedTexturesList.SetSelectedTextures(new[] { item });
                 SelectedTexturesList.ScrollToItem(item);
@@ -358,7 +358,7 @@ namespace CBRE.Editor.Tools.TextureTool
                 var tex = face.Texture;
 
                 var name = tex.Texture == null ? tex.Name : tex.Texture.Name;
-                if (textures.Any(x => String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase))) continue;
+                if (textures.Any(x => String.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase))) continue;
 
                 var item = Document.TextureCollection.GetItem(name) ?? new TextureItem(null, name, TextureFlags.Missing, 64, 64);
                 textures.Add(item);

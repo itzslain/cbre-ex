@@ -56,7 +56,7 @@ namespace CBRE.Editor.UI
             {
                 return name.ToLowerInvariant().Contains(match.ToLowerInvariant());
             }
-            return String.Equals(name, match, StringComparison.InvariantCultureIgnoreCase);
+            return String.Equals(name, match, StringComparison.OrdinalIgnoreCase);
         }
 
         private IEnumerable<Tuple<string, TextureItem, ITexture>> GetReplacements(IEnumerable<string> names)

@@ -170,7 +170,7 @@ namespace CBRE.Editor.Documents
                 IEnumerable<string> noSaveExtensions = FileTypeRegistration.GetSupportedExtensions().Where(x => !x.CanSave).Select(x => x.Extension);
                 foreach (string ext in noSaveExtensions)
                 {
-                    if (path.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase))
+                    if (path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
                     {
                         path = null;
                         break;

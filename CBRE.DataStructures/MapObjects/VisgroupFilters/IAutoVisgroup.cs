@@ -136,7 +136,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Hint"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "hint", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "hint", StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -146,7 +146,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Origin"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "origin", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "origin", StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -156,7 +156,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Skip"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "skip", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "skip", StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -166,7 +166,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Trigger"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "aaatrigger", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "aaatrigger", StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -176,7 +176,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Bevel"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "bevel", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "bevel", StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -196,7 +196,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Null"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "null", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "null", StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -206,7 +206,7 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Sky"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "sky", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "sky", StringComparison.OrdinalIgnoreCase));
         }
     }
 

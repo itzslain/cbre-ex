@@ -82,7 +82,7 @@ namespace CBRE.Editor.Brushes
                 var size = sizes[ci];
 
                 var gp = new GraphicsPath();
-                gp.AddString(c.ToString(CultureInfo.InvariantCulture), family, (int)style, length, new PointF(0, 0), StringFormat.GenericTypographic);
+                gp.AddString(c.ToString(), family, (int)style, length, new PointF(0, 0), StringFormat.GenericTypographic);
                 gp.Flatten(new System.Drawing.Drawing2D.Matrix(), flatten);
 
                 var polygons = new List<Polygon>();

@@ -220,19 +220,19 @@ namespace CBRE.Editor.Compiling
                 if (export)
                 {
                     string extension = System.IO.Path.GetExtension(SaveFileName);
-                    if (extension.Equals(".rm2", StringComparison.InvariantCultureIgnoreCase))
+                    if (extension.Equals(".rm2", StringComparison.OrdinalIgnoreCase))
                     {
                         RM2Export.SaveToFile(SaveFileName, Document, this);
                     }
-                    else if (extension.Equals(".rmesh", StringComparison.InvariantCultureIgnoreCase))
+                    else if (extension.Equals(".rmesh", StringComparison.OrdinalIgnoreCase))
                     {
                         RMeshExport.SaveToFile(SaveFileName, Document, this);
                     }
-                    else if (extension.Equals(".fbx", StringComparison.InvariantCultureIgnoreCase) ||
-                        extension.Equals(".obj", StringComparison.InvariantCultureIgnoreCase) ||
-                        extension.Equals(".dae", StringComparison.InvariantCultureIgnoreCase) ||
-                        extension.Equals(".stl", StringComparison.InvariantCultureIgnoreCase) ||
-                        extension.Equals(".ply", StringComparison.InvariantCultureIgnoreCase))
+                    else if (extension.Equals(".fbx", StringComparison.OrdinalIgnoreCase) ||
+                        extension.Equals(".obj", StringComparison.OrdinalIgnoreCase) ||
+                        extension.Equals(".dae", StringComparison.OrdinalIgnoreCase) ||
+                        extension.Equals(".stl", StringComparison.OrdinalIgnoreCase) ||
+                        extension.Equals(".ply", StringComparison.OrdinalIgnoreCase))
                     {
                         GenericExport.SaveToFile(SaveFileName, Document, this, extension.Substring(1));
                     }

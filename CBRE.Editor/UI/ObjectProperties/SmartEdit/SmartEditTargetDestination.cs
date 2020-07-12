@@ -43,7 +43,7 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
             {
                 var options = GetSortedTargetNames().ToList();
                 _comboBox.Items.AddRange(options.OfType<object>().ToArray());
-                var index = options.FindIndex(x => String.Equals(x, PropertyValue, StringComparison.InvariantCultureIgnoreCase));
+                var index = options.FindIndex(x => String.Equals(x, PropertyValue, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     _comboBox.SelectedIndex = index;

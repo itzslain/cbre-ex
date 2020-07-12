@@ -195,7 +195,7 @@ namespace CBRE.Settings
             var i = 1;
             foreach (var file in RecentFiles.OrderBy(x => x.Order).Select(x => x.Location).Where(File.Exists))
             {
-                recents.AddProperty(i.ToString(CultureInfo.InvariantCulture), file);
+                recents.AddProperty(i.ToString(), file);
                 i++;
             }
             root.Children.Add(recents);

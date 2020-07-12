@@ -24,8 +24,8 @@ namespace CBRE.Providers.Map
 
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".map", true, CultureInfo.InvariantCulture)
-                || filename.EndsWith(".max", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".map", StringComparison.OrdinalIgnoreCase)
+                || filename.EndsWith(".max", StringComparison.OrdinalIgnoreCase);
         }
 
         private string CleanLine(string line)
@@ -43,9 +43,9 @@ namespace CBRE.Providers.Map
 
         private string FormatCoordinate(Coordinate c)
         {
-            return c.X.ToString("0.000", CultureInfo.InvariantCulture)
-                   + " " + c.Y.ToString("0.000", CultureInfo.InvariantCulture)
-                   + " " + c.Z.ToString("0.000", CultureInfo.InvariantCulture);
+            return c.X.ToString("0.000")
+                   + " " + c.Y.ToString("0.000")
+                   + " " + c.Z.ToString("0.000");
         }
 
         private void CollectSolids(List<Solid> solids, MapObject parent)
@@ -86,11 +86,11 @@ namespace CBRE.Providers.Map
             if (parts.Count == 21)
             {
                 face.AlignTextureToFace();
-                face.Texture.XShift = decimal.Parse(parts[16], ns, CultureInfo.InvariantCulture);
-                face.Texture.YShift = decimal.Parse(parts[17], ns, CultureInfo.InvariantCulture);
-                face.Texture.Rotation = decimal.Parse(parts[18], ns, CultureInfo.InvariantCulture);
-                face.Texture.XScale = decimal.Parse(parts[19], ns, CultureInfo.InvariantCulture);
-                face.Texture.YScale = decimal.Parse(parts[20], ns, CultureInfo.InvariantCulture);
+                face.Texture.XShift = decimal.Parse(parts[16], ns);
+                face.Texture.YShift = decimal.Parse(parts[17], ns);
+                face.Texture.Rotation = decimal.Parse(parts[18], ns);
+                face.Texture.XScale = decimal.Parse(parts[19], ns);
+                face.Texture.YScale = decimal.Parse(parts[20], ns);
             }
             else
             {
@@ -100,12 +100,12 @@ namespace CBRE.Providers.Map
                 Assert(parts[27] == "]");
 
                 face.Texture.UAxis = Coordinate.Parse(parts[17], parts[18], parts[19]);
-                face.Texture.XShift = decimal.Parse(parts[20], ns, CultureInfo.InvariantCulture);
+                face.Texture.XShift = decimal.Parse(parts[20], ns);
                 face.Texture.VAxis = Coordinate.Parse(parts[23], parts[24], parts[25]);
-                face.Texture.YShift = decimal.Parse(parts[26], ns, CultureInfo.InvariantCulture);
-                face.Texture.Rotation = decimal.Parse(parts[28], ns, CultureInfo.InvariantCulture);
-                face.Texture.XScale = decimal.Parse(parts[29], ns, CultureInfo.InvariantCulture);
-                face.Texture.YScale = decimal.Parse(parts[30], ns, CultureInfo.InvariantCulture);
+                face.Texture.YShift = decimal.Parse(parts[26], ns);
+                face.Texture.Rotation = decimal.Parse(parts[28], ns);
+                face.Texture.XScale = decimal.Parse(parts[29], ns);
+                face.Texture.YScale = decimal.Parse(parts[30], ns);
             }
 
             return face;
@@ -118,15 +118,15 @@ namespace CBRE.Providers.Map
             strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
             strings.Add("[");
             strings.Add(FormatCoordinate(face.Texture.UAxis));
-            strings.Add(face.Texture.XShift.ToString("0.000", CultureInfo.InvariantCulture));
+            strings.Add(face.Texture.XShift.ToString("0.000"));
             strings.Add("]");
             strings.Add("[");
             strings.Add(FormatCoordinate(face.Texture.VAxis));
-            strings.Add(face.Texture.YShift.ToString("0.000", CultureInfo.InvariantCulture));
+            strings.Add(face.Texture.YShift.ToString("0.000"));
             strings.Add("]");
-            strings.Add(face.Texture.Rotation.ToString("0.000", CultureInfo.InvariantCulture));
-            strings.Add(face.Texture.XScale.ToString("0.000", CultureInfo.InvariantCulture));
-            strings.Add(face.Texture.YScale.ToString("0.000", CultureInfo.InvariantCulture));
+            strings.Add(face.Texture.Rotation.ToString("0.000"));
+            strings.Add(face.Texture.XScale.ToString("0.000"));
+            strings.Add(face.Texture.YScale.ToString("0.000"));
             sw.WriteLine(String.Join(" ", strings));
         }
 
@@ -232,14 +232,14 @@ namespace CBRE.Providers.Map
             if (ent.EntityData.Flags > 0)
             {
                 // VHE doesn't write the spawnflags when they are zero
-                WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
+                WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString());
             }
             foreach (var prop in ent.EntityData.Properties)
             {
                 if (prop.Key == "classname" || prop.Key == "spawnflags" || prop.Key == "origin") continue;
 
                 // VHE doesn't write empty or zero values to the .map file
-                var gameDataProp = ent.GameData != null ? ent.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)) : null;
+                var gameDataProp = ent.GameData != null ? ent.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)) : null;
                 if (gameDataProp != null)
                 {
                     var emptyGd = String.IsNullOrWhiteSpace(gameDataProp.DefaultValue) || gameDataProp.DefaultValue == "0";
@@ -267,7 +267,7 @@ namespace CBRE.Providers.Map
             sw.WriteLine("{");
 
             WriteProperty(sw, "classname", world.EntityData.Name);
-            WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
+            WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString());
             WriteProperty(sw, "mapversion", "220");
             foreach (var prop in world.EntityData.Properties)
             {

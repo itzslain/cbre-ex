@@ -188,10 +188,10 @@ namespace CBRE.Editor.UI
                 var ed = mo.GetEntityData();
                 if (ed != null)
                 {
-                    var gd = Document.GameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ed.Name, StringComparison.InvariantCultureIgnoreCase));
+                    var gd = Document.GameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ed.Name, StringComparison.OrdinalIgnoreCase));
                     foreach (var prop in ed.Properties)
                     {
-                        var gdp = gd != null ? gd.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)) : null;
+                        var gdp = gd != null ? gd.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)) : null;
                         var key = gdp != null && !String.IsNullOrWhiteSpace(gdp.ShortDescription) ? gdp.ShortDescription : prop.Key;
                         list.Add(Tuple.Create(key, prop.Value));
                     }

@@ -43,7 +43,7 @@ namespace CBRE.Editor.Extensions
 
             var decal = e.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
             var existingDecal = e.MetaData.Get<string>(DecalNameMetaKey);
-            if (decal == null || String.Equals(decal.Value, existingDecal, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren;
+            if (decal == null || String.Equals(decal.Value, existingDecal, StringComparison.OrdinalIgnoreCase)) return updatedChildren;
 
             e.SetDecal(document.GetTexture(decal.Value.ToLowerInvariant()));
             return true;

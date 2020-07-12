@@ -44,7 +44,7 @@ namespace CBRE.Providers.Texture
                 _selectedTexture = value;
                 if (_selectedTexture != null)
                 {
-                    _recentTextures.RemoveAll(x => String.Equals(x.Name, _selectedTexture.Name, StringComparison.InvariantCultureIgnoreCase));
+                    _recentTextures.RemoveAll(x => String.Equals(x.Name, _selectedTexture.Name, StringComparison.OrdinalIgnoreCase));
                     _recentTextures.Insert(0, _selectedTexture);
                     while (_recentTextures.Count > 25) _recentTextures.RemoveAt(_recentTextures.Count - 1);
                 }

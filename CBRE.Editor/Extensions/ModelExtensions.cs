@@ -61,7 +61,7 @@ namespace CBRE.Editor.Extensions
 
             var model = GetModelName(e);
             var existingModel = e.MetaData.Get<string>(ModelNameMetaKey);
-            if (String.Equals(model, existingModel, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren; // Already set; No need to continue
+            if (String.Equals(model, existingModel, StringComparison.OrdinalIgnoreCase)) return updatedChildren; // Already set; No need to continue
 
             if (cache.ContainsKey(model))
             {
