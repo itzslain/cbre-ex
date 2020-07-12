@@ -59,13 +59,13 @@ namespace CBRE.DataStructures.MapObjects
 
         public string GetPropertyValue(string key)
         {
-            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase));
             return prop == null ? null : prop.Value;
         }
 
         public void SetPropertyValue(string key, string value)
         {
-            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase));
             if (prop == null)
             {
                 prop = new Property { Key = key };
@@ -76,7 +76,7 @@ namespace CBRE.DataStructures.MapObjects
 
         public Coordinate GetPropertyCoordinate(string key, Coordinate def = null)
         {
-            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase));
             return prop == null ? def : prop.GetCoordinate(def);
         }
     }

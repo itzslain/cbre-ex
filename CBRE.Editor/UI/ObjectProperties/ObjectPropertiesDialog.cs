@@ -146,8 +146,8 @@ namespace CBRE.Editor.UI.ObjectProperties
                     entityData.SetPropertyValue(ent.OriginalKey, ent.Value);
                     if (!String.IsNullOrWhiteSpace(ent.NewKey) && ent.NewKey != ent.OriginalKey)
                     {
-                        var prop = entityData.Properties.FirstOrDefault(x => String.Equals(x.Key, ent.OriginalKey, StringComparison.InvariantCultureIgnoreCase));
-                        if (prop != null && !entityData.Properties.Any(x => String.Equals(x.Key, ent.NewKey, StringComparison.InvariantCultureIgnoreCase)))
+                        var prop = entityData.Properties.FirstOrDefault(x => String.Equals(x.Key, ent.OriginalKey, StringComparison.OrdinalIgnoreCase));
+                        if (prop != null && !entityData.Properties.Any(x => String.Equals(x.Key, ent.NewKey, StringComparison.OrdinalIgnoreCase)))
                         {
                             prop.Key = ent.NewKey;
                         }
@@ -616,7 +616,7 @@ namespace CBRE.Editor.UI.ObjectProperties
                 var name = qf.String("Key");
                 var newName = name;
                 var num = 1;
-                while (_values.Any(x => String.Equals(x.OriginalKey, newName, StringComparison.InvariantCultureIgnoreCase)))
+                while (_values.Any(x => String.Equals(x.OriginalKey, newName, StringComparison.OrdinalIgnoreCase)))
                 {
                     newName = name + "#" + (num++);
                 }

@@ -16,14 +16,14 @@ namespace CBRE.Editor.Problems
                 .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
                 .OfType<Entity>()
                 .Where(x => x.GameData != null)
-                .Where(x => !String.Equals(x.EntityData.Name, "multi_manager", StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => !String.Equals(x.EntityData.Name, "multi_manager", StringComparison.OrdinalIgnoreCase))
                 .ToList();
             foreach (var entity in entities)
             {
                 var valid = true;
                 foreach (var prop in entity.EntityData.Properties)
                 {
-                    if (!entity.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)))
+                    if (!entity.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)))
                     {
                         valid = false;
                     }
@@ -40,7 +40,7 @@ namespace CBRE.Editor.Problems
                 var ed = mo.GetEntityData().Clone();
                 foreach (var prop in mo.EntityData.Properties)
                 {
-                    if (!mo.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)))
+                    if (!mo.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)))
                     {
                         ed.Properties.Remove(prop);
                     }

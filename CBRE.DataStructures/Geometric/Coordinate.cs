@@ -268,11 +268,11 @@ namespace CBRE.DataStructures.Geometric
 
         public override string ToString()
         {
-            return "(" + _x.ToString("0.0000", CultureInfo.InvariantCulture) + " " + _y.ToString("0.0000", CultureInfo.InvariantCulture) + " " + _z.ToString("0.0000", CultureInfo.InvariantCulture) + ")";
+            return "(" + _x.ToString("0.0000") + " " + _y.ToString("0.0000") + " " + _z.ToString("0.0000") + ")";
         }
 
         public string ToDataString() {
-            return _x.ToString(CultureInfo.InvariantCulture) + " " + _y.ToString(CultureInfo.InvariantCulture) + " " + _z.ToString(CultureInfo.InvariantCulture);
+            return _x.ToString("G4") + " " + _y.ToString("G4") + " " + _z.ToString("G4");
         }
 
         public Coordinate Clone()
@@ -283,7 +283,7 @@ namespace CBRE.DataStructures.Geometric
         public static Coordinate Parse(string x, string y, string z)
         {
             const NumberStyles ns = NumberStyles.Float;
-            return new Coordinate(decimal.Parse(x, ns, CultureInfo.InvariantCulture), decimal.Parse(y, ns, CultureInfo.InvariantCulture), decimal.Parse(z, ns, CultureInfo.InvariantCulture));
+            return new Coordinate(decimal.Parse(x, ns), decimal.Parse(y, ns), decimal.Parse(z, ns));
         }
 
         public CoordinateF ToCoordinateF()

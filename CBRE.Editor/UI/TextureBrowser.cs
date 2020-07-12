@@ -220,7 +220,7 @@ namespace CBRE.Editor.UI
 
         private bool InFavouriteList(IEnumerable<string> favs, TextureItem ti)
         {
-            return favs.Contains(ti.Name, StringComparer.InvariantCultureIgnoreCase);
+            return favs.Contains(ti.Name, StringComparer.OrdinalIgnoreCase);
         }
 
         private void CollectNodes(List<FavouriteTextureFolder> favs, IEnumerable<FavouriteTextureFolder> folders)
@@ -242,7 +242,7 @@ namespace CBRE.Editor.UI
             if (UsedTexturesOnlyBox.Checked && DocumentManager.CurrentDocument != null)
             {
                 var used = DocumentManager.CurrentDocument.GetUsedTextures().ToList();
-                list = list.Where(x => used.Any(y => String.Equals(x.Name, y, StringComparison.InvariantCultureIgnoreCase)));
+                list = list.Where(x => used.Any(y => String.Equals(x.Name, y, StringComparison.OrdinalIgnoreCase)));
             }
             var l = list.ToList();
             TextureList.SetTextureList(l);
@@ -390,7 +390,7 @@ namespace CBRE.Editor.UI
                     var folder = (FavouriteTextureFolder)dest.Tag;
                     foreach (var ti in data)
                     {
-                        if (!folder.Items.Contains(ti.Name, StringComparer.InvariantCultureIgnoreCase)) folder.Items.Add(ti.Name);
+                        if (!folder.Items.Contains(ti.Name, StringComparer.OrdinalIgnoreCase)) folder.Items.Add(ti.Name);
                     }
                     UpdateFavouritesList();
                 }

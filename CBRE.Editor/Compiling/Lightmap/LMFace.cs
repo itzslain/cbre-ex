@@ -53,7 +53,7 @@ namespace CBRE.Editor.Compiling.Lightmap
 
             Vertices = face.Vertices.Select(x => new Vertex(x)).ToList();
 
-            CastsShadows = !(solid?.Parent?.GetEntityData()?.Name.Equals("noshadow", StringComparison.InvariantCultureIgnoreCase) ?? false);
+            CastsShadows = !(solid?.Parent?.GetEntityData()?.Name.Equals("noshadow", StringComparison.OrdinalIgnoreCase) ?? false);
 
             int i1 = 0;
             int i2 = 1;

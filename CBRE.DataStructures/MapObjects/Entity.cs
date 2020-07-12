@@ -19,7 +19,7 @@ namespace CBRE.DataStructures.MapObjects
         {
             get
             {
-                return EntityData.GetPropertyCoordinate("position");
+                return EntityData.GetPropertyCoordinate("position", Coordinate.Zero);
 			}
             
             set

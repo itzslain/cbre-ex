@@ -44,7 +44,7 @@ namespace CBRE.Editor.Extensions
 
             var sprite = GetSpriteName(e);
             var existingSprite = e.MetaData.Get<string>(SpriteMetaKey);
-            if (String.Equals(sprite, existingSprite, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren; // Already set; No need to continue
+            if (String.Equals(sprite, existingSprite, StringComparison.OrdinalIgnoreCase)) return updatedChildren; // Already set; No need to continue
 
             var tex = document.TextureCollection.GetItem(sprite);
             if (tex == null)
@@ -64,8 +64,8 @@ namespace CBRE.Editor.Extensions
         private static string GetSpriteName(Entity entity)
         {
             if (entity.GameData == null) return null;
-            var spr = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase))
-                ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "iconsprite", StringComparison.InvariantCultureIgnoreCase));
+            var spr = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.OrdinalIgnoreCase))
+                ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "iconsprite", StringComparison.OrdinalIgnoreCase));
             if (spr == null) return null;
 
             // First see if the studio behaviour forces a model...
@@ -76,7 +76,7 @@ namespace CBRE.Editor.Extensions
 
             // Find the first property that is a studio type, or has a name of "sprite"...
             var prop = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Sprite);
-            if (prop == null) prop = entity.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
+            if (prop == null) prop = entity.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.OrdinalIgnoreCase));
             if (prop != null)
             {
                 var val = entity.EntityData.GetPropertyValue(prop.Name);

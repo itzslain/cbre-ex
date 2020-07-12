@@ -30,7 +30,7 @@ namespace CBRE.Providers.Map
 
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".3dw", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".3dw", StringComparison.OrdinalIgnoreCase);
         }
 
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)
@@ -167,7 +167,7 @@ namespace CBRE.Providers.Map
                     float roll = br.ReadSingle();
                     newProperty = new Property();
                     newProperty.Key = "angles";
-                    newProperty.Value = pitch.ToString(CultureInfo.InvariantCulture) + " " + yaw.ToString(CultureInfo.InvariantCulture) + " " + roll.ToString(CultureInfo.InvariantCulture);
+                    newProperty.Value = pitch.ToString() + " " + yaw.ToString() + " " + roll.ToString();
 
                     entity.EntityData.Properties.Add(newProperty);
 
@@ -184,7 +184,7 @@ namespace CBRE.Providers.Map
 
                     newProperty = new Property();
                     newProperty.Key = "scale";
-                    newProperty.Value = xScale.ToString(CultureInfo.InvariantCulture) + " " + yScale.ToString(CultureInfo.InvariantCulture) + " " + zScale.ToString(CultureInfo.InvariantCulture);
+                    newProperty.Value = xScale.ToString() + " " + yScale.ToString() + " " + zScale.ToString();
 
                     entity.EntityData.Properties.Add(newProperty);
 
@@ -242,10 +242,10 @@ namespace CBRE.Providers.Map
                         Int32 keyNameInd = br.ReadInt32();
                         Int32 keyValueInd = br.ReadInt32();
                         string keyName = names[keyNameInd - 1];
-                        if (keyName.Equals("classname", StringComparison.InvariantCultureIgnoreCase))
+                        if (keyName.Equals("classname", StringComparison.OrdinalIgnoreCase))
                         {
                             string keyValue = names[keyValueInd - 1];
-                            if (keyValue.Equals("field_hit", StringComparison.InvariantCultureIgnoreCase))
+                            if (keyValue.Equals("field_hit", StringComparison.OrdinalIgnoreCase))
                             {
                                 invisibleCollision = true;
                             }

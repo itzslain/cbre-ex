@@ -989,7 +989,7 @@ namespace CBRE.Editor.Documents
                 var id = Math.Max(1, ids.Any() ? ids.Max() + 1 : 1);
 
                 var name = qf.String("Name");
-                if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString(CultureInfo.InvariantCulture);
+                if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString();
 
                 var vg = new Visgroup
                 {

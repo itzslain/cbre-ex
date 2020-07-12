@@ -41,8 +41,8 @@ namespace CBRE.DataStructures.MapObjects
         {
             ID = info.GetInt64("ID");
             ClassName = info.GetString("ClassName");
-            Visgroups = info.GetString("Visgroups").Split(',').Select(x => int.Parse(x, CultureInfo.InvariantCulture)).ToList();
-            AutoVisgroups = info.GetString("AutoVisgroups").Split(',').Select(x => int.Parse(x, CultureInfo.InvariantCulture)).ToList();
+            Visgroups = info.GetString("Visgroups").Split(',').Select(x => int.Parse(x)).ToList();
+            AutoVisgroups = info.GetString("AutoVisgroups").Split(',').Select(x => int.Parse(x)).ToList();
             Colour = Color.FromArgb(info.GetInt32("Colour"));
 
             var children = (MapObject[])info.GetValue("Children", typeof(MapObject[]));
@@ -56,8 +56,8 @@ namespace CBRE.DataStructures.MapObjects
         {
             info.AddValue("ID", ID);
             info.AddValue("ClassName", ClassName);
-            info.AddValue("Visgroups", String.Join(",", Visgroups.Select(x => x.ToString(CultureInfo.InvariantCulture))));
-            info.AddValue("AutoVisgroups", String.Join(",", AutoVisgroups.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+            info.AddValue("Visgroups", String.Join(",", Visgroups.Select(x => x.ToString())));
+            info.AddValue("AutoVisgroups", String.Join(",", AutoVisgroups.Select(x => x.ToString())));
             info.AddValue("Colour", Colour.ToArgb());
             info.AddValue("Children", GetChildren().ToArray());
         }

@@ -13,7 +13,7 @@ namespace CBRE.Providers.GameData
 
         protected override bool IsValidForFile(string filename)
         {
-            return filename.EndsWith(".fgd", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".fgd", StringComparison.OrdinalIgnoreCase);
         }
 
         protected override bool IsValidForStream(Stream stream)
@@ -56,7 +56,7 @@ namespace CBRE.Providers.GameData
         {
             iterator.MoveNext();
             var type = iterator.Current.Value;
-            if (type.Equals("include", StringComparison.InvariantCultureIgnoreCase))
+            if (type.Equals("include", StringComparison.OrdinalIgnoreCase))
             {
                 Expect(iterator, LexType.String);
                 if (CurrentFile != null)
@@ -69,22 +69,22 @@ namespace CBRE.Providers.GameData
                     var incgd = GetGameDataFromFile(incfile);
                     CurrentFile = current;
 
-                    if (!gd.Includes.Any(x => String.Equals(x, filename, StringComparison.InvariantCultureIgnoreCase))) gd.Includes.Add(filename);
+                    if (!gd.Includes.Any(x => String.Equals(x, filename, StringComparison.OrdinalIgnoreCase))) gd.Includes.Add(filename);
 
                     // Merge the included gamedata into the current one
                     gd.MapSizeHigh = Math.Max(incgd.MapSizeHigh, gd.MapSizeHigh);
                     gd.MapSizeLow = Math.Min(incgd.MapSizeLow, gd.MapSizeLow);
                     gd.Includes.AddRange(incgd.Includes.Where(x => !gd.Includes.Contains(x)));
-                    gd.Classes.AddRange(incgd.Classes.Where(x => !gd.Classes.Any(y => String.Equals(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase))));
-                    gd.AutoVisgroups.AddRange(incgd.AutoVisgroups.Where(x => !gd.AutoVisgroups.Any(y => String.Equals(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase))));
-                    gd.MaterialExclusions.AddRange(incgd.MaterialExclusions.Where(x => !gd.MaterialExclusions.Any(y => String.Equals(x, y, StringComparison.InvariantCultureIgnoreCase))));
+                    gd.Classes.AddRange(incgd.Classes.Where(x => !gd.Classes.Any(y => String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase))));
+                    gd.AutoVisgroups.AddRange(incgd.AutoVisgroups.Where(x => !gd.AutoVisgroups.Any(y => String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase))));
+                    gd.MaterialExclusions.AddRange(incgd.MaterialExclusions.Where(x => !gd.MaterialExclusions.Any(y => String.Equals(x, y, StringComparison.OrdinalIgnoreCase))));
                 }
                 else
                 {
                     throw new ProviderException("Unable to include a file when not reading from a file.");
                 }
             }
-            else if (type.Equals("mapsize", StringComparison.InvariantCultureIgnoreCase))
+            else if (type.Equals("mapsize", StringComparison.OrdinalIgnoreCase))
             {
                 Expect(iterator, LexType.OpenParen);
                 Expect(iterator, LexType.Value);
@@ -94,7 +94,7 @@ namespace CBRE.Providers.GameData
                 gd.MapSizeHigh = Int32.Parse(iterator.Current.Value);
                 Expect(iterator, LexType.CloseParen);
             }
-            else if (type.Equals("materialexclusion", StringComparison.InvariantCultureIgnoreCase))
+            else if (type.Equals("materialexclusion", StringComparison.OrdinalIgnoreCase))
             {
                 Expect(iterator, LexType.OpenBracket);
                 iterator.MoveNext();
@@ -106,7 +106,7 @@ namespace CBRE.Providers.GameData
                     iterator.MoveNext();
                 }
             }
-            else if (type.Equals("autovisgroup", StringComparison.InvariantCultureIgnoreCase))
+            else if (type.Equals("autovisgroup", StringComparison.OrdinalIgnoreCase))
             {
                 Expect(iterator, LexType.Equals);
 
@@ -530,9 +530,9 @@ namespace CBRE.Providers.GameData
             }
             if (c == '"')
             {
-                return new LexObject(lineNum, charNum, LexType.String, c.ToString(CultureInfo.InvariantCulture));
+                return new LexObject(lineNum, charNum, LexType.String, c.ToString());
             }
-            return new LexObject(lineNum, charNum, LexType.Value, c.ToString(CultureInfo.InvariantCulture));
+            return new LexObject(lineNum, charNum, LexType.Value, c.ToString());
         }
 
         private static readonly char[] NonValueCharacters =
@@ -553,10 +553,10 @@ namespace CBRE.Providers.GameData
                     {
                         return LexNew(lineNum, charNum, c);
                     }
-                    existing.Value += c.ToString(CultureInfo.InvariantCulture);
+                    existing.Value += c.ToString();
                     return existing;
                 case LexType.String:
-                    existing.Value += c.ToString(CultureInfo.InvariantCulture);
+                    existing.Value += c.ToString();
                     return c == '"' ? null : existing;
                 case LexType.Comment:
                     return c == '\n' ? null : existing;

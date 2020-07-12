@@ -307,7 +307,7 @@ namespace CBRE.Editor.Compiling
 
                 br.Write((Int32)int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
 
-                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range"), CultureInfo.InvariantCulture));
+                br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range")));
             }
 
             foreach (Entity prop in props)

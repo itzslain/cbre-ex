@@ -36,8 +36,8 @@ namespace CBRE.Providers.Map
 
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".vmf", true, CultureInfo.InvariantCulture)
-                || filename.EndsWith(".vmx", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".vmf", StringComparison.OrdinalIgnoreCase)
+                || filename.EndsWith(".vmx", StringComparison.OrdinalIgnoreCase);
         }
 
         private static long GetObjectID(GenericStructure gs, IDGenerator generator)
@@ -69,16 +69,16 @@ namespace CBRE.Providers.Map
 
         private static string FormatCoordinate(Coordinate c)
         {
-            return c.X.ToString("0.00000000", CultureInfo.InvariantCulture)
-                + " " + c.Y.ToString("0.00000000", CultureInfo.InvariantCulture)
-                + " " + c.Z.ToString("0.00000000", CultureInfo.InvariantCulture);
+            return c.X.ToString("0.00000000")
+                + " " + c.Y.ToString("0.00000000")
+                + " " + c.Z.ToString("0.00000000");
         }
 
         private static string FormatColor(Color c)
         {
-            return c.R.ToString(CultureInfo.InvariantCulture)
-                + " " + c.G.ToString(CultureInfo.InvariantCulture)
-                + " " + c.B.ToString(CultureInfo.InvariantCulture);
+            return c.R.ToString()
+                + " " + c.G.ToString()
+                + " " + c.B.ToString();
         }
 
         private static readonly string[] ExcludedKeys = new[] { "id", "spawnflags", "classname", "origin", "wad", "mapversion" };
@@ -102,7 +102,7 @@ namespace CBRE.Providers.Map
             {
                 obj[property.Key] = property.Value;
             }
-            obj["spawnflags"] = data.Flags.ToString(CultureInfo.InvariantCulture);
+            obj["spawnflags"] = data.Flags.ToString();
         }
 
         private static GenericStructure WriteEditor(MapObject obj)
@@ -111,12 +111,12 @@ namespace CBRE.Providers.Map
             editor["color"] = FormatColor(obj.Colour);
             foreach (var visgroup in obj.Visgroups.Except(obj.AutoVisgroups).OrderBy(x => x))
             {
-                editor.AddProperty("visgroupid", visgroup.ToString(CultureInfo.InvariantCulture));
+                editor.AddProperty("visgroupid", visgroup.ToString());
             }
             editor["visgroupshown"] = "1";
             editor["visgroupautoshown"] = "1";
-            if (obj.Parent is Group) editor["groupid"] = obj.Parent.ID.ToString(CultureInfo.InvariantCulture);
-            if (obj.Parent != null) editor["parentid"] = obj.Parent.ID.ToString(CultureInfo.InvariantCulture);
+            if (obj.Parent is Group) editor["groupid"] = obj.Parent.ID.ToString();
+            if (obj.Parent != null) editor["parentid"] = obj.Parent.ID.ToString();
             return editor;
         }
 
@@ -195,20 +195,20 @@ namespace CBRE.Providers.Map
         private static GenericStructure WriteFace(Face face)
         {
             var ret = new GenericStructure("side");
-            ret["id"] = face.ID.ToString(CultureInfo.InvariantCulture);
+            ret["id"] = face.ID.ToString();
             ret["plane"] = String.Format("({0}) ({1}) ({2})",
                                          FormatCoordinate(face.Vertices[0].Location),
                                          FormatCoordinate(face.Vertices[1].Location),
                                          FormatCoordinate(face.Vertices[2].Location));
             ret["material"] = face.Texture.Name;
-            ret["uaxis"] = String.Format(CultureInfo.InvariantCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
-            ret["vaxis"] = String.Format(CultureInfo.InvariantCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
-            ret["rotation"] = face.Texture.Rotation.ToString(CultureInfo.InvariantCulture);
+            ret["uaxis"] = String.Format("[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
+            ret["vaxis"] = String.Format("[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
+            ret["rotation"] = face.Texture.Rotation.ToString();
             // ret["lightmapscale"]
             // ret["smoothing_groups"]
 
             var verts = new GenericStructure("vertex");
-            verts["count"] = face.Vertices.Count.ToString(CultureInfo.InvariantCulture);
+            verts["count"] = face.Vertices.Count.ToString();
             for (var i = 0; i < face.Vertices.Count; i++)
             {
                 verts["vertex" + i] = FormatCoordinate(face.Vertices[i].Location);
@@ -297,7 +297,7 @@ namespace CBRE.Providers.Map
         private static GenericStructure WriteSolid(Solid solid)
         {
             var ret = new GenericStructure("solid");
-            ret["id"] = solid.ID.ToString(CultureInfo.InvariantCulture);
+            ret["id"] = solid.ID.ToString();
 
             foreach (var face in solid.Faces.OrderBy(x => x.ID))
             {
@@ -339,7 +339,7 @@ namespace CBRE.Providers.Map
         private static GenericStructure WriteEntity(Entity ent)
         {
             var ret = new GenericStructure("entity");
-            ret["id"] = ent.ID.ToString(CultureInfo.InvariantCulture);
+            ret["id"] = ent.ID.ToString();
             ret["classname"] = ent.EntityData.Name;
             WriteEntityData(ret, ent.EntityData);
             if (!ent.HasChildren) ret["origin"] = FormatCoordinate(ent.Origin);
@@ -367,7 +367,7 @@ namespace CBRE.Providers.Map
         private static GenericStructure WriteGroup(Group group)
         {
             var ret = new GenericStructure("group");
-            ret["id"] = group.ID.ToString(CultureInfo.InvariantCulture);
+            ret["id"] = group.ID.ToString();
 
             var editor = WriteEditor(group);
             ret.Children.Add(editor);
@@ -459,9 +459,9 @@ namespace CBRE.Providers.Map
         {
             var world = map.WorldSpawn;
             var ret = new GenericStructure("world");
-            ret["id"] = world.ID.ToString(CultureInfo.InvariantCulture);
+            ret["id"] = world.ID.ToString();
             ret["classname"] = "worldspawn";
-            ret["mapversion"] = map.Version.ToString(CultureInfo.InvariantCulture);
+            ret["mapversion"] = map.Version.ToString();
             WriteEntityData(ret, world.EntityData);
 
             foreach (var solid in solids.OrderBy(x => x.ID))
@@ -493,7 +493,7 @@ namespace CBRE.Providers.Map
         {
             var ret = new GenericStructure("visgroup");
             ret["name"] = visgroup.Name;
-            ret["visgroupid"] = visgroup.ID.ToString(CultureInfo.InvariantCulture);
+            ret["visgroupid"] = visgroup.ID.ToString();
             ret["color"] = FormatColor(visgroup.Colour);
             return ret;
         }
@@ -651,9 +651,9 @@ namespace CBRE.Providers.Map
             var fvi = FileVersionInfo.GetVersionInfo(typeof(VmfProvider).Assembly.Location);
             var versioninfo = new GenericStructure("versioninfo");
             versioninfo.AddProperty("editorname", "CBRE");
-            versioninfo.AddProperty("editorversion", fvi.ProductMajorPart.ToString(CultureInfo.InvariantCulture) + "." + fvi.ProductMinorPart.ToString(CultureInfo.InvariantCulture));
-            versioninfo.AddProperty("editorbuild", fvi.ProductBuildPart.ToString(CultureInfo.InvariantCulture));
-            versioninfo.AddProperty("mapversion", map.Version.ToString(CultureInfo.InvariantCulture));
+            versioninfo.AddProperty("editorversion", fvi.ProductMajorPart.ToString() + "." + fvi.ProductMinorPart.ToString());
+            versioninfo.AddProperty("editorbuild", fvi.ProductBuildPart.ToString());
+            versioninfo.AddProperty("mapversion", map.Version.ToString());
             versioninfo.AddProperty("formatversion", "100");
             versioninfo.AddProperty("prefab", "0");
 
@@ -668,7 +668,7 @@ namespace CBRE.Providers.Map
             viewsettings.AddProperty("bSnapToGrid", map.SnapToGrid ? "1" : "0");
             viewsettings.AddProperty("bShowGrid", map.Show2DGrid ? "1" : "0");
             viewsettings.AddProperty("bShow3DGrid", map.Show3DGrid ? "1" : "0");
-            viewsettings.AddProperty("nGridSpacing", map.GridSpacing.ToString(CultureInfo.InvariantCulture));
+            viewsettings.AddProperty("nGridSpacing", map.GridSpacing.ToString());
             viewsettings.AddProperty("bIgnoreGrouping", map.IgnoreGrouping ? "1" : "0");
             viewsettings.AddProperty("bHideFaceMask", map.HideFaceMask ? "1" : "0");
             viewsettings.AddProperty("bHideNullTextures", map.HideNullTextures ? "1" : "0");
@@ -680,7 +680,7 @@ namespace CBRE.Providers.Map
             var entities = ents.OrderBy(x => x.ID).Select(WriteEntity).ToList();
 
             var cameras = new GenericStructure("cameras");
-            cameras.AddProperty("activecamera", map.Cameras.IndexOf(map.ActiveCamera).ToString(CultureInfo.InvariantCulture));
+            cameras.AddProperty("activecamera", map.Cameras.IndexOf(map.ActiveCamera).ToString());
             foreach (var cam in map.Cameras)
             {
                 var camera = new GenericStructure("camera");

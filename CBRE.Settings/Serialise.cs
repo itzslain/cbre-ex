@@ -27,7 +27,7 @@ namespace CBRE.Settings
             {
                 return string.Join("|", list);
             }
-            return Convert.ToString(obj, CultureInfo.InvariantCulture);
+            return Convert.ToString(obj);
         }
 
         private static object FromString(Type t, string str)
@@ -56,7 +56,7 @@ namespace CBRE.Settings
                 if (string.IsNullOrEmpty(str)) { return new List<string>(); }
                 return str.Split('|').ToList();
             }
-            return Convert.ChangeType(str, t, CultureInfo.InvariantCulture);
+            return Convert.ChangeType(str, t);
         }
 
         public static Dictionary<string, string> SerialiseSettings()

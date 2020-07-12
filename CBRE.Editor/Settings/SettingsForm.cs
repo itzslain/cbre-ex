@@ -181,7 +181,7 @@ namespace CBRE.Editor.Settings
             GridHighlight1On.Checked = cp.Highlight1Enabled;
 
             GridHighlight2Colour.BackColor = cp.Highlight2;
-            GridHighlight2UnitNum.SelectedItem = cp.Highlight2Units.ToString(CultureInfo.InvariantCulture);
+            GridHighlight2UnitNum.SelectedItem = cp.Highlight2Units.ToString();
             GridHighlight2On.Checked = cp.Highlight2Enabled;
         }
 

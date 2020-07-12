@@ -27,8 +27,8 @@ namespace CBRE.Editor.UI.Sidebar
             foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant()))
             {
                 EntityTypeList.Items.Add(gdo);
-                if (String.Equals(sel, gdo.Name, StringComparison.InvariantCultureIgnoreCase)) reselect = gdo;
-                if (String.Equals(def, gdo.Name, StringComparison.InvariantCultureIgnoreCase)) redef = gdo;
+                if (String.Equals(sel, gdo.Name, StringComparison.OrdinalIgnoreCase)) reselect = gdo;
+                if (String.Equals(def, gdo.Name, StringComparison.OrdinalIgnoreCase)) redef = gdo;
             }
             if (reselect == null && redef == null) redef = doc.GameData.Classes
                 .Where(x => x.ClassType == ClassType.Point)

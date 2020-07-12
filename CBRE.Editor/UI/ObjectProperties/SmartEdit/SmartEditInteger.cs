@@ -22,7 +22,7 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 
         protected override string GetValue()
         {
-            return _numericUpDown.Value.ToString(CultureInfo.InvariantCulture);
+            return _numericUpDown.Value.ToString();
         }
 
         protected override void OnSetProperty()

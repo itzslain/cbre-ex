@@ -75,30 +75,30 @@ namespace CBRE.Settings.Models
 
         public void Write(GenericStructure gs)
         {
-            gs["ID"] = ID.ToString(CultureInfo.InvariantCulture);
+            gs["ID"] = ID.ToString();
             gs["Name"] = Name;
             gs["Specification"] = Specification;
             gs["EngineID"] = Engine.ToString();
-            gs["DontRedirectOutput"] = DontRedirectOutput.ToString(CultureInfo.InvariantCulture);
+            gs["DontRedirectOutput"] = DontRedirectOutput.ToString();
             gs["Path"] = Path;
             gs["Bsp"] = Bsp;
             gs["Csg"] = Csg;
             gs["Vis"] = Vis;
             gs["Rad"] = Rad;
-            gs["IncludePathInEnvironment"] = IncludePathInEnvironment.ToString(CultureInfo.InvariantCulture);
+            gs["IncludePathInEnvironment"] = IncludePathInEnvironment.ToString();
 
             gs["WorkingDirectory"] = WorkingDirectory.ToString();
-            gs["AfterCopyBsp"] = AfterCopyBsp.ToString(CultureInfo.InvariantCulture);
-            gs["AfterRunGame"] = AfterRunGame.ToString(CultureInfo.InvariantCulture);
-            gs["AfterAskBeforeRun"] = AfterAskBeforeRun.ToString(CultureInfo.InvariantCulture);
+            gs["AfterCopyBsp"] = AfterCopyBsp.ToString();
+            gs["AfterRunGame"] = AfterRunGame.ToString();
+            gs["AfterAskBeforeRun"] = AfterAskBeforeRun.ToString();
 
-            gs["CopyBsp"] = CopyBsp.ToString(CultureInfo.InvariantCulture);
-            gs["CopyRes"] = CopyRes.ToString(CultureInfo.InvariantCulture);
-            gs["CopyLin"] = CopyLin.ToString(CultureInfo.InvariantCulture);
-            gs["CopyMap"] = CopyMap.ToString(CultureInfo.InvariantCulture);
-            gs["CopyPts"] = CopyPts.ToString(CultureInfo.InvariantCulture);
-            gs["CopyLog"] = CopyLog.ToString(CultureInfo.InvariantCulture);
-            gs["CopyErr"] = CopyErr.ToString(CultureInfo.InvariantCulture);
+            gs["CopyBsp"] = CopyBsp.ToString();
+            gs["CopyRes"] = CopyRes.ToString();
+            gs["CopyLin"] = CopyLin.ToString();
+            gs["CopyMap"] = CopyMap.ToString();
+            gs["CopyPts"] = CopyPts.ToString();
+            gs["CopyLog"] = CopyLog.ToString();
+            gs["CopyErr"] = CopyErr.ToString();
 
             foreach (var bp in Profiles)
             {
