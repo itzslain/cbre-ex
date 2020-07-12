@@ -1,6 +1,7 @@
 ﻿using CBRE.Extensions;
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace CBRE.DataStructures.Geometric
@@ -272,7 +273,14 @@ namespace CBRE.DataStructures.Geometric
         }
 
         public string ToDataString() {
-            return _x.ToString("G4") + " " + _y.ToString("G4") + " " + _z.ToString("G4");
+            Func<decimal, string> toStringNoTrailing = (v) => {
+                string retVal = v.ToString("F7");
+                while (retVal.Contains('.') && (retVal.Last()=='0' || retVal.Last() == '.')) {
+                    retVal = retVal.Substring(0, retVal.Length - 1);
+                }
+                return retVal;
+            };
+            return toStringNoTrailing(_x) + " " + toStringNoTrailing(_y) + " " + toStringNoTrailing(_z);
         }
 
         public Coordinate Clone()

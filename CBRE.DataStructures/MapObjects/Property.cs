@@ -45,9 +45,9 @@ namespace CBRE.DataStructures.MapObjects
             var spl = Value.Split(' ');
             if (spl.Length != 3) return defaultIfInvalid;
             decimal x, y, z;
-            if (decimal.TryParse(spl[0], out x)
-                && decimal.TryParse(spl[1], out y)
-                && decimal.TryParse(spl[2], out z))
+            if (decimal.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && decimal.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && decimal.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
             {
                 return new Coordinate(x, y, z);
             }
