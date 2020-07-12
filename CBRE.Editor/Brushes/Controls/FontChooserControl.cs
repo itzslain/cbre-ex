@@ -3,18 +3,14 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 
-namespace CBRE.Editor.Brushes.Controls
-{
-    public partial class FontChooserControl : BrushControl
-    {
-        public string FontName
-        {
+namespace CBRE.Editor.Brushes.Controls {
+    public partial class FontChooserControl : BrushControl {
+        public string FontName {
             get { return FontPicker.SelectedItem as string; }
             set { FontPicker.SelectedItem = value; }
         }
 
-        public FontChooserControl(IBrush brush) : base(brush)
-        {
+        public FontChooserControl(IBrush brush) : base(brush) {
             InitializeComponent();
 
             FontPicker.Items.Clear();
@@ -22,13 +18,11 @@ namespace CBRE.Editor.Brushes.Controls
             FontPicker.SelectedItem = GetFontFamily().Name;
         }
 
-        public FontFamily GetFontFamily()
-        {
+        public FontFamily GetFontFamily() {
             return FontFamily.Families.FirstOrDefault(x => x.Name == FontName) ?? FontFamily.GenericSansSerif;
         }
 
-        private void ValueChanged(object sender, EventArgs e)
-        {
+        private void ValueChanged(object sender, EventArgs e) {
             OnValuesChanged(Brush);
         }
     }

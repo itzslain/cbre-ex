@@ -3,32 +3,25 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CBRE.Providers.GameData
-{
-    public abstract class GameDataProvider
-    {
+namespace CBRE.Providers.GameData {
+    public abstract class GameDataProvider {
         private static readonly List<GameDataProvider> RegisteredProviders;
 
-        static GameDataProvider()
-        {
+        static GameDataProvider() {
             RegisteredProviders = new List<GameDataProvider>();
         }
 
-        public static void Register(GameDataProvider provider)
-        {
+        public static void Register(GameDataProvider provider) {
             RegisteredProviders.Add(provider);
         }
 
-        public static void Deregister(GameDataProvider provider)
-        {
+        public static void Deregister(GameDataProvider provider) {
             RegisteredProviders.Remove(provider);
         }
 
-        public static DataStructures.GameData.GameData GetGameDataFromFiles(IEnumerable<string> files)
-        {
+        public static DataStructures.GameData.GameData GetGameDataFromFiles(IEnumerable<string> files) {
             var gd = new DataStructures.GameData.GameData();
-            foreach (var d in files.Select(GetGameDataFromFile))
-            {
+            foreach (var d in files.Select(GetGameDataFromFile)) {
                 gd.MapSizeHigh = d.MapSizeHigh;
                 gd.MapSizeLow = d.MapSizeLow;
                 gd.Classes.AddRange(d.Classes);
@@ -39,47 +32,39 @@ namespace CBRE.Providers.GameData
             return gd;
         }
 
-        public static DataStructures.GameData.GameData GetGameDataFromFile(string fileName)
-        {
+        public static DataStructures.GameData.GameData GetGameDataFromFile(string fileName) {
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFile(fileName));
-            if (provider != null)
-            {
+            if (provider != null) {
                 var gd = provider.GetFromFile(fileName);
                 return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this file.");
         }
 
-        public static DataStructures.GameData.GameData GetGameDataFromString(string contents)
-        {
+        public static DataStructures.GameData.GameData GetGameDataFromString(string contents) {
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForString(contents));
-            if (provider != null)
-            {
+            if (provider != null) {
                 var gd = provider.GetFromString(contents);
                 return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this string.");
         }
 
-        public static DataStructures.GameData.GameData GetGameDataFromStream(Stream stream)
-        {
+        public static DataStructures.GameData.GameData GetGameDataFromStream(Stream stream) {
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForStream(stream));
-            if (provider != null)
-            {
+            if (provider != null) {
                 var gd = provider.GetFromStream(stream);
                 return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this stream.");
         }
 
-        protected virtual bool IsValidForFile(string filename)
-        {
+        protected virtual bool IsValidForFile(string filename) {
             Stream strm = new FileStream(filename, FileMode.Open, FileAccess.Read);
             return IsValidForStream(strm);
         }
 
-        protected virtual bool IsValidForString(string contents)
-        {
+        protected virtual bool IsValidForString(string contents) {
             var length = Encoding.UTF8.GetByteCount(contents);
             Stream strm = new MemoryStream(length);
             strm.Write(Encoding.UTF8.GetBytes(contents), 0, length);
@@ -88,19 +73,15 @@ namespace CBRE.Providers.GameData
 
         protected abstract bool IsValidForStream(Stream stream);
 
-        protected virtual DataStructures.GameData.GameData GetFromFile(string filename)
-        {
-            using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            {
+        protected virtual DataStructures.GameData.GameData GetFromFile(string filename) {
+            using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
                 return GetFromStream(strm);
             }
         }
 
-        protected virtual DataStructures.GameData.GameData GetFromString(string contents)
-        {
+        protected virtual DataStructures.GameData.GameData GetFromString(string contents) {
             var length = Encoding.UTF8.GetByteCount(contents);
-            using (var strm = new MemoryStream(length))
-            {
+            using (var strm = new MemoryStream(length)) {
                 strm.Write(Encoding.UTF8.GetBytes(contents), 0, length);
                 return GetFromStream(strm);
             }

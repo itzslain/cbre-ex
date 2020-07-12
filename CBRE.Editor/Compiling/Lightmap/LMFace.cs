@@ -5,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Compiling.Lightmap
-{
-    public class LMFace
-    {
+namespace CBRE.Editor.Compiling.Lightmap {
+    public class LMFace {
         public PlaneF Plane { get; set; }
         public CoordinateF Normal;
         public CoordinateF Tangent;
@@ -22,10 +20,8 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         public int LmIndex;
 
-        public class Vertex
-        {
-            public Vertex(DataStructures.MapObjects.Vertex original)
-            {
+        public class Vertex {
+            public Vertex(DataStructures.MapObjects.Vertex original) {
                 OriginalVertex = original;
                 Location = new CoordinateF(original.Location);
                 DiffU = (float)original.TextureU; DiffV = (float)original.TextureV;
@@ -45,8 +41,7 @@ namespace CBRE.Editor.Compiling.Lightmap
 
         public Face OriginalFace;
 
-        public LMFace(Face face, Solid solid)
-        {
+        public LMFace(Face face, Solid solid) {
             Plane = new PlaneF(face.Plane);
 
             Normal = Plane.Normal;
@@ -97,38 +92,30 @@ namespace CBRE.Editor.Compiling.Lightmap
             UpdateBoundingBox();
         }
 
-        public virtual IEnumerable<LineF> GetLines()
-        {
+        public virtual IEnumerable<LineF> GetLines() {
             return GetEdges();
         }
 
-        public virtual IEnumerable<LineF> GetEdges()
-        {
-            for (var i = 0; i < Vertices.Count; i++)
-            {
+        public virtual IEnumerable<LineF> GetEdges() {
+            for (var i = 0; i < Vertices.Count; i++) {
                 yield return new LineF(Vertices[i].Location, Vertices[(i + 1) % Vertices.Count].Location);
             }
         }
 
-        public virtual IEnumerable<Vertex> GetIndexedVertices()
-        {
+        public virtual IEnumerable<Vertex> GetIndexedVertices() {
             return Vertices;
         }
 
-        public virtual IEnumerable<uint> GetTriangleIndices()
-        {
-            for (uint i = 1; i < Vertices.Count - 1; i++)
-            {
+        public virtual IEnumerable<uint> GetTriangleIndices() {
+            for (uint i = 1; i < Vertices.Count - 1; i++) {
                 yield return 0;
                 yield return i;
                 yield return i + 1;
             }
         }
 
-        public virtual IEnumerable<Vertex[]> GetTriangles()
-        {
-            for (var i = 1; i < Vertices.Count - 1; i++)
-            {
+        public virtual IEnumerable<Vertex[]> GetTriangles() {
+            for (var i = 1; i < Vertices.Count - 1; i++) {
                 yield return new[]
                 {
                     Vertices[0],
@@ -138,8 +125,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             }
         }
 
-        public virtual void UpdateBoundingBox()
-        {
+        public virtual void UpdateBoundingBox() {
             BoundingBox = new BoxF(Vertices.Select(x => x.Location));
         }
 
@@ -149,8 +135,7 @@ namespace CBRE.Editor.Compiling.Lightmap
         /// <param name="line">The intersection line</param>
         /// <returns>The point of intersection between the face and the line.
         /// Returns null if the line does not intersect this face.</returns>
-        public virtual CoordinateF GetIntersectionPoint(LineF line)
-        {
+        public virtual CoordinateF GetIntersectionPoint(LineF line) {
             return GetIntersectionPoint(this, line);
         }
 
@@ -159,8 +144,7 @@ namespace CBRE.Editor.Compiling.Lightmap
         /// </summary>
         /// <param name="box">The box to intersect</param>
         /// <returns>True if one of the face's edges intersects with the box.</returns>
-        public bool IntersectsWithLine(BoxF box)
-        {
+        public bool IntersectsWithLine(BoxF box) {
             // Shortcut through the bounding box to avoid the line computations if they aren't needed
             return BoundingBox.IntersectsWith(box) && GetLines().Any(box.IntersectsWith);
         }
@@ -170,14 +154,12 @@ namespace CBRE.Editor.Compiling.Lightmap
         /// </summary>
         /// <param name="box">The box to test against</param>
         /// <returns>True if the box intersects</returns>
-        public bool IntersectsWithBox(BoxF box)
-        {
+        public bool IntersectsWithBox(BoxF box) {
             var verts = Vertices.ToList();
             return box.GetBoxLines().Any(x => GetIntersectionPoint(this, x, true) != null);
         }
 
-        protected static CoordinateF GetIntersectionPoint(LMFace face, LineF line, bool ignoreDirection = false)
-        {
+        protected static CoordinateF GetIntersectionPoint(LMFace face, LineF line, bool ignoreDirection = false) {
             var plane = face.Plane;
             var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
             List<CoordinateF> coordinates = face.Vertices.Select(x => x.Location).ToList();
@@ -186,8 +168,7 @@ namespace CBRE.Editor.Compiling.Lightmap
             if (!bbox.CoordinateIsInside(intersect)) return null;
 
             CoordinateF centerPoint = face.BoundingBox.Center;
-            for (var i = 0; i < coordinates.Count; i++)
-            {
+            for (var i = 0; i < coordinates.Count; i++) {
                 var i1 = i;
                 var i2 = (i + 1) % coordinates.Count;
 
@@ -196,8 +177,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 var v = coordinates[i1] - coordinates[i2];
                 var lineNormal = face.Plane.Normal.Cross(v);
 
-                if ((middleToCenter - lineNormal).LengthSquared() > (middleToCenter + lineNormal).LengthSquared())
-                {
+                if ((middleToCenter - lineNormal).LengthSquared() > (middleToCenter + lineNormal).LengthSquared()) {
                     lineNormal = -lineNormal;
                 }
 
@@ -206,14 +186,11 @@ namespace CBRE.Editor.Compiling.Lightmap
             return intersect;
         }
 
-        public static void FindFacesAndGroups(Map map, out List<LMFace> faces, out List<LightmapGroup> lmGroups)
-        {
+        public static void FindFacesAndGroups(Map map, out List<LMFace> faces, out List<LightmapGroup> lmGroups) {
             faces = new List<LMFace>();
             lmGroups = new List<LightmapGroup>();
-            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
-            {
-                foreach (Face tface in solid.Faces)
-                {
+            foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()) {
+                foreach (Face tface in solid.Faces) {
                     tface.Vertices.ForEach(v => { v.LMU = -500.0f; v.LMV = -500.0f; });
                     tface.UpdateBoundingBox();
                     if (tface.Texture?.Texture == null) continue;
@@ -224,8 +201,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     LMFace face = new LMFace(tface, solid);
                     LightmapGroup group = LightmapGroup.FindCoplanar(lmGroups, face);
                     BoxF faceBox = new BoxF(face.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), face.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));
-                    if (group == null)
-                    {
+                    if (group == null) {
                         group = new LightmapGroup();
                         group.BoundingBox = faceBox;
                         group.Faces = new List<LMFace>();
@@ -233,8 +209,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                         lmGroups.Add(group);
                     }
 #if DEBUG
-                    if (face.Texture.ToLowerInvariant() == "tooltextures/debug_breakpoint")
-                    {
+                    if (face.Texture.ToLowerInvariant() == "tooltextures/debug_breakpoint") {
                         group.DebugBreakpoint = true;
                     }
 #endif

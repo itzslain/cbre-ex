@@ -4,10 +4,8 @@ using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes.Controls;
 using System.Collections.Generic;
 
-namespace CBRE.Editor.Brushes
-{
-    public interface IBrush
-    {
+namespace CBRE.Editor.Brushes {
+    public interface IBrush {
         string Name { get; }
         bool CanRound { get; }
         IEnumerable<BrushControl> GetControls();

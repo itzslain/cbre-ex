@@ -7,35 +7,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Extensions
-{
-    public static class DecalExtensions
-    {
+namespace CBRE.Editor.Extensions {
+    public static class DecalExtensions {
         private const string DecalMetaKey = "Decal";
         private const string DecalNameMetaKey = "DecalName";
         private const string DecalGeometryMetaKey = "DecalGeometry";
         private const string DecalBoundingBoxMetaKey = "DecalBoundingBox";
 
-        public static bool UpdateDecals(this Map map, Document document)
-        {
+        public static bool UpdateDecals(this Map map, Document document) {
             return UpdateDecals(document, map.WorldSpawn);
         }
 
-        public static bool UpdateDecals(this Map map, Document document, IEnumerable<MapObject> objects)
-        {
+        public static bool UpdateDecals(this Map map, Document document, IEnumerable<MapObject> objects) {
             var updated = false;
             foreach (var mo in objects) updated |= UpdateDecals(document, mo);
             return updated;
         }
 
-        private static bool UpdateDecals(Document document, MapObject mo)
-        {
+        private static bool UpdateDecals(Document document, MapObject mo) {
             var updatedChildren = false;
             foreach (var child in mo.GetChildren()) updatedChildren |= UpdateDecals(document, child);
 
             var e = mo as Entity;
-            if (e == null || !ShouldHaveDecal(e))
-            {
+            if (e == null || !ShouldHaveDecal(e)) {
                 var has = e != null && HasDecal(e);
                 if (has) SetDecal(e, null);
                 return updatedChildren || has;
@@ -49,59 +43,46 @@ namespace CBRE.Editor.Extensions
             return true;
         }
 
-        public static bool ShouldHaveDecal(this Entity entity)
-        {
+        public static bool ShouldHaveDecal(this Entity entity) {
             return entity.EntityData.Name == "infodecal";
         }
 
-        public static void SetDecal(this Entity entity, ITexture texture)
-        {
-            if (texture == null)
-            {
+        public static void SetDecal(this Entity entity, ITexture texture) {
+            if (texture == null) {
                 entity.MetaData.Unset(DecalMetaKey);
                 entity.MetaData.Unset(DecalNameMetaKey);
-            }
-            else
-            {
+            } else {
                 entity.MetaData.Set(DecalMetaKey, texture);
                 entity.MetaData.Set(DecalNameMetaKey, texture.Name);
             }
             UpdateDecalGeometry(entity);
         }
 
-        public static ITexture GetDecal(this Entity entity)
-        {
+        public static ITexture GetDecal(this Entity entity) {
             return entity.MetaData.Get<ITexture>(DecalMetaKey);
         }
 
-        public static IEnumerable<Face> GetDecalGeometry(this Entity entity)
-        {
+        public static IEnumerable<Face> GetDecalGeometry(this Entity entity) {
             return entity.MetaData.Get<List<Face>>(DecalGeometryMetaKey) ?? new List<Face>();
         }
 
-        public static void UpdateDecalGeometry(this Entity entity)
-        {
+        public static void UpdateDecalGeometry(this Entity entity) {
             var decal = GetDecal(entity);
-            if (decal == null)
-            {
+            if (decal == null) {
                 entity.MetaData.Unset(DecalGeometryMetaKey);
                 entity.MetaData.Unset(DecalBoundingBoxMetaKey);
-            }
-            else
-            {
+            } else {
                 var geometry = CalculateDecalGeometry(entity, decal);
                 entity.MetaData.Set(DecalGeometryMetaKey, geometry);
                 entity.MetaData.Set(DecalBoundingBoxMetaKey, geometry.Any() ? new Box(geometry.SelectMany(x => x.Vertices).Select(x => x.Location)) : null);
             }
         }
 
-        public static bool HasDecal(this Entity entity)
-        {
+        public static bool HasDecal(this Entity entity) {
             return entity.MetaData.Has<ITexture>(DecalMetaKey);
         }
 
-        private static List<Face> CalculateDecalGeometry(Entity entity, ITexture decal)
-        {
+        private static List<Face> CalculateDecalGeometry(Entity entity, ITexture decal) {
             var decalGeometry = new List<Face>();
             if (decal == null || entity.Parent == null) return decalGeometry; // Texture not found
 
@@ -114,8 +95,7 @@ namespace CBRE.Editor.Extensions
             var faces = root.GetAllNodesIntersectingWith(box).OfType<Solid>()
                     .SelectMany(x => x.Faces).Where(x => x.IntersectsWithBox(box));
             var idg = new IDGenerator(); // Dummy generator
-            foreach (var face in faces)
-            {
+            foreach (var face in faces) {
                 // Project the decal onto the face
                 var center = face.Plane.Project(entity.Origin);
                 var texture = face.Texture.Clone();
@@ -123,8 +103,7 @@ namespace CBRE.Editor.Extensions
                 texture.Texture = decal;
                 texture.XShift = -decal.Width / 2m;
                 texture.YShift = -decal.Height / 2m;
-                var decalFace = new Face(idg.GetNextFaceID())
-                {
+                var decalFace = new Face(idg.GetNextFaceID()) {
                     Colour = entity.Colour,
                     IsSelected = entity.IsSelected,
                     IsHidden = entity.IsCodeHidden,
@@ -146,8 +125,7 @@ namespace CBRE.Editor.Extensions
                 // If so, reverse the points to get a valid face for the plane.
                 // TODO: Is there a better way to do this?
                 var vertPlane = new Plane(verts[0].Location, verts[1].Location, verts[2].Location);
-                if (!face.Plane.Normal.EquivalentTo(vertPlane.Normal))
-                {
+                if (!face.Plane.Normal.EquivalentTo(vertPlane.Normal)) {
                     Array.Reverse(verts);
                 }
 
@@ -164,8 +142,7 @@ namespace CBRE.Editor.Extensions
                 // Create a fake solid out of the decal geometry and clip it against all the brush planes
                 var fake = CreateFakeDecalSolid(decalFace);
 
-                foreach (var f in face.Parent.Faces.Except(new[] { face }))
-                {
+                foreach (var f in face.Parent.Faces.Except(new[] { face })) {
                     Solid back, front;
                     fake.Split(f.Plane, out back, out front, idg);
                     fake = back ?? fake;
@@ -185,10 +162,8 @@ namespace CBRE.Editor.Extensions
             return decalGeometry;
         }
 
-        private static Solid CreateFakeDecalSolid(Face face)
-        {
-            var s = new Solid(0)
-            {
+        private static Solid CreateFakeDecalSolid(Face face) {
+            var s = new Solid(0) {
                 Colour = face.Colour,
                 IsVisgroupHidden = face.IsHidden,
                 IsSelected = face.IsSelected
@@ -206,10 +181,8 @@ namespace CBRE.Editor.Extensions
                                 new[] { p4, p3, p},
                                 new[] { p1, p4, p}
                             };
-            foreach (var ff in faces)
-            {
-                var f = new Face(-1)
-                {
+            foreach (var ff in faces) {
+                var f = new Face(-1) {
                     Colour = face.Colour,
                     IsSelected = face.IsSelected,
                     IsHidden = face.IsHidden,

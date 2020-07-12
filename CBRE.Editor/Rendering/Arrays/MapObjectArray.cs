@@ -12,24 +12,19 @@ using System.Collections.Generic;
 using System.Linq;
 using GL = OpenTK.Graphics.OpenGL.GL;
 
-namespace CBRE.Editor.Rendering.Arrays
-{
-    public class MapObjectArray : VBO<MapObject, MapObjectVertex>
-    {
+namespace CBRE.Editor.Rendering.Arrays {
+    public class MapObjectArray : VBO<MapObject, MapObjectVertex> {
         private const int Textured = 0;
         private const int Transparent = 1;
         private const int BrushWireframe = 2;
         private const int EntityWireframe = 3;
 
         public MapObjectArray(IEnumerable<MapObject> data)
-            : base(data)
-        {
+            : base(data) {
         }
 
-        public void RenderTextured(IGraphicsContext context, ITexture lightmapTexture)
-        {
-            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null))
-            {
+        public void RenderTextured(IGraphicsContext context, ITexture lightmapTexture) {
+            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null)) {
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
                 var tex = (ITexture)subset.Instance;
                 tex.Bind();
@@ -40,34 +35,29 @@ namespace CBRE.Editor.Rendering.Arrays
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
             }
         }
-        public void RenderUntextured(IGraphicsContext context, Coordinate location)
-        {
+        public void RenderUntextured(IGraphicsContext context, Coordinate location) {
             GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
             TextureHelper.Unbind();
             GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
             TextureHelper.Unbind();
             GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
-            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance == null))
-            {
+            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance == null)) {
                 Render(context, PrimitiveType.Triangles, subset);
             }
-            foreach (var subset in GetSubsets<Entity>(Textured))
-            {
+            foreach (var subset in GetSubsets<Entity>(Textured)) {
                 var e = (Entity)subset.Instance;
                 if (!CBRE.Settings.View.DisableModelRendering && e.HasModel() && e.HideDistance() > (location - e.Origin).VectorMagnitude()) continue;
                 Render(context, PrimitiveType.Triangles, subset);
             }
         }
 
-        private decimal LookAtOrder(Face face, Coordinate cameraLocation, Coordinate lookAt)
-        {
+        private decimal LookAtOrder(Face face, Coordinate cameraLocation, Coordinate lookAt) {
             var point = face.Plane.GetIntersectionPoint(new Line(cameraLocation, cameraLocation + lookAt), true, true);
             if (point == null) { return decimal.MaxValue; }
             return (point - cameraLocation).Dot(lookAt);
         }
 
-        public void RenderTransparent(IGraphicsContext context, Action<bool> isTextured, Coordinate cameraLocation, Coordinate lookAt)
-        {
+        public void RenderTransparent(IGraphicsContext context, Action<bool> isTextured, Coordinate cameraLocation, Coordinate lookAt) {
 
             var sorted =
                 from subset in GetSubsets<Face>(Transparent)
@@ -75,8 +65,7 @@ namespace CBRE.Editor.Rendering.Arrays
                 where face != null
                 orderby LookAtOrder(face, cameraLocation, lookAt) ascending
                 select subset;
-            foreach (var subset in sorted)
-            {
+            foreach (var subset in sorted) {
                 var tex = ((Face)subset.Instance).Texture;
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();
@@ -86,39 +75,31 @@ namespace CBRE.Editor.Rendering.Arrays
             }
         }
 
-        public void RenderWireframe(IGraphicsContext context)
-        {
-            foreach (var subset in GetSubsets(BrushWireframe))
-            {
+        public void RenderWireframe(IGraphicsContext context) {
+            foreach (var subset in GetSubsets(BrushWireframe)) {
                 Render(context, PrimitiveType.Lines, subset);
             }
 
-            foreach (var subset in GetSubsets(EntityWireframe))
-            {
+            foreach (var subset in GetSubsets(EntityWireframe)) {
                 Render(context, PrimitiveType.Lines, subset);
             }
         }
 
-        public void RenderVertices(IGraphicsContext context, int pointSize)
-        {
+        public void RenderVertices(IGraphicsContext context, int pointSize) {
             GL.PointSize(pointSize);
-            foreach (var subset in GetSubsets(BrushWireframe))
-            {
+            foreach (var subset in GetSubsets(BrushWireframe)) {
                 Render(context, PrimitiveType.Points, subset);
             }
 
         }
 
-        public void UpdatePartial(IEnumerable<MapObject> objects)
-        {
+        public void UpdatePartial(IEnumerable<MapObject> objects) {
             UpdatePartial(objects.OfType<Solid>().SelectMany(x => x.Faces));
             UpdatePartial(objects.OfType<Entity>().Where(x => !x.HasChildren));
         }
 
-        public void UpdatePartial(IEnumerable<Face> faces)
-        {
-            foreach (var face in faces)
-            {
+        public void UpdatePartial(IEnumerable<Face> faces) {
+            foreach (var face in faces) {
                 var offset = GetOffset(face);
                 if (offset < 0) continue;
                 var conversion = Convert(face);
@@ -126,10 +107,8 @@ namespace CBRE.Editor.Rendering.Arrays
             }
         }
 
-        public void UpdatePartial(IEnumerable<Entity> entities)
-        {
-            foreach (var entity in entities)
-            {
+        public void UpdatePartial(IEnumerable<Entity> entities) {
+            foreach (var entity in entities) {
                 var offset = GetOffset(entity);
                 if (offset < 0) continue;
                 var conversion = entity.GetBoxFaces().SelectMany(Convert);
@@ -137,8 +116,7 @@ namespace CBRE.Editor.Rendering.Arrays
             }
         }
 
-        protected override void CreateArray(IEnumerable<MapObject> objects)
-        {
+        protected override void CreateArray(IEnumerable<MapObject> objects) {
             var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var entities = obj.OfType<Entity>().Where(x => !x.HasChildren).ToList();
@@ -146,13 +124,11 @@ namespace CBRE.Editor.Rendering.Arrays
             StartSubset(BrushWireframe);
 
             // Render solids
-            foreach (var group in faces.GroupBy(x => new { x.Texture.Texture, Transparent = HasTransparency(x) }))
-            {
+            foreach (var group in faces.GroupBy(x => new { x.Texture.Texture, Transparent = HasTransparency(x) })) {
                 var subset = group.Key.Transparent ? Transparent : Textured;
                 if (!group.Key.Transparent) StartSubset(subset);
 
-                foreach (var face in group)
-                {
+                foreach (var face in group) {
                     if (group.Key.Transparent) StartSubset(subset);
 
                     PushOffset(face);
@@ -170,17 +146,14 @@ namespace CBRE.Editor.Rendering.Arrays
             StartSubset(EntityWireframe);
 
             // Render entities
-            foreach (var g in entities.GroupBy(x => x.HasModel()))
-            {
+            foreach (var g in entities.GroupBy(x => x.HasModel())) {
                 // key = false -> no model, put in the untextured group
                 // key = true  -> model, put in the entity group
                 if (!g.Key) StartSubset(Textured);
-                foreach (var entity in g)
-                {
+                foreach (var entity in g) {
                     if (g.Key) StartSubset(Textured);
                     PushOffset(entity);
-                    foreach (var face in entity.GetBoxFaces())
-                    {
+                    foreach (var face in entity.GetBoxFaces()) {
                         var index = PushData(Convert(face));
                         if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, face.GetTriangleIndices());
                         if (!face.Parent.IsRenderHidden2D) PushIndex(EntityWireframe, index, face.GetLineIndices());
@@ -193,14 +166,12 @@ namespace CBRE.Editor.Rendering.Arrays
             PushSubset(EntityWireframe, (object)null);
         }
 
-        private bool HasTransparency(Face face)
-        {
+        private bool HasTransparency(Face face) {
             return face.Opacity < 0.95
                    || (face.Texture.Texture != null && face.Texture.Texture.HasTransparency());
         }
 
-        protected IEnumerable<MapObjectVertex> Convert(Face face)
-        {
+        protected IEnumerable<MapObjectVertex> Convert(Face face) {
             float nx = (float)face.Plane.Normal.DX,
               ny = (float)face.Plane.Normal.DY,
               nz = (float)face.Plane.Normal.DZ;
@@ -209,8 +180,7 @@ namespace CBRE.Editor.Rendering.Arrays
                   b = face.Colour.B / 255f,
                   a = face.Opacity;
             var lmed = face.GetIndexedVertices().Where(v => v.LMU != 0).ToList();
-            return face.GetIndexedVertices().Select(vert => new MapObjectVertex
-            {
+            return face.GetIndexedVertices().Select(vert => new MapObjectVertex {
                 Position = new Vector3((float)vert.Location.DX, (float)vert.Location.DY, (float)vert.Location.DZ),
                 Normal = new Vector3(nx, ny, nz),
                 Texture = new Vector2((float)vert.TextureU, (float)vert.TextureV),

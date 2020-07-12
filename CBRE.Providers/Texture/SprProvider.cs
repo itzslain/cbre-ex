@@ -9,22 +9,17 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CBRE.Providers.Texture
-{
-    public class SprProvider : TextureProvider
-    {
-        private enum SpriteRenderMode
-        {
+namespace CBRE.Providers.Texture {
+    public class SprProvider : TextureProvider {
+        private enum SpriteRenderMode {
             Normal = 0,     // No transparency
             Additive = 1,   // R/G/B = R/G/B, A = (R+G+B)/3
             IndexAlpha = 2, // R/G/B = Palette index 255, A = (R+G+B)/3
             AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
         }
 
-        private static Size GetSize(string file)
-        {
-            using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-            {
+        private static Size GetSize(string file) {
+            using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))) {
                 var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (idst != "IDSP") return Size.Empty;
                 var version = br.ReadInt32();
@@ -39,11 +34,9 @@ namespace CBRE.Providers.Texture
             }
         }
 
-        private static BitmapRef Parse(string file)
-        {
+        private static BitmapRef Parse(string file) {
             // Sprite file spec taken from the spritegen source in the Half-Life SDK.
-            using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-            {
+            using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))) {
                 var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (idst != "IDSP") return null;
                 var version = br.ReadInt32();
@@ -61,8 +54,7 @@ namespace CBRE.Providers.Texture
 
                 if (paletteSize > 256) paletteSize = 256; // Don't accept anything higher
                 var colours = new Color[256];
-                for (var i = 0; i < paletteSize; i++)
-                {
+                for (var i = 0; i < paletteSize; i++) {
                     var r = palette[i * 3 + 0];
                     var g = palette[i * 3 + 1];
                     var b = palette[i * 3 + 2];
@@ -71,8 +63,7 @@ namespace CBRE.Providers.Texture
 
                 // Only read the first frame.
                 var frametype = br.ReadInt32();
-                if (frametype != 0)
-                {
+                if (frametype != 0) {
                     var num = br.ReadInt32();
                     var intervals = br.ReadSingleArray(num);
                 }
@@ -87,23 +78,18 @@ namespace CBRE.Providers.Texture
                 // Pre-process the palette
                 var pal = bitmap.Palette;
                 var last = colours[255];
-                for (var i = 0; i < paletteSize; i++)
-                {
+                for (var i = 0; i < paletteSize; i++) {
                     var c = colours[i];
-                    if (texFormat == SpriteRenderMode.Additive)
-                    {
+                    if (texFormat == SpriteRenderMode.Additive) {
                         var a = (int)((c.R + c.G + c.B) / 3f);
                         c = Color.FromArgb(a, c);
-                    }
-                    else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255)
-                    {
+                    } else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255) {
                         var a = (int)((c.R + c.G + c.B) / 3f);
                         c = Color.FromArgb(a, last);
                     }
                     pal.Entries[i] = c;
                 }
-                if (texFormat == SpriteRenderMode.AlphaTest)
-                {
+                if (texFormat == SpriteRenderMode.AlphaTest) {
                     pal.Entries[255] = Color.FromArgb(0, 0, 0, 0);
                 }
                 bitmap.Palette = pal;
@@ -117,16 +103,12 @@ namespace CBRE.Providers.Texture
             }
         }
 
-        public override void LoadTextures(IEnumerable<TextureItem> items)
-        {
-            foreach (var item in items)
-            {
+        public override void LoadTextures(IEnumerable<TextureItem> items) {
+            foreach (var item in items) {
                 string name = item.Name.Substring("sprites/".Length);
-                foreach (var root in item.Package.PackageRoot.Split(';'))
-                {
+                foreach (var root in item.Package.PackageRoot.Split(';')) {
                     var file = Path.Combine(root, name);
-                    if (File.Exists(file))
-                    {
+                    if (File.Exists(file)) {
                         var bmp = Parse(file);
                         TextureHelper.Create(item.Name, bmp.Bitmap, item.Width, item.Height, item.Flags);
                         break;
@@ -135,20 +117,17 @@ namespace CBRE.Providers.Texture
             }
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<TextureCategory> sourceRoots)
-        {
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<TextureCategory> sourceRoots) {
             // Sprite provider ignores the black/whitelists
             var dirs = sourceRoots.Where(sr => Directory.Exists(sr.Path));
             var tp = new TexturePackage(String.Join(";", dirs.Select(d => d.Path)), "Sprites", this) { IsBrowsable = false };
-            foreach (var dir in dirs)
-            {
+            foreach (var dir in dirs) {
                 var sprs = Directory.GetFiles(dir.Path, "*.spr", SearchOption.AllDirectories);
                 if (!sprs.Any()) continue;
 
-                foreach (var spr in sprs)
-                {
+                foreach (var spr in sprs) {
                     var size = GetSize(spr);
-                    var rel = "sprites/"+Path.GetFullPath(spr).Substring(dir.Path.Length).TrimStart('/', '\\').Replace('\\', '/');
+                    var rel = "sprites/" + Path.GetFullPath(spr).Substring(dir.Path.Length).TrimStart('/', '\\').Replace('\\', '/');
                     tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), TextureFlags.Transparent, size.Width, size.Height));
                 }
             }
@@ -156,34 +135,27 @@ namespace CBRE.Providers.Texture
             yield return tp;
         }
 
-        public override void DeletePackages(IEnumerable<TexturePackage> packages)
-        {
+        public override void DeletePackages(IEnumerable<TexturePackage> packages) {
 
         }
 
-        public override ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
-        {
+        public override ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages) {
             return new SpriteTextureStreamSource(packages);
         }
 
-        private class SpriteTextureStreamSource : ITextureStreamSource
-        {
+        private class SpriteTextureStreamSource : ITextureStreamSource {
             private readonly List<TexturePackage> _packages;
 
-            public SpriteTextureStreamSource(IEnumerable<TexturePackage> packages)
-            {
+            public SpriteTextureStreamSource(IEnumerable<TexturePackage> packages) {
                 _packages = packages.ToList();
             }
 
-            public bool HasImage(TextureItem item)
-            {
+            public bool HasImage(TextureItem item) {
                 return _packages.Any(x => x.Items.ContainsValue(item));
             }
 
-            public BitmapRef GetImage(TextureItem item)
-            {
-                foreach (var root in item.Package.PackageRoot.Split(';'))
-                {
+            public BitmapRef GetImage(TextureItem item) {
+                foreach (var root in item.Package.PackageRoot.Split(';')) {
                     string name = item.Name.Substring("sprites/".Length);
                     var file = Path.Combine(root, name);
                     if (File.Exists(file)) return Parse(file);
@@ -191,8 +163,7 @@ namespace CBRE.Providers.Texture
                 return null;
             }
 
-            public void Dispose()
-            {
+            public void Dispose() {
                 _packages.Clear();
             }
         }

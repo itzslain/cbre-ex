@@ -29,10 +29,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Path = System.IO.Path;
 
-namespace CBRE.Editor.Documents
-{
-    public class Document
-    {
+namespace CBRE.Editor.Documents {
+    public class Document {
         public string MapFile { get; set; }
         public string MapFileName { get; set; }
         public Map Map { get; set; }
@@ -51,8 +49,7 @@ namespace CBRE.Editor.Documents
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
 
-        private Document()
-        {
+        private Document() {
             Map = new Map();
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
@@ -60,8 +57,7 @@ namespace CBRE.Editor.Documents
             TextureCollection = new TextureCollection(new List<TexturePackage>());
         }
 
-        public Document(string mapFile, Map map, Game game)
-        {
+        public Document(string mapFile, Map map, Game game) {
             MapFile = mapFile;
             Map = map;
             Game = game;
@@ -80,15 +76,13 @@ namespace CBRE.Editor.Documents
 
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
-            if (Map.GridSpacing <= 0)
-            {
+            if (Map.GridSpacing <= 0) {
                 Map.GridSpacing = Grid.DefaultSize;
             }
 
             GameData = new GameData();
 
-            if (game.OverrideMapSize)
-            {
+            if (game.OverrideMapSize) {
                 GameData.MapSizeLow = game.OverrideMapSizeLow;
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
@@ -111,25 +105,21 @@ namespace CBRE.Editor.Documents
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
 
             // Autosaving
-            if (Game.Autosave)
-            {
+            if (Game.Autosave) {
                 var at = Math.Max(1, Game.AutosaveTime);
                 Scheduler.Schedule(this, Autosave, TimeSpan.FromMinutes(at));
             }
         }
 
-        public void SetMemory<T>(string name, T obj)
-        {
+        public void SetMemory<T>(string name, T obj) {
             _memory.Set(name, obj);
         }
 
-        public T GetMemory<T>(string name, T def = default(T))
-        {
+        public T GetMemory<T>(string name, T def = default(T)) {
             return _memory.Get(name, def);
         }
 
-        public void SetActive()
-        {
+        public void SetActive() {
             if (!CBRE.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
             if (!CBRE.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
 
@@ -143,8 +133,7 @@ namespace CBRE.Editor.Documents
             RenderAll();
         }
 
-        public void SetInactive()
-        {
+        public void SetInactive() {
             if (!CBRE.Settings.View.KeepSelectedTool && ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
             if (!CBRE.Settings.View.KeepCameraPositions) _memory.RememberViewports(ViewportManager.Viewports);
 
@@ -154,40 +143,32 @@ namespace CBRE.Editor.Documents
             _subscriptions.Unsubscribe();
         }
 
-        public void Close()
-        {
+        public void Close() {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
             Renderer.Dispose();
         }
 
-        public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)
-        {
+        public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true) {
             path = forceOverride ? path : path ?? MapFile;
 
-            if (path != null)
-            {
+            if (path != null) {
                 IEnumerable<string> noSaveExtensions = FileTypeRegistration.GetSupportedExtensions().Where(x => !x.CanSave).Select(x => x.Extension);
-                foreach (string ext in noSaveExtensions)
-                {
-                    if (path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
-                    {
+                foreach (string ext in noSaveExtensions) {
+                    if (path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)) {
                         path = null;
                         break;
                     }
                 }
             }
 
-            if (path == null)
-            {
-                using (var sfd = new SaveFileDialog())
-                {
+            if (path == null) {
+                using (var sfd = new SaveFileDialog()) {
                     var filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions()
                         .Where(x => x.CanSave).Select(x => x.Description + " (*" + x.Extension + ")|*" + x.Extension));
                     var all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanSave).Select(x => "*" + x.Extension).ToArray();
                     sfd.Filter = "All supported formats (" + String.Join(", ", all) + ")|" + String.Join(";", all) + "|" + filter;
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
+                    if (sfd.ShowDialog() == DialogResult.OK) {
                         path = sfd.FileName;
                     }
                 }
@@ -196,10 +177,8 @@ namespace CBRE.Editor.Documents
 
             // Save the 3D camera position
             var cam = ViewportManager.Viewports.OfType<Viewport3D>().Select(x => x.Camera).FirstOrDefault();
-            if (cam != null)
-            {
-                if (Map.ActiveCamera == null)
-                {
+            if (cam != null) {
+                if (Map.ActiveCamera == null) {
                     Map.ActiveCamera = !Map.Cameras.Any() ? new Camera { LookPosition = Coordinate.UnitX * Map.GridSpacing * 1.5m } : Map.Cameras.First();
                     if (!Map.Cameras.Contains(Map.ActiveCamera)) Map.Cameras.Add(Map.ActiveCamera);
                 }
@@ -213,8 +192,7 @@ namespace CBRE.Editor.Documents
             }
             Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
             MapProvider.SaveMapToFile(path, Map);
-            if (switchPath)
-            {
+            if (switchPath) {
                 MapFile = path;
                 MapFileName = Path.GetFileName(MapFile);
                 History.TotalActionsSinceLastSave = 0;
@@ -223,30 +201,26 @@ namespace CBRE.Editor.Documents
             return true;
         }
 
-        private string GetAutosaveFormatString()
-        {
+        private string GetAutosaveFormatString() {
             if (MapFile == null || Path.GetFileNameWithoutExtension(MapFile) == null) return null;
             var we = Path.GetFileNameWithoutExtension(MapFile);
             var ex = Path.GetExtension(MapFile);
             return we + ".auto.{0}" + ex;
         }
 
-        private string GetAutosaveFolder()
-        {
+        private string GetAutosaveFolder() {
             if (Game.UseCustomAutosaveDir && System.IO.Directory.Exists(Game.AutosaveDir)) return Game.AutosaveDir;
             if (MapFile == null || Path.GetDirectoryName(MapFile) == null) return null;
             return Path.GetDirectoryName(MapFile);
         }
 
-        public void Autosave()
-        {
+        public void Autosave() {
             if (!Game.Autosave) return;
             var dir = GetAutosaveFolder();
             var fmt = GetAutosaveFormatString();
 
             // Only save on change if the game is configured to do so
-            if (dir != null && fmt != null && (History.TotalActionsSinceLastAutoSave != 0 || !Game.AutosaveOnlyOnChanged))
-            {
+            if (dir != null && fmt != null && (History.TotalActionsSinceLastAutoSave != 0 || !Game.AutosaveOnlyOnChanged)) {
                 var date = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd-hh-mm-ss");
                 var filename = String.Format(fmt, date);
                 if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
@@ -255,11 +229,9 @@ namespace CBRE.Editor.Documents
                 MapProvider.SaveMapToFile(Path.Combine(dir, filename), Map);
 
                 // Delete extra autosaves if there is a limit
-                if (Game.AutosaveLimit > 0)
-                {
+                if (Game.AutosaveLimit > 0) {
                     var asFiles = GetAutosaveFiles(dir);
-                    foreach (var file in asFiles.OrderByDescending(x => x.Value).Skip(Game.AutosaveLimit))
-                    {
+                    foreach (var file in asFiles.OrderByDescending(x => x.Value).Skip(Game.AutosaveLimit)) {
                         if (System.IO.File.Exists(file.Key)) System.IO.File.Delete(file.Key);
                     }
                 }
@@ -268,8 +240,7 @@ namespace CBRE.Editor.Documents
                 Mediator.Publish(EditorMediator.FileAutosaved, this);
                 History.TotalActionsSinceLastAutoSave = 0;
 
-                if (Game.AutosaveTriggerFileSave && MapFile != null)
-                {
+                if (Game.AutosaveTriggerFileSave && MapFile != null) {
                     SaveFile();
                 }
             }
@@ -279,15 +250,13 @@ namespace CBRE.Editor.Documents
             Scheduler.Schedule(this, Autosave, TimeSpan.FromMinutes(at));
         }
 
-        public Dictionary<string, DateTime> GetAutosaveFiles(string dir)
-        {
+        public Dictionary<string, DateTime> GetAutosaveFiles(string dir) {
             var ret = new Dictionary<string, DateTime>();
             var fs = GetAutosaveFormatString();
             if (fs == null || dir == null) return ret;
             // Search for matching files
             var files = System.IO.Directory.GetFiles(dir, String.Format(fs, "*"));
-            foreach (var file in files)
-            {
+            foreach (var file in files) {
                 // Match the date portion with a regex
                 var re = Regex.Escape(fs.Replace("{0}", ":")).Replace(":", "{0}");
                 var regex = String.Format(re, "(\\d{4})-(\\d{2})-(\\d{2})-(\\d{2})-(\\d{2})-(\\d{2})");
@@ -302,16 +271,14 @@ namespace CBRE.Editor.Documents
                                                              match.Groups[5].Value, match.Groups[6].Value),
                                                              CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal,
                                                              out date);
-                if (result)
-                {
+                if (result) {
                     ret.Add(file, date);
                 }
             }
             return ret;
         }
 
-        public Coordinate Snap(Coordinate c, decimal spacing = 0)
-        {
+        public Coordinate Snap(Coordinate c, decimal spacing = 0) {
             if (!Map.SnapToGrid) return c;
 
             var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
@@ -325,19 +292,14 @@ namespace CBRE.Editor.Documents
         /// </summary>
         /// <param name="name">The name of the action, for history purposes</param>
         /// <param name="action">The action to perform</param>
-        public void PerformAction(string name, IAction action)
-        {
-            try
-            {
+        public void PerformAction(string name, IAction action) {
+            try {
                 action.Perform(this);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 var st = new StackTrace();
                 var frames = st.GetFrames() ?? new StackFrame[0];
                 var msg = "Action exception: " + name + " (" + action + ")";
-                foreach (var frame in frames)
-                {
+                foreach (var frame in frames) {
                     var method = frame.GetMethod();
                     msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
                 }
@@ -350,33 +312,27 @@ namespace CBRE.Editor.Documents
 
         public Matrix4 SelectListTransform { get; private set; }
 
-        public void SetSelectListTransform(Matrix4 matrix)
-        {
+        public void SetSelectListTransform(Matrix4 matrix) {
             SelectListTransform = matrix;
             Renderer.SetSelectionTransform(matrix);
         }
 
-        public void EndSelectionTransform()
-        {
+        public void EndSelectionTransform() {
             SelectListTransform = Matrix4.Identity;
             Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
-        public ITexture GetTexture(string name)
-        {
-            if (!TextureHelper.Exists(name))
-            {
+        public ITexture GetTexture(string name) {
+            if (!TextureHelper.Exists(name)) {
                 var ti = TextureCollection.GetItem(name);
-                if (ti != null)
-                {
+                if (ti != null) {
                     TextureProvider.LoadTextureItem(ti);
                 }
             }
             return TextureHelper.Get(name);
         }
 
-        public void RenderAll()
-        {
+        public void RenderAll() {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
 
             var decalsUpdated = Map.UpdateDecals(this);
@@ -389,14 +345,12 @@ namespace CBRE.Editor.Documents
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void RenderSelection(IEnumerable<MapObject> objects)
-        {
+        public void RenderSelection(IEnumerable<MapObject> objects) {
             Renderer.UpdateSelection(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void RenderObjects(IEnumerable<MapObject> objects)
-        {
+        public void RenderObjects(IEnumerable<MapObject> objects) {
             var objs = objects.ToList();
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
 
@@ -414,8 +368,7 @@ namespace CBRE.Editor.Documents
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void RenderFaces(IEnumerable<Face> faces)
-        {
+        public void RenderFaces(IEnumerable<Face> faces) {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             // No need to update decals or models here: they can only be changed via entity properties
             HelperManager.UpdateCache();
@@ -423,8 +376,7 @@ namespace CBRE.Editor.Documents
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void Make3D(ViewportBase viewport, Viewport3D.ViewType type)
-        {
+        public void Make3D(ViewportBase viewport, Viewport3D.ViewType type) {
             var vp = ViewportManager.Make3D(viewport, type);
             vp.RenderContext.Add(new WidgetLinesRenderable());
             Renderer.Register(new[] { vp });
@@ -433,8 +385,7 @@ namespace CBRE.Editor.Documents
             Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
         }
 
-        public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
-        {
+        public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction) {
             var vp = ViewportManager.Make2D(viewport, direction);
             Renderer.Register(new[] { vp });
             vp.RenderContext.Add(new ToolRenderable());
@@ -442,13 +393,11 @@ namespace CBRE.Editor.Documents
             Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
         }
 
-        public IEnumerable<string> GetUsedTextures()
-        {
+        public IEnumerable<string> GetUsedTextures() {
             return Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct();
         }
 
-        public IEnumerable<TexturePackage> GetUsedTexturePackages()
-        {
+        public IEnumerable<TexturePackage> GetUsedTexturePackages() {
             var used = GetUsedTextures().ToList();
             return TextureCollection.Packages.Where(x => used.Any(x.HasTexture));
         }

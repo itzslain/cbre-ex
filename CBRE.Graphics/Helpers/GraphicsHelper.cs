@@ -1,12 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 
-namespace CBRE.Graphics.Helpers
-{
-    public class GraphicsHelper
-    {
-        public static void InitGL3D()
-        {
+namespace CBRE.Graphics.Helpers {
+    public class GraphicsHelper {
+        public static void InitGL3D() {
             GL.ClearColor(Color.Black);
 
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
@@ -23,8 +20,7 @@ namespace CBRE.Graphics.Helpers
             TextureHelper.EnableTexturing();
         }
 
-        public static void InitGL2D()
-        {
+        public static void InitGL2D() {
             GL.ClearColor(Color.Black);
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);
@@ -33,13 +29,11 @@ namespace CBRE.Graphics.Helpers
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
         }
 
-        public static void DisableDepthTesting()
-        {
+        public static void DisableDepthTesting() {
             GL.Disable(EnableCap.DepthTest);
         }
 
-        public static void EnableDepthTesting()
-        {
+        public static void EnableDepthTesting() {
             GL.Enable(EnableCap.DepthTest);
         }
     }

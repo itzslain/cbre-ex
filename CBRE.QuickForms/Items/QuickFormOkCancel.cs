@@ -3,24 +3,20 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items
-{
+namespace CBRE.QuickForms.Items {
     /// <summary>
     /// A control that shows OK and Cancel buttons.
     /// </summary>
-    public class QuickFormOkCancel : QuickFormItem
-    {
+    public class QuickFormOkCancel : QuickFormItem {
         private readonly Action<QuickForm> _okevent;
         private readonly Action<QuickForm> _cancelevent;
 
-        public QuickFormOkCancel(Action<QuickForm> ok, Action<QuickForm> cancel)
-        {
+        public QuickFormOkCancel(Action<QuickForm> ok, Action<QuickForm> cancel) {
             _okevent = ok;
             _cancelevent = cancel;
         }
 
-        public override List<Control> GetControls(QuickForm qf)
-        {
+        public override List<Control> GetControls(QuickForm qf) {
             var controls = new List<Control>();
 
             var b1 = new Button();

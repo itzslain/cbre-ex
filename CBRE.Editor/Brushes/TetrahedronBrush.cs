@@ -5,31 +5,25 @@ using CBRE.Editor.Brushes.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Brushes
-{
-    public class TetrahedronBrush : IBrush
-    {
+namespace CBRE.Editor.Brushes {
+    public class TetrahedronBrush : IBrush {
         private readonly BooleanControl _useCentroid;
 
-        public TetrahedronBrush()
-        {
+        public TetrahedronBrush() {
             _useCentroid = new BooleanControl(this) { LabelText = "Top vertex at centroid", Checked = false };
         }
 
-        public string Name
-        {
+        public string Name {
             get { return "Tetrahedron"; }
         }
 
         public bool CanRound { get { return true; } }
 
-        public IEnumerable<BrushControl> GetControls()
-        {
+        public IEnumerable<BrushControl> GetControls() {
             yield return _useCentroid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
-        {
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals) {
             var useCentroid = _useCentroid.GetValue();
 
             // The lower Z plane will be the triangle, with the lower Y value getting the two corners
@@ -47,10 +41,8 @@ namespace CBRE.Editor.Brushes
             };
 
             var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
-            foreach (var arr in faces)
-            {
-                var face = new Face(generator.GetNextFaceID())
-                {
+            foreach (var arr in faces) {
+                var face = new Face(generator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,

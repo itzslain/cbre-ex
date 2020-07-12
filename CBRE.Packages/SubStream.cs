@@ -1,22 +1,17 @@
 using System;
 using System.IO;
 
-namespace CBRE.Packages
-{
-    internal class SubStream : Stream
-    {
-        public override bool CanRead
-        {
+namespace CBRE.Packages {
+    internal class SubStream : Stream {
+        public override bool CanRead {
             get { return true; }
         }
 
-        public override bool CanSeek
-        {
+        public override bool CanSeek {
             get { return true; }
         }
 
-        public override bool CanWrite
-        {
+        public override bool CanWrite {
             get { return false; }
         }
 
@@ -29,18 +24,15 @@ namespace CBRE.Packages
         private long _offset;
         private long _length;
 
-        public SubStream(Stream stream, long offset, long length)
-        {
+        public SubStream(Stream stream, long offset, long length) {
             _stream = stream;
             _offset = offset;
             _length = length;
             CloseParentOnDispose = false;
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            switch (origin)
-            {
+        public override long Seek(long offset, SeekOrigin origin) {
+            switch (origin) {
                 case SeekOrigin.Begin:
                     Position = offset;
                     break;
@@ -56,10 +48,8 @@ namespace CBRE.Packages
             return Position;
         }
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            lock (_stream)
-            {
+        public override int Read(byte[] buffer, int offset, int count) {
+            lock (_stream) {
                 var pos = _stream.Position;
                 _stream.Position = _offset + Position;
                 count = (int)Math.Min(count, _length - Position);
@@ -70,25 +60,21 @@ namespace CBRE.Packages
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
             if (disposing && CloseParentOnDispose) _stream.Dispose();
             base.Dispose(disposing);
         }
 
         //
-        public override void Flush()
-        {
+        public override void Flush() {
             throw new NotImplementedException();
         }
 
-        public override void SetLength(long value)
-        {
+        public override void SetLength(long value) {
             throw new NotImplementedException();
         }
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
+        public override void Write(byte[] buffer, int offset, int count) {
             throw new NotImplementedException();
         }
     }

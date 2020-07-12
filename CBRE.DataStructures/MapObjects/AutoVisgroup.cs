@@ -2,19 +2,15 @@ using CBRE.DataStructures.MapObjects.VisgroupFilters;
 using System;
 using System.Linq;
 
-namespace CBRE.DataStructures.MapObjects
-{
-    public class AutoVisgroup : Visgroup
-    {
+namespace CBRE.DataStructures.MapObjects {
+    public class AutoVisgroup : Visgroup {
         public bool IsHidden { get; set; }
         public Func<MapObject, bool> Filter { get; set; }
 
         public override bool IsAutomatic { get { return true; } }
 
-        public override Visgroup Clone()
-        {
-            return new AutoVisgroup
-            {
+        public override Visgroup Clone() {
+            return new AutoVisgroup {
                 ID = ID,
                 Name = Name,
                 Visible = Visible,
@@ -25,28 +21,23 @@ namespace CBRE.DataStructures.MapObjects
             };
         }
 
-        public static AutoVisgroup GetDefaultAutoVisgroup()
-        {
+        public static AutoVisgroup GetDefaultAutoVisgroup() {
             var filters = typeof(IVisgroupFilter).Assembly.GetTypes()
                 .Where(x => typeof(IVisgroupFilter).IsAssignableFrom(x))
                 .Where(x => !x.IsInterface)
                 .Select(Activator.CreateInstance)
                 .OfType<IVisgroupFilter>();
             var i = -1;
-            var auto = new AutoVisgroup
-            {
+            var auto = new AutoVisgroup {
                 ID = i--,
                 IsHidden = false,
                 Name = "Auto",
                 Visible = true
             };
-            foreach (var f in filters)
-            {
+            foreach (var f in filters) {
                 var parent = auto.Children.OfType<AutoVisgroup>().FirstOrDefault(x => x.Name == f.Group);
-                if (parent == null)
-                {
-                    parent = new AutoVisgroup
-                    {
+                if (parent == null) {
+                    parent = new AutoVisgroup {
                         ID = i--,
                         IsHidden = false,
                         Name = f.Group,
@@ -55,8 +46,7 @@ namespace CBRE.DataStructures.MapObjects
                     };
                     auto.Children.Add(parent);
                 }
-                var vg = new AutoVisgroup
-                {
+                var vg = new AutoVisgroup {
                     ID = i--,
                     Filter = f.IsMatch,
                     IsHidden = false,

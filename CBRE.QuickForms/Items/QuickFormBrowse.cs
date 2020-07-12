@@ -2,23 +2,19 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items
-{
+namespace CBRE.QuickForms.Items {
     /// <summary>
     /// A control that shows a text box and a browse button for file selection.
     /// </summary>
-    public class QuickFormBrowse : QuickFormItem
-    {
+    public class QuickFormBrowse : QuickFormItem {
         private readonly string _filter;
 
-        public QuickFormBrowse(string tbname, string filter)
-        {
+        public QuickFormBrowse(string tbname, string filter) {
             Name = tbname;
             _filter = filter;
         }
 
-        public override List<Control> GetControls(QuickForm qf)
-        {
+        public override List<Control> GetControls(QuickForm qf) {
             var controls = new List<Control>();
 
             var l = new Label { Text = Name };
@@ -47,12 +43,9 @@ namespace CBRE.QuickForms.Items
             return controls;
         }
 
-        private void ShowBrowseDialog(Control textBox)
-        {
-            using (var ofd = new OpenFileDialog { Filter = _filter, FileName = textBox.Text })
-            {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
+        private void ShowBrowseDialog(Control textBox) {
+            using (var ofd = new OpenFileDialog { Filter = _filter, FileName = textBox.Text }) {
+                if (ofd.ShowDialog() == DialogResult.OK) {
                     textBox.Text = ofd.FileName;
                 }
             }

@@ -4,11 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Geometric
-{
+namespace CBRE.DataStructures.Geometric {
     [Serializable]
-    public class Coordinate : ISerializable
-    {
+    public class Coordinate : ISerializable {
         public readonly static Coordinate MaxValue = new Coordinate(Decimal.MaxValue, Decimal.MaxValue, Decimal.MaxValue);
         public readonly static Coordinate MinValue = new Coordinate(Decimal.MinValue, Decimal.MinValue, Decimal.MinValue);
         public readonly static Coordinate Zero = new Coordinate(0, 0, 0);
@@ -26,69 +24,56 @@ namespace CBRE.DataStructures.Geometric
         private double _dy;
         private double _dz;
 
-        public decimal X
-        {
+        public decimal X {
             get { return _x; }
-            set
-            {
+            set {
                 _x = value;
                 _dx = (double)value;
             }
         }
 
-        public decimal Y
-        {
+        public decimal Y {
             get { return _y; }
-            set
-            {
+            set {
                 _y = value;
                 _dy = (double)value;
             }
         }
 
-        public decimal Z
-        {
+        public decimal Z {
             get { return _z; }
-            set
-            {
+            set {
                 _z = value;
                 _dz = (double)value;
             }
         }
 
-        public double DX
-        {
+        public double DX {
             get { return _dx; }
-            set
-            {
+            set {
                 _dx = value;
                 _x = (decimal)value;
             }
         }
 
-        public double DY
-        {
+        public double DY {
             get { return _dy; }
-            set
-            {
+            set {
                 _dy = value;
                 _y = (decimal)value;
             }
         }
 
-        public double DZ
-        {
+        public double DZ {
             get { return _dz; }
-            set
-            {
+            set {
                 _dz = value;
                 _z = (decimal)value;
             }
         }
         #endregion
 
-        public Coordinate(decimal x, decimal y, decimal z)
-        {
+        public Coordinate(decimal x, decimal y, decimal z) {
             _x = x;
             _y = y;
             _z = z;
@@ -97,8 +82,7 @@ namespace CBRE.DataStructures.Geometric
             _dz = (double)z;
         }
 
-        public Coordinate(CoordinateF other)
-        {
+        public Coordinate(CoordinateF other) {
             _x = (decimal)other.X;
             _y = (decimal)other.Y;
             _z = (decimal)other.Z;
@@ -107,46 +91,39 @@ namespace CBRE.DataStructures.Geometric
             _dy = other.Z;
         }
 
-        protected Coordinate(SerializationInfo info, StreamingContext context)
-        {
+        protected Coordinate(SerializationInfo info, StreamingContext context) {
             X = info.GetDecimal("X");
             Y = info.GetDecimal("Y");
             Z = info.GetDecimal("Z");
         }
 
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("X", X);
             info.AddValue("Y", Y);
             info.AddValue("Z", Z);
         }
 
-        public bool EquivalentTo(Coordinate test, decimal delta = 0.0001m)
-        {
+        public bool EquivalentTo(Coordinate test, decimal delta = 0.0001m) {
             var xd = Math.Abs(_x - test._x);
             var yd = Math.Abs(_y - test._y);
             var zd = Math.Abs(_z - test._z);
             return (xd < delta) && (yd < delta) && (zd < delta);
         }
 
-        public bool Equals(Coordinate other)
-        {
+        public bool Equals(Coordinate other) {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return EquivalentTo(other);
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == typeof(Coordinate) && Equals((Coordinate)obj);
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
+        public override int GetHashCode() {
+            unchecked {
                 var result = _x.GetHashCode();
                 result = (result * 397) ^ _y.GetHashCode();
                 result = (result * 397) ^ _z.GetHashCode();
@@ -154,26 +131,22 @@ namespace CBRE.DataStructures.Geometric
             }
         }
 
-        public decimal Dot(Coordinate c)
-        {
+        public decimal Dot(Coordinate c) {
             return ((_x * c._x) + (_y * c._y) + (_z * c._z));
         }
 
-        public Coordinate Cross(Coordinate that)
-        {
+        public Coordinate Cross(Coordinate that) {
             var xv = (_y * that._z) - (_z * that._y);
             var yv = (_z * that._x) - (_x * that._z);
             var zv = (_x * that._y) - (_y * that._x);
             return new Coordinate(xv, yv, zv);
         }
 
-        public Coordinate Round(int num = 8)
-        {
+        public Coordinate Round(int num = 8) {
             return new Coordinate(Math.Round(_x, num), Math.Round(_y, num), Math.Round(_z, num));
         }
 
-        public Coordinate Snap(decimal snapTo)
-        {
+        public Coordinate Snap(decimal snapTo) {
             return new Coordinate(
                 Math.Round(_x / snapTo) * snapTo,
                 Math.Round(_y / snapTo) * snapTo,
@@ -181,74 +154,60 @@ namespace CBRE.DataStructures.Geometric
             );
         }
 
-        public decimal VectorMagnitude()
-        {
+        public decimal VectorMagnitude() {
             return (decimal)Math.Sqrt(Math.Pow(_dx, 2) + Math.Pow(_dy, 2) + Math.Pow(_dz, 2));
         }
 
-        public decimal LengthSquared()
-        {
+        public decimal LengthSquared() {
             return (decimal)(Math.Pow(_dx, 2) + Math.Pow(_dy, 2) + Math.Pow(_dz, 2));
         }
 
-        public Coordinate Normalise()
-        {
+        public Coordinate Normalise() {
             var len = VectorMagnitude();
             return len == 0 ? new Coordinate(0, 0, 0) : new Coordinate(_x / len, _y / len, _z / len);
         }
 
-        public Coordinate Absolute()
-        {
+        public Coordinate Absolute() {
             return new Coordinate(Math.Abs(_x), Math.Abs(_y), Math.Abs(_z));
         }
 
-        public static bool operator ==(Coordinate c1, Coordinate c2)
-        {
+        public static bool operator ==(Coordinate c1, Coordinate c2) {
             return Equals(c1, null) ? Equals(c2, null) : c1.Equals(c2);
         }
 
-        public static bool operator !=(Coordinate c1, Coordinate c2)
-        {
+        public static bool operator !=(Coordinate c1, Coordinate c2) {
             return Equals(c1, null) ? !Equals(c2, null) : !c1.Equals(c2);
         }
 
-        public static Coordinate operator +(Coordinate c1, Coordinate c2)
-        {
+        public static Coordinate operator +(Coordinate c1, Coordinate c2) {
             return new Coordinate(c1._x + c2._x, c1._y + c2._y, c1._z + c2._z);
         }
 
-        public static Coordinate operator -(Coordinate c1, Coordinate c2)
-        {
+        public static Coordinate operator -(Coordinate c1, Coordinate c2) {
             return new Coordinate(c1._x - c2._x, c1._y - c2._y, c1._z - c2._z);
         }
 
-        public static Coordinate operator -(Coordinate c1)
-        {
+        public static Coordinate operator -(Coordinate c1) {
             return new Coordinate(-c1._x, -c1._y, -c1._z);
         }
 
-        public static Coordinate operator /(Coordinate c, decimal f)
-        {
+        public static Coordinate operator /(Coordinate c, decimal f) {
             return f == 0 ? new Coordinate(0, 0, 0) : new Coordinate(c._x / f, c._y / f, c._z / f);
         }
 
-        public static Coordinate operator *(Coordinate c, decimal f)
-        {
+        public static Coordinate operator *(Coordinate c, decimal f) {
             return new Coordinate(c._x * f, c._y * f, c._z * f);
         }
 
-        public static Coordinate operator *(decimal f, Coordinate c)
-        {
+        public static Coordinate operator *(decimal f, Coordinate c) {
             return c * f;
         }
 
-        public Coordinate ComponentMultiply(Coordinate c)
-        {
+        public Coordinate ComponentMultiply(Coordinate c) {
             return new Coordinate(_x * c._x, _y * c._y, _z * c._z);
         }
 
-        public Coordinate ComponentDivide(Coordinate c)
-        {
+        public Coordinate ComponentDivide(Coordinate c) {
             var x = c._x == 0 ? 1 : c._x;
             var y = c._y == 0 ? 1 : c._y;
             var z = c._z == 0 ? 1 : c._z;
@@ -259,23 +218,21 @@ namespace CBRE.DataStructures.Geometric
         /// Treats this vector as a directional unit vector and constructs a euler angle representation of that angle (in radians)
         /// </summary>
         /// <returns></returns>
-        public Coordinate ToEulerAngles()
-        {
+        public Coordinate ToEulerAngles() {
             // http://www.gamedev.net/topic/399701-convert-vector-to-euler-cardan-angles/#entry3651854
             var yaw = DMath.Atan2(_y, _x);
             var pitch = DMath.Atan2(-_z, DMath.Sqrt(_x * _x + _y * _y));
             return new Coordinate(0, pitch, yaw); // HL FGD has X = roll, Y = pitch, Z = yaw
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return "(" + _x.ToString("0.0000") + " " + _y.ToString("0.0000") + " " + _z.ToString("0.0000") + ")";
         }
 
         public string ToDataString() {
             Func<decimal, string> toStringNoTrailing = (v) => {
                 string retVal = v.ToString("F7");
-                while (retVal.Contains('.') && (retVal.Last()=='0' || retVal.Last() == '.')) {
+                while (retVal.Contains('.') && (retVal.Last() == '0' || retVal.Last() == '.')) {
                     retVal = retVal.Substring(0, retVal.Length - 1);
                 }
                 return retVal;
@@ -283,19 +240,16 @@ namespace CBRE.DataStructures.Geometric
             return toStringNoTrailing(_x) + " " + toStringNoTrailing(_y) + " " + toStringNoTrailing(_z);
         }
 
-        public Coordinate Clone()
-        {
+        public Coordinate Clone() {
             return new Coordinate(_x, _y, _z);
         }
 
-        public static Coordinate Parse(string x, string y, string z)
-        {
+        public static Coordinate Parse(string x, string y, string z) {
             const NumberStyles ns = NumberStyles.Float;
             return new Coordinate(decimal.Parse(x, ns), decimal.Parse(y, ns), decimal.Parse(z, ns));
         }
 
-        public CoordinateF ToCoordinateF()
-        {
+        public CoordinateF ToCoordinateF() {
             return new CoordinateF((float)_dx, (float)_dy, (float)_dz);
         }
     }

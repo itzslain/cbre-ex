@@ -3,18 +3,14 @@ using CBRE.DataStructures.Geometric;
 using System;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.MapObjects
-{
+namespace CBRE.DataStructures.MapObjects {
     [Serializable]
-    public class TextureReference : ISerializable
-    {
+    public class TextureReference : ISerializable {
         public string Name { get; set; }
         private ITexture _texture;
-        public ITexture Texture
-        {
+        public ITexture Texture {
             get { return _texture; }
-            set
-            {
+            set {
                 _texture = value;
                 Name = _texture == null ? Name : _texture.Name;
             }
@@ -23,15 +19,13 @@ namespace CBRE.DataStructures.MapObjects
         public decimal Rotation { get; set; }
 
         private Coordinate _uAxis;
-        public Coordinate UAxis
-        {
+        public Coordinate UAxis {
             get { return _uAxis; }
             set { _uAxis = value.Normalise(); }
         }
 
         private Coordinate _vAxis;
-        public Coordinate VAxis
-        {
+        public Coordinate VAxis {
             get { return _vAxis; }
             set { _vAxis = value.Normalise(); }
         }
@@ -42,8 +36,7 @@ namespace CBRE.DataStructures.MapObjects
         public decimal YShift { get; set; }
         public decimal YScale { get; set; }
 
-        public TextureReference()
-        {
+        public TextureReference() {
             Name = "";
             Texture = null;
             Rotation = 0;
@@ -53,8 +46,7 @@ namespace CBRE.DataStructures.MapObjects
             XScale = YScale = 1;
         }
 
-        protected TextureReference(SerializationInfo info, StreamingContext context)
-        {
+        protected TextureReference(SerializationInfo info, StreamingContext context) {
             Name = info.GetString("Name");
             Rotation = info.GetInt32("Rotation");
             _uAxis = (Coordinate)info.GetValue("UAxis", typeof(Coordinate));
@@ -65,8 +57,7 @@ namespace CBRE.DataStructures.MapObjects
             YScale = info.GetDecimal("YScale");
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("Name", Name);
             info.AddValue("Rotation", Rotation);
             info.AddValue("UAxis", _uAxis);
@@ -77,15 +68,12 @@ namespace CBRE.DataStructures.MapObjects
             info.AddValue("YScale", YScale);
         }
 
-        public Coordinate GetNormal()
-        {
+        public Coordinate GetNormal() {
             return UAxis.Cross(VAxis).Normalise();
         }
 
-        public TextureReference Clone()
-        {
-            return new TextureReference
-            {
+        public TextureReference Clone() {
+            return new TextureReference {
                 Name = Name,
                 Texture = Texture,
                 Rotation = Rotation,

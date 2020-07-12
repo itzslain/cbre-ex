@@ -7,10 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace CBRE.Settings
-{
-    public static class SettingsManager
-    {
+namespace CBRE.Settings {
+    public static class SettingsManager {
         public static Build Build { get; private set; }
         public static Game Game { get; private set; }
         public static List<RecentFile> RecentFiles { get; set; }
@@ -21,8 +19,7 @@ namespace CBRE.Settings
 
         public static string SettingsFile { get; set; }
 
-        static SettingsManager()
-        {
+        static SettingsManager() {
             Build = new Build();
             Game = new Game();
             RecentFiles = new List<RecentFile>();
@@ -51,8 +48,7 @@ namespace CBRE.Settings
             SettingsFile = Path.Combine(sledge, "Settings.vdf");
         }
 
-        public static string GetTextureCachePath()
-        {
+        public static string GetTextureCachePath() {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var sledge = Path.Combine(appdata, "CBRE");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
@@ -61,12 +57,10 @@ namespace CBRE.Settings
             return cache;
         }
 
-        public static float GetSpecialTextureOpacity(string name)
-        {
+        public static float GetSpecialTextureOpacity(string name) {
             name = name.ToLowerInvariant();
             var val = SpecialTextureOpacities.ContainsKey(name) ? SpecialTextureOpacities[name] : 1;
-            if (View.DisableToolTextureTransparency || View.GloballyDisableTransparency)
-            {
+            if (View.DisableToolTextureTransparency || View.GloballyDisableTransparency) {
                 return val < 0.1 ? 0 : 1;
             }
             return val;
@@ -74,8 +68,7 @@ namespace CBRE.Settings
 
         private static readonly IDictionary<string, float> SpecialTextureOpacities;
 
-        private static GenericStructure ReadSettingsFile()
-        {
+        private static GenericStructure ReadSettingsFile() {
             if (File.Exists(SettingsFile)) return GenericStructure.Parse(SettingsFile).FirstOrDefault();
 
             var exec = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -85,8 +78,7 @@ namespace CBRE.Settings
             return null;
         }
 
-        public static void Read()
-        {
+        public static void Read() {
             RecentFiles.Clear();
             Settings.Clear();
             Hotkeys.Clear();
@@ -98,30 +90,23 @@ namespace CBRE.Settings
             if (root == null) return;
 
             var settings = root.Children.FirstOrDefault(x => x.Name == "Settings");
-            if (settings != null)
-            {
-                foreach (var key in settings.GetPropertyKeys())
-                {
+            if (settings != null) {
+                foreach (var key in settings.GetPropertyKeys()) {
                     Settings.Add(new Setting { Key = key, Value = settings[key] });
                 }
             }
             var recents = root.Children.FirstOrDefault(x => x.Name == "RecentFiles");
-            if (recents != null)
-            {
-                foreach (var key in recents.GetPropertyKeys())
-                {
+            if (recents != null) {
+                foreach (var key in recents.GetPropertyKeys()) {
                     int i;
-                    if (int.TryParse(key, out i))
-                    {
+                    if (int.TryParse(key, out i)) {
                         RecentFiles.Add(new RecentFile { Location = recents[key], Order = i });
                     }
                 }
             }
             var hotkeys = root.Children.FirstOrDefault(x => x.Name == "Hotkeys");
-            if (hotkeys != null)
-            {
-                foreach (var key in hotkeys.GetPropertyKeys())
-                {
+            if (hotkeys != null) {
+                foreach (var key in hotkeys.GetPropertyKeys()) {
                     var spl = key.Split(':');
                     Hotkeys.Add(new Hotkey { ID = spl[0], HotkeyString = hotkeys[key] });
                 }
@@ -131,42 +116,32 @@ namespace CBRE.Settings
             CBRE.Settings.Hotkeys.SetupHotkeys(Hotkeys);
 
             var additionalSettings = root.Children.FirstOrDefault(x => x.Name == "AdditionalSettings");
-            if (additionalSettings != null)
-            {
-                foreach (var child in additionalSettings.Children)
-                {
+            if (additionalSettings != null) {
+                foreach (var child in additionalSettings.Children) {
                     if (child.Children.Count > 0) AdditionalSettings.Add(child.Name, child.Children[0]);
                 }
             }
 
             var favTextures = root.Children.FirstOrDefault(x => x.Name == "FavouriteTextures");
-            if (favTextures != null && favTextures.Children.Any())
-            {
-                try
-                {
+            if (favTextures != null && favTextures.Children.Any()) {
+                try {
                     var ft = GenericStructure.Deserialise<List<FavouriteTextureFolder>>(favTextures.Children[0]);
                     if (ft != null) FavouriteTextureFolders.AddRange(ft);
                     FixFavouriteNames(FavouriteTextureFolders);
-                }
-                catch
-                {
+                } catch {
                     // Nope
                 }
             }
 
-            if (!File.Exists(SettingsFile))
-            {
+            if (!File.Exists(SettingsFile)) {
                 Write();
             }
         }
 
-        private static void FixFavouriteNames(IEnumerable<FavouriteTextureFolder> folders)
-        {
-            foreach (var f in folders)
-            {
+        private static void FixFavouriteNames(IEnumerable<FavouriteTextureFolder> folders) {
+            foreach (var f in folders) {
                 FixFavouriteNames(f.Children);
-                f.Items = f.Items.Select(x =>
-                {
+                f.Items = f.Items.Select(x => {
                     var i = x.IndexOf(':');
                     if (i >= 0) x = x.Substring(i + 1);
                     return x;
@@ -174,8 +149,7 @@ namespace CBRE.Settings
             }
         }
 
-        public static void Write()
-        {
+        public static void Write() {
             var newSettings = Serialise.SerialiseSettings().Select(s => new Setting { Key = s.Key, Value = s.Value });
             Settings.Clear();
             Settings.AddRange(newSettings);
@@ -184,8 +158,7 @@ namespace CBRE.Settings
 
             // Settings
             var settings = new GenericStructure("Settings");
-            foreach (var setting in Settings)
-            {
+            foreach (var setting in Settings) {
                 settings.AddProperty(setting.Key, setting.Value);
             }
             root.Children.Add(settings);
@@ -193,8 +166,7 @@ namespace CBRE.Settings
             // Recent Files
             var recents = new GenericStructure("RecentFiles");
             var i = 1;
-            foreach (var file in RecentFiles.OrderBy(x => x.Order).Select(x => x.Location).Where(File.Exists))
-            {
+            foreach (var file in RecentFiles.OrderBy(x => x.Order).Select(x => x.Location).Where(File.Exists)) {
                 recents.AddProperty(i.ToString(), file);
                 i++;
             }
@@ -203,11 +175,9 @@ namespace CBRE.Settings
             // Hotkeys
             Hotkeys = CBRE.Settings.Hotkeys.GetHotkeys().ToList();
             var hotkeys = new GenericStructure("Hotkeys");
-            foreach (var g in Hotkeys.GroupBy(x => x.ID))
-            {
+            foreach (var g in Hotkeys.GroupBy(x => x.ID)) {
                 var count = 0;
-                foreach (var hotkey in g)
-                {
+                foreach (var hotkey in g) {
                     hotkeys.AddProperty(hotkey.ID + ":" + count, hotkey.HotkeyString);
                     count++;
                 }
@@ -216,8 +186,7 @@ namespace CBRE.Settings
 
             // Additional
             var additional = new GenericStructure("AdditionalSettings");
-            foreach (var kv in AdditionalSettings)
-            {
+            foreach (var kv in AdditionalSettings) {
                 var child = new GenericStructure(kv.Key);
                 child.Children.Add(kv.Value);
                 additional.Children.Add(child);
@@ -232,52 +201,43 @@ namespace CBRE.Settings
             File.WriteAllText(SettingsFile, root.ToString());
         }
 
-        private static string GetSessionFile()
-        {
+        private static string GetSessionFile() {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var sledge = Path.Combine(appdata, "CBRE");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             return Path.Combine(sledge, "session");
         }
 
-        public static void SaveSession(IEnumerable<Tuple<string, Game>> files)
-        {
+        public static void SaveSession(IEnumerable<Tuple<string, Game>> files) {
             File.WriteAllLines(GetSessionFile(), files.Select(x => x.Item1 + ":" + x.Item2.ID));
         }
 
-        public static IEnumerable<string> LoadSession()
-        {
+        public static IEnumerable<string> LoadSession() {
             var sf = GetSessionFile();
             if (!File.Exists(sf)) return new List<string>();
             return File.ReadAllLines(sf)
-                .Select(x =>
-                            {
-                                var i = x.LastIndexOf(":", StringComparison.Ordinal);
-                                var file = x.Substring(0, i);
-                                var num = x.Substring(i + 1);
-                                int id;
-                                int.TryParse(num, out id);
-                                return file;
-                            })
+                .Select(x => {
+                    var i = x.LastIndexOf(":", StringComparison.Ordinal);
+                    var file = x.Substring(0, i);
+                    var num = x.Substring(i + 1);
+                    int id;
+                    int.TryParse(num, out id);
+                    return file;
+                })
                 .Where(x => File.Exists(x));
         }
 
-        public static T GetAdditionalData<T>(string key)
-        {
+        public static T GetAdditionalData<T>(string key) {
             if (!AdditionalSettings.ContainsKey(key)) return default(T);
             var additional = AdditionalSettings[key];
-            try
-            {
+            try {
                 return GenericStructure.Deserialise<T>(additional);
-            }
-            catch
-            {
+            } catch {
                 return default(T); // Deserialisation failure
             }
         }
 
-        public static void SetAdditionalData<T>(string key, T obj)
-        {
+        public static void SetAdditionalData<T>(string key, T obj) {
             if (AdditionalSettings.ContainsKey(key)) AdditionalSettings.Remove(key);
             AdditionalSettings.Add(key, GenericStructure.Serialise(obj));
         }

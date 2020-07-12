@@ -1,7 +1,5 @@
-namespace CBRE.DataStructures
-{
-    public enum PlaneClassification
-    {
+﻿namespace CBRE.DataStructures {
+    public enum PlaneClassification {
         Front,
         Back,
         OnPlane,

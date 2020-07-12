@@ -7,43 +7,33 @@ using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Rendering.Arrays
-{
-    public class ModelArray : VBO<Model, MapObjectVertex>
-    {
+namespace CBRE.Editor.Rendering.Arrays {
+    public class ModelArray : VBO<Model, MapObjectVertex> {
         private const int Textured = 0;
 
         public ModelArray(Model model)
-            : base(new[] { model })
-        {
+            : base(new[] { model }) {
         }
 
-        public void RenderTextured(IGraphicsContext context)
-        {
-            foreach (var subset in GetSubsets<ITexture>(Textured))
-            {
+        public void RenderTextured(IGraphicsContext context) {
+            foreach (var subset in GetSubsets<ITexture>(Textured)) {
                 ((ITexture)subset.Instance).Bind();
                 Render(context, PrimitiveType.Triangles, subset);
             }
         }
 
-        protected override void CreateArray(IEnumerable<Model> objects)
-        {
-            foreach (var model in objects)
-            {
+        protected override void CreateArray(IEnumerable<Model> objects) {
+            foreach (var model in objects) {
                 PushOffset(model);
 
                 var transforms = model.GetTransforms();
 
-                foreach (var g in model.GetActiveMeshes().GroupBy(x => x.SkinRef))
-                {
+                foreach (var g in model.GetActiveMeshes().GroupBy(x => x.SkinRef)) {
                     StartSubset(Textured);
                     var tex = model.Textures[g.Key];
 
-                    foreach (var mesh in g)
-                    {
-                        foreach (var vertex in mesh.Vertices)
-                        {
+                    foreach (var mesh in g) {
+                        foreach (var vertex in mesh.Vertices) {
                             var transform = transforms[vertex.BoneWeightings.First().Bone.BoneIndex];
                             var c = vertex.Location * transform;
                             var n = vertex.Normal * transform;

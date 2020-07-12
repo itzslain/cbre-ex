@@ -1,9 +1,7 @@
 ﻿using CBRE.Editor.UI;
 
-namespace CBRE.Editor
-{
-    partial class Editor
-    {
+namespace CBRE.Editor {
+    partial class Editor {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -13,10 +11,8 @@ namespace CBRE.Editor
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,8 +24,7 @@ namespace CBRE.Editor
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             CBRE.Editor.UI.TableSplitConfiguration tableSplitConfiguration1 = new CBRE.Editor.UI.TableSplitConfiguration();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
@@ -94,8 +89,8 @@ namespace CBRE.Editor
             // StatusSelectionLabel
             // 
             this.StatusSelectionLabel.AutoSize = false;
-            this.StatusSelectionLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            this.StatusSelectionLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.StatusSelectionLabel.Name = "StatusSelectionLabel";
             this.StatusSelectionLabel.Size = new System.Drawing.Size(130, 19);
@@ -103,8 +98,8 @@ namespace CBRE.Editor
             // StatusCoordinatesLabel
             // 
             this.StatusCoordinatesLabel.AutoSize = false;
-            this.StatusCoordinatesLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            this.StatusCoordinatesLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.StatusCoordinatesLabel.Name = "StatusCoordinatesLabel";
             this.StatusCoordinatesLabel.Size = new System.Drawing.Size(130, 19);
@@ -112,8 +107,8 @@ namespace CBRE.Editor
             // StatusBoxLabel
             // 
             this.StatusBoxLabel.AutoSize = false;
-            this.StatusBoxLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            this.StatusBoxLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.StatusBoxLabel.Name = "StatusBoxLabel";
             this.StatusBoxLabel.Size = new System.Drawing.Size(130, 19);
@@ -121,8 +116,8 @@ namespace CBRE.Editor
             // StatusZoomLabel
             // 
             this.StatusZoomLabel.AutoSize = false;
-            this.StatusZoomLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            this.StatusZoomLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.StatusZoomLabel.Name = "StatusZoomLabel";
             this.StatusZoomLabel.Size = new System.Drawing.Size(80, 19);
@@ -130,8 +125,8 @@ namespace CBRE.Editor
             // StatusSnapLabel
             // 
             this.StatusSnapLabel.AutoSize = false;
-            this.StatusSnapLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            this.StatusSnapLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.StatusSnapLabel.Name = "StatusSnapLabel";
             this.StatusSnapLabel.Size = new System.Drawing.Size(80, 19);

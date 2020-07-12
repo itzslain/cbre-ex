@@ -1,9 +1,7 @@
 using System.IO;
 
-namespace CBRE.Packages.Wad
-{
-    public class WadEntry : IPackageEntry
-    {
+namespace CBRE.Packages.Wad {
+    public class WadEntry : IPackageEntry {
         public WadPackage Package { get; private set; }
 
         public uint Offset { get; private set; }
@@ -23,8 +21,7 @@ namespace CBRE.Packages.Wad
         public string FullName { get { return Name; } }
         public string ParentPath { get { return ""; } }
 
-        public WadEntry(WadPackage package, string name, WadEntryType type, uint offset, byte compressionType, uint compressedLength, uint fullLength)
-        {
+        public WadEntry(WadPackage package, string name, WadEntryType type, uint offset, byte compressionType, uint compressedLength, uint fullLength) {
             Package = package;
             Name = name;
             Offset = offset;
@@ -34,8 +31,7 @@ namespace CBRE.Packages.Wad
             Type = type;
         }
 
-        public Stream Open()
-        {
+        public Stream Open() {
             return Package.OpenStream(this);
         }
     };

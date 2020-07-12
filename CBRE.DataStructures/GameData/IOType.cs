@@ -1,7 +1,5 @@
-﻿namespace CBRE.DataStructures.GameData
-{
-    public enum IOType
-    {
+﻿namespace CBRE.DataStructures.GameData {
+    public enum IOType {
         Input,
         Output
     }

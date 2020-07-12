@@ -34,22 +34,18 @@ using System.Linq;
 using System.Windows.Forms;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
-namespace CBRE.Editor.Documents
-{
+namespace CBRE.Editor.Documents {
     /// <summary>
     /// A simple container to separate out the document mediator listeners from the document itself.
     /// </summary>
-    public class DocumentSubscriptions : IMediatorListener
-    {
+    public class DocumentSubscriptions : IMediatorListener {
         private readonly Document _document;
 
-        public DocumentSubscriptions(Document document)
-        {
+        public DocumentSubscriptions(Document document) {
             _document = document;
         }
 
-        public void Subscribe()
-        {
+        public void Subscribe() {
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeSelectedObjectsChanged, this);
@@ -147,25 +143,20 @@ namespace CBRE.Editor.Documents
             Mediator.Subscribe(EditorMediator.ViewportCreated, this);
         }
 
-        public void Unsubscribe()
-        {
+        public void Unsubscribe() {
             Mediator.UnsubscribeAll(this);
         }
 
-        public void Notify(string message, object data)
-        {
+        public void Notify(string message, object data) {
             HotkeysMediator val;
-            if (ToolManager.ActiveTool != null && Enum.TryParse(message, true, out val))
-            {
+            if (ToolManager.ActiveTool != null && Enum.TryParse(message, true, out val)) {
                 var result = ToolManager.ActiveTool.InterceptHotkey(val, data);
                 if (result == HotkeyInterceptResult.Abort) return;
-                if (result == HotkeyInterceptResult.SwitchToSelectTool)
-                {
+                if (result == HotkeyInterceptResult.SwitchToSelectTool) {
                     ToolManager.Activate(typeof(SelectTool));
                 }
             }
-            if (!Mediator.ExecuteDefault(this, message, data))
-            {
+            if (!Mediator.ExecuteDefault(this, message, data)) {
                 throw new Exception("Invalid document message: " + message + ", with data: " + data);
             }
         }
@@ -173,52 +164,42 @@ namespace CBRE.Editor.Documents
         // ReSharper disable UnusedMember.Global
         // ReSharper disable MemberCanBePrivate.Global
 
-        private void DocumentTreeStructureChanged()
-        {
+        private void DocumentTreeStructureChanged() {
             _document.RenderAll();
         }
 
-        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
-        {
+        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects) {
             _document.RenderObjects(objects);
         }
 
-        private void DocumentTreeSelectedObjectsChanged(IEnumerable<MapObject> objects)
-        {
+        private void DocumentTreeSelectedObjectsChanged(IEnumerable<MapObject> objects) {
             _document.RenderSelection(objects);
         }
 
-        private void DocumentTreeFacesChanged(IEnumerable<Face> faces)
-        {
+        private void DocumentTreeFacesChanged(IEnumerable<Face> faces) {
             _document.RenderFaces(faces);
         }
 
-        private void DocumentTreeSelectedFacesChanged(IEnumerable<Face> faces)
-        {
+        private void DocumentTreeSelectedFacesChanged(IEnumerable<Face> faces) {
             _document.RenderSelection(faces.Select(x => x.Parent).Distinct());
         }
 
-        public void SettingsChanged()
-        {
+        public void SettingsChanged() {
             _document.HelperManager.UpdateCache();
             RebuildGrid();
             _document.RenderAll();
         }
 
-        public void HistoryUndo()
-        {
+        public void HistoryUndo() {
             _document.History.Undo();
         }
 
-        public void HistoryRedo()
-        {
+        public void HistoryRedo() {
             _document.History.Redo();
         }
 
-        public void FileClose()
-        {
-            if (_document.History.TotalActionsSinceLastSave > 0)
-            {
+        public void FileClose() {
+            if (_document.History.TotalActionsSinceLastSave > 0) {
                 var result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Cancel) return;
                 if (result == DialogResult.Yes) FileSave();
@@ -226,39 +207,32 @@ namespace CBRE.Editor.Documents
             DocumentManager.Remove(_document);
         }
 
-        public void FileSave()
-        {
+        public void FileSave() {
             _document.SaveFile();
         }
 
-        public void FileSaveAs()
-        {
+        public void FileSaveAs() {
             _document.SaveFile(null, true);
         }
 
-        public void FileCompile()
-        {
+        public void FileCompile() {
             ExportForm form = new ExportForm();
             form.Document = _document;
             form.ShowDialog();
         }
 
-        public void OperationsCopy()
-        {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
-            {
+        public void OperationsCopy() {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
                 ClipboardManager.Push(_document.Selection.GetSelectedObjects());
             }
         }
 
-        public void OperationsCut()
-        {
+        public void OperationsCut() {
             OperationsCopy();
             OperationsDelete();
         }
 
-        public void OperationsPaste()
-        {
+        public void OperationsPaste() {
             if (!ClipboardManager.CanPaste()) return;
 
             var content = ClipboardManager.GetPastedContent(_document);
@@ -277,8 +251,7 @@ namespace CBRE.Editor.Documents
                                               new Create(_document.Map.WorldSpawn.ID, list))); // Add and select the new objects
         }
 
-        public void OperationsPasteSpecial()
-        {
+        public void OperationsPasteSpecial() {
             if (!ClipboardManager.CanPaste()) return;
 
             var content = ClipboardManager.GetPastedContent(_document);
@@ -287,17 +260,14 @@ namespace CBRE.Editor.Documents
             var list = content.ToList();
             if (!list.Any()) return;
 
-            foreach (var face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
-            {
+            foreach (var face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces))) {
                 face.Texture.Texture = _document.GetTexture(face.Texture.Name);
             }
 
             var box = new Box(list.Select(x => x.BoundingBox));
 
-            using (var psd = new PasteSpecialDialog(box))
-            {
-                if (psd.ShowDialog() == DialogResult.OK)
-                {
+            using (var psd = new PasteSpecialDialog(box)) {
+                if (psd.ShowDialog() == DialogResult.OK) {
                     var name = "Paste special (" + psd.NumberOfCopies + (psd.NumberOfCopies == 1 ? " copy)" : " copies)");
                     var action = new PasteSpecial(list, psd.NumberOfCopies, psd.StartPoint, psd.Grouping,
                                                   psd.AccumulativeOffset, psd.AccumulativeRotation,
@@ -307,49 +277,41 @@ namespace CBRE.Editor.Documents
             }
         }
 
-        public void OperationsDelete()
-        {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
-            {
+        public void OperationsDelete() {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
                 var sel = _document.Selection.GetSelectedParents().Select(x => x.ID).ToList();
                 var name = "Removed " + sel.Count + " item" + (sel.Count == 1 ? "" : "s");
                 _document.PerformAction(name, new Delete(sel));
             }
         }
 
-        public void SelectionClear()
-        {
+        public void SelectionClear() {
             var selected = _document.Selection.GetSelectedObjects().ToList();
             _document.PerformAction("Clear selection", new Deselect(selected));
         }
 
-        public void SelectAll()
-        {
+        public void SelectAll() {
             var all = _document.Map.WorldSpawn.Find(x => !(x is World));
             _document.PerformAction("Select all", new Actions.MapObjects.Selection.Select(all));
         }
 
-        public void ObjectProperties()
-        {
+        public void ObjectProperties() {
             var pd = new ObjectPropertiesDialog(_document);
             pd.Show(Editor.Instance);
         }
 
-        public void SwitchTool(HotkeyTool tool)
-        {
+        public void SwitchTool(HotkeyTool tool) {
             if (ToolManager.ActiveTool != null && ToolManager.ActiveTool.GetHotkeyToolType() == tool) tool = HotkeyTool.Selection;
             ToolManager.Activate(tool);
         }
 
-        public void ApplyCurrentTextureToSelection()
-        {
+        public void ApplyCurrentTextureToSelection() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
             var texture = _document.TextureCollection.SelectedTexture;
             if (texture == null) return;
             var ti = texture.GetTexture();
             if (ti == null) return;
-            Action<Document, Face> action = (document, face) =>
-            {
+            Action<Document, Face> action = (document, face) => {
                 face.Texture.Name = texture.Name;
                 face.Texture.Texture = ti;
                 face.CalculateTextureCoordinates(true);
@@ -358,8 +320,7 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Apply current texture", new EditFace(faces, action, true));
         }
 
-        public void QuickHideSelected()
-        {
+        public void QuickHideSelected() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
@@ -369,8 +330,7 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Hide objects", new QuickHideObjects(objects));
         }
 
-        public void QuickHideUnselected()
-        {
+        public void QuickHideUnselected() {
             if (_document.Selection.InFaceSelection) return;
 
             var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
@@ -380,8 +340,7 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Hide objects", new QuickHideObjects(objects));
         }
 
-        public void QuickHideShowAll()
-        {
+        public void QuickHideShowAll() {
             var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
             if (autohide == null) return;
 
@@ -389,15 +348,13 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Show hidden objects", new QuickShowObjects(objects));
         }
 
-        public void WorldspawnProperties()
-        {
+        public void WorldspawnProperties() {
             var pd = new ObjectPropertiesDialog(_document) { FollowSelection = false, AllowClassChange = false };
             pd.SetObjects(new[] { _document.Map.WorldSpawn });
             pd.Show(Editor.Instance);
         }
 
-        public void Carve()
-        {
+        public void Carve() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var carver = _document.Selection.GetSelectedObjects().OfType<Solid>().FirstOrDefault();
@@ -408,17 +365,14 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Carve objects", new Carve(carvees, carver));
         }
 
-        public void MakeHollow()
-        {
+        public void MakeHollow() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var solids = _document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             if (!solids.Any()) return;
 
-            if (solids.Count > 1)
-            {
-                if (MessageBox.Show("This will hollow out every selected solid, are you sure?", "Multiple solids selected", MessageBoxButtons.YesNo) != DialogResult.Yes)
-                {
+            if (solids.Count > 1) {
+                if (MessageBox.Show("This will hollow out every selected solid, are you sure?", "Multiple solids selected", MessageBoxButtons.YesNo) != DialogResult.Yes) {
                     return;
                 }
             }
@@ -426,8 +380,7 @@ namespace CBRE.Editor.Documents
             var qf = new QuickForm("Select wall width") { UseShortcutKeys = true }.NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
 
             decimal width;
-            do
-            {
+            do {
                 if (qf.ShowDialog() == DialogResult.Cancel) return;
                 width = qf.Decimal("Wall width (negative to hollow outwards)");
                 if (width == 0) MessageBox.Show("Please select a non-zero value.");
@@ -436,43 +389,35 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Make objects hollow", new MakeHollow(solids, width));
         }
 
-        public void GroupingGroup()
-        {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
-            {
+        public void GroupingGroup() {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
                 _document.PerformAction("Grouped objects", new GroupAction(_document.Selection.GetSelectedParents()));
             }
         }
 
-        public void GroupingUngroup()
-        {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
-            {
+        public void GroupingUngroup() {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
                 _document.PerformAction("Ungrouped objects", new UngroupAction(_document.Selection.GetSelectedParents()));
             }
         }
 
-        private class EntityContainer
-        {
+        private class EntityContainer {
             public Entity Entity { get; set; }
-            public override string ToString()
-            {
+            public override string ToString() {
                 var name = Entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
                 if (name != null) return name.Value + " (" + Entity.EntityData.Name + ")";
                 return Entity.EntityData.Name;
             }
         }
 
-        public void TieToEntity()
-        {
+        public void TieToEntity() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
 
             Entity existing = null;
 
-            if (entities.Count == 1)
-            {
+            if (entities.Count == 1) {
                 var result = new QuickForms.QuickForm("Existing Entity in Selection") { Width = 400 }
                     .Label(String.Format("You have selected an existing entity (a '{0}'), how would you like to proceed?", entities[0].ClassName))
                     .Label(" - Keep the existing entity and add the selected items to the entity")
@@ -482,20 +427,16 @@ namespace CBRE.Editor.Documents
                               .Button("Create New", DialogResult.No)
                               .Button("Cancel", DialogResult.Cancel))
                     .ShowDialog();
-                if (result == DialogResult.Yes)
-                {
+                if (result == DialogResult.Yes) {
                     existing = entities[0];
                 }
-            }
-            else if (entities.Count > 1)
-            {
+            } else if (entities.Count > 1) {
                 var qf = new QuickForms.QuickForm("Multiple Entities Selected") { Width = 400 }
                     .Label("You have selected multiple entities, which one would you like to keep?")
                     .ComboBox("Entity", entities.Select(x => new EntityContainer { Entity = x }))
                     .OkCancel();
                 var result = qf.ShowDialog();
-                if (result == DialogResult.OK)
-                {
+                if (result == DialogResult.OK) {
                     var cont = qf.Object("Entity") as EntityContainer;
                     if (cont != null) existing = cont.Entity;
                 }
@@ -503,28 +444,23 @@ namespace CBRE.Editor.Documents
 
             var ac = new ActionCollection();
 
-            if (existing == null)
-            {
+            if (existing == null) {
                 var def = _document.Game.DefaultBrushEntity;
                 var entity = _document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == def.ToLower())
                              ?? _document.GameData.Classes.Where(x => x.ClassType == ClassType.Solid)
                                  .OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1)
                                  .FirstOrDefault();
-                if (entity == null)
-                {
+                if (entity == null) {
                     MessageBox.Show("No solid entities found. Please make sure your FGDs are configured correctly.", "No entities found!");
                     return;
                 }
-                existing = new Entity(_document.Map.IDGenerator.GetNextObjectID())
-                {
+                existing = new Entity(_document.Map.IDGenerator.GetNextObjectID()) {
                     EntityData = new EntityData(entity),
                     ClassName = entity.Name,
                     Colour = Colour.GetDefaultEntityColour()
                 };
                 ac.Add(new Create(_document.Map.WorldSpawn.ID, existing));
-            }
-            else
-            {
+            } else {
                 // Move the new parent to the root, in case it is a descendant of a selected parent...
                 ac.Add(new Reparent(_document.Map.WorldSpawn.ID, new[] { existing }));
 
@@ -537,14 +473,12 @@ namespace CBRE.Editor.Documents
 
             _document.PerformAction("Tie to Entity", ac);
 
-            if (CBRE.Settings.Select.OpenObjectPropertiesWhenCreatingEntity && !ObjectPropertiesDialog.IsShowing)
-            {
+            if (CBRE.Settings.Select.OpenObjectPropertiesWhenCreatingEntity && !ObjectPropertiesDialog.IsShowing) {
                 Mediator.Publish(HotkeysMediator.ObjectProperties);
             }
         }
 
-        public void TieToWorld()
-        {
+        public void TieToWorld() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
@@ -557,24 +491,20 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Tie to World", ac);
         }
 
-        private IUnitTransformation GetSnapTransform(Box box)
-        {
+        private IUnitTransformation GetSnapTransform(Box box) {
             var offset = box.Start.Snap(_document.Map.GridSpacing) - box.Start;
             return new UnitTranslate(offset);
         }
 
-        public void Transform()
-        {
+        public void Transform() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
             var box = _document.Selection.GetSelectionBoundingBox();
-            using (var td = new TransformDialog(box))
-            {
+            using (var td = new TransformDialog(box)) {
                 if (td.ShowDialog() != DialogResult.OK) return;
 
                 var value = td.TransformValue;
                 IUnitTransformation transform = null;
-                switch (td.TransformType)
-                {
+                switch (td.TransformType) {
                     case TransformType.Rotate:
                         var mov = Matrix.Translation(-box.Center); // Move to zero
                         var rot = Matrix.Rotation(Quaternion.EulerAngles(value * DMath.PI / 180)); // Do rotation
@@ -596,8 +526,7 @@ namespace CBRE.Editor.Documents
             }
         }
 
-        public void RotateClockwise()
-        {
+        public void RotateClockwise() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
             var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
             if (focused == null) return;
@@ -608,8 +537,7 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void RotateCounterClockwise()
-        {
+        public void RotateCounterClockwise() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
             var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
             if (focused == null) return;
@@ -620,20 +548,16 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void ReplaceTextures()
-        {
-            using (var trd = new TextureReplaceDialog(_document))
-            {
-                if (trd.ShowDialog() == DialogResult.OK)
-                {
+        public void ReplaceTextures() {
+            using (var trd = new TextureReplaceDialog(_document)) {
+                if (trd.ShowDialog() == DialogResult.OK) {
                     var action = trd.GetAction();
                     _document.PerformAction("Replace textures", action);
                 }
             }
         }
 
-        public void SnapSelectionToGrid()
-        {
+        public void SnapSelectionToGrid() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var selected = _document.Selection.GetSelectedParents();
@@ -644,8 +568,7 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Snap to grid", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void SnapSelectionToGridIndividually()
-        {
+        public void SnapSelectionToGridIndividually() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var selected = _document.Selection.GetSelectedParents();
@@ -653,8 +576,7 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Snap to grid individually", new Edit(selected, new SnapToGridEditOperation(_document.Map.GridSpacing, _document.Map.GetTransformFlags())));
         }
 
-        private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction)
-        {
+        private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction) {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var selected = _document.Selection.GetSelectedParents();
@@ -663,38 +585,31 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Align Objects", new Edit(selected, new AlignObjectsEditOperation(box, axis, direction, _document.Map.GetTransformFlags())));
         }
 
-        public void AlignXMax()
-        {
+        public void AlignXMax() {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
-        public void AlignXMin()
-        {
+        public void AlignXMin() {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
-        public void AlignYMax()
-        {
+        public void AlignYMax() {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
-        public void AlignYMin()
-        {
+        public void AlignYMin() {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
-        public void AlignZMax()
-        {
+        public void AlignZMax() {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
-        public void AlignZMin()
-        {
+        public void AlignZMin() {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
-        private void FlipObjects(Coordinate scale)
-        {
+        private void FlipObjects(Coordinate scale) {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var selected = _document.Selection.GetSelectedParents();
@@ -704,81 +619,67 @@ namespace CBRE.Editor.Documents
             _document.PerformAction("Flip Objects", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void FlipX()
-        {
+        public void FlipX() {
             FlipObjects(new Coordinate(-1, 1, 1));
         }
 
-        public void FlipY()
-        {
+        public void FlipY() {
             FlipObjects(new Coordinate(1, -1, 1));
         }
 
-        public void FlipZ()
-        {
+        public void FlipZ() {
             FlipObjects(new Coordinate(1, 1, -1));
         }
 
-        public void GridIncrease()
-        {
+        public void GridIncrease() {
             var curr = _document.Map.GridSpacing;
             if (curr >= 1024) return;
             _document.Map.GridSpacing *= 2;
             RebuildGrid();
         }
 
-        public void GridDecrease()
-        {
+        public void GridDecrease() {
             var curr = _document.Map.GridSpacing;
             if (curr <= 1) return;
             _document.Map.GridSpacing /= 2;
             RebuildGrid();
         }
 
-        public void RebuildGrid()
-        {
+        public void RebuildGrid() {
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, true);
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
-        public void CenterAllViewsOnSelection()
-        {
+        public void CenterAllViewsOnSelection() {
             var box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports)
-            {
+            foreach (var vp in ViewportManager.Viewports) {
                 vp.FocusOn(box);
             }
         }
 
-        public void Center2DViewsOnSelection()
-        {
+        public void Center2DViewsOnSelection() {
             var box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
-            {
+            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>()) {
                 vp.FocusOn(box);
             }
         }
 
-        public void Center3DViewsOnSelection()
-        {
+        public void Center3DViewsOnSelection() {
             var box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport3D>())
-            {
+            foreach (var vp in ViewportManager.Viewports.OfType<Viewport3D>()) {
                 vp.FocusOn(box);
             }
         }
 
-        public void GoToCoordinates()
-        {
+        public void GoToCoordinates() {
             using (var qf = new QuickForm("Enter Coordinates") { LabelWidth = 50, UseShortcutKeys = true }
                 .TextBox("X", "0")
                 .TextBox("Y", "0")
                 .TextBox("Z", "0")
-                .OkCancel())
-            {
+                .OkCancel()) {
                 qf.ClientSize = new Size(180, qf.ClientSize.Height);
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
@@ -793,12 +694,10 @@ namespace CBRE.Editor.Documents
             }
         }
 
-        public void GoToBrushID()
-        {
+        public void GoToBrushID() {
             using (var qf = new QuickForm("Enter Brush ID") { LabelWidth = 100, UseShortcutKeys = true }
                 .TextBox("Brush ID")
-                .OkCancel())
-            {
+                .OkCancel()) {
                 qf.ClientSize = new Size(230, qf.ClientSize.Height);
 
                 if (qf.ShowDialog() != DialogResult.OK) return;
@@ -815,24 +714,20 @@ namespace CBRE.Editor.Documents
             }
         }
 
-        public void ToggleSnapToGrid()
-        {
+        public void ToggleSnapToGrid() {
             _document.Map.SnapToGrid = !_document.Map.SnapToGrid;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleShow2DGrid()
-        {
+        public void ToggleShow2DGrid() {
             _document.Map.Show2DGrid = !_document.Map.Show2DGrid;
             RebuildGrid();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleShow3DGrid()
-        {
+        public void ToggleShow3DGrid() {
             _document.Map.Show3DGrid = !_document.Map.Show3DGrid;
-            if (_document.Map.Show3DGrid && CBRE.Settings.View.Renderer != RenderMode.OpenGL3)
-            {
+            if (_document.Map.Show3DGrid && CBRE.Settings.View.Renderer != RenderMode.OpenGL3) {
                 MessageBox.Show("The 3D grid is only available when the OpenGL 3.0 renderer is used.");
                 _document.Map.Show3DGrid = false;
             }
@@ -840,53 +735,45 @@ namespace CBRE.Editor.Documents
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleIgnoreGrouping()
-        {
+        public void ToggleIgnoreGrouping() {
             _document.Map.IgnoreGrouping = !_document.Map.IgnoreGrouping;
             Mediator.Publish(EditorMediator.IgnoreGroupingChanged);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleTextureLock()
-        {
+        public void ToggleTextureLock() {
             _document.Map.TextureLock = !_document.Map.TextureLock;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleTextureScalingLock()
-        {
+        public void ToggleTextureScalingLock() {
             _document.Map.TextureScalingLock = !_document.Map.TextureScalingLock;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleCordon()
-        {
+        public void ToggleCordon() {
             _document.Map.Cordon = !_document.Map.Cordon;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideFaceMask()
-        {
+        public void ToggleHideFaceMask() {
             _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
             _document.Renderer.UpdateDocumentToggles();
         }
 
-        public void ToggleHideDisplacementSolids()
-        {
+        public void ToggleHideDisplacementSolids() {
             _document.Map.HideDisplacementSolids = !_document.Map.HideDisplacementSolids;
             // todo hide displacement solids
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideNullTextures()
-        {
+        public void ToggleHideNullTextures() {
             _document.Map.HideNullTextures = !_document.Map.HideNullTextures;
             _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ShowSelectedBrushID()
-        {
+        public void ShowSelectedBrushID() {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var selectedIds = _document.Selection.GetSelectedObjects().Select(x => x.ID);
@@ -895,45 +782,36 @@ namespace CBRE.Editor.Documents
             MessageBox.Show("Selected Object IDs: " + idString);
         }
 
-        public void ShowMapInformation()
-        {
-            using (var mid = new MapInformationDialog(_document))
-            {
+        public void ShowMapInformation() {
+            using (var mid = new MapInformationDialog(_document)) {
                 mid.ShowDialog();
             }
         }
 
-        public void ShowLogicalTree()
-        {
+        public void ShowLogicalTree() {
             var mtw = new MapTreeWindow(_document);
             mtw.Show(Editor.Instance);
         }
 
-        public void ShowEntityReport()
-        {
+        public void ShowEntityReport() {
             var erd = new EntityReportDialog();
             erd.Show(Editor.Instance);
         }
 
-        public void CheckForProblems()
-        {
-            using (var cfpd = new CheckForProblemsDialog(_document))
-            {
+        public void CheckForProblems() {
+            using (var cfpd = new CheckForProblemsDialog(_document)) {
                 cfpd.ShowDialog(Editor.Instance);
             }
         }
 
-        public void ViewportRightClick(Viewport2D vp, ViewportEvent e)
-        {
+        public void ViewportRightClick(Viewport2D vp, ViewportEvent e) {
             ViewportContextMenu.Instance.AddNonSelectionItems(_document, vp);
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)
-            {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool) {
                 var selectionBoundingBox = _document.Selection.GetSelectionBoundingBox();
                 var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
                 var start = vp.Flatten(selectionBoundingBox.Start);
                 var end = vp.Flatten(selectionBoundingBox.End);
-                if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y)
-                {
+                if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y) {
                     // Clicked inside the selection bounds
                     ViewportContextMenu.Instance.AddSelectionItems(_document, vp);
                 }
@@ -942,47 +820,38 @@ namespace CBRE.Editor.Documents
             if (ViewportContextMenu.Instance.Items.Count > 0) ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
         }
 
-        public void VisgroupSelect(int visgroupId)
-        {
+        public void VisgroupSelect(int visgroupId) {
             if (_document.Selection.InFaceSelection) return;
             var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId, true), true).Where(x => !x.IsVisgroupHidden);
             _document.PerformAction("Select visgroup", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
         }
 
-        public void VisgroupShowEditor()
-        {
-            using (var vef = new VisgroupEditForm(_document))
-            {
-                if (vef.ShowDialog() == DialogResult.OK)
-                {
+        public void VisgroupShowEditor() {
+            using (var vef = new VisgroupEditForm(_document)) {
+                if (vef.ShowDialog() == DialogResult.OK) {
                     var nv = new List<Visgroup>();
                     var cv = new List<Visgroup>();
                     var dv = new List<Visgroup>();
                     vef.PopulateChangeLists(_document, nv, cv, dv);
-                    if (nv.Any() || cv.Any() || dv.Any())
-                    {
+                    if (nv.Any() || cv.Any() || dv.Any()) {
                         _document.PerformAction("Edit visgroups", new CreateEditDeleteVisgroups(nv, cv, dv));
                     }
                 }
             }
         }
 
-        public void VisgroupShowAll()
-        {
+        public void VisgroupShowAll() {
             _document.PerformAction("Show all visgroups", new ShowAllVisgroups());
         }
 
-        public void VisgroupToggled(int visgroupId, CheckState state)
-        {
+        public void VisgroupToggled(int visgroupId, CheckState state) {
             if (state == CheckState.Indeterminate) return;
             var visible = state == CheckState.Checked;
             _document.PerformAction((visible ? "Show" : "Hide") + " visgroup", new ToggleVisgroup(visgroupId, visible));
         }
 
-        public void VisgroupCreateNew()
-        {
-            using (var qf = new QuickForm("Create New Visgroup") { UseShortcutKeys = true }.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel())
-            {
+        public void VisgroupCreateNew() {
+            using (var qf = new QuickForm("Create New Visgroup") { UseShortcutKeys = true }.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel()) {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
                 var ids = _document.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.ID).ToList();
@@ -991,38 +860,32 @@ namespace CBRE.Editor.Documents
                 var name = qf.String("Name");
                 if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString();
 
-                var vg = new Visgroup
-                {
+                var vg = new Visgroup {
                     ID = id,
                     Colour = Colour.GetRandomLightColour(),
                     Name = name,
                     Visible = true
                 };
                 IAction action = new CreateEditDeleteVisgroups(new[] { vg }, new Visgroup[0], new Visgroup[0]);
-                if (qf.Bool("Add selection to visgroup") && !_document.Selection.IsEmpty())
-                {
+                if (qf.Bool("Add selection to visgroup") && !_document.Selection.IsEmpty()) {
                     action = new ActionCollection(action, new EditObjectVisgroups(_document.Selection.GetSelectedObjects(), new[] { id }, new int[0]));
                 }
                 _document.PerformAction("Create visgroup", action);
             }
         }
 
-        public void SetZoomValue(decimal value)
-        {
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
-            {
+        public void SetZoomValue(decimal value) {
+            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>()) {
                 vp.Zoom = value;
             }
             Mediator.Publish(EditorMediator.ViewZoomChanged, value);
         }
 
-        public void TextureSelected(TextureItem selection)
-        {
+        public void TextureSelected(TextureItem selection) {
             _document.TextureCollection.SelectedTexture = selection;
         }
 
-        public void ViewportCreated(ViewportBase viewport)
-        {
+        public void ViewportCreated(ViewportBase viewport) {
             if (viewport is Viewport3D) viewport.RenderContext.Add(new WidgetLinesRenderable());
             _document.Renderer.Register(new[] { viewport });
             viewport.RenderContext.Add(new ToolRenderable());
@@ -1030,19 +893,15 @@ namespace CBRE.Editor.Documents
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
         }
 
-        public void SelectMatchingTextures(IEnumerable<string> textureList)
-        {
+        public void SelectMatchingTextures(IEnumerable<string> textureList) {
             var list = textureList.ToList();
             var allFaces = _document.Map.WorldSpawn.Find(x => x is Solid && !x.IsCodeHidden && !x.IsVisgroupHidden).OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var matchingFaces = allFaces.Where(x => list.Contains(x.Texture.Name, StringComparer.CurrentCultureIgnoreCase)).ToList();
             var fc = matchingFaces.Count;
-            if (_document.Selection.InFaceSelection)
-            {
+            if (_document.Selection.InFaceSelection) {
                 _document.PerformAction("Select Faces by Texture", new ChangeFaceSelection(matchingFaces, _document.Selection.GetSelectedFaces()));
                 MessageBox.Show(fc + " face" + (fc == 1 ? "" : "s") + " selected.");
-            }
-            else
-            {
+            } else {
                 var objects = matchingFaces.Select(x => x.Parent).Distinct().ToList();
                 _document.PerformAction("Select Objects by Texture", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
                 var oc = objects.Count;

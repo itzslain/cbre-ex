@@ -6,10 +6,8 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace CBRE.DataStructures.Models
-{
-    public class Model : IDisposable
-    {
+namespace CBRE.DataStructures.Models {
+    public class Model : IDisposable {
         public string Name { get; set; }
         public List<Bone> Bones { get; private set; }
         public List<BodyPart> BodyParts { get; private set; }
@@ -20,8 +18,7 @@ namespace CBRE.DataStructures.Models
 
         private Box _boundingBox;
 
-        public Model()
-        {
+        public Model() {
             Bones = new List<Bone>();
             BodyParts = new List<BodyPart>();
             Animations = new List<Animation>();
@@ -30,10 +27,8 @@ namespace CBRE.DataStructures.Models
 
         }
 
-        public Box GetBoundingBox()
-        {
-            if (_boundingBox == null)
-            {
+        public Box GetBoundingBox() {
+            if (_boundingBox == null) {
                 var transforms = GetTransforms();
                 var list =
                     from mesh in GetActiveMeshes()
@@ -46,29 +41,23 @@ namespace CBRE.DataStructures.Models
             return _boundingBox;
         }
 
-        public IEnumerable<Mesh> GetActiveMeshes()
-        {
+        public IEnumerable<Mesh> GetActiveMeshes() {
             return BodyParts.SelectMany(x => x.GetActiveGroup());
         }
 
-        public void AddMesh(string bodyPartName, int groupid, Mesh mesh)
-        {
+        public void AddMesh(string bodyPartName, int groupid, Mesh mesh) {
             var g = BodyParts.FirstOrDefault(x => x.Name == bodyPartName);
-            if (g == null)
-            {
+            if (g == null) {
                 g = new BodyPart(bodyPartName);
                 BodyParts.Add(g);
             }
             g.AddMesh(groupid, mesh);
         }
 
-        public List<MatrixF> GetTransforms(int animation = 0, int frame = 0)
-        {
-            if (Animations.Count > animation && animation >= 0)
-            {
+        public List<MatrixF> GetTransforms(int animation = 0, int frame = 0) {
+            if (Animations.Count > animation && animation >= 0) {
                 var ani = Animations[animation];
-                if (ani.Frames.Count > 0)
-                {
+                if (ani.Frames.Count > 0) {
                     if (frame < 0 || frame >= ani.Frames.Count) frame = 0;
                     var frm = ani.Frames[frame];
                     return frm.GetBoneTransforms(BonesTransformMesh, !BonesTransformMesh);
@@ -83,8 +72,7 @@ namespace CBRE.DataStructures.Models
         /// pre-computes chrome texture values, and
         /// combines all the textures into a single bitmap.
         /// </summary>
-        public void PreprocessModel()
-        {
+        public void PreprocessModel() {
             if (_preprocessed) return;
             _preprocessed = true;
 
@@ -97,15 +85,13 @@ namespace CBRE.DataStructures.Models
         /// Combines the textures in this model into one bitmap and modifies all the referenced skins and texture coordinates to use the combined texture.
         /// This modifies the model object.
         /// </summary>
-        private void CombineTextures()
-        {
+        private void CombineTextures() {
             if (Textures.Count < 1) return;
             // Calculate the dimension of the combined texture
             var width = 0;
             var height = 0;
             var heightList = new Dictionary<int, int>();
-            foreach (var texture in Textures)
-            {
+            foreach (var texture in Textures) {
                 width = Math.Max(texture.Width, width);
                 heightList.Add(texture.Index, height);
                 height += texture.Height;
@@ -115,8 +101,7 @@ namespace CBRE.DataStructures.Models
             var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
             var y = 0;
-            foreach (var texture in Textures)
-            {
+            foreach (var texture in Textures) {
                 BitmapData bmpData2 = texture.Image.LockBits(new Rectangle(0, 0, texture.Width, texture.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 byte[] bytes = new byte[bmpData2.Width * bmpData2.Height * Bitmap.GetPixelFormatSize(PixelFormat.Format32bppArgb) / 8];
                 Marshal.Copy(bmpData2.Scan0, bytes, 0, bytes.Length);
@@ -127,8 +112,7 @@ namespace CBRE.DataStructures.Models
             bmp.UnlockBits(bmpData);
 
             // Create the texture object and replace the existing textures
-            var tex = new Texture
-            {
+            var tex = new Texture {
                 Flags = Textures[0].Flags,
                 Height = height,
                 Width = width,
@@ -136,32 +120,27 @@ namespace CBRE.DataStructures.Models
                 Index = 0,
                 Name = "Combined Texture"
             };
-            foreach (var texture in Textures)
-            {
+            foreach (var texture in Textures) {
                 texture.Image.Dispose();
             }
             Textures.Clear();
             Textures.Insert(0, tex);
 
             // Update all the meshes with the new texture and alter the texture coordinates as needed
-            foreach (var mesh in GetActiveMeshes())
-            {
-                if (!heightList.ContainsKey(mesh.SkinRef))
-                {
+            foreach (var mesh in GetActiveMeshes()) {
+                if (!heightList.ContainsKey(mesh.SkinRef)) {
                     mesh.SkinRef = -1;
                     continue;
                 }
                 var i = mesh.SkinRef;
                 var yVal = heightList[i];
-                foreach (var v in mesh.Vertices)
-                {
+                foreach (var v in mesh.Vertices) {
                     v.TextureV += yVal;
                 }
                 mesh.SkinRef = 0;
             }
             // Reset the texture indices
-            for (var i = 0; i < Textures.Count; i++)
-            {
+            for (var i = 0; i < Textures.Count; i++) {
                 Textures[i].Index = i;
             }
         }
@@ -170,15 +149,12 @@ namespace CBRE.DataStructures.Models
         /// Pre-calculates chrome texture values for the model.
         /// This operation modifies the model vertices.
         /// </summary>
-        private void PreCalculateChromeCoordinates()
-        {
+        private void PreCalculateChromeCoordinates() {
             var transforms = Bones.Select(x => x.Transform).ToList();
-            foreach (var g in GetActiveMeshes().GroupBy(x => x.SkinRef))
-            {
+            foreach (var g in GetActiveMeshes().GroupBy(x => x.SkinRef)) {
                 var skin = Textures.FirstOrDefault(x => x.Index == g.Key);
                 if (skin == null || (skin.Flags & 0x02) == 0) continue;
-                foreach (var v in g.SelectMany(m => m.Vertices))
-                {
+                foreach (var v in g.SelectMany(m => m.Vertices)) {
                     var transform = transforms[v.BoneWeightings.First().Bone.BoneIndex];
 
                     // Borrowed from HLMV's StudioModel::Chrome function
@@ -205,24 +181,19 @@ namespace CBRE.DataStructures.Models
         /// Normalises vertex texture coordinates to be between 0 and 1.
         /// This operation modifies the model vertices.
         /// </summary>
-        private void NormaliseTextureCoordinates()
-        {
-            foreach (var g in GetActiveMeshes().GroupBy(x => x.SkinRef))
-            {
+        private void NormaliseTextureCoordinates() {
+            foreach (var g in GetActiveMeshes().GroupBy(x => x.SkinRef)) {
                 var skin = Textures.FirstOrDefault(x => x.Index == g.Key);
                 if (skin == null) continue;
-                foreach (var v in g.SelectMany(m => m.Vertices))
-                {
+                foreach (var v in g.SelectMany(m => m.Vertices)) {
                     v.TextureU /= skin.Width;
                     v.TextureV /= skin.Height;
                 }
             }
         }
 
-        public void Dispose()
-        {
-            foreach (var t in Textures)
-            {
+        public void Dispose() {
+            foreach (var t in Textures) {
                 if (t.Image != null) t.Image.Dispose();
                 if (t.TextureObject != null) t.TextureObject.Dispose();
             }

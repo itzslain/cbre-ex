@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Compiling.Lightmap
-{
-    public class LightmapGroup
-    {
+namespace CBRE.Editor.Compiling.Lightmap {
+    public class LightmapGroup {
         public PlaneF Plane;
         public BoxF BoundingBox;
         public List<LMFace> Faces;
@@ -25,13 +23,10 @@ namespace CBRE.Editor.Compiling.Lightmap
         public bool DebugBreakpoint = false;
 #endif
 
-        private void CalculateInitialUV()
-        {
-            if (uAxis == null || vAxis == null)
-            {
+        private void CalculateInitialUV() {
+            if (uAxis == null || vAxis == null) {
 #if DEBUG
-                if (DebugBreakpoint)
-                {
+                if (DebugBreakpoint) {
                     int breakHerePls = 2222222;
                 }
 #endif
@@ -41,22 +36,17 @@ namespace CBRE.Editor.Compiling.Lightmap
                 uAxis = Plane.Normal.Cross(tempV).Normalise();
                 vAxis = uAxis.Cross(Plane.Normal).Normalise();
 
-                if (Plane.OnPlane(Plane.PointOnPlane + uAxis * 1000f) != 0)
-                {
+                if (Plane.OnPlane(Plane.PointOnPlane + uAxis * 1000f) != 0) {
                     throw new Exception("uAxis is misaligned");
                 }
-                if (Plane.OnPlane(Plane.PointOnPlane + vAxis * 1000f) != 0)
-                {
+                if (Plane.OnPlane(Plane.PointOnPlane + vAxis * 1000f) != 0) {
                     throw new Exception("vAxis is misaligned");
                 }
             }
 
-            if (minTotalX == null || minTotalY == null || maxTotalX == null || maxTotalY == null)
-            {
-                foreach (LMFace face in Faces)
-                {
-                    foreach (CoordinateF coord in face.Vertices.Select(x => x.Location))
-                    {
+            if (minTotalX == null || minTotalY == null || maxTotalX == null || maxTotalY == null) {
+                foreach (LMFace face in Faces) {
+                    foreach (CoordinateF coord in face.Vertices.Select(x => x.Location)) {
                         float x = coord.Dot(uAxis);
                         float y = coord.Dot(vAxis);
 
@@ -75,33 +65,27 @@ namespace CBRE.Editor.Compiling.Lightmap
                 maxTotalX /= LightmapConfig.DownscaleFactor; maxTotalX = (float)Math.Ceiling(maxTotalX.Value); maxTotalX *= LightmapConfig.DownscaleFactor;
                 maxTotalY /= LightmapConfig.DownscaleFactor; maxTotalY = (float)Math.Ceiling(maxTotalY.Value); maxTotalY *= LightmapConfig.DownscaleFactor;
 
-                if ((maxTotalX - minTotalX) < (maxTotalY - minTotalY))
-                {
+                if ((maxTotalX - minTotalX) < (maxTotalY - minTotalY)) {
                     SwapUV();
                 }
             }
         }
 
-        public float Width
-        {
-            get
-            {
+        public float Width {
+            get {
                 CalculateInitialUV();
                 return (maxTotalX - minTotalX).Value;
             }
         }
 
-        public float Height
-        {
-            get
-            {
+        public float Height {
+            get {
                 CalculateInitialUV();
                 return (maxTotalY - minTotalY).Value;
             }
         }
 
-        public void SwapUV()
-        {
+        public void SwapUV() {
             float maxSwap = maxTotalX.Value; float minSwap = minTotalX.Value;
             maxTotalX = maxTotalY; minTotalX = minTotalY;
             maxTotalY = maxSwap; minTotalY = minSwap;
@@ -111,12 +95,9 @@ namespace CBRE.Editor.Compiling.Lightmap
             vAxis = swapAxis;
         }
 
-        public static LightmapGroup FindCoplanar(List<LightmapGroup> lmGroups, LMFace otherFace)
-        {
-            foreach (LightmapGroup group in lmGroups)
-            {
-                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.01f)
-                {
+        public static LightmapGroup FindCoplanar(List<LightmapGroup> lmGroups, LMFace otherFace) {
+            foreach (LightmapGroup group in lmGroups) {
+                if ((group.Plane.Normal - otherFace.Plane.Normal).LengthSquared() < 0.01f) {
                     PlaneF plane2 = new PlaneF(otherFace.Plane.Normal, otherFace.Vertices[0].Location);
                     if (Math.Abs(plane2.EvalAtPoint((group.Plane.PointOnPlane))) > 4.0f) continue;
                     BoxF faceBox = new BoxF(otherFace.BoundingBox.Start - new CoordinateF(3.0f, 3.0f, 3.0f), otherFace.BoundingBox.End + new CoordinateF(3.0f, 3.0f, 3.0f));

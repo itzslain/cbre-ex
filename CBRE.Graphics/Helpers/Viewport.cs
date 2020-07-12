@@ -1,12 +1,9 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace CBRE.Graphics.Helpers
-{
-    public static class Viewport
-    {
-        public static void Perspective(int x, int y, int width, int height, int fov, float near = 0.1f, float far = 50000)
-        {
+namespace CBRE.Graphics.Helpers {
+    public static class Viewport {
+        public static void Perspective(int x, int y, int width, int height, int fov, float near = 0.1f, float far = 50000) {
             Switch(x, y, width, height);
             var mode = Matrix.CurrentMode;
             Matrix.Set(MatrixMode.Projection);
@@ -17,8 +14,7 @@ namespace CBRE.Graphics.Helpers
             Matrix.Set(mode);
         }
 
-        public static void Orthographic(int x, int y, int width, int height, float near = -1, float far = 1)
-        {
+        public static void Orthographic(int x, int y, int width, int height, float near = -1, float far = 1) {
             Switch(x, y, width, height);
             var mode = Matrix.CurrentMode;
             Matrix.Set(MatrixMode.Projection);
@@ -27,8 +23,7 @@ namespace CBRE.Graphics.Helpers
             Matrix.Set(mode);
         }
 
-        public static void Switch(int x, int y, int width, int height)
-        {
+        public static void Switch(int x, int y, int width, int height) {
             GL.Viewport(x, y, width, height);
             GL.Scissor(x, y, width, height);
         }

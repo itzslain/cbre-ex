@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CBRE.Packages
-{
-    public interface IPackage : IPackageStreamSource
-    {
+namespace CBRE.Packages {
+    public interface IPackage : IPackageStreamSource {
         FileInfo PackageFile { get; }
         IEnumerable<IPackageEntry> GetEntries();
         IPackageEntry GetEntry(string path);

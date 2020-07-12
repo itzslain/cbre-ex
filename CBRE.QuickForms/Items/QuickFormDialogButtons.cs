@@ -3,40 +3,34 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items
-{
+namespace CBRE.QuickForms.Items {
     /// <summary>
     /// A control that shows any number of buttons.
     /// </summary>
-    public class QuickFormDialogButtons : QuickFormItem
-    {
+    public class QuickFormDialogButtons : QuickFormItem {
         private readonly List<Action<QuickForm>> _actions;
         private readonly List<string> _labels;
         private readonly List<DialogResult> _results;
 
-        public QuickFormDialogButtons()
-        {
+        public QuickFormDialogButtons() {
             _actions = new List<Action<QuickForm>>();
             _labels = new List<string>();
             _results = new List<DialogResult>();
         }
 
-        public QuickFormDialogButtons Button(string label, DialogResult result, Action<QuickForm> action = null)
-        {
+        public QuickFormDialogButtons Button(string label, DialogResult result, Action<QuickForm> action = null) {
             _labels.Add(label);
             _actions.Add(action);
             _results.Add(result);
             return this;
         }
 
-        public override List<Control> GetControls(QuickForm qf)
-        {
+        public override List<Control> GetControls(QuickForm qf) {
             var controls = new List<Control>();
 
             var length = _actions.Count;
 
-            for (var i = 0; i < _labels.Count; i++)
-            {
+            for (var i = 0; i < _labels.Count; i++) {
                 var action = _actions[i];
                 var label = _labels[i];
                 var result = _results[i];

@@ -1,7 +1,5 @@
-﻿namespace CBRE.UI
-{
-    public interface IViewportEventListener
-    {
+﻿namespace CBRE.UI {
+    public interface IViewportEventListener {
         ViewportBase Viewport { get; set; }
 
         void KeyUp(ViewportEvent e);

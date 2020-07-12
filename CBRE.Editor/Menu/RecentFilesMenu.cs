@@ -4,18 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.Menu
-{
-    public class RecentFilesMenu : IMenuBuilder
-    {
+namespace CBRE.Editor.Menu {
+    public class RecentFilesMenu : IMenuBuilder {
         public bool ShowInMenu { get { return true; } }
         public bool ShowInToolStrip { get { return false; } }
-        public IEnumerable<ToolStripItem> Build()
-        {
+        public IEnumerable<ToolStripItem> Build() {
             if (MenuManager.RecentFiles.Count == 0) yield break;
             yield return new ToolStripSeparator();
-            foreach (var rf in MenuManager.RecentFiles.OrderBy(x => x.Order))
-            {
+            foreach (var rf in MenuManager.RecentFiles.OrderBy(x => x.Order)) {
                 var file = rf.Location;
                 var mi = new ToolStripMenuItem(Path.GetFileName(file));
                 mi.Click += (sender, e) => Mediator.Publish(EditorMediator.LoadFile, file);
@@ -23,8 +19,7 @@ namespace CBRE.Editor.Menu
             }
         }
 
-        public IEnumerable<ToolStripItem> BuildToolStrip()
-        {
+        public IEnumerable<ToolStripItem> BuildToolStrip() {
             throw new System.NotImplementedException();
         }
     }

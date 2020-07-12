@@ -2,23 +2,18 @@
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Geometric
-{
+namespace CBRE.DataStructures.Geometric {
     /// <summary>
     /// Represents a 4x4 MatrixF. Shamelessly taken in its entirety from OpenTK's MatrixF4 structure. http://www.opentk.com/
     /// </summary>
     [Serializable]
-    public class MatrixF : ISerializable
-    {
-        public static MatrixF Zero
-        {
+    public class MatrixF : ISerializable {
+        public static MatrixF Zero {
             get { return new MatrixF(); }
         }
 
-        public static MatrixF Identity
-        {
-            get
-            {
+        public static MatrixF Identity {
+            get {
                 return new MatrixF(1, 0, 0, 0,
                                   0, 1, 0, 0,
                                   0, 0, 1, 0,
@@ -28,8 +23,7 @@ namespace CBRE.DataStructures.Geometric
 
         public float[] Values { get; private set; }
 
-        public float this[int i]
-        {
+        public float this[int i] {
             get { return Values[i]; }
             set { Values[i] = value; }
         }
@@ -39,8 +33,7 @@ namespace CBRE.DataStructures.Geometric
         public CoordinateF Z { get { return new CoordinateF(Values[8], Values[9], Values[10]); } }
         public CoordinateF Shift { get { return new CoordinateF(Values[12], Values[13], Values[14]); } }
 
-        public MatrixF()
-        {
+        public MatrixF() {
             Values = new float[]
                          {
                              0, 0, 0, 0,
@@ -50,24 +43,20 @@ namespace CBRE.DataStructures.Geometric
                          };
         }
 
-        protected MatrixF(SerializationInfo info, StreamingContext context)
-        {
+        protected MatrixF(SerializationInfo info, StreamingContext context) {
             Values = (float[])info.GetValue("Values", typeof(float[]));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("Values", Values);
         }
 
-        public MatrixF(params float[] values)
-        {
+        public MatrixF(params float[] values) {
             if (values.Length != 16) throw new Exception("A MatrixF must be 16 values long.");
             Values = values;
         }
 
-        public float Determinant()
-        {
+        public float Determinant() {
             return
                 Values[0] * Values[5] * Values[10] * Values[15] - Values[0] * Values[5] * Values[11] * Values[14] + Values[0] * Values[6] * Values[11] * Values[13] - Values[0] * Values[6] * Values[9] * Values[15]
               + Values[0] * Values[7] * Values[9] * Values[14] - Values[0] * Values[7] * Values[10] * Values[13] - Values[1] * Values[6] * Values[11] * Values[12] + Values[1] * Values[6] * Values[8] * Values[15]
@@ -77,8 +66,7 @@ namespace CBRE.DataStructures.Geometric
               - Values[3] * Values[5] * Values[10] * Values[12] + Values[3] * Values[5] * Values[8] * Values[14] - Values[3] * Values[6] * Values[8] * Values[13] + Values[3] * Values[6] * Values[9] * Values[12];
         }
 
-        public MatrixF Inverse()
-        {
+        public MatrixF Inverse() {
             int[] colIdx = { 0, 0, 0, 0 };
             int[] rowIdx = { 0, 0, 0, 0 };
             int[] pivotIdx = { -1, -1, -1, -1 };
@@ -93,28 +81,20 @@ namespace CBRE.DataStructures.Geometric
                               };
             var icol = 0;
             var irow = 0;
-            for (var i = 0; i < 4; i++)
-            {
+            for (var i = 0; i < 4; i++) {
                 // Find the largest pivot value
                 var maxPivot = 0f;
-                for (var j = 0; j < 4; j++)
-                {
-                    if (pivotIdx[j] != 0)
-                    {
-                        for (var k = 0; k < 4; ++k)
-                        {
-                            if (pivotIdx[k] == -1)
-                            {
+                for (var j = 0; j < 4; j++) {
+                    if (pivotIdx[j] != 0) {
+                        for (var k = 0; k < 4; ++k) {
+                            if (pivotIdx[k] == -1) {
                                 var absVal = Math.Abs(inverse[j, k]);
-                                if (absVal > maxPivot)
-                                {
+                                if (absVal > maxPivot) {
                                     maxPivot = absVal;
                                     irow = j;
                                     icol = k;
                                 }
-                            }
-                            else if (pivotIdx[k] > 0)
-                            {
+                            } else if (pivotIdx[k] > 0) {
                                 return this;
                             }
                         }
@@ -124,10 +104,8 @@ namespace CBRE.DataStructures.Geometric
                 ++(pivotIdx[icol]);
 
                 // Swap rows over so pivot is on diagonal
-                if (irow != icol)
-                {
-                    for (var k = 0; k < 4; ++k)
-                    {
+                if (irow != icol) {
+                    for (var k = 0; k < 4; ++k) {
                         var f = inverse[irow, k];
                         inverse[irow, k] = inverse[icol, k];
                         inverse[icol, k] = f;
@@ -139,8 +117,7 @@ namespace CBRE.DataStructures.Geometric
 
                 var pivot = inverse[icol, icol];
                 // check for singular MatrixF
-                if (Math.Abs(pivot - 0) < 0.0001)
-                {
+                if (Math.Abs(pivot - 0) < 0.0001) {
                     throw new InvalidOperationException("MatrixF is singular and cannot be inverted.");
                 }
 
@@ -150,11 +127,9 @@ namespace CBRE.DataStructures.Geometric
                 for (var k = 0; k < 4; ++k) inverse[icol, k] *= oneOverPivot;
 
                 // Do elimination of non-diagonal elements
-                for (var j = 0; j < 4; ++j)
-                {
+                for (var j = 0; j < 4; ++j) {
                     // check this isn't on the diagonal
-                    if (icol != j)
-                    {
+                    if (icol != j) {
                         var f = inverse[j, icol];
                         inverse[j, icol] = 0;
                         for (var k = 0; k < 4; ++k) inverse[j, k] -= inverse[icol, k] * f;
@@ -162,12 +137,10 @@ namespace CBRE.DataStructures.Geometric
                 }
             }
 
-            for (var j = 3; j >= 0; --j)
-            {
+            for (var j = 3; j >= 0; --j) {
                 var ir = rowIdx[j];
                 var ic = colIdx[j];
-                for (var k = 0; k < 4; ++k)
-                {
+                for (var k = 0; k < 4; ++k) {
                     var f = inverse[k, ir];
                     inverse[k, ir] = inverse[k, ic];
                     inverse[k, ic] = f;
@@ -181,85 +154,71 @@ namespace CBRE.DataStructures.Geometric
                 inverse[3, 0], inverse[3, 1], inverse[3, 2], inverse[3, 3]);
         }
 
-        public MatrixF Transpose()
-        {
+        public MatrixF Transpose() {
             return new MatrixF(Values[0], Values[4], Values[8], Values[12],
                               Values[1], Values[5], Values[9], Values[13],
                               Values[2], Values[6], Values[10], Values[14],
                               Values[3], Values[7], Values[11], Values[15]);
         }
 
-        public MatrixF Translate(CoordinateF translation)
-        {
+        public MatrixF Translate(CoordinateF translation) {
             return new MatrixF(Values[0], Values[1], Values[2], Values[3],
                               Values[4], Values[5], Values[6], Values[7],
                               Values[8], Values[9], Values[10], Values[11],
                               Values[12] + translation.X, Values[13] + translation.Y, Values[14] + translation.Z, Values[15]);
         }
 
-        public bool EquivalentTo(MatrixF other, float delta = 0.0001f)
-        {
-            for (var i = 0; i < 16; i++)
-            {
+        public bool EquivalentTo(MatrixF other, float delta = 0.0001f) {
+            for (var i = 0; i < 16; i++) {
                 if (Math.Abs(Values[i] - other.Values[i]) >= delta) return false;
             }
             return true;
         }
 
-        public bool Equals(MatrixF other)
-        {
+        public bool Equals(MatrixF other) {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            for (var i = 0; i < 16; i++)
-            {
+            for (var i = 0; i < 16; i++) {
                 if (Math.Abs(Values[i] - other.Values[i]) > 0.0001) return false;
             }
             return true;
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(MatrixF)) return false;
             return Equals((MatrixF)obj);
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return (Values != null ? Values.GetHashCode() : 0);
         }
 
-        public static bool operator ==(MatrixF left, MatrixF right)
-        {
+        public static bool operator ==(MatrixF left, MatrixF right) {
             return Equals(left, right);
         }
 
-        public static bool operator !=(MatrixF left, MatrixF right)
-        {
+        public static bool operator !=(MatrixF left, MatrixF right) {
             return !Equals(left, right);
         }
 
-        public static CoordinateF operator *(CoordinateF left, MatrixF right)
-        {
+        public static CoordinateF operator *(CoordinateF left, MatrixF right) {
             return new CoordinateF(
                 right[12] + left.X * right[0] + left.Y * right[4] + left.Z * right[8],
                 right[13] + left.X * right[1] + left.Y * right[5] + left.Z * right[9],
                 right[14] + left.X * right[2] + left.Y * right[6] + left.Z * right[10]);
         }
 
-        public static MatrixF operator *(MatrixF mat, float scalar)
-        {
+        public static MatrixF operator *(MatrixF mat, float scalar) {
             return new MatrixF(mat.Values.Select(x => x * scalar).ToArray());
         }
 
-        public static MatrixF operator *(float scalar, MatrixF mat)
-        {
+        public static MatrixF operator *(float scalar, MatrixF mat) {
             return new MatrixF(mat.Values.Select(x => x * scalar).ToArray());
         }
 
-        public static MatrixF operator *(MatrixF left, MatrixF right)
-        {
+        public static MatrixF operator *(MatrixF left, MatrixF right) {
             return new MatrixF(
                 left.Values[0] * right.Values[0] + left.Values[1] * right.Values[4] + left.Values[2] * right.Values[8] + left.Values[3] * right.Values[12],
                 left.Values[0] * right.Values[1] + left.Values[1] * right.Values[5] + left.Values[2] * right.Values[9] + left.Values[3] * right.Values[13],
@@ -279,22 +238,19 @@ namespace CBRE.DataStructures.Geometric
                 left.Values[12] * right.Values[3] + left.Values[13] * right.Values[7] + left.Values[14] * right.Values[11] + left.Values[15] * right.Values[15]);
         }
 
-        public static MatrixF operator +(MatrixF left, MatrixF right)
-        {
+        public static MatrixF operator +(MatrixF left, MatrixF right) {
             var mat = new MatrixF();
             for (var i = 0; i < 16; i++) mat[i] = left[i] + right[i];
             return mat;
         }
 
-        public static MatrixF operator -(MatrixF left, MatrixF right)
-        {
+        public static MatrixF operator -(MatrixF left, MatrixF right) {
             var mat = new MatrixF();
             for (var i = 0; i < 16; i++) mat[i] = left[i] - right[i];
             return mat;
         }
 
-        public static MatrixF Rotation(CoordinateF axis, float angle)
-        {
+        public static MatrixF Rotation(CoordinateF axis, float angle) {
             var cos = (float)Math.Cos(-angle);
             var sin = (float)Math.Sin(-angle);
             var t = 1f - cos;
@@ -306,14 +262,12 @@ namespace CBRE.DataStructures.Geometric
                               0, 0, 0, 1);
         }
 
-        public static MatrixF Rotation(QuaternionF quaternion)
-        {
+        public static MatrixF Rotation(QuaternionF quaternion) {
             var aa = quaternion.GetAxisAngle();
             return Rotation(aa.Item1, aa.Item2);
         }
 
-        public static MatrixF RotationX(float angle)
-        {
+        public static MatrixF RotationX(float angle) {
             var cos = (float)Math.Cos(angle);
             var sin = (float)Math.Sin(angle);
 
@@ -323,8 +277,7 @@ namespace CBRE.DataStructures.Geometric
                               0, 0, 0, 1);
         }
 
-        public static MatrixF RotationY(float angle)
-        {
+        public static MatrixF RotationY(float angle) {
             var cos = (float)Math.Cos(angle);
             var sin = (float)Math.Sin(angle);
 
@@ -334,8 +287,7 @@ namespace CBRE.DataStructures.Geometric
                               0, 0, 0, 1);
         }
 
-        public static MatrixF RotationZ(float angle)
-        {
+        public static MatrixF RotationZ(float angle) {
             var cos = (float)Math.Cos(angle);
             var sin = (float)Math.Sin(angle);
 
@@ -345,8 +297,7 @@ namespace CBRE.DataStructures.Geometric
                               0, 0, 0, 1);
         }
 
-        public static MatrixF Translation(CoordinateF translation)
-        {
+        public static MatrixF Translation(CoordinateF translation) {
             var m = Identity;
             m.Values[12] = translation.X;
             m.Values[13] = translation.Y;
@@ -354,8 +305,7 @@ namespace CBRE.DataStructures.Geometric
             return m;
         }
 
-        public static MatrixF Scale(CoordinateF scale)
-        {
+        public static MatrixF Scale(CoordinateF scale) {
             var m = Identity;
             m.Values[0] = scale.X;
             m.Values[5] = scale.Y;

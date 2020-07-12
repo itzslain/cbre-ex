@@ -8,45 +8,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.Menu
-{
-    public static class MenuManager
-    {
+namespace CBRE.Editor.Menu {
+    public static class MenuManager {
         private static MenuStrip _menu;
         private static ToolStripContainer _container;
         private static readonly Dictionary<string, List<IMenuBuilder>> MenuItems;
 
         public static List<RecentFile> RecentFiles { get; private set; }
 
-        static MenuManager()
-        {
+        static MenuManager() {
             RecentFiles = new List<RecentFile>();
             MenuItems = new Dictionary<string, List<IMenuBuilder>>();
         }
 
-        public static void Init(MenuStrip menu, ToolStripContainer toolStripContainer)
-        {
+        public static void Init(MenuStrip menu, ToolStripContainer toolStripContainer) {
             _menu = menu;
             _container = toolStripContainer;
             AddDefault();
         }
 
-        public static void Add(string menuName, IMenuBuilder builder)
-        {
+        public static void Add(string menuName, IMenuBuilder builder) {
             if (!MenuItems.ContainsKey(menuName)) MenuItems.Add(menuName, new List<IMenuBuilder>());
             MenuItems[menuName].Add(builder);
         }
 
-        public static void Insert(string menuName, int index, IMenuBuilder builder)
-        {
+        public static void Insert(string menuName, int index, IMenuBuilder builder) {
             if (!MenuItems.ContainsKey(menuName)) MenuItems.Add(menuName, new List<IMenuBuilder>());
             if (index < 0) index = 0;
             if (index > MenuItems[menuName].Count) index = MenuItems[menuName].Count;
             MenuItems[menuName].Insert(index, builder);
         }
 
-        private static void AddDefault()
-        {
+        private static void AddDefault() {
             Func<bool> mapOpen = () => DocumentManager.CurrentDocument != null;
             Add("File", new SimpleMenuBuilder("New", HotkeysMediator.FileNew) { Image = Resources.Menu_New, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Open", HotkeysMediator.FileOpen) { Image = Resources.Menu_Open, ShowInToolStrip = true });
@@ -86,8 +79,7 @@ namespace CBRE.Editor.Menu
             Add("Map", new GroupedMenuBuilder("Grid Settings",
                                               new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { Image = Resources.Menu_SmallerGrid, IsVisible = mapOpen, ShowInToolStrip = true },
                                               new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { Image = Resources.Menu_LargerGrid, IsVisible = mapOpen, ShowInToolStrip = true }
-                           )
-            { IsVisible = mapOpen });
+                           ) { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { Image = Resources.Menu_SmallerGrid, IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { Image = Resources.Menu_LargerGrid, IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
@@ -142,14 +134,12 @@ namespace CBRE.Editor.Menu
                                                 new SimpleMenuBuilder("To Y Axis Max", HotkeysMediator.AlignZMax) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("To Z Axis Min", HotkeysMediator.AlignYMin) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("To Z Axis Max", HotkeysMediator.AlignYMax) { IsVisible = mapOpen, IsActive = itemsSelected }
-                             )
-            { Image = Resources.Menu_Align, IsVisible = mapOpen });
+                             ) { Image = Resources.Menu_Align, IsVisible = mapOpen });
             Add("Tools", new GroupedMenuBuilder("Flip Objects",
                                                 new SimpleMenuBuilder("X Axis", HotkeysMediator.FlipX) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("Y Axis", HotkeysMediator.FlipZ) { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("Z Axis", HotkeysMediator.FlipY) { IsVisible = mapOpen, IsActive = itemsSelected }
-                             )
-            { Image = Resources.Menu_Flip, IsVisible = mapOpen });
+                             ) { Image = Resources.Menu_Flip, IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings) { Image = Resources.Menu_Options, ShowInToolStrip = true });
 
@@ -159,35 +149,29 @@ namespace CBRE.Editor.Menu
             Add("Help", new SimpleMenuBuilder("About...", EditorMediator.About));
         }
 
-        public static void UpdateRecentFilesMenu()
-        {
+        public static void UpdateRecentFilesMenu() {
             RebuildPartial("File");
         }
 
-        public static void RebuildPartial(string name)
-        {
+        public static void RebuildPartial(string name) {
             if (!MenuItems.ContainsKey(name)) return;
             var mi = MenuItems[name];
 
-            foreach (ToolStripMenuItem menu in _menu.Items)
-            {
+            foreach (ToolStripMenuItem menu in _menu.Items) {
                 if (menu.Text != name) continue;
                 menu.DropDownItems.Clear();
                 menu.DropDownItems.AddRange(mi.Where(x => x.ShowInMenu).SelectMany(x => x.Build()).ToArray());
             }
         }
 
-        public static void Rebuild()
-        {
+        public static void Rebuild() {
             if (_menu == null || _container == null) return;
-            foreach (ToolStripMenuItem mi in _menu.Items)
-            {
+            foreach (ToolStripMenuItem mi in _menu.Items) {
                 mi.DropDownOpening -= DropDownOpening;
             }
             _menu.Items.Clear();
             var removeMenu = _menu.Items.OfType<ToolStripMenuItem>().ToList();
-            foreach (var kv in MenuItems)
-            {
+            foreach (var kv in MenuItems) {
                 var mi = removeMenu.FirstOrDefault(x => x.Text == kv.Key) ?? new ToolStripMenuItem(kv.Key);
                 mi.DropDownItems.Clear();
                 mi.DropDownItems.AddRange(kv.Value.Where(x => x.ShowInMenu).SelectMany(x => x.Build()).ToArray());
@@ -196,8 +180,7 @@ namespace CBRE.Editor.Menu
                 mi.DropDownOpening += DropDownOpening;
                 if (!_menu.Items.Contains(mi)) _menu.Items.Add(mi);
             }
-            foreach (var rem in removeMenu)
-            {
+            foreach (var rem in removeMenu) {
                 _menu.Items.Remove(rem);
             }
             // Need to remove and re-add tool strips because the ordering is incorrect otherwise
@@ -205,27 +188,23 @@ namespace CBRE.Editor.Menu
                 .SelectMany(x => x.Controls.OfType<ToolStrip>())
                 .Where(control => MenuItems.Any(x => x.Key == control.Name))
                 .ToList();
-            foreach (var kv in MenuItems.Reverse())
-            {
+            foreach (var kv in MenuItems.Reverse()) {
                 var ts = removeToolbar.FirstOrDefault(x => x.Name == kv.Key) ?? new ToolStrip { Name = kv.Key };
                 // TODO Match by name, only remove items that don't match
                 ts.Items.Clear();
                 ts.Items.AddRange(kv.Value.Where(x => x.ShowInToolStrip).SelectMany(x => x.BuildToolStrip()).ToArray());
-                if (ts.Items.Count > 0)
-                {
+                if (ts.Items.Count > 0) {
                     if (!removeToolbar.Contains(ts)) _container.TopToolStripPanel.Join(ts);
                     removeToolbar.Remove(ts);
                 }
             }
-            foreach (var control in removeToolbar)
-            {
+            foreach (var control in removeToolbar) {
                 control.Parent.Controls.Remove(control);
                 control.Dispose();
             }
         }
 
-        private static void DropDownOpening(object sender, EventArgs e)
-        {
+        private static void DropDownOpening(object sender, EventArgs e) {
             Mediator.Publish(EditorMediator.UpdateMenu);
         }
     }

@@ -7,39 +7,31 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace CBRE.Editor.Brushes
-{
-    public class PipeBrush : IBrush
-    {
+namespace CBRE.Editor.Brushes {
+    public class PipeBrush : IBrush {
         private readonly NumericControl _numSides;
         private readonly NumericControl _wallWidth;
 
-        public PipeBrush()
-        {
+        public PipeBrush() {
             _numSides = new NumericControl(this) { LabelText = "Number of sides" };
             _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
         }
 
-        public string Name
-        {
+        public string Name {
             get { return "Pipe"; }
         }
 
         public bool CanRound { get { return true; } }
 
-        public IEnumerable<BrushControl> GetControls()
-        {
+        public IEnumerable<BrushControl> GetControls() {
             yield return _numSides;
             yield return _wallWidth;
         }
 
-        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
-        {
+        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col) {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
-            foreach (var arr in faces)
-            {
-                var face = new Face(generator.GetNextFaceID())
-                {
+            foreach (var arr in faces) {
+                var face = new Face(generator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,
@@ -54,8 +46,7 @@ namespace CBRE.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
-        {
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals) {
             var wallWidth = _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
             var numSides = (int)_numSides.GetValue();
@@ -74,8 +65,7 @@ namespace CBRE.Editor.Brushes
             // Calculate the X and Y points for the inner and outer ellipses
             var outer = new Coordinate[numSides];
             var inner = new Coordinate[numSides];
-            for (var i = 0; i < numSides; i++)
-            {
+            for (var i = 0; i < numSides; i++) {
                 var a = i * angle;
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
                 var yval = box.Center.Y + minorOut * DMath.Sin(a);
@@ -89,8 +79,7 @@ namespace CBRE.Editor.Brushes
             // Create the solids
             var colour = Colour.GetRandomBrushColour();
             var z = new Coordinate(0, 0, height).Round(roundDecimals);
-            for (var i = 0; i < numSides; i++)
-            {
+            for (var i = 0; i < numSides; i++) {
                 var faces = new List<Coordinate[]>();
                 var next = (i + 1) % numSides;
                 faces.Add(new[] { outer[i], outer[i] + z, outer[next] + z, outer[next] });

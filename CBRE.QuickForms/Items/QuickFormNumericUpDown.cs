@@ -2,20 +2,17 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items
-{
+namespace CBRE.QuickForms.Items {
     /// <summary>
     /// A control that shows a NumericUpDown control.
     /// </summary>
-    public class QuickFormNumericUpDown : QuickFormItem
-    {
+    public class QuickFormNumericUpDown : QuickFormItem {
         private readonly int _max;
         private readonly int _min;
         private readonly int _decimals;
         private readonly decimal _defaultValue;
 
-        public QuickFormNumericUpDown(string nudname, int nudmin, int nudmax, int nuddecimals, decimal value)
-        {
+        public QuickFormNumericUpDown(string nudname, int nudmin, int nudmax, int nuddecimals, decimal value) {
             Name = nudname;
             _min = nudmin;
             _max = nudmax;
@@ -23,16 +20,14 @@ namespace CBRE.QuickForms.Items
             _defaultValue = value;
         }
 
-        public override List<Control> GetControls(QuickForm qf)
-        {
+        public override List<Control> GetControls(QuickForm qf) {
             var controls = new List<Control>();
             var l = new Label { Text = Name };
             Location(l, qf, true);
             Size(l, qf.LabelWidth);
             TextAlign(l);
             controls.Add(l);
-            var n = new NumericUpDown
-            {
+            var n = new NumericUpDown {
                 Maximum = _max,
                 Minimum = _min,
                 DecimalPlaces = _decimals,

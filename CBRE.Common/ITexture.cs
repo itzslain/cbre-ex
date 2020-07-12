@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace CBRE.Common
-{
-    public interface ITexture : IDisposable
-    {
+namespace CBRE.Common {
+    public interface ITexture : IDisposable {
         TextureFlags Flags { get; }
         string Name { get; }
         int Width { get; }
@@ -12,10 +10,8 @@ namespace CBRE.Common
         void Unbind();
     }
 
-    public static class TextureExtensions
-    {
-        public static bool HasTransparency(this ITexture texture)
-        {
+    public static class TextureExtensions {
+        public static bool HasTransparency(this ITexture texture) {
             return texture.Flags.HasFlag(TextureFlags.Transparent);
         }
     }

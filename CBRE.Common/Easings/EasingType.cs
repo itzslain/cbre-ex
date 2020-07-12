@@ -1,7 +1,5 @@
-namespace CBRE.Common.Easings
-{
-    public enum EasingType
-    {
+namespace CBRE.Common.Easings {
+    public enum EasingType {
         Constant,
         Linear,
         Quadratic,

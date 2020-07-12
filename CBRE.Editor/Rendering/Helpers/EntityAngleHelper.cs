@@ -9,10 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace CBRE.Editor.Rendering.Helpers
-{
-    public class EntityAngleHelper : IHelper
-    {
+namespace CBRE.Editor.Rendering.Helpers {
+    public class EntityAngleHelper : IHelper {
 
         public Document Document { get; set; }
         public bool Is2DHelper { get { return CBRE.Settings.View.DrawEntityAngles; } }
@@ -20,25 +18,21 @@ namespace CBRE.Editor.Rendering.Helpers
         public bool IsDocumentHelper { get { return false; } }
         public HelperType HelperType { get { return HelperType.Augment; } }
 
-        public bool IsValidFor(MapObject o)
-        {
+        public bool IsValidFor(MapObject o) {
             return o is Entity && !o.HasChildren;
         }
 
-        public void BeforeRender2D(Viewport2D viewport)
-        {
+        public void BeforeRender2D(Viewport2D viewport) {
             GL.Enable(EnableCap.LineSmooth);
             GL.Enable(EnableCap.PolygonSmooth);
             GL.LineWidth(2);
         }
 
-        protected static void Coord(Coordinate c)
-        {
+        protected static void Coord(Coordinate c) {
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        public void Render2D(Viewport2D viewport, MapObject o)
-        {
+        public void Render2D(Viewport2D viewport, MapObject o) {
             if (viewport.Zoom < 0.5m) return;
 
             var entityData = o.GetEntityData();
@@ -77,35 +71,29 @@ namespace CBRE.Editor.Rendering.Helpers
             GL.End();
         }
 
-        public void AfterRender2D(Viewport2D viewport)
-        {
+        public void AfterRender2D(Viewport2D viewport) {
             GL.LineWidth(1);
             GL.Disable(EnableCap.LineSmooth);
             GL.Disable(EnableCap.PolygonSmooth);
         }
 
-        public void BeforeRender3D(Viewport3D viewport)
-        {
+        public void BeforeRender3D(Viewport3D viewport) {
             throw new NotImplementedException();
         }
 
-        public void Render3D(Viewport3D vp, MapObject o)
-        {
+        public void Render3D(Viewport3D vp, MapObject o) {
             throw new NotImplementedException();
         }
 
-        public void AfterRender3D(Viewport3D viewport)
-        {
+        public void AfterRender3D(Viewport3D viewport) {
             throw new NotImplementedException();
         }
 
-        public void RenderDocument(ViewportBase viewport, Document document)
-        {
+        public void RenderDocument(ViewportBase viewport, Document document) {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
-        {
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects) {
             return mapObjects;
         }
     }

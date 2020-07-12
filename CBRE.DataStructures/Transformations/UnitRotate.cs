@@ -3,28 +3,23 @@ using CBRE.Extensions;
 using System;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Transformations
-{
+namespace CBRE.DataStructures.Transformations {
     [Serializable]
-    public class UnitRotate : IUnitTransformation
-    {
+    public class UnitRotate : IUnitTransformation {
         public decimal Rotation { get; set; }
         public Line Axis { get; set; }
 
-        public UnitRotate(decimal scalar, Line axis)
-        {
+        public UnitRotate(decimal scalar, Line axis) {
             Rotation = scalar;
             Axis = axis;
         }
 
-        protected UnitRotate(SerializationInfo info, StreamingContext context)
-        {
+        protected UnitRotate(SerializationInfo info, StreamingContext context) {
             Rotation = info.GetInt32("Rotation");
             Axis = (Line)info.GetValue("Axis", typeof(Line));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("Rotation", Rotation);
             info.AddValue("Axis", Axis);
         }
@@ -32,8 +27,7 @@ namespace CBRE.DataStructures.Transformations
         /**
          * http://paulbourke.net/geometry/rotate/
          */
-        public Coordinate Transform(Coordinate c)
-        {
+        public Coordinate Transform(Coordinate c) {
             var p = c - Axis.Start;
             var r = (Axis.End - Axis.Start).Normalise();
 
@@ -57,8 +51,7 @@ namespace CBRE.DataStructures.Transformations
             return new Coordinate(x, y, z) + Axis.Start;
         }
 
-        public CoordinateF Transform(CoordinateF c)
-        {
+        public CoordinateF Transform(CoordinateF c) {
             var p = c - new CoordinateF(Axis.Start);
             var r = new CoordinateF((Axis.End - Axis.Start).Normalise());
 

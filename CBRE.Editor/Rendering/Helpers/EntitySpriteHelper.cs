@@ -11,52 +11,43 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace CBRE.Editor.Rendering.Helpers
-{
-    public class EntitySpriteHelper : IHelper
-    {
+namespace CBRE.Editor.Rendering.Helpers {
+    public class EntitySpriteHelper : IHelper {
         public Document Document { get; set; }
         public bool Is2DHelper { get { return false; } }
         public bool Is3DHelper { get { return true; } }
         public bool IsDocumentHelper { get { return false; } }
         public HelperType HelperType { get { return HelperType.Replace; } }
 
-        public bool IsValidFor(MapObject o)
-        {
+        public bool IsValidFor(MapObject o) {
             return !CBRE.Settings.View.DisableSpriteRendering && o is Entity && ((Entity)o).HasSprite();
         }
 
-        public void BeforeRender2D(Viewport2D viewport)
-        {
+        public void BeforeRender2D(Viewport2D viewport) {
             throw new NotImplementedException();
         }
 
-        public void Render2D(Viewport2D viewport, MapObject o)
-        {
+        public void Render2D(Viewport2D viewport, MapObject o) {
             throw new NotImplementedException();
         }
 
-        public void AfterRender2D(Viewport2D viewport)
-        {
+        public void AfterRender2D(Viewport2D viewport) {
             throw new NotImplementedException();
         }
 
-        public void BeforeRender3D(Viewport3D viewport)
-        {
+        public void BeforeRender3D(Viewport3D viewport) {
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.AlphaTest);
             GL.AlphaFunc(AlphaFunction.Greater, 0);
         }
 
-        public void Render3D(Viewport3D vp, MapObject o)
-        {
+        public void Render3D(Viewport3D vp, MapObject o) {
             var right = vp.Camera.GetRight();
             var up = Vector3.Cross(right, (vp.Camera.LookAt - vp.Camera.Location).Normalized());
             var entity = (Entity)o;
 
             var orig = new Vector3((float)entity.Origin.X, (float)entity.Origin.Y, (float)entity.Origin.Z);
-            if (entity.IsSelected)
-            {
+            if (entity.IsSelected) {
                 orig = Vector3.TransformPosition(orig, Document.SelectListTransform);
             }
             var normal = Vector3.Subtract(vp.Camera.Location, orig);
@@ -67,14 +58,11 @@ namespace CBRE.Editor.Rendering.Helpers
 
             GL.Color3(Color.White);
 
-            if (entity.GameData != null)
-            {
+            if (entity.GameData != null) {
                 var col = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Color255);
-                if (col != null)
-                {
+                if (col != null) {
                     var val = entity.EntityData.Properties.FirstOrDefault(x => x.Key == col.Name);
-                    if (val != null)
-                    {
+                    if (val != null) {
                         GL.Color3(val.GetColour(Color.White));
                     }
                 }
@@ -95,20 +83,17 @@ namespace CBRE.Editor.Rendering.Helpers
             GL.End();
         }
 
-        public void AfterRender3D(Viewport3D viewport)
-        {
+        public void AfterRender3D(Viewport3D viewport) {
             GL.AlphaFunc(AlphaFunction.Always, 0);
             GL.Disable(EnableCap.AlphaTest);
             GL.Disable(EnableCap.Texture2D);
         }
 
-        public void RenderDocument(ViewportBase viewport, Document document)
-        {
+        public void RenderDocument(ViewportBase viewport, Document document) {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
-        {
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects) {
             var vp3 = viewport as Viewport3D;
             if (vp3 == null) return mapObjects;
             var cam = vp3.Camera.Location.ToCoordinate();

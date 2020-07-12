@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Geometric
-{
+namespace CBRE.DataStructures.Geometric {
     /// <summary>
     /// Represents a QuaternionF. Shamelessly taken in its entirety from OpenTK's QuaternionF structure. http://www.opentk.com/
     /// </summary>
     [Serializable]
-    public class QuaternionF : ISerializable
-    {
-        public static QuaternionF Identity
-        {
+    public class QuaternionF : ISerializable {
+        public static QuaternionF Identity {
             get { return new QuaternionF(0, 0, 0, 1); }
         }
 
@@ -22,69 +19,57 @@ namespace CBRE.DataStructures.Geometric
         public float Z { get { return Vector.Z; } }
         public float W { get { return Scalar; } }
 
-        public QuaternionF(CoordinateF vector, float scalar)
-        {
+        public QuaternionF(CoordinateF vector, float scalar) {
             Vector = vector;
             Scalar = scalar;
         }
 
-        public QuaternionF(float x, float y, float z, float w)
-        {
+        public QuaternionF(float x, float y, float z, float w) {
             Vector = new CoordinateF(x, y, z);
             Scalar = w;
         }
 
-        public float Dot(QuaternionF c)
-        {
+        public float Dot(QuaternionF c) {
             return Vector.Dot(c.Vector) + Scalar * c.Scalar;
         }
 
-        protected QuaternionF(SerializationInfo info, StreamingContext context)
-        {
+        protected QuaternionF(SerializationInfo info, StreamingContext context) {
             Vector = (CoordinateF)info.GetValue("Vector", typeof(CoordinateF));
             Scalar = info.GetSingle("Scalar");
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("Vector", Vector);
             info.AddValue("Scalar", Scalar);
         }
 
-        public float Magnitude()
-        {
+        public float Magnitude() {
             return (float)Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2) + Math.Pow(W, 2));
         }
 
-        public QuaternionF Normalise()
-        {
+        public QuaternionF Normalise() {
             var len = Magnitude();
             return Math.Abs(len - 0) < 0.0001 ? new QuaternionF(0, 0, 0, 0) : new QuaternionF(X / len, Y / len, Z / len, W / len);
         }
 
-        public QuaternionF Conjugate()
-        {
+        public QuaternionF Conjugate() {
             return new QuaternionF(-X, -Y, -Z, W);
         }
 
-        public QuaternionF Inverse()
-        {
+        public QuaternionF Inverse() {
             var lengthSq = (float)(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2) + Math.Pow(W, 2));
-            if (Math.Abs(lengthSq - 0) > 0.0001)
-            {
+            if (Math.Abs(lengthSq - 0) > 0.0001) {
                 var i = 1f / lengthSq;
                 return new QuaternionF(Vector * -i, W * i);
             }
             return this;
         }
 
-        public QuaternionF Clone()
-        {
+        public QuaternionF Clone() {
             return new QuaternionF(X, Y, Z, W);
         }
 
-        public Tuple<CoordinateF, float> GetAxisAngle()
-        {
+        public Tuple<CoordinateF, float> GetAxisAngle() {
             var q = W > 1 ? Normalise() : this;
             var angle = 2f * (float)Math.Acos(q.W);
             var denom = (float)Math.Sqrt(1 - q.W * q.W);
@@ -92,8 +77,7 @@ namespace CBRE.DataStructures.Geometric
             return Tuple.Create(coord, angle);
         }
 
-        public CoordinateF GetEulerAngles(bool homogenous = true)
-        {
+        public CoordinateF GetEulerAngles(bool homogenous = true) {
             // http://willperone.net/Code/quaternion.php
             var sqw = W * W;
             var sqx = X * X;
@@ -111,8 +95,7 @@ namespace CBRE.DataStructures.Geometric
                              (float)Math.Atan2(2 * (X * Y + Z * W), 1 - 2 * (sqy + sqz)));
         }
 
-        public MatrixF GetMatrix()
-        {
+        public MatrixF GetMatrix() {
             // http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/QuaternionFs/
             var xx = X * X;
             var yy = Y * Y;
@@ -140,91 +123,75 @@ namespace CBRE.DataStructures.Geometric
                        );
         }
 
-        public CoordinateF Rotate(CoordinateF coord)
-        {
+        public CoordinateF Rotate(CoordinateF coord) {
             // http://content.gpwiki.org/index.php/OpenGL:Tutorials:Using_Quaternions_to_represent_rotation
             var q = new QuaternionF(coord.Normalise(), 0);
             var temp = q * Conjugate();
             return (this * temp).Vector;
         }
 
-        public bool Equals(QuaternionF other)
-        {
+        public bool Equals(QuaternionF other) {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.Vector, Vector) && Math.Abs(other.Scalar - Scalar) < 0.0001;
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(QuaternionF)) return false;
             return Equals((QuaternionF)obj);
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
+        public override int GetHashCode() {
+            unchecked {
                 return ((Vector != null ? Vector.GetHashCode() : 0) * 397) ^ Scalar.GetHashCode();
             }
         }
 
-        public static bool operator ==(QuaternionF left, QuaternionF right)
-        {
+        public static bool operator ==(QuaternionF left, QuaternionF right) {
             return Equals(left, right);
         }
 
-        public static bool operator !=(QuaternionF left, QuaternionF right)
-        {
+        public static bool operator !=(QuaternionF left, QuaternionF right) {
             return !Equals(left, right);
         }
 
-        public static QuaternionF operator +(QuaternionF c1, QuaternionF c2)
-        {
+        public static QuaternionF operator +(QuaternionF c1, QuaternionF c2) {
             return new QuaternionF(c1.X + c2.X, c1.Y + c2.Y, c1.Z + c2.Z, c1.W + c2.W);
         }
 
-        public static QuaternionF operator -(QuaternionF c1, QuaternionF c2)
-        {
+        public static QuaternionF operator -(QuaternionF c1, QuaternionF c2) {
             return new QuaternionF(c1.X - c2.X, c1.Y - c2.Y, c1.Z - c2.Z, c1.W - c2.W);
         }
 
-        public static QuaternionF operator -(QuaternionF c1)
-        {
+        public static QuaternionF operator -(QuaternionF c1) {
             return new QuaternionF(-c1.X, -c1.Y, -c1.Z, -c1.W);
         }
 
-        public static QuaternionF operator /(QuaternionF c, float f)
-        {
+        public static QuaternionF operator /(QuaternionF c, float f) {
             return Math.Abs(f - 0) < 0.0001 ? new QuaternionF(0, 0, 0, 0) : new QuaternionF(c.X / f, c.Y / f, c.Z / f, c.W / f);
         }
 
-        public static QuaternionF operator *(QuaternionF c, float f)
-        {
+        public static QuaternionF operator *(QuaternionF c, float f) {
             return new QuaternionF(c.X * f, c.Y * f, c.Z * f, c.W * f);
         }
 
-        public static QuaternionF operator *(float f, QuaternionF c)
-        {
+        public static QuaternionF operator *(float f, QuaternionF c) {
             return c * f;
         }
 
-        public static QuaternionF operator *(QuaternionF left, QuaternionF right)
-        {
+        public static QuaternionF operator *(QuaternionF left, QuaternionF right) {
             return new QuaternionF(
                 right.W * left.Vector + left.W * right.Vector + left.Vector.Cross(right.Vector),
                 left.W * right.W - left.Vector.Dot(right.Vector));
         }
 
-        public static QuaternionF operator /(QuaternionF left, QuaternionF right)
-        {
+        public static QuaternionF operator /(QuaternionF left, QuaternionF right) {
             return left * right.Inverse();
         }
 
-        public static QuaternionF EulerAngles(CoordinateF angles)
-        {
+        public static QuaternionF EulerAngles(CoordinateF angles) {
             // http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToQuaternionF/index.htm
             angles = angles / 2;
             var sy = (float)Math.Sin(angles.Z);
@@ -240,15 +207,13 @@ namespace CBRE.DataStructures.Geometric
 
         }
 
-        public static QuaternionF AxisAngle(CoordinateF axis, float angle)
-        {
+        public static QuaternionF AxisAngle(CoordinateF axis, float angle) {
             return Math.Abs(axis.VectorMagnitude()) < 0.0001
                        ? Identity
                        : new QuaternionF(axis.Normalise() * (float)Math.Sin(angle / 2), (float)Math.Cos(angle / 2)).Normalise();
         }
 
-        public static QuaternionF Lerp(QuaternionF start, QuaternionF end, float blend)
-        {
+        public static QuaternionF Lerp(QuaternionF start, QuaternionF end, float blend) {
             // Clone to avoid modifying the parameters
             var q1 = start.Clone();
             var q2 = end.Clone();
@@ -264,8 +229,7 @@ namespace CBRE.DataStructures.Geometric
             return result.Magnitude() > 0 ? result.Normalise() : Identity;
         }
 
-        public static QuaternionF Slerp(QuaternionF start, QuaternionF end, float blend)
-        {
+        public static QuaternionF Slerp(QuaternionF start, QuaternionF end, float blend) {
             // Clone to avoid modifying the parameters
             var q1 = start.Clone();
             var q2 = end.Clone();
@@ -278,8 +242,7 @@ namespace CBRE.DataStructures.Geometric
 
             if (cosHalfAngle >= 1 || cosHalfAngle <= -1) return q1;
 
-            if (cosHalfAngle < 0)
-            {
+            if (cosHalfAngle < 0) {
                 q2.Vector = -q2.Vector;
                 q2.Scalar = -q2.Scalar;
                 cosHalfAngle = -cosHalfAngle;
@@ -287,17 +250,14 @@ namespace CBRE.DataStructures.Geometric
 
             float blendA;
             float blendB;
-            if (cosHalfAngle < 0.99)
-            {
+            if (cosHalfAngle < 0.99) {
                 // do proper slerp for big angles
                 var halfAngle = (float)Math.Acos(cosHalfAngle);
                 var sinHalfAngle = (float)Math.Sin(halfAngle);
                 var oneOverSinHalfAngle = 1 / sinHalfAngle;
                 blendA = (float)Math.Sin(halfAngle * (1 - blend)) * oneOverSinHalfAngle;
                 blendB = (float)Math.Sin(halfAngle * blend) * oneOverSinHalfAngle;
-            }
-            else
-            {
+            } else {
                 // do lerp if angle is really small.
                 blendA = 1 - blend;
                 blendB = blend;
@@ -307,8 +267,7 @@ namespace CBRE.DataStructures.Geometric
             return result.Magnitude() > 0 ? result.Normalise() : Identity;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Vector + " " + Scalar;
         }
     }

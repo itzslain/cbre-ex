@@ -7,24 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace CBRE.SMFConverter
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            if (!args.Any())
-            {
+namespace CBRE.SMFConverter {
+    class Program {
+        static void Main(string[] args) {
+            if (!args.Any()) {
                 Log("No input files defined! Just drag and drop files onto CBRE.SMFConverter.exe", ConsoleColor.Red);
-            }
-            else
-            {
+            } else {
                 AssimpContext context = new AssimpContext();
 
-                foreach (string file in args)
-                {
-                    try
-                    {
+                foreach (string file in args) {
+                    try {
                         string directory = Path.GetDirectoryName(file).Replace('\\', '/');
                         if (directory.Length > 0 && directory.Last() != '/') { directory += "/"; }
 
@@ -32,14 +24,11 @@ namespace CBRE.SMFConverter
                         Node rootNode = new Node("rootnode");
                         scene.RootNode = rootNode;
 
-                        using (var fileStream = new FileStream(file, FileMode.Open))
-                        {
-                            using (var reader = new BinaryReader(fileStream))
-                            {
+                        using (var fileStream = new FileStream(file, FileMode.Open)) {
+                            using (var reader = new BinaryReader(fileStream)) {
                                 // header
                                 UInt16 mapVersion = reader.ReadUInt16();
-                                if (mapVersion != 1)
-                                {
+                                if (mapVersion != 1) {
                                     Log($"[{file}] Warning: mapVersion != 1 ({mapVersion})", ConsoleColor.Yellow);
                                 }
                                 byte mapFlags = reader.ReadByte();
@@ -53,9 +42,7 @@ namespace CBRE.SMFConverter
                                 Log($"[{file}] Complete!", ConsoleColor.Green);
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         Log($"[{file}] Error: {e.Message}\n{e.StackTrace}", ConsoleColor.Red);
                     }
                 }
@@ -65,17 +52,14 @@ namespace CBRE.SMFConverter
             Console.ReadKey();
         }
 
-        static void ReadNode(string file, string directory, BinaryReader reader, Scene scene, Node parentNode)
-        {
+        static void ReadNode(string file, string directory, BinaryReader reader, Scene scene, Node parentNode) {
             Int32 childCount = reader.ReadInt32();
 
-            if (childCount > 0)
-            {
+            if (childCount > 0) {
                 Log($"Processing {childCount} node{(childCount == 1 ? "" : "s")}");
             }
 
-            for (int i = 0; i < childCount; i++)
-            {
+            for (int i = 0; i < childCount; i++) {
                 var node = new Node($"{parentNode.Name}_child{i}");
                 var mesh = new Mesh($"mesh{i}", PrimitiveType.Triangle);
 
@@ -113,18 +97,15 @@ namespace CBRE.SMFConverter
 
                 UInt16 vertexCount = reader.ReadUInt16();
                 Log($"{vertexCount} vertices");
-                for (int j = 0; j < vertexCount; j++)
-                {
+                for (int j = 0; j < vertexCount; j++) {
                     Vector3D vertexPosition = reader.ReadVector3D();
                     mesh.Vertices.Add(vertexPosition);
                 }
-                for (int j = 0; j < vertexCount; j++)
-                {
+                for (int j = 0; j < vertexCount; j++) {
                     Vector3D vertexNormal = reader.ReadVector3D();
                     mesh.Normals.Add(vertexNormal);
                 }
-                for (int j = 0; j < vertexCount; j++)
-                {
+                for (int j = 0; j < vertexCount; j++) {
                     Vector2D vertexTexCoords = reader.ReadVector2D();
                     mesh.TextureCoordinateChannels[0].Add(new Vector3D(vertexTexCoords, 0.0f));
                 }
@@ -132,8 +113,7 @@ namespace CBRE.SMFConverter
 
                 UInt16 triangleCount = reader.ReadUInt16();
                 List<int> indices = new List<int>();
-                for (int j = 0; j < triangleCount; j++)
-                {
+                for (int j = 0; j < triangleCount; j++) {
                     UInt16 ind0 = reader.ReadUInt16();
                     UInt16 ind1 = reader.ReadUInt16();
                     UInt16 ind2 = reader.ReadUInt16();
@@ -152,8 +132,7 @@ namespace CBRE.SMFConverter
             }
         }
 
-        static void Log(string msg, ConsoleColor color = ConsoleColor.White)
-        {
+        static void Log(string msg, ConsoleColor color = ConsoleColor.White) {
             Console.ForegroundColor = color;
             Console.WriteLine(msg);
         }

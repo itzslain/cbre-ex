@@ -3,10 +3,8 @@ using CBRE.Editor.Documents;
 using CBRE.UI;
 using System.Collections.Generic;
 
-namespace CBRE.Editor.Rendering.Helpers
-{
-    public interface IHelper
-    {
+namespace CBRE.Editor.Rendering.Helpers {
+    public interface IHelper {
         Document Document { get; set; }
         bool Is2DHelper { get; }
         bool Is3DHelper { get; }

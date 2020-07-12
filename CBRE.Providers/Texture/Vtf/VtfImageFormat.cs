@@ -1,7 +1,5 @@
-﻿namespace CBRE.Providers.Texture.Vtf
-{
-    public enum VtfImageFormat : int
-    {
+﻿namespace CBRE.Providers.Texture.Vtf {
+    public enum VtfImageFormat : int {
         None = -1,
         Rgba8888 = 0,
         Abgr8888,

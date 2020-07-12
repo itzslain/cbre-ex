@@ -3,25 +3,21 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 
-namespace CBRE.Graphics
-{
-    public class Camera
-    {
+namespace CBRE.Graphics {
+    public class Camera {
         public Vector3 LookAt { get; set; }
         public Vector3 Location { get; set; }
         public int FOV { get; set; }
         public int ClipDistance { get; set; }
 
-        public Camera()
-        {
+        public Camera() {
             LookAt = new Vector3(1, 0, 0);
             Location = new Vector3(0, 0, 0);
             FOV = 60;
             ClipDistance = 4000;
         }
 
-        public void Position()
-        {
+        public void Position() {
             var mode = Matrix.CurrentMode;
             Matrix.Set(MatrixMode.Modelview);
             Matrix4 modelview = Matrix4.LookAt(Location, LookAt, Vector3.UnitZ);
@@ -29,8 +25,7 @@ namespace CBRE.Graphics
             Matrix.Set(mode);
         }
 
-        public decimal GetRotation()
-        {
+        public decimal GetRotation() {
             var temp = (LookAt - Location);
             temp.Normalize();
             var rot = Math.Atan2(temp.Y, temp.X);
@@ -39,8 +34,7 @@ namespace CBRE.Graphics
             return (decimal)rot;
         }
 
-        public void SetRotation(decimal rotation)
-        {
+        public void SetRotation(decimal rotation) {
             var temp = (LookAt - Location);
             temp.Normalize();
             var e = GetElevation();
@@ -49,16 +43,14 @@ namespace CBRE.Graphics
             LookAt = new Vector3((float)x + Location.X, (float)y + Location.Y, temp.Z + Location.Z);
         }
 
-        public decimal GetElevation()
-        {
+        public decimal GetElevation() {
             var temp = (LookAt - Location);
             temp.Normalize();
             var elev = Math.Acos(temp.Z);
             return (decimal)elev;
         }
 
-        public void SetElevation(decimal elevation)
-        {
+        public void SetElevation(decimal elevation) {
             if (elevation > ((decimal)Math.PI * 0.99m)) elevation = (decimal)Math.PI * 0.99m;
             if (elevation < ((decimal)Math.PI * 0.01m)) elevation = (decimal)Math.PI * 0.01m;
             var rotation = GetRotation();
@@ -68,20 +60,17 @@ namespace CBRE.Graphics
             LookAt = new Vector3((float)x + Location.X, (float)y + Location.Y, (float)z + Location.Z);
         }
 
-        public void Pan(decimal degrees)
-        {
+        public void Pan(decimal degrees) {
             var rad = degrees * ((decimal)Math.PI / 180);
             var rot = GetRotation();
             SetRotation(rot + rad);
         }
 
-        public void Tilt(decimal degrees)
-        {
+        public void Tilt(decimal degrees) {
             SetElevation(GetElevation() + (degrees * ((decimal)Math.PI / 180)));
         }
 
-        public void Advance(decimal units)
-        {
+        public void Advance(decimal units) {
             var temp = LookAt - Location;
             temp.Normalize();
             var add = temp * (float)units;
@@ -89,31 +78,27 @@ namespace CBRE.Graphics
             Location += add;
         }
 
-        public void Strafe(decimal units)
-        {
+        public void Strafe(decimal units) {
             var right = GetRight();
             var add = right * (float)units;
             LookAt += add;
             Location += add;
         }
 
-        public void Ascend(decimal units)
-        {
+        public void Ascend(decimal units) {
             var up = GetUp();
             var add = up * (float)units;
             LookAt += add;
             Location += add;
         }
 
-        public void AscendAbsolute(decimal units)
-        {
+        public void AscendAbsolute(decimal units) {
             var up = new Vector3(0, 0, (float)units);
             LookAt += up;
             Location += up;
         }
 
-        public Vector3 GetUp()
-        {
+        public Vector3 GetUp() {
             var temp = LookAt - Location;
             temp.Normalize();
             var normal = Vector3.Cross(GetRight(), temp);
@@ -121,8 +106,7 @@ namespace CBRE.Graphics
             return normal;
         }
 
-        public Vector3 GetRight()
-        {
+        public Vector3 GetRight() {
             var temp = LookAt - Location;
             temp.Z = 0;
             temp.Normalize();

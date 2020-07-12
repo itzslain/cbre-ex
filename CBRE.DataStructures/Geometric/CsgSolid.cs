@@ -1,27 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.DataStructures.Geometric
-{
+namespace CBRE.DataStructures.Geometric {
     // Ported from: https://github.com/evanw/csg.js/
     // Copyright (c) 2011 Evan Wallace (http://madebyevan.com/)
     // MIT license
-    public class CsgSolid
-    {
+    public class CsgSolid {
         public List<Polygon> Polygons { get; private set; }
 
-        public CsgSolid(IEnumerable<Polygon> polygons)
-        {
+        public CsgSolid(IEnumerable<Polygon> polygons) {
             Polygons = polygons.ToList();
         }
 
-        public CsgSolid()
-        {
+        public CsgSolid() {
             Polygons = new List<Polygon>();
         }
 
-        public CsgSolid Union(CsgSolid solid)
-        {
+        public CsgSolid Union(CsgSolid solid) {
             var a = new CsgNode(this);
             var b = new CsgNode(solid);
             a.ClipTo(b);
@@ -33,8 +28,7 @@ namespace CBRE.DataStructures.Geometric
             return new CsgSolid(a.AllPolygons());
         }
 
-        public CsgSolid Subtract(CsgSolid solid)
-        {
+        public CsgSolid Subtract(CsgSolid solid) {
             var a = new CsgNode(this);
             var b = new CsgNode(solid);
             a.Invert();
@@ -48,8 +42,7 @@ namespace CBRE.DataStructures.Geometric
             return new CsgSolid(a.AllPolygons());
         }
 
-        public CsgSolid Intersect(CsgSolid solid)
-        {
+        public CsgSolid Intersect(CsgSolid solid) {
             var a = new CsgNode(this);
             var b = new CsgNode(solid);
             a.Invert();

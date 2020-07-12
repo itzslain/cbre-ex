@@ -1,12 +1,9 @@
-namespace CBRE.Settings
-{
-    public static class Steam
-    {
+namespace CBRE.Settings {
+    public static class Steam {
         public static string SteamDirectory { get; set; }
         public static string SteamUsername { get; set; }
 
-        static Steam()
-        {
+        static Steam() {
             SteamDirectory = "";
             SteamUsername = "";
         }

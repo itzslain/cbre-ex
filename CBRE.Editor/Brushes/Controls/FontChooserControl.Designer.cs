@@ -1,7 +1,5 @@
-﻿namespace CBRE.Editor.Brushes.Controls
-{
-    partial class FontChooserControl
-    {
+﻿namespace CBRE.Editor.Brushes.Controls {
+    partial class FontChooserControl {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -11,10 +9,8 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -26,8 +22,7 @@
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.Label = new System.Windows.Forms.Label();
             this.FontPicker = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
@@ -43,7 +38,7 @@
             // 
             // FontPicker
             // 
-            this.FontPicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.FontPicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FontPicker.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.FontPicker.FormattingEnabled = true;

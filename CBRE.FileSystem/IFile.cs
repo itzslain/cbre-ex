@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CBRE.FileSystem
-{
+namespace CBRE.FileSystem {
     /// <summary>
     /// Represents a file or container in any file system
     /// </summary>
-    public interface IFile
-    {
+    public interface IFile {
         /// <summary>
         /// If you really need to know the implementation of this file, it is exposed via this property.
         /// </summary>

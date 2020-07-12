@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.MapObjects
-{
+namespace CBRE.DataStructures.MapObjects {
     [Serializable]
-    public class DisplacementPoint : ISerializable
-    {
+    public class DisplacementPoint : ISerializable {
         public Displacement Parent { get; set; }
 
         public Vertex CurrentPosition { get; set; }
@@ -23,13 +21,11 @@ namespace CBRE.DataStructures.MapObjects
         /// <summary>
         /// Shorthand for CurrentPosition.Location.
         /// </summary>
-        public Coordinate Location
-        {
+        public Coordinate Location {
             get { return CurrentPosition.Location; }
         }
 
-        public DisplacementPoint(Displacement parent, int x, int y)
-        {
+        public DisplacementPoint(Displacement parent, int x, int y) {
             Parent = parent;
             XIndex = x;
             YIndex = y;
@@ -40,8 +36,7 @@ namespace CBRE.DataStructures.MapObjects
             Alpha = 0;
         }
 
-        protected DisplacementPoint(SerializationInfo info, StreamingContext context)
-        {
+        protected DisplacementPoint(SerializationInfo info, StreamingContext context) {
             XIndex = info.GetInt32("XIndex");
             YIndex = info.GetInt32("YIndex");
             CurrentPosition = (Vertex)info.GetValue("CurrentPosition", typeof(Vertex));
@@ -51,8 +46,7 @@ namespace CBRE.DataStructures.MapObjects
             Alpha = info.GetDecimal("Alpha");
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("XIndex", XIndex);
             info.AddValue("YIndex", YIndex);
             info.AddValue("CurrentPosition", CurrentPosition);
@@ -62,8 +56,7 @@ namespace CBRE.DataStructures.MapObjects
             info.AddValue("Alpha", Alpha);
         }
 
-        public IEnumerable<DisplacementPoint> GetAdjacentPoints()
-        {
+        public IEnumerable<DisplacementPoint> GetAdjacentPoints() {
             yield return Parent.GetPoint(XIndex + 1, YIndex + 0);
             yield return Parent.GetPoint(XIndex - 1, YIndex + 0);
             yield return Parent.GetPoint(XIndex + 0, YIndex + 1);

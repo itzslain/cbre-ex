@@ -1,7 +1,5 @@
-﻿namespace CBRE.Settings
-{
-    public static class Select
-    {
+﻿namespace CBRE.Settings {
+    public static class Select {
         public static SnapStyle SnapStyle { get; set; }
         public static RotationStyle RotationStyle { get; set; }
         public static DoubleClick3DAction DoubleClick3DAction { get; set; }
@@ -36,8 +34,7 @@
         public static bool SkipVisibilityInUndoStack { get; set; }
         public static int UndoStackSize { get; set; }
 
-        static Select()
-        {
+        static Select() {
             SnapStyle = SnapStyle.SnapOffAlt;
             RotationStyle = RotationStyle.SnapOnShift;
             DoubleClick3DAction = DoubleClick3DAction.ObjectProperties;

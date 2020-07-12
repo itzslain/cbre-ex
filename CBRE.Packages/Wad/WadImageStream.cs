@@ -2,29 +2,23 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace CBRE.Packages.Wad
-{
-    internal class WadImageStream : Stream
-    {
+namespace CBRE.Packages.Wad {
+    internal class WadImageStream : Stream {
         public override long Position { get; set; }
 
-        public override bool CanRead
-        {
+        public override bool CanRead {
             get { return true; }
         }
 
-        public override bool CanSeek
-        {
+        public override bool CanSeek {
             get { return true; }
         }
 
-        public override bool CanWrite
-        {
+        public override bool CanWrite {
             get { return false; }
         }
 
-        public override long Length
-        {
+        public override long Length {
             get { return _length; }
         }
 
@@ -33,34 +27,28 @@ namespace CBRE.Packages.Wad
         private uint _length;
         private byte[] _data;
 
-        public WadImageStream(WadEntry entry, WadPackage package)
-        {
+        public WadImageStream(WadEntry entry, WadPackage package) {
             _entry = entry;
-            using (var br = new BinaryReader(package.OpenFile(package.PackageFile)))
-            {
+            using (var br = new BinaryReader(package.OpenFile(package.PackageFile))) {
                 br.BaseStream.Position = entry.Offset;
                 PrepareData(br);
             }
         }
 
-        public WadImageStream(WadEntry entry, Stream stream)
-        {
+        public WadImageStream(WadEntry entry, Stream stream) {
             _entry = entry;
-            using (var br = new BinaryReader(stream))
-            {
+            using (var br = new BinaryReader(stream)) {
                 PrepareData(br);
             }
         }
 
-        private void PrepareData(BinaryReader br)
-        {
+        private void PrepareData(BinaryReader br) {
             var startIndex = br.BaseStream.Position;
             const uint headerSize = 14;
             const uint infoSize = 40;
             _length = headerSize + infoSize + _entry.PaletteSize * 4 + _entry.Width * _entry.Height;
             _data = new byte[_length];
-            using (var bw = new BinaryWriter(new MemoryStream(_data, true)))
-            {
+            using (var bw = new BinaryWriter(new MemoryStream(_data, true))) {
                 // BITMAPFILEHEADER
                 bw.WriteFixedLengthString(Encoding.ASCII, 2, "BM"); // Type
                 bw.Write(_length); // Size
@@ -83,8 +71,7 @@ namespace CBRE.Packages.Wad
 
                 br.BaseStream.Position = startIndex + (_entry.PaletteDataOffset - _entry.Offset);
                 var paletteData = br.ReadBytes((int)(_entry.PaletteSize * 3));
-                for (var i = 0; i < _entry.PaletteSize; i++)
-                {
+                for (var i = 0; i < _entry.PaletteSize; i++) {
                     // Wad palettes are RGB, bitmap is BGRX
                     bw.Write(paletteData[i * 3 + 2]);
                     bw.Write(paletteData[i * 3 + 1]);
@@ -94,18 +81,15 @@ namespace CBRE.Packages.Wad
 
                 br.BaseStream.Position = startIndex + (_entry.TextureDataOffset - _entry.Offset);
                 var imageData = br.ReadBytes((int)(_entry.Width * _entry.Height));
-                for (var y = (int)_entry.Height - 1; y >= 0; y--)
-                {
+                for (var y = (int)_entry.Height - 1; y >= 0; y--) {
                     // The Y axis is reversed
                     bw.Write(imageData, (int)_entry.Width * y, (int)_entry.Width);
                 }
             }
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            switch (origin)
-            {
+        public override long Seek(long offset, SeekOrigin origin) {
+            switch (origin) {
                 case SeekOrigin.Begin:
                     Position = offset;
                     break;
@@ -121,8 +105,7 @@ namespace CBRE.Packages.Wad
             return Position;
         }
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
+        public override int Read(byte[] buffer, int offset, int count) {
             var pos = Math.Min(Position, _length);
             var ret = (int)Math.Min(_length - pos, count);
             Array.Copy(_data, pos, buffer, offset, ret);
@@ -131,18 +114,15 @@ namespace CBRE.Packages.Wad
         }
 
         // Write: not supported
-        public override void Flush()
-        {
+        public override void Flush() {
             //
         }
 
-        public override void SetLength(long value)
-        {
+        public override void SetLength(long value) {
             //
         }
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
+        public override void Write(byte[] buffer, int offset, int count) {
             //
         }
     }

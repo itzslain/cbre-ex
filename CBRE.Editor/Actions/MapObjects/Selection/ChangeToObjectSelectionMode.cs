@@ -7,36 +7,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Actions.MapObjects.Selection
-{
-    public class ChangeToObjectSelectionMode : IAction
-    {
+namespace CBRE.Editor.Actions.MapObjects.Selection {
+    public class ChangeToObjectSelectionMode : IAction {
         public bool SkipInStack { get { return CBRE.Settings.Select.SkipSelectionInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
         private readonly Type _toolType;
         private readonly Dictionary<long, long> _selection;
 
-        public ChangeToObjectSelectionMode(Type toolType, IEnumerable<Face> selection)
-        {
+        public ChangeToObjectSelectionMode(Type toolType, IEnumerable<Face> selection) {
             _toolType = toolType;
             _selection = selection.Where(x => x.Parent != null).GroupBy(x => x.ID).ToDictionary(x => x.Key, x => x.First().Parent.ID);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             _selection.Clear();
         }
 
-        private Face FindFace(Document document, long faceId, long parentId)
-        {
+        private Face FindFace(Document document, long faceId, long parentId) {
             var par = document.Map.WorldSpawn.FindByID(parentId) as Solid;
             if (par == null) return null;
             return par.Faces.FirstOrDefault(x => x.ID == faceId);
         }
 
-        public void Reverse(Document document)
-        {
+        public void Reverse(Document document) {
             ToolManager.Deactivate(true);
 
             document.Selection.SwitchToFaceSelection();
@@ -52,8 +46,7 @@ namespace CBRE.Editor.Actions.MapObjects.Selection
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
-        public void Perform(Document document)
-        {
+        public void Perform(Document document) {
             ToolManager.Deactivate(true);
 
             document.Selection.SwitchToObjectSelection();

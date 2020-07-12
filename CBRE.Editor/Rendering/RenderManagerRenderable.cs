@@ -2,23 +2,19 @@ using CBRE.Graphics.Renderables;
 using CBRE.UI;
 using OpenTK;
 
-namespace CBRE.Editor.Rendering
-{
-    public class RenderManagerRenderable : IRenderable
-    {
+namespace CBRE.Editor.Rendering {
+    public class RenderManagerRenderable : IRenderable {
         private readonly ViewportBase _viewport;
         private readonly RenderManager _manager;
         private readonly bool _is3D;
 
-        public RenderManagerRenderable(ViewportBase viewport, RenderManager manager)
-        {
+        public RenderManagerRenderable(ViewportBase viewport, RenderManager manager) {
             _viewport = viewport;
             _manager = manager;
             _is3D = viewport is Viewport3D;
         }
 
-        public void Render(object sender)
-        {
+        public void Render(object sender) {
             Matrix4 vm = _viewport.GetViewportMatrix(),
                     cm = _viewport.GetCameraMatrix(),
                     mm = _viewport.GetModelViewMatrix();

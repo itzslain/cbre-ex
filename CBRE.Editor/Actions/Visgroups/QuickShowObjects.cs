@@ -4,33 +4,26 @@ using CBRE.Editor.Documents;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Actions.Visgroups
-{
-    public class QuickShowObjects : IAction
-    {
+namespace CBRE.Editor.Actions.Visgroups {
+    public class QuickShowObjects : IAction {
         public bool SkipInStack { get { return CBRE.Settings.Select.SkipVisibilityInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
         private List<MapObject> _objects;
         private int _removed;
 
-        public QuickShowObjects(IEnumerable<MapObject> objects)
-        {
+        public QuickShowObjects(IEnumerable<MapObject> objects) {
             _objects = objects.Where(x => x.IsVisgroupHidden).ToList();
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             _objects = null;
         }
 
-        public void Reverse(Document document)
-        {
-            foreach (var mapObject in _objects)
-            {
+        public void Reverse(Document document) {
+            foreach (var mapObject in _objects) {
                 var o = mapObject;
-                if (!o.AutoVisgroups.Contains(_removed))
-                {
+                if (!o.AutoVisgroups.Contains(_removed)) {
                     o.AutoVisgroups.Add(_removed);
                     o.Visgroups.Add(_removed);
                 }
@@ -40,12 +33,10 @@ namespace CBRE.Editor.Actions.Visgroups
             Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
 
-        public void Perform(Document document)
-        {
+        public void Perform(Document document) {
             var autohide = document.Map.GetAllVisgroups().First(x => x.Name == "Autohide");
             _removed = autohide.ID;
-            foreach (var mapObject in _objects)
-            {
+            foreach (var mapObject in _objects) {
                 var o = mapObject;
                 o.AutoVisgroups.Remove(_removed);
                 o.Visgroups.Remove(_removed);

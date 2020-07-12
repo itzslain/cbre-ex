@@ -1,10 +1,8 @@
-﻿namespace CBRE.FileSystem
-{
+﻿namespace CBRE.FileSystem {
     /// <summary>
     /// If you really need to know the underlying implementation of a file system, this is the enum that exposes it.
     /// </summary>
-    public enum FileSystemType
-    {
+    public enum FileSystemType {
         /// <summary>
         /// The native Windows file system
         /// </summary>

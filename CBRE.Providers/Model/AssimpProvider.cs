@@ -11,46 +11,37 @@ using Face = CBRE.DataStructures.MapObjects.Face;
 using Mesh = Assimp.Mesh;
 using Path = System.IO.Path;
 
-namespace CBRE.Providers.Model
-{
-    public class AssimpProvider : ModelProvider
-    {
+namespace CBRE.Providers.Model {
+    public class AssimpProvider : ModelProvider {
         protected static AssimpContext importer = null;
 
-        protected override bool IsValidForFile(IFile file)
-        {
+        protected override bool IsValidForFile(IFile file) {
             return file.Extension.ToLowerInvariant() == "b3d" ||
                    file.Extension.ToLowerInvariant() == "fbx" ||
                    file.Extension.ToLowerInvariant() == "x";
         }
 
-        protected static void AddNode(Scene scene, Node node, DataStructures.Models.Model model, DataStructures.Models.Texture tex, Matrix4x4 parentMatrix)
-        {
+        protected static void AddNode(Scene scene, Node node, DataStructures.Models.Model model, DataStructures.Models.Texture tex, Matrix4x4 parentMatrix) {
             Matrix4x4 selfMatrix = node.Transform * parentMatrix;
-            foreach (var meshIndex in node.MeshIndices)
-            {
+            foreach (var meshIndex in node.MeshIndices) {
                 DataStructures.Models.Mesh sledgeMesh = AddMesh(model, scene.Meshes[meshIndex], selfMatrix);
-                foreach (var v in sledgeMesh.Vertices)
-                {
+                foreach (var v in sledgeMesh.Vertices) {
                     v.TextureU *= tex.Width;
                     v.TextureV *= tex.Height;
                 }
                 model.AddMesh("mesh", 0, sledgeMesh);
             }
 
-            foreach (var subNode in node.Children)
-            {
+            foreach (var subNode in node.Children) {
                 AddNode(scene, subNode, model, tex, selfMatrix);
             }
         }
 
-        protected static DataStructures.Models.Mesh AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh, Matrix4x4 selfMatrix)
-        {
+        protected static DataStructures.Models.Mesh AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh, Matrix4x4 selfMatrix) {
             var sledgeMesh = new DataStructures.Models.Mesh(0);
             List<MeshVertex> vertices = new List<MeshVertex>();
 
-            for (int i = 0; i < assimpMesh.VertexCount; i++)
-            {
+            for (int i = 0; i < assimpMesh.VertexCount; i++) {
                 var assimpVertex = assimpMesh.Vertices[i];
                 assimpVertex = selfMatrix * assimpVertex;
                 var assimpNormal = assimpMesh.Normals[i];
@@ -62,11 +53,9 @@ namespace CBRE.Providers.Model
                                             sledgeModel.Bones[0], assimpUv.X, -assimpUv.Y));
             }
 
-            foreach (var face in assimpMesh.Faces)
-            {
+            foreach (var face in assimpMesh.Faces) {
                 var triInds = face.Indices;
-                for (var i = 1; i < triInds.Count - 1; i++)
-                {
+                for (var i = 1; i < triInds.Count - 1; i++) {
                     sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[0]].Location, vertices[triInds[0]].Normal, vertices[triInds[0]].BoneWeightings, vertices[triInds[0]].TextureU, vertices[triInds[0]].TextureV));
                     sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[i + 1]].Location, vertices[triInds[i + 1]].Normal, vertices[triInds[i + 1]].BoneWeightings, vertices[triInds[i + 1]].TextureU, vertices[triInds[i + 1]].TextureV));
                     sledgeMesh.Vertices.Add(new MeshVertex(vertices[triInds[i]].Location, vertices[triInds[i]].Normal, vertices[triInds[i]].BoneWeightings, vertices[triInds[i]].TextureU, vertices[triInds[i]].TextureV));
@@ -76,10 +65,8 @@ namespace CBRE.Providers.Model
             return sledgeMesh;
         }
 
-        protected override DataStructures.Models.Model LoadFromFile(IFile file)
-        {
-            if (importer == null)
-            {
+        protected override DataStructures.Models.Model LoadFromFile(IFile file) {
+            if (importer == null) {
                 importer = new AssimpContext();
                 //importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
             }
@@ -92,19 +79,15 @@ namespace CBRE.Providers.Model
 
             DataStructures.Models.Texture tex = null;
 
-            if (scene.MaterialCount > 0)
-            {
+            if (scene.MaterialCount > 0) {
                 //TODO: handle several textures
-                for (int i = 0; i < scene.MaterialCount; i++)
-                {
+                for (int i = 0; i < scene.MaterialCount; i++) {
                     if (string.IsNullOrEmpty(scene.Materials[i].TextureDiffuse.FilePath)) { continue; }
                     string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[i].TextureDiffuse.FilePath);
                     if (!File.Exists(path)) { path = scene.Materials[i].TextureDiffuse.FilePath; }
-                    if (File.Exists(path))
-                    {
+                    if (File.Exists(path)) {
                         Bitmap bmp = new Bitmap(path);
-                        tex = new DataStructures.Models.Texture
-                        {
+                        tex = new DataStructures.Models.Texture {
                             Name = path,
                             Index = 0,
                             Width = bmp.Width,
@@ -117,18 +100,14 @@ namespace CBRE.Providers.Model
                 }
             }
 
-            if (tex == null)
-            {
+            if (tex == null) {
                 Bitmap bmp = new Bitmap(64, 64);
-                for (int i = 0; i < 64; i++)
-                {
-                    for (int j = 0; j < 64; j++)
-                    {
+                for (int i = 0; i < 64; i++) {
+                    for (int j = 0; j < 64; j++) {
                         bmp.SetPixel(i, j, Color.DarkGray);
                     }
                 }
-                tex = new DataStructures.Models.Texture
-                {
+                tex = new DataStructures.Models.Texture {
                     Name = "blank",
                     Index = 0,
                     Width = 64,
@@ -145,8 +124,7 @@ namespace CBRE.Providers.Model
             return model;
         }
 
-        public static void SaveToFile(string filename, DataStructures.MapObjects.Map map, string format)
-        {
+        public static void SaveToFile(string filename, DataStructures.MapObjects.Map map, string format) {
             Scene scene = new Scene();
 
             Node rootNode = new Node();
@@ -158,8 +136,7 @@ namespace CBRE.Providers.Model
             Mesh mesh;
             int vertOffset;
             string[] textures = map.GetAllTextures().ToArray();
-            foreach (string texture in textures)
-            {
+            foreach (string texture in textures) {
                 if (texture == "tooltextures/remove_face") { continue; }
 
                 Material material = new Material();
@@ -193,17 +170,14 @@ namespace CBRE.Providers.Model
                     SelectMany(x => x.Faces).
                     Where(x => x.Texture.Name == texture);
 
-                foreach (Face face in faces)
-                {
-                    foreach (Vertex v in face.Vertices)
-                    {
+                foreach (Face face in faces) {
+                    foreach (Vertex v in face.Vertices) {
                         mesh.Vertices.Add(new Vector3D((float)v.Location.X, (float)v.Location.Z, (float)v.Location.Y));
                         mesh.Normals.Add(new Vector3D((float)face.Plane.Normal.X, (float)face.Plane.Normal.Z, (float)face.Plane.Normal.Y));
                         mesh.TextureCoordinateChannels[0].Add(new Vector3D((float)v.TextureU, (float)v.TextureV, 0));
                     }
                     mesh.UVComponentCount[0] = 2;
-                    foreach (uint ind in face.GetTriangleIndices())
-                    {
+                    foreach (uint ind in face.GetTriangleIndices()) {
                         indices.Add((int)ind + vertOffset);
                     }
 

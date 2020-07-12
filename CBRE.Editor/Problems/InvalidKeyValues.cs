@@ -5,12 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Problems
-{
-    public class InvalidKeyValues : IProblemCheck
-    {
-        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
-        {
+namespace CBRE.Editor.Problems {
+    public class InvalidKeyValues : IProblemCheck {
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly) {
             // MultiManagers require invalid key/values to work, exclude them from the search
             var entities = map.WorldSpawn
                 .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
@@ -18,13 +15,10 @@ namespace CBRE.Editor.Problems
                 .Where(x => x.GameData != null)
                 .Where(x => !String.Equals(x.EntityData.Name, "multi_manager", StringComparison.OrdinalIgnoreCase))
                 .ToList();
-            foreach (var entity in entities)
-            {
+            foreach (var entity in entities) {
                 var valid = true;
-                foreach (var prop in entity.EntityData.Properties)
-                {
-                    if (!entity.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)))
-                    {
+                foreach (var prop in entity.EntityData.Properties) {
+                    if (!entity.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase))) {
                         valid = false;
                     }
                 }
@@ -32,16 +26,12 @@ namespace CBRE.Editor.Problems
             }
         }
 
-        public IAction Fix(Problem problem)
-        {
+        public IAction Fix(Problem problem) {
             var edit = new EditEntityData();
-            foreach (var mo in problem.Objects.OfType<Entity>().Where(x => x.GameData != null))
-            {
+            foreach (var mo in problem.Objects.OfType<Entity>().Where(x => x.GameData != null)) {
                 var ed = mo.GetEntityData().Clone();
-                foreach (var prop in mo.EntityData.Properties)
-                {
-                    if (!mo.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)))
-                    {
+                foreach (var prop in mo.EntityData.Properties) {
+                    if (!mo.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase))) {
                         ed.Properties.Remove(prop);
                     }
                 }

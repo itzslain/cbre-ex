@@ -4,10 +4,8 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.IO;
 
-namespace CBRE.Editor.Rendering.Shaders
-{
-    public class MapObject2DShader : IDisposable
-    {
+namespace CBRE.Editor.Rendering.Shaders {
+    public class MapObject2DShader : IDisposable {
         public bool SelectedOnly { set { Shader.Set("drawSelectedOnly", value); } }
         public bool UnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
         public Vector4 SelectedColour { set { Shader.Set("selectedColour", value); } }
@@ -23,8 +21,7 @@ namespace CBRE.Editor.Rendering.Shaders
 
         private const string ShaderName = "MapObject2D";
 
-        public MapObject2DShader()
-        {
+        public MapObject2DShader() {
             Shader = new ShaderProgram(GetShader(ShaderType.VertexShader), GetShader(ShaderType.FragmentShader));
 
             Shader.Bind();
@@ -37,8 +34,7 @@ namespace CBRE.Editor.Rendering.Shaders
             Shader.Unbind();
         }
 
-        public void Bind(Viewport2DRenderOptions options)
-        {
+        public void Bind(Viewport2DRenderOptions options) {
             Shader.Bind();
 
             Perspective = options.Viewport;
@@ -46,16 +42,13 @@ namespace CBRE.Editor.Rendering.Shaders
             ModelView = options.ModelView;
         }
 
-        public void Unbind()
-        {
+        public void Unbind() {
             Shader.Unbind();
         }
 
-        private Shader GetShader(ShaderType type)
-        {
+        private Shader GetShader(ShaderType type) {
             string ext;
-            switch (type)
-            {
+            switch (type) {
                 case ShaderType.VertexShader:
                     ext = "vert";
                     break;
@@ -66,18 +59,15 @@ namespace CBRE.Editor.Rendering.Shaders
                     throw new ArgumentOutOfRangeException();
             }
             var ty = GetType();
-            using (var s = ty.Assembly.GetManifestResourceStream(ty, ShaderName + "." + ext))
-            {
+            using (var s = ty.Assembly.GetManifestResourceStream(ty, ShaderName + "." + ext)) {
                 if (s == null) throw new Exception("Shader file not found.");
-                using (var r = new StreamReader(s))
-                {
+                using (var r = new StreamReader(s)) {
                     return new Shader(type, r.ReadToEnd());
                 }
             }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Shader.Dispose();
         }
     }

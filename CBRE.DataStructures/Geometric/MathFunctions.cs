@@ -1,10 +1,8 @@
 ﻿using OpenTK;
 using System;
 
-namespace CBRE.DataStructures.Geometric
-{
-    public static class MathFunctions
-    {
+namespace CBRE.DataStructures.Geometric {
+    public static class MathFunctions {
         // https://gist.github.com/871099/8d37734ba22737c69173c2e44eaa332f9c85bcde
         // http://www.opentk.com/node/1892
         // http://www.opentk.com/node/1276
@@ -19,8 +17,7 @@ namespace CBRE.DataStructures.Geometric
         /// <param name="projection">The projection matrix</param>
         /// <param name="modelview">The modelview matrix</param>
         /// <returns>The coordinate in screen space.</returns>
-        public static Coordinate Project(Coordinate coordinate, int[] viewport, Matrix4d projection, Matrix4d modelview)
-        {
+        public static Coordinate Project(Coordinate coordinate, int[] viewport, Matrix4d projection, Matrix4d modelview) {
             var source = new Vector4d(coordinate.DX, coordinate.DY, coordinate.DZ, 1);
             var imed = Vector4d.Transform(source, modelview);
             var vector = Vector4d.Transform(imed, projection);
@@ -40,8 +37,7 @@ namespace CBRE.DataStructures.Geometric
         /// <param name="projection">The projection matrix</param>
         /// <param name="modelview">The modelview matrix</param>
         /// <returns>The coordinate in world space.</returns>
-        public static Coordinate Unproject(Coordinate coordinate, int[] viewport, Matrix4d projection, Matrix4d modelview)
-        {
+        public static Coordinate Unproject(Coordinate coordinate, int[] viewport, Matrix4d projection, Matrix4d modelview) {
             var matrix = Matrix4d.Invert(Matrix4d.Mult(modelview, projection));
             var source = new Vector4d(
                 (coordinate.DX - viewport[0]) * 2 / viewport[2] - 1,

@@ -7,10 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace CBRE.Editor.Brushes
-{
-    public class TorusBrush : IBrush
-    {
+namespace CBRE.Editor.Brushes {
+    public class TorusBrush : IBrush {
         private readonly NumericControl _crossSides;
         private readonly NumericControl _crossRadius;
         private readonly BooleanControl _crossMakeHollow;
@@ -24,8 +22,7 @@ namespace CBRE.Editor.Brushes
 
         private readonly NumericControl _rotationHeight;
 
-        public TorusBrush()
-        {
+        public TorusBrush() {
             _crossSides = new NumericControl(this) { LabelText = "Cross sec. sides" };
             _crossRadius = new NumericControl(this) { LabelText = "Ring width", Minimum = 16, Maximum = 1024, Value = 32, Precision = 1 };
             _crossStartAngle = new NumericControl(this) { LabelText = "Cross sec. start", Minimum = 0, Maximum = 359, Value = 0 };
@@ -39,15 +36,13 @@ namespace CBRE.Editor.Brushes
             _crossMakeHollow.ValuesChanged += (s, b) => _crossWallWidth.Enabled = _crossArc.Enabled = _crossMakeHollow.GetValue();
         }
 
-        public string Name
-        {
+        public string Name {
             get { return "Torus"; }
         }
 
         public bool CanRound { get { return true; } }
 
-        public IEnumerable<BrushControl> GetControls()
-        {
+        public IEnumerable<BrushControl> GetControls() {
             yield return _crossSides;
             yield return _crossRadius;
             yield return _crossStartAngle;
@@ -60,13 +55,10 @@ namespace CBRE.Editor.Brushes
             yield return _rotationHeight;
         }
 
-        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
-        {
+        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col) {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
-            foreach (var arr in faces)
-            {
-                var face = new Face(generator.GetNextFaceID())
-                {
+            foreach (var arr in faces) {
+                var face = new Face(generator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,
@@ -81,8 +73,7 @@ namespace CBRE.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
-        {
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals) {
             var crossSides = (int)_crossSides.GetValue();
             if (crossSides < 3) yield break;
             var crossWidth = _crossRadius.GetValue() * 2;
@@ -122,16 +113,14 @@ namespace CBRE.Editor.Brushes
             // Rotate around the ring, generating each cross section
             var ringOuterSections = new List<Coordinate[]>();
             var ringInnerSections = new List<Coordinate[]>();
-            for (var i = 0; i < ringSides + 1; i++)
-            {
+            for (var i = 0; i < ringSides + 1; i++) {
                 var ring = ringStart + i * ringAngle;
                 var rxval = box.Center.X + majorPrimary * DMath.Cos(ring);
                 var ryval = box.Center.Y + minorPrimary * DMath.Sin(ring);
                 var rzval = box.Center.Z;
                 var crossSecOuter = new Coordinate[crossSides + 1];
                 var crossSecInner = new Coordinate[crossSides + 1];
-                for (var j = 0; j < crossSides + 1; j++)
-                {
+                for (var j = 0; j < crossSides + 1; j++) {
                     var cross = crossStart + j * crossAngle;
                     var xval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Cos(ring);
                     var yval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Sin(ring);
@@ -149,19 +138,16 @@ namespace CBRE.Editor.Brushes
 
             // Create the solids
             var colour = Colour.GetRandomBrushColour();
-            for (var i = 0; i < ringSides; i++)
-            {
+            for (var i = 0; i < ringSides; i++) {
                 var vertical = Coordinate.UnitZ * heightAdd * i;
                 var nexti = i + 1;
-                if (crossMakeHollow)
-                {
+                if (crossMakeHollow) {
                     // Use pipe cross sections
                     var outerPoints = ringOuterSections[i];
                     var nextOuterPoints = ringOuterSections[nexti];
                     var innerPoints = ringInnerSections[i];
                     var nextInnerPoints = ringInnerSections[nexti];
-                    for (var j = 0; j < crossSides; j++)
-                    {
+                    for (var j = 0; j < crossSides; j++) {
                         var nextj = j + 1;
                         var faces = new List<Coordinate[]>();
                         faces.Add(new[] { outerPoints[j], outerPoints[nextj], nextOuterPoints[nextj], nextOuterPoints[j] }.Select(x => x + vertical).ToArray());
@@ -172,16 +158,13 @@ namespace CBRE.Editor.Brushes
                         faces.Add(new[] { nextOuterPoints[j], nextOuterPoints[nextj], nextInnerPoints[nextj], nextInnerPoints[j] }.Select(x => x + vertical).ToArray());
                         yield return MakeSolid(generator, faces, texture, colour);
                     }
-                }
-                else
-                {
+                } else {
                     // Use cylindrical cross sections
                     var faces = new List<Coordinate[]>();
                     var points = ringOuterSections[i];
                     var nextPoints = ringOuterSections[nexti];
                     // Add the outer faces
-                    for (var j = 0; j < crossSides; j++)
-                    {
+                    for (var j = 0; j < crossSides; j++) {
                         var nextj = (j + 1) % crossSides;
                         faces.Add(new[] { points[j], points[nextj], nextPoints[nextj], nextPoints[j] }.Select(x => x + vertical).ToArray());
                     }

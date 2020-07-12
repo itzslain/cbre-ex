@@ -9,8 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace CBRE.Providers
-{
+namespace CBRE.Providers {
     /// <summary>
     /// Holds values parsed from a generic Valve structure. It holds a single entity:
     /// entity_name
@@ -26,15 +25,12 @@ namespace CBRE.Providers
     /// 	}
     /// }
     /// </summary>
-    public class GenericStructure
-    {
-        private class GenericStructureProperty
-        {
+    public class GenericStructure {
+        private class GenericStructureProperty {
             public string Key { get; set; }
             public string Value { get; set; }
 
-            public GenericStructureProperty(string key, string value)
-            {
+            public GenericStructureProperty(string key, string value) {
                 Key = key;
                 Value = value;
             }
@@ -44,126 +40,104 @@ namespace CBRE.Providers
         private List<GenericStructureProperty> Properties { get; set; }
         public List<GenericStructure> Children { get; private set; }
 
-        public string this[string key]
-        {
-            get
-            {
+        public string this[string key] {
+            get {
                 var prop = Properties.FirstOrDefault(x => x.Key == key);
                 return prop == null ? null : prop.Value;
             }
-            set
-            {
+            set {
                 var prop = Properties.FirstOrDefault(x => x.Key == key);
                 if (prop != null) prop.Value = value;
                 else Properties.Add(new GenericStructureProperty(key, value));
             }
         }
 
-        public void AddProperty(string key, string value)
-        {
+        public void AddProperty(string key, string value) {
             Properties.Add(new GenericStructureProperty(key, value));
         }
 
-        public void RemoveProperty(string key)
-        {
+        public void RemoveProperty(string key) {
             Properties.RemoveAll(x => x.Key == key);
         }
 
-        public GenericStructure(string name)
-        {
+        public GenericStructure(string name) {
             Name = name;
             Properties = new List<GenericStructureProperty>();
             Children = new List<GenericStructure>();
         }
 
-        public IEnumerable<string> GetPropertyKeys()
-        {
+        public IEnumerable<string> GetPropertyKeys() {
             return Properties.Select(x => x.Key).Distinct();
         }
 
-        public IEnumerable<string> GetAllPropertyValues(string key)
-        {
+        public IEnumerable<string> GetAllPropertyValues(string key) {
             return Properties.Where(x => x.Key == key).Select(x => x.Value);
         }
 
-        public string GetPropertyValue(string name, bool ignoreCase)
-        {
+        public string GetPropertyValue(string name, bool ignoreCase) {
             var prop = Properties.FirstOrDefault(x => String.Equals(x.Key, name, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture));
             return prop == null ? null : prop.Value;
         }
 
-        public bool PropertyBoolean(string name, bool defaultValue = false)
-        {
+        public bool PropertyBoolean(string name, bool defaultValue = false) {
             var prop = this[name];
             if (prop == "1") return true;
             if (prop == "0") return false;
             bool d;
-            if (bool.TryParse(prop, out d))
-            {
+            if (bool.TryParse(prop, out d)) {
                 return d;
             }
             return defaultValue;
         }
 
-        public T PropertyEnum<T>(string name, T defaultValue = default(T)) where T : struct
-        {
+        public T PropertyEnum<T>(string name, T defaultValue = default(T)) where T : struct {
             var prop = this[name];
             T val;
             return Enum.TryParse(prop, true, out val) ? val : defaultValue;
         }
 
-        public int PropertyInteger(string name, int defaultValue = 0)
-        {
+        public int PropertyInteger(string name, int defaultValue = 0) {
             var prop = this[name];
             int d;
-            if (int.TryParse(prop, out d))
-            {
+            if (int.TryParse(prop, out d)) {
                 return d;
             }
             return defaultValue;
         }
 
-        public long PropertyLong(string name, long defaultValue = 0)
-        {
+        public long PropertyLong(string name, long defaultValue = 0) {
             var prop = this[name];
             long d;
-            if (long.TryParse(prop, out d))
-            {
+            if (long.TryParse(prop, out d)) {
                 return d;
             }
             return defaultValue;
         }
 
-        public decimal PropertyDecimal(string name, decimal defaultValue = 0)
-        {
+        public decimal PropertyDecimal(string name, decimal defaultValue = 0) {
             var prop = this[name];
             decimal d;
-            if (decimal.TryParse(prop, out d))
-            {
+            if (decimal.TryParse(prop, out d)) {
                 return d;
             }
             return defaultValue;
         }
 
-        public decimal[] PropertyDecimalArray(string name, int count)
-        {
+        public decimal[] PropertyDecimalArray(string name, int count) {
             var prop = this[name];
             var defaultValue = Enumerable.Range(0, count).Select(i => 0m).ToArray();
             if (prop == null || prop.Count(c => c == ' ') != (count - 1)) return defaultValue;
             var split = prop.Split(' ');
-            for (var i = 0; i < count; i++)
-            {
+            for (var i = 0; i < count; i++) {
                 decimal d;
-                if (decimal.TryParse(split[i], out d))
-                {
+                if (decimal.TryParse(split[i], out d)) {
                     defaultValue[i] = d;
                 }
             }
             return defaultValue;
         }
 
-        public Plane PropertyPlane(string name)
-        {
+        public Plane PropertyPlane(string name) {
             var prop = this[name];
             var defaultValue = new Plane(Coordinate.UnitZ, 0);
             if (prop == null || prop.Count(c => c == ' ') != 8) return defaultValue;
@@ -177,8 +151,7 @@ namespace CBRE.Providers
                 && decimal.TryParse(split[5], out z2)
                 && decimal.TryParse(split[6], out x3)
                 && decimal.TryParse(split[7], out y3)
-                && decimal.TryParse(split[8], out z3))
-            {
+                && decimal.TryParse(split[8], out z3)) {
                 return new Plane(
                     new Coordinate(x1, y1, z1).Round(),
                     new Coordinate(x2, y2, z2).Round(),
@@ -187,8 +160,7 @@ namespace CBRE.Providers
             return defaultValue;
         }
 
-        public Coordinate PropertyCoordinate(string name, Coordinate defaultValue = null)
-        {
+        public Coordinate PropertyCoordinate(string name, Coordinate defaultValue = null) {
             var prop = this[name];
             if (defaultValue == null) defaultValue = Coordinate.Zero;
             if (prop == null || prop.Count(c => c == ' ') != 2) return defaultValue;
@@ -196,34 +168,29 @@ namespace CBRE.Providers
             decimal x, y, z;
             if (decimal.TryParse(split[0], out x)
                 && decimal.TryParse(split[1], out y)
-                && decimal.TryParse(split[2], out z))
-            {
+                && decimal.TryParse(split[2], out z)) {
                 return new Coordinate(x, y, z);
             }
             return defaultValue;
         }
 
-        public Coordinate[] PropertyCoordinateArray(string name, int count)
-        {
+        public Coordinate[] PropertyCoordinateArray(string name, int count) {
             var prop = this[name];
             var defaultValue = Enumerable.Range(0, count).Select(i => Coordinate.Zero).ToArray();
             if (prop == null || prop.Count(c => c == ' ') != (count * 3 - 1)) return defaultValue;
             var split = prop.Split(' ');
-            for (var i = 0; i < count; i++)
-            {
+            for (var i = 0; i < count; i++) {
                 decimal x, y, z;
                 if (decimal.TryParse(split[i * 3], out x)
                     && decimal.TryParse(split[i * 3 + 1], out y)
-                    && decimal.TryParse(split[i * 3 + 2], out z))
-                {
+                    && decimal.TryParse(split[i * 3 + 2], out z)) {
                     defaultValue[i] = new Coordinate(x, y, z);
                 }
             }
             return defaultValue;
         }
 
-        public Tuple<Coordinate, decimal, decimal> PropertyTextureAxis(string name)
-        {
+        public Tuple<Coordinate, decimal, decimal> PropertyTextureAxis(string name) {
             var prop = this[name];
             var defaultValue = Tuple.Create(Coordinate.UnitX, 0m, 1m);
             if (prop == null || prop.Count(c => c == ' ') != 4) return defaultValue;
@@ -233,23 +200,20 @@ namespace CBRE.Providers
                 && decimal.TryParse(split[1], out y)
                 && decimal.TryParse(split[2], out z)
                 && decimal.TryParse(split[3], out sh)
-                && decimal.TryParse(split[4], out sc))
-            {
+                && decimal.TryParse(split[4], out sc)) {
                 return Tuple.Create(new Coordinate(x, y, z), sh, sc);
             }
             return defaultValue;
         }
 
-        public Color PropertyColour(string name, Color defaultValue)
-        {
+        public Color PropertyColour(string name, Color defaultValue) {
             var prop = this[name];
             if (prop == null || prop.Count(x => x == ' ') != 2) return defaultValue;
             var split = prop.Split(' ');
             int r, g, b;
             if (int.TryParse(split[0], out r)
                 && int.TryParse(split[1], out g)
-                && int.TryParse(split[2], out b))
-            {
+                && int.TryParse(split[2], out b)) {
                 return Color.FromArgb(r, g, b);
             }
             return defaultValue;
@@ -260,8 +224,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="name">Optional name filter</param>
         /// <returns>A list of children</returns>
-        public IEnumerable<GenericStructure> GetChildren(string name = null)
-        {
+        public IEnumerable<GenericStructure> GetChildren(string name = null) {
             return Children.Where(x => name == null || String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
@@ -270,26 +233,22 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="name">Optional name filter</param>
         /// <returns>A list of descendants</returns>
-        public IEnumerable<GenericStructure> GetDescendants(string name = null)
-        {
+        public IEnumerable<GenericStructure> GetDescendants(string name = null) {
             return Children.Where(x => name == null || String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase))
                 .Union(Children.SelectMany(x => x.GetDescendants(name)));
         }
 
         #region Serialise / Deserialise
 
-        public static GenericStructure Serialise(object obj)
-        {
+        public static GenericStructure Serialise(object obj) {
             return SerialiseHelper(obj, new List<object>());
         }
 
-        private static GenericStructure SerialiseHelper(object obj, List<object> encounteredObjects)
-        {
+        private static GenericStructure SerialiseHelper(object obj, List<object> encounteredObjects) {
             // Handle null
             if (Equals(obj, null)) return new GenericStructure("Serialise.Null") { Properties = { new GenericStructureProperty("Serialise.Null.Value", "null") } };
 
-            if (encounteredObjects.Contains(obj))
-            {
+            if (encounteredObjects.Contains(obj)) {
                 var rf = new GenericStructure("Serialise.Reference");
                 rf.AddProperty("Serialise.Reference.Index", (encounteredObjects.IndexOf(obj) + 1).ToString());
                 return rf;
@@ -298,8 +257,7 @@ namespace CBRE.Providers
             var ty = obj.GetType();
 
             // Handle primitive types
-            if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(decimal))
-            {
+            if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(decimal)) {
                 var name = "Primitives.";
                 if (ty == typeof(bool)) name += "Boolean";
                 else if (ty == typeof(char) || ty == typeof(string)) name += "String";
@@ -307,37 +265,31 @@ namespace CBRE.Providers
                 return new GenericStructure(name) { Properties = { new GenericStructureProperty("Primitive.Value", Convert.ToString(obj)) } };
             }
 
-            if (ty == typeof(DateTime))
-            {
+            if (ty == typeof(DateTime)) {
                 return new GenericStructure("Primitives.DateTime") { Properties = { new GenericStructureProperty("Primitive.Value", ((DateTime)obj).ToString("u")) } };
             }
 
-            if (ty == typeof(Color))
-            {
+            if (ty == typeof(Color)) {
                 var color = (Color)obj;
                 var col = String.Format("{0} {1} {2} {3}", color.R, color.G, color.B, color.A);
                 return new GenericStructure("Primitives.Colour") { Properties = { new GenericStructureProperty("Primitive.Value", col) } };
             }
 
-            if (ty == typeof(Coordinate))
-            {
+            if (ty == typeof(Coordinate)) {
                 return new GenericStructure("Primitives.Coordinate") { Properties = { new GenericStructureProperty("Primitive.Value", obj.ToString()) } };
             }
 
-            if (ty == typeof(Box))
-            {
+            if (ty == typeof(Box)) {
                 var b = (Box)obj;
                 return new GenericStructure("Primitives.Box") { Properties = { new GenericStructureProperty("Primitive.Value", b.Start + " " + b.End) } };
             }
 
-            if (ty == typeof(Rectangle))
-            {
+            if (ty == typeof(Rectangle)) {
                 var r = (Rectangle)obj;
                 return new GenericStructure("Primitives.Rectangle") { Properties = { new GenericStructureProperty("Primitive.Value", r.X + " " + r.Y + " " + r.Width + " " + r.Height) } };
             }
 
-            if (ty == typeof(Plane))
-            {
+            if (ty == typeof(Plane)) {
                 var p = (Plane)obj;
                 return new GenericStructure("Primitives.Plane") { Properties = { new GenericStructureProperty("Primitive.Value", p.Normal + " " + p.DistanceFromOrigin) } };
             }
@@ -347,8 +299,7 @@ namespace CBRE.Providers
 
             // Handle list
             var enumerable = obj as IEnumerable;
-            if (enumerable != null)
-            {
+            if (enumerable != null) {
                 var children = enumerable.OfType<object>().Select(x => SerialiseHelper(x, encounteredObjects));
                 var list = new GenericStructure("Serialise.List");
                 list.AddProperty("Serialise.Reference", index.ToString());
@@ -359,17 +310,13 @@ namespace CBRE.Providers
             // Handle complex types
             var gs = new GenericStructure(ty.FullName);
             gs.AddProperty("Serialise.Reference", index.ToString());
-            foreach (var pi in ty.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
+            foreach (var pi in ty.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
                 if (!pi.CanRead) continue;
                 var val = pi.GetValue(obj, null);
                 var pv = SerialiseHelper(val, encounteredObjects);
-                if (pv.Name.StartsWith("Primitives."))
-                {
+                if (pv.Name.StartsWith("Primitives.")) {
                     gs.AddProperty(pi.Name, pv["Primitive.Value"]);
-                }
-                else
-                {
+                } else {
                     pv.Name = pi.Name;
                     gs.Children.Add(pv);
                 }
@@ -377,8 +324,7 @@ namespace CBRE.Providers
             return gs;
         }
 
-        public static T Deserialise<T>(GenericStructure structure)
-        {
+        public static T Deserialise<T>(GenericStructure structure) {
             var obj = DeserialiseHelper(typeof(T), structure, new Dictionary<int, object>());
             if (obj is T) return (T)obj;
             obj = Convert.ChangeType(obj, typeof(T));
@@ -386,11 +332,9 @@ namespace CBRE.Providers
             return default(T);
         }
 
-        private static object DeserialiseHelper(Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
-        {
+        private static object DeserialiseHelper(Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects) {
             // Null values
-            if (structure.Name == "Serialise.Null" || structure["Serialise.Null.Value"] == "null")
-            {
+            if (structure.Name == "Serialise.Null" || structure["Serialise.Null.Value"] == "null") {
                 return bindingType.IsValueType ? Activator.CreateInstance(bindingType) : null;
             }
 
@@ -406,8 +350,7 @@ namespace CBRE.Providers
             var refVal = refProp != null ? int.Parse(refProp.Value) : -1;
 
             // List objects
-            if (structure.Name == "Serialise.List" || typeof(IEnumerable).IsAssignableFrom(bindingType))
-            {
+            if (structure.Name == "Serialise.List" || typeof(IEnumerable).IsAssignableFrom(bindingType)) {
                 var list = Activator.CreateInstance(bindingType);
                 if (refVal >= 0) encounteredObjects[refVal] = list;
                 DeserialiseList(list, bindingType, structure, encounteredObjects);
@@ -421,18 +364,14 @@ namespace CBRE.Providers
 
             if (refVal >= 0) encounteredObjects[refVal] = instance;
 
-            foreach (var pi in bindingType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
+            foreach (var pi in bindingType.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
                 if (!pi.CanWrite) continue;
                 var prop = structure.Properties.FirstOrDefault(x => x.Key == pi.Name);
                 var child = structure.Children.FirstOrDefault(x => x.Name == pi.Name);
-                if (prop != null)
-                {
+                if (prop != null) {
                     var prim = ConvertPrimitive(pi.PropertyType, prop.Value);
                     pi.SetValue(instance, Convert.ChangeType(prim, pi.PropertyType), null);
-                }
-                else if (child != null)
-                {
+                } else if (child != null) {
                     var obj = DeserialiseHelper(pi.PropertyType, child, encounteredObjects);
                     pi.SetValue(instance, obj, null);
                 }
@@ -441,46 +380,37 @@ namespace CBRE.Providers
             return instance;
         }
 
-        private static void DeserialiseList(object instance, Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
-        {
+        private static void DeserialiseList(object instance, Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects) {
             Type listType = null;
             if (bindingType.IsGenericType) listType = bindingType.GetGenericArguments()[0];
-            var children = structure.Children.Select(x =>
-            {
+            var children = structure.Children.Select(x => {
                 var name = x.Name;
                 var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(name)).FirstOrDefault(t => t != null) ?? (listType ?? typeof(object));
                 var result = DeserialiseHelper(type, x, encounteredObjects);
                 return Convert.ChangeType(result, type);
             }).ToList();
-            if (typeof(IList).IsAssignableFrom(bindingType))
-            {
+            if (typeof(IList).IsAssignableFrom(bindingType)) {
                 foreach (var child in children) ((IList)instance).Add(child);
-            }
-            else if (typeof(Array).IsAssignableFrom(bindingType))
-            {
+            } else if (typeof(Array).IsAssignableFrom(bindingType)) {
                 var arr = (object[])instance;
                 Array.Resize(ref arr, children.Count);
                 children.CopyTo(arr);
             }
         }
 
-        private static object ConvertPrimitive(GenericStructure structure)
-        {
+        private static object ConvertPrimitive(GenericStructure structure) {
             var prim = structure.Name.Substring("Primitives.".Length);
             var value = structure["Primitive.Value"];
             return ConvertPrimitive(prim, value);
         }
 
-        private static object ConvertPrimitive(Type type, string value)
-        {
+        private static object ConvertPrimitive(Type type, string value) {
             return ConvertPrimitive(GetPrimitiveName(type), value);
         }
 
-        private static object ConvertPrimitive(string primitiveType, string value)
-        {
+        private static object ConvertPrimitive(string primitiveType, string value) {
             var spl = value.Split(' ');
-            switch (primitiveType)
-            {
+            switch (primitiveType) {
                 case "Boolean":
                     return Boolean.Parse(value);
                 case "String":
@@ -507,8 +437,7 @@ namespace CBRE.Providers
             }
         }
 
-        private static string GetPrimitiveName(Type ty)
-        {
+        private static string GetPrimitiveName(Type ty) {
             if (ty == typeof(bool)) return "Boolean";
             if (ty == typeof(char) || ty == typeof(string)) return "String";
             if (ty.IsPrimitive || ty == typeof(decimal)) return "Numeric";
@@ -524,34 +453,29 @@ namespace CBRE.Providers
         #endregion
 
         #region Printer
-        public override string ToString()
-        {
+        public override string ToString() {
             var sw = new StringWriter();
             PrintToStream(sw);
             return sw.ToString();
         }
 
-        public void PrintToStream(TextWriter tw)
-        {
+        public void PrintToStream(TextWriter tw) {
             Print(tw);
         }
 
-        private static string LengthLimit(string str, int limit)
-        {
+        private static string LengthLimit(string str, int limit) {
             if (str.Length >= limit) return str.Substring(0, limit - 1);
             return str;
         }
 
-        private void Print(TextWriter tw, int tabs = 0)
-        {
+        private void Print(TextWriter tw, int tabs = 0) {
             var preTabStr = new string(' ', tabs * 4);
             var postTabStr = new string(' ', (tabs + 1) * 4);
             tw.Write(preTabStr);
             tw.WriteLine(Name);
             tw.Write(preTabStr);
             tw.WriteLine("{");
-            foreach (var kv in Properties)
-            {
+            foreach (var kv in Properties) {
                 tw.Write(postTabStr);
                 tw.Write('"');
                 tw.Write(LengthLimit(kv.Key, 1024));
@@ -562,8 +486,7 @@ namespace CBRE.Providers
                 tw.Write('"');
                 tw.WriteLine();
             }
-            foreach (var child in Children)
-            {
+            foreach (var child in Children) {
                 child.Print(tw, tabs + 1);
             }
             tw.Write(preTabStr);
@@ -578,10 +501,8 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="filePath">The file to parse from</param>
         /// <returns>The parsed structure</returns>
-        public static IEnumerable<GenericStructure> Parse(string filePath)
-        {
-            using (var reader = new StreamReader(filePath))
-            {
+        public static IEnumerable<GenericStructure> Parse(string filePath) {
+            using (var reader = new StreamReader(filePath)) {
                 return Parse(reader).ToList();
             }
         }
@@ -591,13 +512,10 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="reader">The TextReader to parse from</param>
         /// <returns>The parsed structure</returns>
-        public static IEnumerable<GenericStructure> Parse(TextReader reader)
-        {
+        public static IEnumerable<GenericStructure> Parse(TextReader reader) {
             string line;
-            while ((line = CleanLine(reader.ReadLine())) != null)
-            {
-                if (ValidStructStartString(line))
-                {
+            while ((line = CleanLine(reader.ReadLine())) != null) {
+                if (ValidStructStartString(line)) {
                     yield return ParseStructure(reader, line);
                 }
             }
@@ -608,8 +526,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="line">The unclean line</param>
         /// <returns>The cleaned line</returns>
-        private static string CleanLine(string line)
-        {
+        private static string CleanLine(string line) {
             if (line == null) return null;
             var ret = line;
             if (ret.Contains("//")) ret = ret.Substring(0, ret.IndexOf("//")); // Comments
@@ -622,24 +539,19 @@ namespace CBRE.Providers
         /// <param name="reader">The TextReader to read from</param>
         /// <param name="name">The structure's name</param>
         /// <returns>The parsed structure</returns>
-		private static GenericStructure ParseStructure(TextReader reader, string name)
-        {
+		private static GenericStructure ParseStructure(TextReader reader, string name) {
             var spl = name.SplitWithQuotes();
             var gs = new GenericStructure(spl[0]);
             string line;
-            if (spl.Length != 2 || spl[1] != "{")
-            {
-                do
-                {
+            if (spl.Length != 2 || spl[1] != "{") {
+                do {
                     line = CleanLine(reader.ReadLine());
                 } while (String.IsNullOrWhiteSpace(line));
-                if (line != "{")
-                {
+                if (line != "{") {
                     return gs;
                 }
             }
-            while ((line = CleanLine(reader.ReadLine())) != null)
-            {
+            while ((line = CleanLine(reader.ReadLine())) != null) {
                 if (line == "}") break;
 
                 if (ValidStructPropertyString(line)) ParseProperty(gs, line);
@@ -653,8 +565,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="s">The string to test</param>
         /// <returns>True if this is a valid structure name, false otherwise</returns>
-	    private static bool ValidStructStartString(string s)
-        {
+	    private static bool ValidStructStartString(string s) {
             if (string.IsNullOrEmpty(s)) return false;
             var split = s.SplitWithQuotes();
             return split.Length == 1 || (split.Length == 2 && split[1] == "{");
@@ -665,8 +576,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="s">The string to test</param>
         /// <returns>True if this is a valid property string, false otherwise</returns>
-		private static bool ValidStructPropertyString(string s)
-        {
+		private static bool ValidStructPropertyString(string s) {
             if (string.IsNullOrEmpty(s)) return false;
             var split = s.SplitWithQuotes();
             return split.Length == 2;
@@ -677,8 +587,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="gs">The structure to add the property to</param>
         /// <param name="prop">The property string to parse</param>
-		private static void ParseProperty(GenericStructure gs, string prop)
-        {
+		private static void ParseProperty(GenericStructure gs, string prop) {
             var split = prop.SplitWithQuotes();
             gs.Properties.Add(new GenericStructureProperty(split[0], (split[1] ?? "").Replace('`', '"')));
         }

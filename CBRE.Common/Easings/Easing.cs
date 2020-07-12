@@ -1,23 +1,18 @@
 using CBRE.Extensions;
 using System;
 
-namespace CBRE.Common.Easings
-{
-    public class Easing
-    {
+namespace CBRE.Common.Easings {
+    public class Easing {
         private Func<decimal, decimal> Function { get; set; }
         private EasingDirection Direction { get; set; }
 
-        public Easing(Func<decimal, decimal> function, EasingDirection direction)
-        {
+        public Easing(Func<decimal, decimal> function, EasingDirection direction) {
             Function = function;
             Direction = direction;
         }
 
-        public decimal Evaluate(decimal input)
-        {
-            switch (Direction)
-            {
+        public decimal Evaluate(decimal input) {
+            switch (Direction) {
                 case EasingDirection.In:
                     return Function(input);
                 case EasingDirection.Out:
@@ -31,15 +26,12 @@ namespace CBRE.Common.Easings
             }
         }
 
-        public static Easing FromType(EasingType type, EasingDirection direction)
-        {
+        public static Easing FromType(EasingType type, EasingDirection direction) {
             return new Easing(FunctionFromType(type), direction);
         }
 
-        private static Func<decimal, decimal> FunctionFromType(EasingType easing)
-        {
-            switch (easing)
-            {
+        private static Func<decimal, decimal> FunctionFromType(EasingType easing) {
+            switch (easing) {
                 case EasingType.Constant:
                     return x => 1;
                 case EasingType.Linear:

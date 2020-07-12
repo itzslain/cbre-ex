@@ -3,15 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Settings
-{
-    public static class Hotkeys
-    {
+namespace CBRE.Settings {
+    public static class Hotkeys {
         private static readonly List<HotkeyDefinition> Definitions;
         private static readonly List<HotkeyImplementation> Implementations;
 
-        static Hotkeys()
-        {
+        static Hotkeys() {
             Definitions = new List<HotkeyDefinition>
                                {
                                     new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.ViewportAutosize, ""),
@@ -107,68 +104,52 @@ namespace CBRE.Settings
             SetupHotkeys(new List<Hotkey>());
         }
 
-        public static void SetupHotkeys(List<Hotkey> overrides)
-        {
+        public static void SetupHotkeys(List<Hotkey> overrides) {
             Implementations.Clear();
-            foreach (var def in Definitions)
-            {
+            foreach (var def in Definitions) {
                 var overridden = false;
-                foreach (var hk in overrides.Where(x => x.ID == def.ID).ToList())
-                {
+                foreach (var hk in overrides.Where(x => x.ID == def.ID).ToList()) {
                     overridden = true;
-                    if (!String.IsNullOrWhiteSpace(hk.HotkeyString))
-                    {
+                    if (!String.IsNullOrWhiteSpace(hk.HotkeyString)) {
                         Implementations.Add(new HotkeyImplementation(def, hk.HotkeyString));
                     }
                 }
-                if (!overridden)
-                {
-                    foreach (var hk in def.DefaultHotkeys)
-                    {
+                if (!overridden) {
+                    foreach (var hk in def.DefaultHotkeys) {
                         Implementations.Add(new HotkeyImplementation(def, hk));
                     }
                 }
             }
         }
 
-        public static IEnumerable<Hotkey> GetHotkeys()
-        {
-            foreach (var def in Definitions)
-            {
+        public static IEnumerable<Hotkey> GetHotkeys() {
+            foreach (var def in Definitions) {
                 var impls = Implementations.Where(x => x.Definition.ID == def.ID).ToList();
-                if (!impls.Any())
-                {
+                if (!impls.Any()) {
                     yield return new Hotkey { ID = def.ID, HotkeyString = "" };
-                }
-                else
-                {
-                    foreach (var impl in impls)
-                    {
+                } else {
+                    foreach (var impl in impls) {
                         yield return new Hotkey { ID = def.ID, HotkeyString = impl.Hotkey };
                     }
                 }
             }
         }
 
-        public static HotkeyImplementation GetHotkeyForMessage(object message, object parameter)
-        {
+        public static HotkeyImplementation GetHotkeyForMessage(object message, object parameter) {
             var def = Definitions.FirstOrDefault(x => x.Action.ToString() == message.ToString() && Equals(x.Parameter, parameter));
             if (def == null) return null;
             return Implementations.FirstOrDefault(x => x.Definition.ID == def.ID);
         }
 
-        public static HotkeyImplementation GetHotkeyFor(string keyCombination)
-        {
+        public static HotkeyImplementation GetHotkeyFor(string keyCombination) {
             return Implementations.FirstOrDefault(x => x.Hotkey == keyCombination);
         }
 
-        public static HotkeyDefinition GetHotkeyDefinition(string id)
-        {
+        public static HotkeyDefinition GetHotkeyDefinition(string id) {
             return Definitions.FirstOrDefault(x => x.ID == id);
         }
 
-        public static IEnumerable<HotkeyDefinition> GetHotkeyDefinitions()
-        {
+        public static IEnumerable<HotkeyDefinition> GetHotkeyDefinitions() {
             return Definitions;
         }
     }

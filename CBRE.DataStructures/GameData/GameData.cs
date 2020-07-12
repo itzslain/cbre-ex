@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.DataStructures.GameData
-{
-    public class GameData
-    {
+namespace CBRE.DataStructures.GameData {
+    public class GameData {
         public int MapSizeLow { get; set; }
         public int MapSizeHigh { get; set; }
         public List<GameDataObject> Classes { get; private set; }
@@ -13,8 +11,7 @@ namespace CBRE.DataStructures.GameData
         public List<string> MaterialExclusions { get; private set; }
         public List<AutoVisgroupSection> AutoVisgroups { get; private set; }
 
-        public GameData()
-        {
+        public GameData() {
             MapSizeHigh = 16384;
             MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
@@ -60,19 +57,17 @@ namespace CBRE.DataStructures.GameData
                 if (gdo.ClassType != ClassType.Solid) {
                     gdo.Properties.Add(p);
                 }
-			}
+            }
 
             Includes = new List<string>();
             MaterialExclusions = new List<string>();
             AutoVisgroups = new List<AutoVisgroupSection>();
         }
 
-        public void CreateDependencies()
-        {
+        public void CreateDependencies() {
             var resolved = new List<string>();
             var unresolved = new List<GameDataObject>(Classes);
-            while (unresolved.Any())
-            {
+            while (unresolved.Any()) {
                 var resolve = unresolved.Where(x => x.BaseClasses.All(resolved.Contains)).ToList();
                 if (!resolve.Any()) throw new Exception("Circular dependencies: " + String.Join(", ", unresolved.Select(x => x.Name)));
                 resolve.ForEach(x => x.Inherit(Classes.Where(y => x.BaseClasses.Contains(y.Name))));
@@ -81,10 +76,8 @@ namespace CBRE.DataStructures.GameData
             }
         }
 
-        public void RemoveDuplicates()
-        {
-            foreach (var g in Classes.Where(x => x.ClassType != ClassType.Base).GroupBy(x => x.Name.ToLowerInvariant()).Where(g => g.Count() > 1).ToList())
-            {
+        public void RemoveDuplicates() {
+            foreach (var g in Classes.Where(x => x.ClassType != ClassType.Base).GroupBy(x => x.Name.ToLowerInvariant()).Where(g => g.Count() > 1).ToList()) {
                 foreach (var obj in g.Skip(1)) Classes.Remove(obj);
             }
         }

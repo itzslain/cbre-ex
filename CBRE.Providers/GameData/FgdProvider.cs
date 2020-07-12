@@ -5,25 +5,20 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace CBRE.Providers.GameData
-{
-    public class FgdProvider : GameDataProvider
-    {
+namespace CBRE.Providers.GameData {
+    public class FgdProvider : GameDataProvider {
         private String CurrentFile { get; set; }
 
-        protected override bool IsValidForFile(string filename)
-        {
+        protected override bool IsValidForFile(string filename) {
             return filename.EndsWith(".fgd", StringComparison.OrdinalIgnoreCase);
         }
 
-        protected override bool IsValidForStream(Stream stream)
-        {
+        protected override bool IsValidForStream(Stream stream) {
             // not really any way of knowing
             return true;
         }
 
-        protected override DataStructures.GameData.GameData GetFromFile(string filename)
-        {
+        protected override DataStructures.GameData.GameData GetFromFile(string filename) {
             if (!File.Exists(filename)) throw new ProviderException("File does not exist: " + filename);
             CurrentFile = filename;
             var parsed = base.GetFromFile(filename);
@@ -31,36 +26,29 @@ namespace CBRE.Providers.GameData
             return parsed;
         }
 
-        protected override DataStructures.GameData.GameData GetFromStream(Stream stream)
-        {
+        protected override DataStructures.GameData.GameData GetFromStream(Stream stream) {
             var lex = Lex(new StreamReader(stream));
             return Parse(lex.Where(l => l.Type != LexType.Comment));
         }
 
-        private DataStructures.GameData.GameData Parse(IEnumerable<LexObject> lex)
-        {
+        private DataStructures.GameData.GameData Parse(IEnumerable<LexObject> lex) {
             var gd = new DataStructures.GameData.GameData();
             var iterator = lex.GetEnumerator();
-            while (true)
-            {
+            while (true) {
                 if (!iterator.MoveNext()) break;
-                if (iterator.Current.Type == LexType.At)
-                {
+                if (iterator.Current.Type == LexType.At) {
                     ParseAt(gd, iterator);
                 }
             }
             return gd;
         }
 
-        private void ParseAt(DataStructures.GameData.GameData gd, IEnumerator<LexObject> iterator)
-        {
+        private void ParseAt(DataStructures.GameData.GameData gd, IEnumerator<LexObject> iterator) {
             iterator.MoveNext();
             var type = iterator.Current.Value;
-            if (type.Equals("include", StringComparison.OrdinalIgnoreCase))
-            {
+            if (type.Equals("include", StringComparison.OrdinalIgnoreCase)) {
                 Expect(iterator, LexType.String);
-                if (CurrentFile != null)
-                {
+                if (CurrentFile != null) {
                     var filename = iterator.Current.GetValue();
                     var path = Path.GetDirectoryName(CurrentFile) ?? "";
                     var incfile = Path.Combine(path, filename);
@@ -78,14 +66,10 @@ namespace CBRE.Providers.GameData
                     gd.Classes.AddRange(incgd.Classes.Where(x => !gd.Classes.Any(y => String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase))));
                     gd.AutoVisgroups.AddRange(incgd.AutoVisgroups.Where(x => !gd.AutoVisgroups.Any(y => String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase))));
                     gd.MaterialExclusions.AddRange(incgd.MaterialExclusions.Where(x => !gd.MaterialExclusions.Any(y => String.Equals(x, y, StringComparison.OrdinalIgnoreCase))));
-                }
-                else
-                {
+                } else {
                     throw new ProviderException("Unable to include a file when not reading from a file.");
                 }
-            }
-            else if (type.Equals("mapsize", StringComparison.OrdinalIgnoreCase))
-            {
+            } else if (type.Equals("mapsize", StringComparison.OrdinalIgnoreCase)) {
                 Expect(iterator, LexType.OpenParen);
                 Expect(iterator, LexType.Value);
                 gd.MapSizeLow = Int32.Parse(iterator.Current.Value);
@@ -93,21 +77,16 @@ namespace CBRE.Providers.GameData
                 Expect(iterator, LexType.Value);
                 gd.MapSizeHigh = Int32.Parse(iterator.Current.Value);
                 Expect(iterator, LexType.CloseParen);
-            }
-            else if (type.Equals("materialexclusion", StringComparison.OrdinalIgnoreCase))
-            {
+            } else if (type.Equals("materialexclusion", StringComparison.OrdinalIgnoreCase)) {
                 Expect(iterator, LexType.OpenBracket);
                 iterator.MoveNext();
-                while (iterator.Current.Type != LexType.CloseBracket)
-                {
+                while (iterator.Current.Type != LexType.CloseBracket) {
                     Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                     var exclusion = iterator.Current.GetValue();
                     gd.MaterialExclusions.Add(exclusion);
                     iterator.MoveNext();
                 }
-            }
-            else if (type.Equals("autovisgroup", StringComparison.OrdinalIgnoreCase))
-            {
+            } else if (type.Equals("autovisgroup", StringComparison.OrdinalIgnoreCase)) {
                 Expect(iterator, LexType.Equals);
 
                 iterator.MoveNext();
@@ -117,16 +96,14 @@ namespace CBRE.Providers.GameData
 
                 Expect(iterator, LexType.OpenBracket);
                 iterator.MoveNext();
-                while (iterator.Current.Type != LexType.CloseBracket)
-                {
+                while (iterator.Current.Type != LexType.CloseBracket) {
                     Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                     var groupName = iterator.Current.GetValue();
                     var grp = new AutoVisgroup { Name = groupName };
 
                     Expect(iterator, LexType.OpenBracket);
                     iterator.MoveNext();
-                    while (iterator.Current.Type != LexType.CloseBracket)
-                    {
+                    while (iterator.Current.Type != LexType.CloseBracket) {
                         Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                         var entity = iterator.Current.GetValue();
                         grp.EntityNames.Add(entity);
@@ -137,35 +114,29 @@ namespace CBRE.Providers.GameData
                 }
 
                 gd.AutoVisgroups.Add(sect);
-            }
-            else
-            {
+            } else {
                 // Parsing:
                 // @TypeClass name(param, param) name()
                 var ct = ParseClassType(type, iterator.Current);
                 var gdo = new GameDataObject("", "", ct);
                 iterator.MoveNext();
-                while (iterator.Current.Type == LexType.Value)
-                {
+                while (iterator.Current.Type == LexType.Value) {
                     // Parsing:
                     // @TypeClass {name(param, param) name()}
                     var name = iterator.Current.Value;
                     var bh = new Behaviour(name);
                     iterator.MoveNext();
-                    if (iterator.Current.Type == LexType.Value)
-                    {
+                    if (iterator.Current.Type == LexType.Value) {
                         // Allow for the following (first seen in hl2 base):
                         // @PointClass {halfgridsnap} base(Targetname)
                         continue;
                     }
                     Assert(iterator.Current, iterator.Current.Type == LexType.OpenParen, "Unexpected " + iterator.Current.Type);
                     iterator.MoveNext();
-                    while (iterator.Current.Type != LexType.CloseParen)
-                    {
+                    while (iterator.Current.Type != LexType.CloseParen) {
                         // Parsing:
                         // name({param, param})
-                        if (iterator.Current.Type != LexType.Comma)
-                        {
+                        if (iterator.Current.Type != LexType.Comma) {
                             Assert(iterator.Current, iterator.Current.Type == LexType.Value || iterator.Current.Type == LexType.String,
                                 "Unexpected " + iterator.Current.Type + ".");
                             var value = iterator.Current.Value;
@@ -176,12 +147,9 @@ namespace CBRE.Providers.GameData
                     }
                     Assert(iterator.Current, iterator.Current.Type == LexType.CloseParen, "Unexpected " + iterator.Current.Type);
                     // Treat base behaviour as a special case
-                    if (bh.Name == "base")
-                    {
+                    if (bh.Name == "base") {
                         gdo.BaseClasses.AddRange(bh.Values);
-                    }
-                    else
-                    {
+                    } else {
                         gdo.Behaviours.Add(bh);
                     }
                     iterator.MoveNext();
@@ -191,8 +159,7 @@ namespace CBRE.Providers.GameData
                 Expect(iterator, LexType.Value);
                 gdo.Name = iterator.Current.Value;
                 iterator.MoveNext();
-                if (iterator.Current.Type == LexType.Colon)
-                {
+                if (iterator.Current.Type == LexType.Colon) {
                     // Parsing:
                     // : {"Descr" + "iption"} [
                     iterator.MoveNext();
@@ -205,8 +172,7 @@ namespace CBRE.Providers.GameData
                 // input name(type) : "Description"
                 // output name(type) : "Description"
                 iterator.MoveNext();
-                while (iterator.Current.Type != LexType.CloseBracket)
-                {
+                while (iterator.Current.Type != LexType.CloseBracket) {
                     Assert(iterator.Current, iterator.Current.Type == LexType.Value, "Unexpected " + iterator.Current.Type);
                     var pt = iterator.Current.Value;
                     if (pt == "input" || pt == "output") // IO
@@ -221,15 +187,13 @@ namespace CBRE.Providers.GameData
                         io.VariableType = ParseVariableType(iterator.Current);
                         Expect(iterator, LexType.CloseParen);
                         iterator.MoveNext(); // if not colon, this will be the value of the next io/property, or close
-                        if (iterator.Current.Type == LexType.Colon)
-                        {
+                        if (iterator.Current.Type == LexType.Colon) {
                             iterator.MoveNext();
                             io.Description = ParsePlusString(iterator);
                         }
                         gdo.InOuts.Add(io);
-                    }
-                    else // Property
-                    {
+                    } else // Property
+                      {
                         Expect(iterator, LexType.OpenParen);
                         Expect(iterator, LexType.Value);
                         var vartype = ParseVariableType(iterator.Current);
@@ -237,13 +201,11 @@ namespace CBRE.Providers.GameData
                         var prop = new Property(pt, vartype);
                         iterator.MoveNext();
                         // if not colon or equals, this will be the value of the next io/property, or close
-                        if (iterator.Current.Type == LexType.Value)
-                        {
+                        if (iterator.Current.Type == LexType.Value) {
                             // Check for additional flags on the property
                             // e.g.: name(type) readonly : "This is a read only value"
                             //       name(type) report   : "This value will show in the entity report"
-                            switch (iterator.Current.Value)
-                            {
+                            switch (iterator.Current.Value) {
                                 case "readonly":
                                     prop.ReadOnly = true;
                                     iterator.MoveNext();
@@ -266,12 +228,9 @@ namespace CBRE.Providers.GameData
                             iterator.MoveNext();
                             if (iterator.Current.Type != LexType.Colon) // Allow for ': :' structure (no default)
                             {
-                                if (iterator.Current.Type == LexType.String)
-                                {
+                                if (iterator.Current.Type == LexType.String) {
                                     prop.DefaultValue = iterator.Current.Value.Trim('"');
-                                }
-                                else
-                                {
+                                } else {
                                     Assert(iterator.Current, iterator.Current.Type == LexType.Value, "Unexpected " + iterator.Current.Type);
                                     prop.DefaultValue = iterator.Current.Value;
                                 }
@@ -283,17 +242,14 @@ namespace CBRE.Providers.GameData
                             iterator.MoveNext();
                             prop.Description = ParsePlusString(iterator);
                         } while (false);
-                        if (iterator.Current.Type == LexType.Equals)
-                        {
+                        if (iterator.Current.Type == LexType.Equals) {
                             Expect(iterator, LexType.OpenBracket);
                             // Parsing property options:
                             // value : description
                             // value : description : 0
                             iterator.MoveNext();
-                            while (iterator.Current.IsValueOrString())
-                            {
-                                var opt = new Option
-                                {
+                            while (iterator.Current.IsValueOrString()) {
+                                var opt = new Option {
                                     Key = iterator.Current.GetValue()
                                 };
                                 Expect(iterator, LexType.Colon);
@@ -301,20 +257,16 @@ namespace CBRE.Providers.GameData
                                 // Some FGDs use values for property descriptions instead of strings
                                 iterator.MoveNext();
                                 Assert(iterator.Current, iterator.Current.IsValueOrString(), "Choices value must be value or string type.");
-                                if (iterator.Current.Type == LexType.String)
-                                {
+                                if (iterator.Current.Type == LexType.String) {
                                     opt.Description = ParsePlusString(iterator);
-                                }
-                                else
-                                {
+                                } else {
                                     opt.Description = iterator.Current.GetValue();
                                     iterator.MoveNext();
                                     // ParsePlusString moves next once it's complete, need to do the same here
                                 }
 
                                 prop.Options.Add(opt);
-                                if (iterator.Current.Type != LexType.Colon)
-                                {
+                                if (iterator.Current.Type != LexType.Colon) {
                                     continue;
                                 }
                                 Expect(iterator, LexType.Value);
@@ -337,20 +289,15 @@ namespace CBRE.Providers.GameData
         /// </summary>
         /// <param name="iterator">A token iterator, the current value should be the start of the string to parse.</param>
         /// <returns>The string result.</returns>
-        private static string ParsePlusString(IEnumerator<LexObject> iterator)
-        {
+        private static string ParsePlusString(IEnumerator<LexObject> iterator) {
             var result = "";
             var plustime = false;
-            while (iterator.Current.Type == LexType.String || iterator.Current.Type == LexType.Plus)
-            {
-                if (iterator.Current.Type != LexType.Plus)
-                {
+            while (iterator.Current.Type == LexType.String || iterator.Current.Type == LexType.Plus) {
+                if (iterator.Current.Type != LexType.Plus) {
                     if (plustime) break;
                     Assert(iterator.Current, iterator.Current.Type == LexType.String, "Unexpected " + iterator.Current.Type);
                     result += iterator.Current.Value.Trim('"');
-                }
-                else
-                {
+                } else {
                     if (!plustime) break;
                 }
                 plustime = !plustime;
@@ -359,51 +306,42 @@ namespace CBRE.Providers.GameData
             return result;
         }
 
-        private static ClassType ParseClassType(string type, LexObject obj)
-        {
+        private static ClassType ParseClassType(string type, LexObject obj) {
             type = type.ToLower().Replace("class", "");
             ClassType ct;
-            if (Enum.TryParse(type, true, out ct))
-            {
+            if (Enum.TryParse(type, true, out ct)) {
                 return ct;
             }
             throw new ProviderException("Unable to parse FGD. Invalid class type: " + type + ".\n" +
                                         "On line " + obj.LineNumber + ", character " + obj.CharacterNumber);
         }
 
-        private static VariableType ParseVariableType(LexObject obj)
-        {
+        private static VariableType ParseVariableType(LexObject obj) {
             var type = obj.Value.ToLower().Replace("_", "");
             VariableType vt;
-            if (Enum.TryParse(type, true, out vt))
-            {
+            if (Enum.TryParse(type, true, out vt)) {
                 return vt;
             }
             throw new ProviderException("Unable to parse FGD. Invalid variable type: " + type + ".\n" +
                                         "On line " + obj.LineNumber + ", character " + obj.CharacterNumber);
         }
 
-        private static void Expect(IEnumerator<LexObject> iterator, LexType lexType)
-        {
+        private static void Expect(IEnumerator<LexObject> iterator, LexType lexType) {
             iterator.MoveNext();
-            if (iterator.Current.Type != lexType)
-            {
+            if (iterator.Current.Type != lexType) {
                 throw new ProviderException("Unable to parse FGD. Expected " + lexType + ", got " + iterator.Current.Type + ".\n" +
                                             "On line " + iterator.Current.LineNumber + ", character " + iterator.Current.CharacterNumber);
             }
         }
 
-        private static void Assert(LexObject obj, bool value, string error)
-        {
-            if (!value)
-            {
+        private static void Assert(LexObject obj, bool value, string error) {
+            if (!value) {
                 throw new ProviderException("Unable to parse FGD. " + error.Trim() + "\n" +
                                             "On line " + obj.LineNumber + ", character " + obj.CharacterNumber);
             }
         }
 
-        private enum LexType
-        {
+        private enum LexType {
             At,             // @
             Equals,         // =
             Colon,          // :
@@ -418,118 +356,91 @@ namespace CBRE.Providers.GameData
             Comment
         }
 
-        private class LexObject
-        {
+        private class LexObject {
             public LexType Type { get; private set; }
             public string Value { get; set; }
             public int LineNumber { get; private set; }
             public int CharacterNumber { get; private set; }
 
-            public LexObject(int lineNum, int charNum, LexType type, string value = "")
-            {
+            public LexObject(int lineNum, int charNum, LexType type, string value = "") {
                 LineNumber = lineNum;
                 CharacterNumber = charNum;
                 Type = type;
                 Value = value;
             }
 
-            public bool IsValueOrString()
-            {
+            public bool IsValueOrString() {
                 return Type == LexType.String || Type == LexType.Value;
             }
 
-            public string GetValue()
-            {
+            public string GetValue() {
                 return Type == LexType.String ? Value.Trim('"') : Value;
             }
         }
 
-        private static IEnumerable<LexObject> Lex(TextReader reader)
-        {
+        private static IEnumerable<LexObject> Lex(TextReader reader) {
             var lineNum = 1;
             var charNum = 0;
             int i;
             LexObject current = null;
-            while ((i = reader.Read()) >= 0)
-            {
+            while ((i = reader.Read()) >= 0) {
                 var c = Convert.ToChar(i);
-                if (c == '\n')
-                {
+                if (c == '\n') {
                     lineNum++;
                     charNum = 0;
-                }
-                else
-                {
+                } else {
                     charNum++;
                 }
-                if (current == null)
-                {
+                if (current == null) {
                     current = LexNew(lineNum, charNum, c);
-                }
-                else
-                {
+                } else {
                     var le = LexExisting(lineNum, charNum, c, current);
-                    if (le != current)
-                    {
+                    if (le != current) {
                         yield return current;
                         current = le;
                     }
                 }
             }
-            if (current != null)
-            {
+            if (current != null) {
                 yield return current;
             }
         }
 
-        private static LexObject LexNew(int lineNum, int charNum, char c)
-        {
-            if (Char.IsWhiteSpace(c))
-            {
+        private static LexObject LexNew(int lineNum, int charNum, char c) {
+            if (Char.IsWhiteSpace(c)) {
                 return null;
             }
-            if (c == '@')
-            {
+            if (c == '@') {
                 return new LexObject(lineNum, charNum, LexType.At);
             }
-            if (c == '=')
-            {
+            if (c == '=') {
                 return new LexObject(lineNum, charNum, LexType.Equals);
             }
-            if (c == ':')
-            {
+            if (c == ':') {
                 return new LexObject(lineNum, charNum, LexType.Colon);
             }
-            if (c == '[')
-            {
+            if (c == '[') {
                 return new LexObject(lineNum, charNum, LexType.OpenBracket);
             }
-            if (c == ']')
-            {
+            if (c == ']') {
                 return new LexObject(lineNum, charNum, LexType.CloseBracket);
             }
-            if (c == '(')
-            {
+            if (c == '(') {
                 return new LexObject(lineNum, charNum, LexType.OpenParen);
             }
-            if (c == ')')
-            {
+            if (c == ')') {
                 return new LexObject(lineNum, charNum, LexType.CloseParen);
             }
-            if (c == '+')
-            {
+            if (c == '+') {
                 return new LexObject(lineNum, charNum, LexType.Plus);
             }
-            if (c == ',')
-            {
+            if (c == ',') {
                 return new LexObject(lineNum, charNum, LexType.Comma);
             }
-            if (c == '/')
-            {
+            if (c == '/') {
                 return new LexObject(lineNum, charNum, LexType.Comment);
             }
-            if (c == '"')
-            {
+            if (c == '"') {
                 return new LexObject(lineNum, charNum, LexType.String, c.ToString());
             }
             return new LexObject(lineNum, charNum, LexType.Value, c.ToString());
@@ -540,17 +451,13 @@ namespace CBRE.Providers.GameData
             '@', '=', ':', '[', ']', '(', ')', '+', ','
         };
 
-        private static LexObject LexExisting(int lineNum, int charNum, char c, LexObject existing)
-        {
-            switch (existing.Type)
-            {
+        private static LexObject LexExisting(int lineNum, int charNum, char c, LexObject existing) {
+            switch (existing.Type) {
                 case LexType.Value:
-                    if (Char.IsWhiteSpace(c))
-                    {
+                    if (Char.IsWhiteSpace(c)) {
                         return null;
                     }
-                    if (NonValueCharacters.Contains(c))
-                    {
+                    if (NonValueCharacters.Contains(c)) {
                         return LexNew(lineNum, charNum, c);
                     }
                     existing.Value += c.ToString();

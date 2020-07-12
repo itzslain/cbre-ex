@@ -5,18 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.Brushes
-{
-    public static class BrushManager
-    {
+namespace CBRE.Editor.Brushes {
+    public static class BrushManager {
         public delegate void ValuesChangedEventHandler(IBrush brush);
 
         public static event ValuesChangedEventHandler ValuesChanged;
 
-        private static void OnValuesChanged(IBrush brush)
-        {
-            if (ValuesChanged != null)
-            {
+        private static void OnValuesChanged(IBrush brush) {
+            if (ValuesChanged != null) {
                 ValuesChanged(brush);
             }
         }
@@ -28,11 +24,9 @@ namespace CBRE.Editor.Brushes
         private static ComboBox _comboBox;
         private static bool _roundCreatedVertices;
 
-        public static bool RoundCreatedVertices
-        {
+        public static bool RoundCreatedVertices {
             get { return _roundCreatedVertices; }
-            set
-            {
+            set {
                 _roundCreatedVertices = value;
                 if (CurrentBrush != null) OnValuesChanged(CurrentBrush);
             }
@@ -40,15 +34,13 @@ namespace CBRE.Editor.Brushes
 
         public static BrushSidebarPanel SidebarControl { get; private set; }
 
-        static BrushManager()
-        {
+        static BrushManager() {
             Brushes = new List<IBrush>();
             CurrentControls = new List<BrushControl>();
             RoundCreatedVertices = true;
         }
 
-        public static void Init()
-        {
+        public static void Init() {
             Brushes.Add(new BlockBrush());
             Brushes.Add(new TetrahedronBrush());
             Brushes.Add(new PyramidBrush());
@@ -64,25 +56,21 @@ namespace CBRE.Editor.Brushes
             SetBrushControl(new BrushSidebarPanel());
         }
 
-        private static ComboBox FindComboBox(Control parent)
-        {
+        private static ComboBox FindComboBox(Control parent) {
             if (parent is ComboBox) return (ComboBox)parent;
             return parent.Controls.OfType<Control>().Select(FindComboBox).FirstOrDefault(x => x != null);
         }
 
-        public static void SetBrushControl(BrushSidebarPanel brushControl)
-        {
+        public static void SetBrushControl(BrushSidebarPanel brushControl) {
             SidebarControl = brushControl;
             _comboBox = FindComboBox(SidebarControl);
-            if (_comboBox != null)
-            {
+            if (_comboBox != null) {
                 _comboBox.SelectedIndexChanged += (sender, e) => UpdateSelectedBrush(Brushes[((ComboBox)sender).SelectedIndex]);
             }
             UpdateBrushControl();
         }
 
-        private static void UpdateSelectedBrush(IBrush brush)
-        {
+        private static void UpdateSelectedBrush(IBrush brush) {
             CurrentControls.ForEach(x => x.ValuesChanged -= ControlValuesChanged);
             CurrentControls.ForEach(x => SidebarControl.Controls.Remove(x));
             CurrentControls.Clear();
@@ -90,8 +78,7 @@ namespace CBRE.Editor.Brushes
             if (CurrentBrush == null) return;
             SidebarControl.RoundCheckboxEnabled = CurrentBrush.CanRound;
             CurrentControls.AddRange(CurrentBrush.GetControls().Reverse());
-            for (var i = 0; i < CurrentControls.Count; i++)
-            {
+            for (var i = 0; i < CurrentControls.Count; i++) {
                 var ctrl = CurrentControls[i];
                 ctrl.Dock = DockStyle.Top;
                 ctrl.ValuesChanged += ControlValuesChanged;
@@ -102,19 +89,16 @@ namespace CBRE.Editor.Brushes
             OnValuesChanged(CurrentBrush);
         }
 
-        private static void ControlValuesChanged(object sender, IBrush brush)
-        {
+        private static void ControlValuesChanged(object sender, IBrush brush) {
             OnValuesChanged(brush);
         }
 
-        public static void Register(IBrush brush)
-        {
+        public static void Register(IBrush brush) {
             Brushes.Add(brush);
             UpdateBrushControl();
         }
 
-        private static void UpdateBrushControl()
-        {
+        private static void UpdateBrushControl() {
             if (SidebarControl == null || _comboBox == null) return;
             var sel = _comboBox.SelectedIndex;
             _comboBox.Items.Clear();

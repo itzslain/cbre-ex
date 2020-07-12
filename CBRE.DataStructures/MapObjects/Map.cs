@@ -7,11 +7,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace CBRE.DataStructures.MapObjects
-{
+namespace CBRE.DataStructures.MapObjects {
     [Serializable]
-    public class Map : ISerializable
-    {
+    public class Map : ISerializable {
         public decimal Version { get; set; }
         public List<Visgroup> Visgroups { get; private set; }
         public List<Camera> Cameras { get; private set; }
@@ -32,8 +30,7 @@ namespace CBRE.DataStructures.MapObjects
         public bool Cordon { get; set; }
         public Box CordonBounds { get; set; }
 
-        public Map()
-        {
+        public Map() {
             Version = 1;
             Visgroups = new List<Visgroup>();
             Cameras = new List<Camera>();
@@ -47,8 +44,7 @@ namespace CBRE.DataStructures.MapObjects
             CordonBounds = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
         }
 
-        protected Map(SerializationInfo info, StreamingContext context)
-        {
+        protected Map(SerializationInfo info, StreamingContext context) {
             Version = info.GetDecimal("Version");
             Visgroups = ((Visgroup[])info.GetValue("Visgroups", typeof(Visgroup[]))).ToList();
             Cameras = ((Camera[])info.GetValue("Cameras", typeof(Camera[]))).ToList();
@@ -58,8 +54,7 @@ namespace CBRE.DataStructures.MapObjects
             IDGenerator = (IDGenerator)info.GetValue("IDGenerator", typeof(IDGenerator));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
             info.AddValue("Version", Version);
             info.AddValue("Visgroups", Visgroups.ToArray());
             info.AddValue("Cameras", Cameras.ToArray());
@@ -68,8 +63,7 @@ namespace CBRE.DataStructures.MapObjects
             info.AddValue("IDGenerator", IDGenerator);
         }
 
-        public IEnumerable<MapFeature> GetUsedFeatures()
-        {
+        public IEnumerable<MapFeature> GetUsedFeatures() {
             var all = WorldSpawn.FindAll();
 
             // Too generic: this should be assumed
@@ -106,32 +100,25 @@ namespace CBRE.DataStructures.MapObjects
             // yield return MapFeature.ViewSettings;
         }
 
-        public TransformFlags GetTransformFlags()
-        {
+        public TransformFlags GetTransformFlags() {
             var flags = TransformFlags.None;
             if (TextureLock) flags |= TransformFlags.TextureLock;
             if (TextureScalingLock) flags |= TransformFlags.TextureScalingLock;
             return flags;
         }
 
-        public IEnumerable<string> GetAllTextures()
-        {
+        public IEnumerable<string> GetAllTextures() {
             return GetAllTexturesRecursive(WorldSpawn).Distinct();
         }
 
-        private static IEnumerable<string> GetAllTexturesRecursive(MapObject obj)
-        {
-            if (obj is Entity && obj.ChildCount == 0)
-            {
+        private static IEnumerable<string> GetAllTexturesRecursive(MapObject obj) {
+            if (obj is Entity && obj.ChildCount == 0) {
                 var ent = (Entity)obj;
-                if (ent.EntityData.Name == "infodecal")
-                {
+                if (ent.EntityData.Name == "infodecal") {
                     var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
                     if (tex != null) return new[] { tex.Value };
                 }
-            }
-            else if (obj is Solid)
-            {
+            } else if (obj is Solid) {
                 return ((Solid)obj).Faces.Select(f => f.Texture.Name);
             }
 
@@ -141,8 +128,7 @@ namespace CBRE.DataStructures.MapObjects
         /// <summary>
         /// Should be called when a map is loaded. Sets up visgroups, object ids, gamedata, and textures.
         /// </summary>
-        public void PostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
-        {
+        public void PostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity) {
             PartialPostLoadProcess(gameData, textureAccessor, textureOpacity);
 
             var all = WorldSpawn.FindAll();
@@ -164,33 +150,27 @@ namespace CBRE.DataStructures.MapObjects
             UpdateAutoVisgroups(all, false);
 
             // Purge empty groups
-            foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.HasChildren))
-            {
+            foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.HasChildren)) {
                 emptyGroup.SetParent(null);
             }
         }
 
-        public void UpdateAutoVisgroups(MapObject node, bool recursive)
-        {
+        public void UpdateAutoVisgroups(MapObject node, bool recursive) {
             var nodes = recursive ? node.FindAll() : new List<MapObject> { node };
             UpdateAutoVisgroups(nodes, false);
         }
 
-        public void UpdateAutoVisgroups(IEnumerable<MapObject> nodes, bool recursive)
-        {
+        public void UpdateAutoVisgroups(IEnumerable<MapObject> nodes, bool recursive) {
             var autos = GetAllVisgroups().OfType<AutoVisgroup>().Where(x => x.Filter != null).ToList();
             var list = recursive ? nodes.SelectMany(x => x.FindAll()) : nodes;
-            foreach (var o in list)
-            {
+            foreach (var o in list) {
                 var obj = o;
                 obj.Visgroups.RemoveAll(x => o.AutoVisgroups.Contains(x));
                 obj.AutoVisgroups.Clear();
-                foreach (var vg in autos.Where(x => x.Filter(obj)))
-                {
+                foreach (var vg in autos.Where(x => x.Filter(obj))) {
                     // Add this visgroup and all parents
                     Visgroup visgroup = vg;
-                    while (visgroup != null)
-                    {
+                    while (visgroup != null) {
                         if (o.AutoVisgroups.Contains(visgroup.ID)) break; // Break out of infinite loop (just in case)
                         o.AutoVisgroups.Add(visgroup.ID);
                         visgroup = visgroup.Parent;
@@ -200,51 +180,38 @@ namespace CBRE.DataStructures.MapObjects
             }
         }
 
-        public IEnumerable<Visgroup> GetAllVisgroups()
-        {
+        public IEnumerable<Visgroup> GetAllVisgroups() {
             return GetAllVisgroups(Visgroups);
         }
 
-        private IEnumerable<Visgroup> GetAllVisgroups(IEnumerable<Visgroup> groups)
-        {
+        private IEnumerable<Visgroup> GetAllVisgroups(IEnumerable<Visgroup> groups) {
             var g = groups.ToList();
             return g.SelectMany(x => GetAllVisgroups(x.Children)).Union(g);
         }
 
-        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
-        {
+        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity) {
             var objects = WorldSpawn.FindAll();
-            Parallel.ForEach(objects, obj =>
-            {
-                if (obj is Entity)
-                {
+            Parallel.ForEach(objects, obj => {
+                if (obj is Entity) {
                     var ent = (Entity)obj;
-                    if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.OrdinalIgnoreCase))
-                    {
+                    if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.OrdinalIgnoreCase)) {
                         var gd =
                             gameData.Classes.FirstOrDefault(
                                 x => String.Equals(x.Name, ent.EntityData.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
                         ent.GameData = gd;
                         ent.UpdateBoundingBox();
                     }
-                }
-                else if (obj is Solid)
-                {
+                } else if (obj is Solid) {
                     var s = ((Solid)obj);
                     var disp = HideDisplacementSolids && s.Faces.Any(x => x is Displacement);
-                    s.Faces.ForEach(f =>
-                    {
-                        if (f.Texture.Texture == null)
-                        {
+                    s.Faces.ForEach(f => {
+                        if (f.Texture.Texture == null) {
                             f.Texture.Texture = textureAccessor(f.Texture.Name.ToLowerInvariant());
                             f.CalculateTextureCoordinates(true);
                         }
-                        if (disp && !(f is Displacement))
-                        {
+                        if (disp && !(f is Displacement)) {
                             f.Opacity = 0;
-                        }
-                        else if (f.Texture.Texture != null)
-                        {
+                        } else if (f.Texture.Texture != null) {
                             f.Opacity = textureOpacity(f.Texture.Name.ToLowerInvariant());
                             if (!HideNullTextures && f.Opacity < 0.1) f.Opacity = 1;
                         }
@@ -253,8 +220,7 @@ namespace CBRE.DataStructures.MapObjects
             });
         }
 
-        public Camera GetActiveCamera()
-        {
+        public Camera GetActiveCamera() {
             if (!Cameras.Any() || ActiveCamera == null) return null;
             return ActiveCamera;
         }

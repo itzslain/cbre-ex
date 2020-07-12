@@ -3,76 +3,60 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CBRE.Providers.Map
-{
-    public abstract class MapProvider
-    {
+namespace CBRE.Providers.Map {
+    public abstract class MapProvider {
         private static readonly List<MapProvider> RegisteredProviders;
 
-        static MapProvider()
-        {
+        static MapProvider() {
             RegisteredProviders = new List<MapProvider>();
         }
 
-        public static void Register(MapProvider provider)
-        {
+        public static void Register(MapProvider provider) {
             RegisteredProviders.Add(provider);
         }
 
-        public static void Deregister(MapProvider provider)
-        {
+        public static void Deregister(MapProvider provider) {
             RegisteredProviders.Remove(provider);
         }
 
-        public static void DeregisterAll()
-        {
+        public static void DeregisterAll() {
             RegisteredProviders.Clear();
         }
 
-        public static DataStructures.MapObjects.Map GetMapFromFile(string fileName)
-        {
+        public static DataStructures.MapObjects.Map GetMapFromFile(string fileName) {
             if (!File.Exists(fileName)) throw new ProviderException("The supplied file doesn't exist.");
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFileName(fileName));
-            if (provider != null)
-            {
+            if (provider != null) {
                 return provider.GetFromFile(fileName);
             }
             throw new ProviderNotFoundException("No map provider was found for this file.");
         }
 
-        public static void SaveMapToFile(string filename, DataStructures.MapObjects.Map map)
-        {
+        public static void SaveMapToFile(string filename, DataStructures.MapObjects.Map map) {
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFileName(filename));
-            if (provider != null)
-            {
+            if (provider != null) {
                 provider.SaveToFile(filename, map);
                 return;
             }
             throw new ProviderNotFoundException("No map provider was found for this file format.");
         }
 
-        public static IEnumerable<MapFeature> GetFormatFeatures(string filename)
-        {
+        public static IEnumerable<MapFeature> GetFormatFeatures(string filename) {
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFileName(filename));
-            if (provider != null)
-            {
+            if (provider != null) {
                 return provider.GetFormatFeatures();
             }
             throw new ProviderNotFoundException("No map provider was found for this file format.");
         }
 
-        protected virtual DataStructures.MapObjects.Map GetFromFile(string filename)
-        {
-            using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            {
+        protected virtual DataStructures.MapObjects.Map GetFromFile(string filename) {
+            using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
                 return GetFromStream(strm);
             }
         }
 
-        protected virtual void SaveToFile(string filename, DataStructures.MapObjects.Map map)
-        {
-            using (var strm = new FileStream(filename, FileMode.Create, FileAccess.Write))
-            {
+        protected virtual void SaveToFile(string filename, DataStructures.MapObjects.Map map) {
+            using (var strm = new FileStream(filename, FileMode.Create, FileAccess.Write)) {
                 SaveToStream(strm, map);
             }
         }

@@ -1,8 +1,6 @@
-namespace CBRE.Packages.Wad
-{
+namespace CBRE.Packages.Wad {
     // Based off quake's qlumpy code
-    public enum WadEntryType : byte
-    {
+    public enum WadEntryType : byte {
         // Palette = 0x40,
         // ColorMap = 0x41,
         Image = 0x42, // Simple image with any size

@@ -9,12 +9,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace CBRE.Providers.Map
-{
-    public class VmfProvider : MapProvider
-    {
-        protected override IEnumerable<MapFeature> GetFormatFeatures()
-        {
+namespace CBRE.Providers.Map {
+    public class VmfProvider : MapProvider {
+        protected override IEnumerable<MapFeature> GetFormatFeatures() {
             return new[]
             {
                 MapFeature.Worldspawn,
@@ -34,48 +31,37 @@ namespace CBRE.Providers.Map
             };
         }
 
-        protected override bool IsValidForFileName(string filename)
-        {
+        protected override bool IsValidForFileName(string filename) {
             return filename.EndsWith(".vmf", StringComparison.OrdinalIgnoreCase)
                 || filename.EndsWith(".vmx", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static long GetObjectID(GenericStructure gs, IDGenerator generator)
-        {
+        private static long GetObjectID(GenericStructure gs, IDGenerator generator) {
             var id = gs.PropertyLong("id");
             if (id == 0) id = generator.GetNextObjectID();
             return id;
         }
 
-        private static void FlattenTree(MapObject parent, List<Solid> solids, List<Entity> entities, List<Group> groups)
-        {
-            foreach (var mo in parent.GetChildren())
-            {
-                if (mo is Solid)
-                {
+        private static void FlattenTree(MapObject parent, List<Solid> solids, List<Entity> entities, List<Group> groups) {
+            foreach (var mo in parent.GetChildren()) {
+                if (mo is Solid) {
                     solids.Add((Solid)mo);
-                }
-                else if (mo is Entity)
-                {
+                } else if (mo is Entity) {
                     entities.Add((Entity)mo);
-                }
-                else if (mo is Group)
-                {
+                } else if (mo is Group) {
                     groups.Add((Group)mo);
                     FlattenTree(mo, solids, entities, groups);
                 }
             }
         }
 
-        private static string FormatCoordinate(Coordinate c)
-        {
+        private static string FormatCoordinate(Coordinate c) {
             return c.X.ToString("0.00000000")
                 + " " + c.Y.ToString("0.00000000")
                 + " " + c.Z.ToString("0.00000000");
         }
 
-        private static string FormatColor(Color c)
-        {
+        private static string FormatColor(Color c) {
             return c.R.ToString()
                 + " " + c.G.ToString()
                 + " " + c.B.ToString();
@@ -83,11 +69,9 @@ namespace CBRE.Providers.Map
 
         private static readonly string[] ExcludedKeys = new[] { "id", "spawnflags", "classname", "origin", "wad", "mapversion" };
 
-        private static EntityData ReadEntityData(GenericStructure structure)
-        {
+        private static EntityData ReadEntityData(GenericStructure structure) {
             var ret = new EntityData();
-            foreach (var key in structure.GetPropertyKeys())
-            {
+            foreach (var key in structure.GetPropertyKeys()) {
                 if (ExcludedKeys.Contains(key.ToLower())) continue;
                 ret.SetPropertyValue(key, structure[key]);
             }
@@ -96,21 +80,17 @@ namespace CBRE.Providers.Map
             return ret;
         }
 
-        private static void WriteEntityData(GenericStructure obj, EntityData data)
-        {
-            foreach (var property in data.Properties.OrderBy(x => x.Key))
-            {
+        private static void WriteEntityData(GenericStructure obj, EntityData data) {
+            foreach (var property in data.Properties.OrderBy(x => x.Key)) {
                 obj[property.Key] = property.Value;
             }
             obj["spawnflags"] = data.Flags.ToString();
         }
 
-        private static GenericStructure WriteEditor(MapObject obj)
-        {
+        private static GenericStructure WriteEditor(MapObject obj) {
             var editor = new GenericStructure("editor");
             editor["color"] = FormatColor(obj.Colour);
-            foreach (var visgroup in obj.Visgroups.Except(obj.AutoVisgroups).OrderBy(x => x))
-            {
+            foreach (var visgroup in obj.Visgroups.Except(obj.AutoVisgroups).OrderBy(x => x)) {
                 editor.AddProperty("visgroupid", visgroup.ToString());
             }
             editor["visgroupshown"] = "1";
@@ -120,8 +100,7 @@ namespace CBRE.Providers.Map
             return editor;
         }
 
-        private static Displacement ReadDisplacement(long id, GenericStructure dispinfo)
-        {
+        private static Displacement ReadDisplacement(long id, GenericStructure dispinfo) {
             var disp = new Displacement(id);
             // power, startposition, flags, elevation, subdiv, normals{}, distances{},
             // offsets{}, offset_normals{}, alphas{}, triangle_tags{}, allowed_verts{}
@@ -137,16 +116,14 @@ namespace CBRE.Providers.Map
             var alphas = dispinfo.GetChildren("alphas").FirstOrDefault();
             //var triangleTags = dispinfo.GetChildren("triangle_tags").First();
             //var allowedVerts = dispinfo.GetChildren("allowed_verts").First();
-            for (var i = 0; i < size; i++)
-            {
+            for (var i = 0; i < size; i++) {
                 var row = "row" + i;
                 var norm = normals != null ? normals.PropertyCoordinateArray(row, size) : Enumerable.Range(0, size).Select(x => Coordinate.Zero).ToArray();
                 var dist = distances != null ? distances.PropertyDecimalArray(row, size) : Enumerable.Range(0, size).Select(x => 0m).ToArray();
                 var offn = offsetNormals != null ? offsetNormals.PropertyCoordinateArray(row, size) : Enumerable.Range(0, size).Select(x => Coordinate.Zero).ToArray();
                 var offs = offsets != null ? offsets.PropertyDecimalArray(row, size) : Enumerable.Range(0, size).Select(x => 0m).ToArray();
                 var alph = alphas != null ? alphas.PropertyDecimalArray(row, size) : Enumerable.Range(0, size).Select(x => 0m).ToArray();
-                for (var j = 0; j < size; j++)
-                {
+                for (var j = 0; j < size; j++) {
                     disp.Points[i, j].Displacement = new Vector(norm[j], dist[j]);
                     disp.Points[i, j].OffsetDisplacement = new Vector(offn[j], offs[j]);
                     disp.Points[i, j].Alpha = alph[j];
@@ -155,13 +132,11 @@ namespace CBRE.Providers.Map
             return disp;
         }
 
-        private static GenericStructure WriteDisplacement(Displacement disp)
-        {
+        private static GenericStructure WriteDisplacement(Displacement disp) {
             throw new NotImplementedException();
         }
 
-        private static Face ReadFace(GenericStructure side, IDGenerator generator)
-        {
+        private static Face ReadFace(GenericStructure side, IDGenerator generator) {
             var id = side.PropertyLong("id");
             if (id == 0) id = generator.GetNextFaceID();
             var dispinfo = side.GetChildren("dispinfo").FirstOrDefault();
@@ -180,11 +155,9 @@ namespace CBRE.Providers.Map
             ret.Plane = side.PropertyPlane("plane");
 
             var verts = side.Children.FirstOrDefault(x => x.Name == "vertex");
-            if (verts != null)
-            {
+            if (verts != null) {
                 var count = verts.PropertyInteger("count");
-                for (var i = 0; i < count; i++)
-                {
+                for (var i = 0; i < count; i++) {
                     ret.Vertices.Add(new Vertex(verts.PropertyCoordinate("vertex" + i), ret));
                 }
             }
@@ -192,8 +165,7 @@ namespace CBRE.Providers.Map
             return ret;
         }
 
-        private static GenericStructure WriteFace(Face face)
-        {
+        private static GenericStructure WriteFace(Face face) {
             var ret = new GenericStructure("side");
             ret["id"] = face.ID.ToString();
             ret["plane"] = String.Format("({0}) ({1}) ({2})",
@@ -209,47 +181,39 @@ namespace CBRE.Providers.Map
 
             var verts = new GenericStructure("vertex");
             verts["count"] = face.Vertices.Count.ToString();
-            for (var i = 0; i < face.Vertices.Count; i++)
-            {
+            for (var i = 0; i < face.Vertices.Count; i++) {
                 verts["vertex" + i] = FormatCoordinate(face.Vertices[i].Location);
             }
             ret.Children.Add(verts);
 
             var disp = face as Displacement;
-            if (disp != null)
-            {
+            if (disp != null) {
                 ret.Children.Add(WriteDisplacement(disp));
             }
 
             return ret;
         }
 
-        private static Solid ReadSolid(GenericStructure solid, IDGenerator generator)
-        {
+        private static Solid ReadSolid(GenericStructure solid, IDGenerator generator) {
             var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             var faces = solid.GetChildren("side").Select(x => ReadFace(x, generator)).ToList();
 
             Solid ret;
 
-            if (faces.All(x => x.Vertices.Count >= 3))
-            {
+            if (faces.All(x => x.Vertices.Count >= 3)) {
                 // Vertices were stored in the VMF
                 ret = new Solid(GetObjectID(solid, generator));
                 ret.Faces.AddRange(faces);
-            }
-            else
-            {
+            } else {
                 // Need to grab the vertices using plane intersections
                 var idg = new IDGenerator(); // No need to increment the id generator if it doesn't have to be
                 ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), idg);
                 ret.ID = GetObjectID(solid, generator);
 
-                for (var i = 0; i < ret.Faces.Count; i++)
-                {
+                for (var i = 0; i < ret.Faces.Count; i++) {
                     var face = ret.Faces[i];
                     var f = faces.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(ret.Faces[i].Plane.Normal));
-                    if (f == null)
-                    {
+                    if (f == null) {
                         // TODO: Report invalid solids
                         Debug.WriteLine("Invalid solid! ID: " + solid["id"]);
                         return null;
@@ -270,15 +234,13 @@ namespace CBRE.Providers.Map
 
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));
-            foreach (var face in ret.Faces)
-            {
+            foreach (var face in ret.Faces) {
                 face.Parent = ret;
                 face.Colour = ret.Colour;
                 face.UpdateBoundingBox();
             }
 
-            if (ret.Faces.Any(x => x is Displacement))
-            {
+            if (ret.Faces.Any(x => x is Displacement)) {
                 ret.Faces.ForEach(x => x.IsHidden = !(x is Displacement));
             }
 
@@ -286,29 +248,25 @@ namespace CBRE.Providers.Map
 
             if (Math.Abs(ret.BoundingBox.Dimensions.DX) < 0.001 ||
                 Math.Abs(ret.BoundingBox.Dimensions.DY) < 0.001 ||
-                Math.Abs(ret.BoundingBox.Dimensions.DZ) < 0.001)
-            {
+                Math.Abs(ret.BoundingBox.Dimensions.DZ) < 0.001) {
                 return null;
             }
 
             return ret;
         }
 
-        private static GenericStructure WriteSolid(Solid solid)
-        {
+        private static GenericStructure WriteSolid(Solid solid) {
             var ret = new GenericStructure("solid");
             ret["id"] = solid.ID.ToString();
 
-            foreach (var face in solid.Faces.OrderBy(x => x.ID))
-            {
+            foreach (var face in solid.Faces.OrderBy(x => x.ID)) {
                 ret.Children.Add(WriteFace(face));
             }
 
             var editor = WriteEditor(solid);
             ret.Children.Add(editor);
 
-            if (solid.IsVisgroupHidden)
-            {
+            if (solid.IsVisgroupHidden) {
                 var hidden = new GenericStructure("hidden");
                 hidden.Children.Add(ret);
                 ret = hidden;
@@ -317,10 +275,8 @@ namespace CBRE.Providers.Map
             return ret;
         }
 
-        private static Entity ReadEntity(GenericStructure entity, IDGenerator generator)
-        {
-            var ret = new Entity(GetObjectID(entity, generator))
-            {
+        private static Entity ReadEntity(GenericStructure entity, IDGenerator generator) {
+            var ret = new Entity(GetObjectID(entity, generator)) {
                 ClassName = entity["classname"],
                 EntityData = ReadEntityData(entity),
                 Origin = entity.PropertyCoordinate("origin")
@@ -328,16 +284,14 @@ namespace CBRE.Providers.Map
             var editor = entity.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));
-            foreach (var child in entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null))
-            {
+            foreach (var child in entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null)) {
                 child.SetParent(ret, false);
             }
             ret.UpdateBoundingBox(false);
             return ret;
         }
 
-        private static GenericStructure WriteEntity(Entity ent)
-        {
+        private static GenericStructure WriteEntity(Entity ent) {
             var ret = new GenericStructure("entity");
             ret["id"] = ent.ID.ToString();
             ret["classname"] = ent.EntityData.Name;
@@ -347,16 +301,14 @@ namespace CBRE.Providers.Map
             var editor = WriteEditor(ent);
             ret.Children.Add(editor);
 
-            foreach (var solid in ent.GetChildren().SelectMany(x => x.FindAll()).OfType<Solid>().OrderBy(x => x.ID))
-            {
+            foreach (var solid in ent.GetChildren().SelectMany(x => x.FindAll()).OfType<Solid>().OrderBy(x => x.ID)) {
                 ret.Children.Add(WriteSolid(solid));
             }
 
             return ret;
         }
 
-        private static Group ReadGroup(GenericStructure group, IDGenerator generator)
-        {
+        private static Group ReadGroup(GenericStructure group, IDGenerator generator) {
             var g = new Group(GetObjectID(group, generator));
             var editor = group.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             g.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
@@ -364,8 +316,7 @@ namespace CBRE.Providers.Map
             return g;
         }
 
-        private static GenericStructure WriteGroup(Group group)
-        {
+        private static GenericStructure WriteGroup(Group group) {
             var ret = new GenericStructure("group");
             ret["id"] = group.ID.ToString();
 
@@ -375,18 +326,15 @@ namespace CBRE.Providers.Map
             return ret;
         }
 
-        private static World ReadWorld(GenericStructure world, IDGenerator generator)
-        {
-            var ret = new World(GetObjectID(world, generator))
-            {
+        private static World ReadWorld(GenericStructure world, IDGenerator generator) {
+            var ret = new World(GetObjectID(world, generator)) {
                 ClassName = "worldspawn",
                 EntityData = ReadEntityData(world)
             };
 
             // Load groups
             var groups = new Dictionary<Group, long>();
-            foreach (var group in world.GetChildren("group"))
-            {
+            foreach (var group in world.GetChildren("group")) {
                 var g = ReadGroup(group, generator);
                 var editor = group.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                 var gid = editor.PropertyLong("groupid");
@@ -395,21 +343,17 @@ namespace CBRE.Providers.Map
 
             // Build group tree
             var assignedGroups = groups.Where(x => x.Value == 0).Select(x => x.Key).ToList();
-            foreach (var ag in assignedGroups)
-            {
+            foreach (var ag in assignedGroups) {
                 // Add the groups with no parent
                 ag.SetParent(ret, false);
                 groups.Remove(ag);
             }
-            while (groups.Any())
-            {
+            while (groups.Any()) {
                 var canAssign = groups.Where(x => assignedGroups.Any(y => y.ID == x.Value)).ToList();
-                if (!canAssign.Any())
-                {
+                if (!canAssign.Any()) {
                     break;
                 }
-                foreach (var kv in canAssign)
-                {
+                foreach (var kv in canAssign) {
                     // Add the group to the tree and the assigned list, remove it from the groups list
                     var parent = assignedGroups.First(y => y.ID == kv.Value);
                     kv.Key.SetParent(parent, false);
@@ -419,8 +363,7 @@ namespace CBRE.Providers.Map
             }
 
             // Load visible solids
-            foreach (var read in world.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x }))
-            {
+            foreach (var read in world.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x })) {
                 var s = read.Solid;
                 var solid = read.Structure;
                 if (s == null) continue;
@@ -432,10 +375,8 @@ namespace CBRE.Providers.Map
             }
 
             // Load hidden solids
-            foreach (var hidden in world.GetChildren("hidden"))
-            {
-                foreach (var read in hidden.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x }))
-                {
+            foreach (var hidden in world.GetChildren("hidden")) {
+                foreach (var read in hidden.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x })) {
                     var s = read.Solid;
                     var solid = read.Structure;
                     if (s == null) continue;
@@ -455,8 +396,7 @@ namespace CBRE.Providers.Map
             return ret;
         }
 
-        private static GenericStructure WriteWorld(DataStructures.MapObjects.Map map, IEnumerable<Solid> solids, IEnumerable<Group> groups)
-        {
+        private static GenericStructure WriteWorld(DataStructures.MapObjects.Map map, IEnumerable<Solid> solids, IEnumerable<Group> groups) {
             var world = map.WorldSpawn;
             var ret = new GenericStructure("world");
             ret["id"] = world.ID.ToString();
@@ -464,23 +404,19 @@ namespace CBRE.Providers.Map
             ret["mapversion"] = map.Version.ToString();
             WriteEntityData(ret, world.EntityData);
 
-            foreach (var solid in solids.OrderBy(x => x.ID))
-            {
+            foreach (var solid in solids.OrderBy(x => x.ID)) {
                 ret.Children.Add(WriteSolid(solid));
             }
 
-            foreach (var group in groups.OrderBy(x => x.ID))
-            {
+            foreach (var group in groups.OrderBy(x => x.ID)) {
                 ret.Children.Add(WriteGroup(group));
             }
 
             return ret;
         }
 
-        private static Visgroup ReadVisgroup(GenericStructure visgroup)
-        {
-            var v = new Visgroup
-            {
+        private static Visgroup ReadVisgroup(GenericStructure visgroup) {
+            var v = new Visgroup {
                 Name = visgroup["name"],
                 ID = visgroup.PropertyInteger("visgroupid"),
                 Colour = visgroup.PropertyColour("color", Colour.GetRandomBrushColour()),
@@ -489,8 +425,7 @@ namespace CBRE.Providers.Map
             return v;
         }
 
-        private static GenericStructure WriteVisgroup(Visgroup visgroup)
-        {
+        private static GenericStructure WriteVisgroup(Visgroup visgroup) {
             var ret = new GenericStructure("visgroup");
             ret["name"] = visgroup.Name;
             ret["visgroupid"] = visgroup.ID.ToString();
@@ -498,8 +433,7 @@ namespace CBRE.Providers.Map
             return ret;
         }
 
-        public static GenericStructure CreateCopyStream(List<MapObject> objects)
-        {
+        public static GenericStructure CreateCopyStream(List<MapObject> objects) {
             var stream = new GenericStructure("clipboard");
 
             var entitySolids = objects.OfType<Entity>().SelectMany(x => x.Find(y => y is Solid)).ToList();
@@ -510,14 +444,12 @@ namespace CBRE.Providers.Map
             return stream;
         }
 
-        public static IEnumerable<MapObject> ExtractCopyStream(GenericStructure gs, IDGenerator generator)
-        {
+        public static IEnumerable<MapObject> ExtractCopyStream(GenericStructure gs, IDGenerator generator) {
             if (gs == null || gs.Name != "clipboard") return null;
             var dummyGen = new IDGenerator();
             var list = new List<MapObject>();
             var world = ReadWorld(gs, dummyGen);
-            foreach (var entity in gs.GetChildren("entity"))
-            {
+            foreach (var entity in gs.GetChildren("entity")) {
                 var ent = ReadEntity(entity, dummyGen);
                 var groupid = entity.Children.Where(x => x.Name == "editor").Select(x => x.PropertyInteger("groupid")).FirstOrDefault();
                 var entParent = groupid > 0 ? world.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? world : world;
@@ -528,10 +460,8 @@ namespace CBRE.Providers.Map
             return list;
         }
 
-        private static void Reindex(IEnumerable<MapObject> objs, IDGenerator generator)
-        {
-            foreach (var o in objs)
-            {
+        private static void Reindex(IEnumerable<MapObject> objs, IDGenerator generator) {
+            foreach (var o in objs) {
                 if (o is Solid) ((Solid)o).Faces.ForEach(x => x.ID = generator.GetNextFaceID());
 
                 // Remove the children
@@ -551,10 +481,8 @@ namespace CBRE.Providers.Map
             }
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)
-        {
-            using (var reader = new StreamReader(stream))
-            {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream) {
+            using (var reader = new StreamReader(stream)) {
                 var parent = new GenericStructure("Root");
                 parent.Children.AddRange(GenericStructure.Parse(reader));
                 // Sections from a Hammer map:
@@ -576,16 +504,14 @@ namespace CBRE.Providers.Map
                 var cordon = parent.GetChildren("cordon").FirstOrDefault();
                 var viewsettings = parent.GetChildren("viewsettings").FirstOrDefault();
 
-                foreach (var visgroup in visgroups)
-                {
+                foreach (var visgroup in visgroups) {
                     var vg = ReadVisgroup(visgroup);
                     if (vg.ID < 0 && vg.Name == "Auto") continue;
                     map.Visgroups.Add(vg);
                 }
 
                 if (world != null) map.WorldSpawn = ReadWorld(world, map.IDGenerator);
-                foreach (var entity in entities)
-                {
+                foreach (var entity in entities) {
                     var ent = ReadEntity(entity, map.IDGenerator);
                     var groupid = entity.Children.Where(x => x.Name == "editor").Select(x => x.PropertyInteger("groupid")).FirstOrDefault();
                     var entParent = groupid > 0 ? map.WorldSpawn.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? map.WorldSpawn : map.WorldSpawn;
@@ -593,39 +519,32 @@ namespace CBRE.Providers.Map
                 }
 
                 var activeCamera = 0;
-                if (cameras != null)
-                {
+                if (cameras != null) {
                     activeCamera = cameras.PropertyInteger("activecamera");
-                    foreach (var cam in cameras.GetChildren("camera"))
-                    {
+                    foreach (var cam in cameras.GetChildren("camera")) {
                         var pos = cam.PropertyCoordinate("position");
                         var look = cam.PropertyCoordinate("look");
-                        if (pos != null && look != null)
-                        {
+                        if (pos != null && look != null) {
                             map.Cameras.Add(new Camera { EyePosition = pos, LookPosition = look });
                         }
                     }
                 }
-                if (!map.Cameras.Any())
-                {
+                if (!map.Cameras.Any()) {
                     map.Cameras.Add(new Camera { EyePosition = Coordinate.Zero, LookPosition = Coordinate.UnitY });
                 }
-                if (activeCamera < 0 || activeCamera >= map.Cameras.Count)
-                {
+                if (activeCamera < 0 || activeCamera >= map.Cameras.Count) {
                     activeCamera = 0;
                 }
                 map.ActiveCamera = map.Cameras[activeCamera];
 
-                if (cordon != null)
-                {
+                if (cordon != null) {
                     var start = cordon.PropertyCoordinate("mins", map.CordonBounds.Start);
                     var end = cordon.PropertyCoordinate("maxs", map.CordonBounds.End);
                     map.CordonBounds = new Box(start, end);
                     map.Cordon = cordon.PropertyBoolean("active", map.Cordon);
                 }
 
-                if (viewsettings != null)
-                {
+                if (viewsettings != null) {
                     map.SnapToGrid = viewsettings.PropertyBoolean("bSnapToGrid", map.SnapToGrid);
                     map.Show2DGrid = viewsettings.PropertyBoolean("bShowGrid", map.Show2DGrid);
                     map.Show3DGrid = viewsettings.PropertyBoolean("bShow3DGrid", map.Show3DGrid);
@@ -641,8 +560,7 @@ namespace CBRE.Providers.Map
             }
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map)
-        {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map) {
             var groups = new List<Group>();
             var solids = new List<Solid>();
             var ents = new List<Entity>();
@@ -658,8 +576,7 @@ namespace CBRE.Providers.Map
             versioninfo.AddProperty("prefab", "0");
 
             var visgroups = new GenericStructure("visgroups");
-            foreach (var visgroup in map.Visgroups.OrderBy(x => x.ID).Where(x => !x.IsAutomatic))
-            {
+            foreach (var visgroup in map.Visgroups.OrderBy(x => x.ID).Where(x => !x.IsAutomatic)) {
                 visgroups.Children.Add(WriteVisgroup(visgroup));
             }
 
@@ -681,8 +598,7 @@ namespace CBRE.Providers.Map
 
             var cameras = new GenericStructure("cameras");
             cameras.AddProperty("activecamera", map.Cameras.IndexOf(map.ActiveCamera).ToString());
-            foreach (var cam in map.Cameras)
-            {
+            foreach (var cam in map.Cameras) {
                 var camera = new GenericStructure("camera");
                 camera.AddProperty("position", "[" + FormatCoordinate(cam.EyePosition) + "]");
                 camera.AddProperty("look", "[" + FormatCoordinate(cam.LookPosition) + "]");
@@ -694,8 +610,7 @@ namespace CBRE.Providers.Map
             cordon.AddProperty("maxs", map.CordonBounds.End.ToString());
             cordon.AddProperty("active", map.Cordon ? "1" : "0");
 
-            using (var sw = new StreamWriter(stream))
-            {
+            using (var sw = new StreamWriter(stream)) {
                 versioninfo.PrintToStream(sw);
                 visgroups.PrintToStream(sw);
                 viewsettings.PrintToStream(sw);

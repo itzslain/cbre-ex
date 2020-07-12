@@ -1,10 +1,8 @@
 ﻿using System;
 
-namespace CBRE.Providers.Texture.Vtf
-{
+namespace CBRE.Providers.Texture.Vtf {
     [Flags]
-    public enum VtfImageFlag : uint
-    {
+    public enum VtfImageFlag : uint {
         Pointsample = 0x00000001,
         Trilinear = 0x00000002,
         Clamps = 0x00000004,

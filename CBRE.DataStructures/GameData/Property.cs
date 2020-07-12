@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CBRE.DataStructures.GameData
-{
-    public class Property
-    {
+namespace CBRE.DataStructures.GameData {
+    public class Property {
         public string Name { get; set; }
         public VariableType VariableType { get; set; }
         public string ShortDescription { get; set; }
@@ -14,15 +12,13 @@ namespace CBRE.DataStructures.GameData
         public bool ReadOnly { get; set; }
         public bool ShowInEntityReport { get; set; }
 
-        public Property(string name, VariableType variableType)
-        {
+        public Property(string name, VariableType variableType) {
             Name = name;
             VariableType = variableType;
             Options = new List<Option>();
         }
 
-        public string DisplayText()
-        {
+        public string DisplayText() {
             return String.IsNullOrWhiteSpace(ShortDescription) ? Name : ShortDescription;
         }
     }

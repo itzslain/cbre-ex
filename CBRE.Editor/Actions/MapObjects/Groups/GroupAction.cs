@@ -5,10 +5,8 @@ using CBRE.Editor.Documents;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Actions.MapObjects.Groups
-{
-    public class GroupAction : IAction
-    {
+namespace CBRE.Editor.Actions.MapObjects.Groups {
+    public class GroupAction : IAction {
         private readonly List<long> _groupedObjects;
         private long _groupId;
         private Dictionary<long, long> _originalChildParents;
@@ -16,13 +14,11 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
         public bool SkipInStack { get { return false; } }
         public bool ModifiesState { get { return true; } }
 
-        public GroupAction(IEnumerable<MapObject> groupedObjects)
-        {
+        public GroupAction(IEnumerable<MapObject> groupedObjects) {
             _groupedObjects = groupedObjects.Select(x => x.ID).ToList();
         }
 
-        public void Perform(Document document)
-        {
+        public void Perform(Document document) {
             var objects = _groupedObjects
                 .Select(x => document.Map.WorldSpawn.FindByID(x))
                 .Where(x => x != null && x.Parent != null)
@@ -37,8 +33,7 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
             group.SetParent(document.Map.WorldSpawn);
             group.UpdateBoundingBox();
 
-            if (group.GetChildren().All(x => x.IsSelected))
-            {
+            if (group.GetChildren().All(x => x.IsSelected)) {
                 document.Selection.Select(group);
                 Mediator.Publish(EditorMediator.SelectionChanged);
             }
@@ -46,8 +41,7 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
-        public void Reverse(Document document)
-        {
+        public void Reverse(Document document) {
             var group = document.Map.WorldSpawn.FindByID(_groupId);
             var children = group.GetChildren().ToList();
             children.ForEach(x => x.SetParent(document.Map.WorldSpawn.FindByID(_originalChildParents[x.ID])));
@@ -55,8 +49,7 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
             children.ForEach(x => x.UpdateBoundingBox());
             group.SetParent(null);
 
-            if (group.IsSelected)
-            {
+            if (group.IsSelected) {
                 document.Selection.Deselect(group);
                 Mediator.Publish(EditorMediator.SelectionChanged);
             }
@@ -66,8 +59,7 @@ namespace CBRE.Editor.Actions.MapObjects.Groups
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             _originalChildParents = null;
         }
     }

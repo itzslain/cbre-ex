@@ -3,12 +3,9 @@ using CBRE.Graphics.Renderables;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 
-namespace CBRE.Editor.Rendering
-{
-    public class WidgetLinesRenderable : IRenderable
-    {
-        public void Render(object sender)
-        {
+namespace CBRE.Editor.Rendering {
+    public class WidgetLinesRenderable : IRenderable {
+        public void Render(object sender) {
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.FromArgb(128, Color.Red));

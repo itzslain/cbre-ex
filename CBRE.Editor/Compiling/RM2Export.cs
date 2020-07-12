@@ -9,14 +9,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.Compiling
-{
-    public class RM2Export
-    {
-        public class Waypoint
-        {
-            public Waypoint(Entity ent)
-            {
+namespace CBRE.Editor.Compiling {
+    public class RM2Export {
+        public class Waypoint {
+            public Waypoint(Entity ent) {
                 Location = new CoordinateF(ent.Origin);
                 Connections = new List<int>();
             }
@@ -25,8 +21,7 @@ namespace CBRE.Editor.Compiling
             public CoordinateF Location;
         }
 
-        enum RM2Chunks
-        {
+        enum RM2Chunks {
             Textures = 1,
             VisibleGeometry = 2,
             InvisibleGeometry = 3,
@@ -36,14 +31,12 @@ namespace CBRE.Editor.Compiling
             Prop = 7
         };
 
-        enum RM2TextureLoadFlag
-        {
+        enum RM2TextureLoadFlag {
             Opaque = 1,
             Alpha = 2
         };
 
-        public static void SaveToFile(string filename, Document document, ExportForm form)
-        {
+        public static void SaveToFile(string filename, Document document, ExportForm form) {
             var map = document.Map;
             string filepath = System.IO.Path.GetDirectoryName(filename);
             filename = System.IO.Path.GetFileName(filename);
@@ -55,8 +48,7 @@ namespace CBRE.Editor.Compiling
             Lightmap.Lightmapper.Render(document, form, out faces, out lmCount);
             Lightmap.Light.FindLights(map, out lights);
 
-            IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x =>
-            {
+            IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => {
                 if (x.Texture?.Texture == null) return false;
                 if (!x.Texture.Texture.HasTransparency()) return false;
                 if (x.Texture.Name.Contains("tooltextures")) return false;
@@ -76,29 +68,21 @@ namespace CBRE.Editor.Compiling
             form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDetermining waypoint visibility...")));
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 9100));
 
-            for (int i = 0; i < waypoints.Count; i++)
-            {
-                for (int j = 0; j < waypoints.Count; j++)
-                {
-                    if (j > i)
-                    {
+            for (int i = 0; i < waypoints.Count; i++) {
+                for (int j = 0; j < waypoints.Count; j++) {
+                    if (j > i) {
                         waypoints[i].Connections.Add(j);
-                    }
-                    else if (j < i)
-                    {
+                    } else if (j < i) {
                         if (waypoints[j].Connections.Contains(i)) waypoints[i].Connections.Add(j);
                     }
                 }
-                foreach (Lightmap.LMFace face in faces)
-                {
-                    for (int j = 0; j < waypoints[i].Connections.Count; j++)
-                    {
+                foreach (Lightmap.LMFace face in faces) {
+                    for (int j = 0; j < waypoints[i].Connections.Count; j++) {
                         int connection = waypoints[i].Connections[j];
                         if (connection < i) continue;
                         LineF line1 = new LineF(waypoints[i].Location, waypoints[connection].Location);
                         LineF line2 = new LineF(waypoints[connection].Location, waypoints[i].Location);
-                        if (face.GetIntersectionPoint(line1) != null || face.GetIntersectionPoint(line2) != null)
-                        {
+                        if (face.GetIntersectionPoint(line1) != null || face.GetIntersectionPoint(line2) != null) {
                             waypoints[i].Connections.RemoveAt(j);
                             j--;
                         }
@@ -118,21 +102,18 @@ namespace CBRE.Editor.Compiling
             //textures
             List<Tuple<string, byte>> textures = new List<Tuple<string, byte>>();
             byte flag = (byte)RM2TextureLoadFlag.Opaque;
-            foreach (Lightmap.LMFace face in faces)
-            {
+            foreach (Lightmap.LMFace face in faces) {
                 if (!textures.Any(x => x.Item1 == face.Texture)) textures.Add(new Tuple<string, byte>(face.Texture, flag));
             }
             flag = (byte)RM2TextureLoadFlag.Alpha;
-            foreach (Face face in transparentFaces)
-            {
+            foreach (Face face in transparentFaces) {
                 if (!textures.Any(x => x.Item1 == face.Texture.Name)) textures.Add(new Tuple<string, byte>(face.Texture.Name, flag));
             }
 
             br.Write((byte)RM2Chunks.Textures);
             br.Write((byte)lmCount);
             br.Write((byte)textures.Count);
-            foreach (Tuple<string, byte> tex in textures)
-            {
+            foreach (Tuple<string, byte> tex in textures) {
                 br.WriteByteString(tex.Item1);
                 br.Write(tex.Item2);
             }
@@ -142,36 +123,29 @@ namespace CBRE.Editor.Compiling
             int vertOffset;
             int triCount;
 
-            for (int i = 0; i < textures.Count; i++)
-            {
-                for (int lmInd = 0; lmInd < lmCount; lmInd++)
-                {
+            for (int i = 0; i < textures.Count; i++) {
+                for (int lmInd = 0; lmInd < lmCount; lmInd++) {
                     IEnumerable<Lightmap.LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1 && x.LmIndex == lmInd);
                     vertCount = 0;
                     vertOffset = 0;
                     triCount = 0;
 
-                    if (tLmFaces.Count() > 0)
-                    {
-                        foreach (Lightmap.LMFace face in tLmFaces)
-                        {
+                    if (tLmFaces.Count() > 0) {
+                        foreach (Lightmap.LMFace face in tLmFaces) {
                             vertCount += face.Vertices.Count;
                             triCount += face.GetTriangleIndices().Count() / 3;
                         }
 
                         br.Write((byte)RM2Chunks.VisibleGeometry);
                         br.Write((byte)i);
-                        if (lmCount > 1)
-                        {
+                        if (lmCount > 1) {
                             br.Write((byte)lmInd);
                         }
 
                         if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
                         br.Write((UInt16)vertCount);
-                        foreach (Lightmap.LMFace face in tLmFaces)
-                        {
-                            for (int j = 0; j < face.Vertices.Count; j++)
-                            {
+                        foreach (Lightmap.LMFace face in tLmFaces) {
+                            for (int j = 0; j < face.Vertices.Count; j++) {
                                 br.Write(face.Vertices[j].Location.X);
                                 br.Write(face.Vertices[j].Location.Z);
                                 br.Write(face.Vertices[j].Location.Y);
@@ -192,10 +166,8 @@ namespace CBRE.Editor.Compiling
                             }
                         }
                         br.Write((UInt16)triCount);
-                        foreach (Lightmap.LMFace face in tLmFaces)
-                        {
-                            foreach (uint ind in face.GetTriangleIndices())
-                            {
+                        foreach (Lightmap.LMFace face in tLmFaces) {
+                            foreach (uint ind in face.GetTriangleIndices()) {
                                 br.Write((UInt16)(ind + vertOffset));
                             }
 
@@ -209,10 +181,8 @@ namespace CBRE.Editor.Compiling
                 vertOffset = 0;
                 triCount = 0;
 
-                if (tTrptFaces.Count() > 0)
-                {
-                    foreach (Face face in tTrptFaces)
-                    {
+                if (tTrptFaces.Count() > 0) {
+                    foreach (Face face in tTrptFaces) {
                         vertCount += face.Vertices.Count;
                         triCount += face.GetTriangleIndices().Count() / 3;
                     }
@@ -222,10 +192,8 @@ namespace CBRE.Editor.Compiling
 
                     if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
                     br.Write((UInt16)vertCount);
-                    foreach (Face face in tTrptFaces)
-                    {
-                        for (int j = 0; j < face.Vertices.Count; j++)
-                        {
+                    foreach (Face face in tTrptFaces) {
+                        for (int j = 0; j < face.Vertices.Count; j++) {
                             br.Write((float)face.Vertices[j].Location.X);
                             br.Write((float)face.Vertices[j].Location.Z);
                             br.Write((float)face.Vertices[j].Location.Y);
@@ -242,10 +210,8 @@ namespace CBRE.Editor.Compiling
                         }
                     }
                     br.Write((UInt16)triCount);
-                    foreach (Face face in tTrptFaces)
-                    {
-                        foreach (uint ind in face.GetTriangleIndices())
-                        {
+                    foreach (Face face in tTrptFaces) {
+                        foreach (uint ind in face.GetTriangleIndices()) {
                             br.Write((UInt16)(ind + vertOffset));
                         }
 
@@ -257,10 +223,8 @@ namespace CBRE.Editor.Compiling
             vertCount = 0;
             vertOffset = 0;
             triCount = 0;
-            if (invisibleCollisionFaces.Count() > 0)
-            {
-                foreach (Face face in invisibleCollisionFaces)
-                {
+            if (invisibleCollisionFaces.Count() > 0) {
+                foreach (Face face in invisibleCollisionFaces) {
                     vertCount += face.Vertices.Count;
                     triCount += face.GetTriangleIndices().Count() / 3;
                 }
@@ -269,20 +233,16 @@ namespace CBRE.Editor.Compiling
 
                 if (vertCount > UInt16.MaxValue) throw new Exception("Vertex overflow!");
                 br.Write((UInt16)vertCount);
-                foreach (Face face in invisibleCollisionFaces)
-                {
-                    for (int j = 0; j < face.Vertices.Count; j++)
-                    {
+                foreach (Face face in invisibleCollisionFaces) {
+                    for (int j = 0; j < face.Vertices.Count; j++) {
                         br.Write((float)face.Vertices[j].Location.X);
                         br.Write((float)face.Vertices[j].Location.Z);
                         br.Write((float)face.Vertices[j].Location.Y);
                     }
                 }
                 br.Write((UInt16)triCount);
-                foreach (Face face in invisibleCollisionFaces)
-                {
-                    foreach (uint ind in face.GetTriangleIndices())
-                    {
+                foreach (Face face in invisibleCollisionFaces) {
+                    foreach (uint ind in face.GetTriangleIndices()) {
                         br.Write((UInt16)(ind + vertOffset));
                     }
 
@@ -290,8 +250,7 @@ namespace CBRE.Editor.Compiling
                 }
             }
 
-            foreach (Lightmap.Light light in lights)
-            {
+            foreach (Lightmap.Light light in lights) {
                 br.Write((byte)RM2Chunks.PointLight);
 
                 br.Write(light.Origin.X);
@@ -306,23 +265,20 @@ namespace CBRE.Editor.Compiling
                 br.Write(light.Intensity);
             }
 
-            foreach (Waypoint wp in waypoints)
-            {
+            foreach (Waypoint wp in waypoints) {
                 br.Write((byte)RM2Chunks.Waypoint);
 
                 br.Write(wp.Location.X);
                 br.Write(wp.Location.Z);
                 br.Write(wp.Location.Y);
 
-                for (int i = 0; i < wp.Connections.Count; i++)
-                {
+                for (int i = 0; i < wp.Connections.Count; i++) {
                     br.Write((byte)(wp.Connections[i] + 1));
                 }
                 br.Write((byte)0);
             }
 
-            foreach (Entity prop in props)
-            {
+            foreach (Entity prop in props) {
                 br.Write((byte)RM2Chunks.Prop);
 
                 br.WriteByteString(System.IO.Path.GetFileNameWithoutExtension(prop.EntityData.GetPropertyValue("file")));

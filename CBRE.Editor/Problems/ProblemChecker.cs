@@ -3,14 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Problems
-{
-    public static class ProblemChecker
-    {
+namespace CBRE.Editor.Problems {
+    public static class ProblemChecker {
         private static readonly List<IProblemCheck> Checkers;
 
-        static ProblemChecker()
-        {
+        static ProblemChecker() {
             Checkers = typeof(IProblemCheck).Assembly.GetTypes()
                 .Where(x => typeof(IProblemCheck).IsAssignableFrom(x))
                 .Where(x => !x.IsInterface)
@@ -19,18 +16,15 @@ namespace CBRE.Editor.Problems
                 .ToList();
         }
 
-        public static void AddCheck(IProblemCheck check)
-        {
+        public static void AddCheck(IProblemCheck check) {
             Checkers.Add(check);
         }
 
-        public static void RemoveCheck<T>()
-        {
+        public static void RemoveCheck<T>() {
             Checkers.RemoveAll(x => x.GetType() == typeof(T));
         }
 
-        public static IEnumerable<Problem> Check(Map map, bool visibleOnly)
-        {
+        public static IEnumerable<Problem> Check(Map map, bool visibleOnly) {
             return Checkers.SelectMany(x => x.Check(map, visibleOnly));
         }
     }

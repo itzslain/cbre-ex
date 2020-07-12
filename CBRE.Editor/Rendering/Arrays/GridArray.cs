@@ -5,21 +5,16 @@ using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace CBRE.Editor.Rendering.Arrays
-{
-    public class GridArray : VBO<object, MapObjectVertex>
-    {
+namespace CBRE.Editor.Rendering.Arrays {
+    public class GridArray : VBO<object, MapObjectVertex> {
         private const int Grid = 0;
 
         public GridArray()
-            : base(new object[0])
-        {
+            : base(new object[0]) {
         }
 
-        public void Render(IGraphicsContext context)
-        {
-            foreach (var subset in GetSubsets(Grid))
-            {
+        public void Render(IGraphicsContext context) {
+            foreach (var subset in GetSubsets(Grid)) {
                 Render(context, PrimitiveType.Lines, subset);
             }
         }
@@ -28,13 +23,10 @@ namespace CBRE.Editor.Rendering.Arrays
         private int _low = -4096;
         private int _high = 4096;
 
-        public void Update(int low, int high, decimal gridSpacing, decimal zoom, bool force = false)
-        {
+        public void Update(int low, int high, decimal gridSpacing, decimal zoom, bool force = false) {
             var actualDist = gridSpacing * zoom;
-            if (CBRE.Settings.Grid.HideSmallerOn)
-            {
-                while (actualDist < CBRE.Settings.Grid.HideSmallerThan)
-                {
+            if (CBRE.Settings.Grid.HideSmallerOn) {
+                while (actualDist < CBRE.Settings.Grid.HideSmallerThan) {
                     gridSpacing *= CBRE.Settings.Grid.HideFactor;
                     actualDist *= CBRE.Settings.Grid.HideFactor;
                 }
@@ -46,11 +38,9 @@ namespace CBRE.Editor.Rendering.Arrays
             Update(new object[0]);
         }
 
-        protected override void CreateArray(IEnumerable<object> objects)
-        {
+        protected override void CreateArray(IEnumerable<object> objects) {
             StartSubset(Grid);
-            for (decimal i = _low; i <= _high; i += _step)
-            {
+            for (decimal i = _low; i <= _high; i += _step) {
                 var c = CBRE.Settings.Grid.GridLines;
                 if (i == 0) c = CBRE.Settings.Grid.ZeroLines;
                 else if (i % CBRE.Settings.Grid.Highlight2UnitNum == 0 && CBRE.Settings.Grid.Highlight2On) c = CBRE.Settings.Grid.Highlight2;
@@ -78,8 +68,7 @@ namespace CBRE.Editor.Rendering.Arrays
             PushSubset(Grid, (object)null);
         }
 
-        private void MakePoint(Color colour, float x, float y, float z = 0)
-        {
+        private void MakePoint(Color colour, float x, float y, float z = 0) {
             PushIndex(Grid, PushData(new[]
             {
                 new MapObjectVertex

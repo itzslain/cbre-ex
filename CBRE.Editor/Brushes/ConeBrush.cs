@@ -6,31 +6,25 @@ using CBRE.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Brushes
-{
-    public class ConeBrush : IBrush
-    {
+namespace CBRE.Editor.Brushes {
+    public class ConeBrush : IBrush {
         private readonly NumericControl _numSides;
 
-        public ConeBrush()
-        {
+        public ConeBrush() {
             _numSides = new NumericControl(this) { LabelText = "Number of sides" };
         }
 
-        public string Name
-        {
+        public string Name {
             get { return "Cone"; }
         }
 
         public bool CanRound { get { return true; } }
 
-        public IEnumerable<BrushControl> GetControls()
-        {
+        public IEnumerable<BrushControl> GetControls() {
             yield return _numSides;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
-        {
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals) {
             var numSides = (int)_numSides.GetValue();
             if (numSides < 3) yield break;
 
@@ -42,8 +36,7 @@ namespace CBRE.Editor.Brushes
             var angle = 2 * DMath.PI / numSides;
 
             var points = new Coordinate[numSides];
-            for (var i = 0; i < numSides; i++)
-            {
+            for (var i = 0; i < numSides; i++) {
                 var a = i * angle;
                 var xval = box.Center.X + major * DMath.Cos(a);
                 var yval = box.Center.Y + minor * DMath.Sin(a);
@@ -54,18 +47,15 @@ namespace CBRE.Editor.Brushes
             var faces = new List<Coordinate[]>();
 
             var point = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals);
-            for (var i = 0; i < numSides; i++)
-            {
+            for (var i = 0; i < numSides; i++) {
                 var next = (i + 1) % numSides;
                 faces.Add(new[] { points[i], point, points[next] });
             }
             faces.Add(points.ToArray());
 
             var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
-            foreach (var arr in faces)
-            {
-                var face = new Face(generator.GetNextFaceID())
-                {
+            foreach (var arr in faces) {
+                var face = new Face(generator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,

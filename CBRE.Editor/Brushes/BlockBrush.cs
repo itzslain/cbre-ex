@@ -5,29 +5,22 @@ using CBRE.Editor.Brushes.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CBRE.Editor.Brushes
-{
-    public class BlockBrush : IBrush
-    {
-        public string Name
-        {
+namespace CBRE.Editor.Brushes {
+    public class BlockBrush : IBrush {
+        public string Name {
             get { return "Block"; }
         }
 
         public bool CanRound { get { return true; } }
 
-        public IEnumerable<BrushControl> GetControls()
-        {
+        public IEnumerable<BrushControl> GetControls() {
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
-        {
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals) {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
-            foreach (var arr in box.GetBoxFaces())
-            {
-                var face = new Face(generator.GetNextFaceID())
-                {
+            foreach (var arr in box.GetBoxFaces()) {
+                var face = new Face(generator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,

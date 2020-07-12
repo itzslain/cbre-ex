@@ -1,7 +1,5 @@
-﻿namespace CBRE.DataStructures.GameData
-{
-    public enum VariableType
-    {
+﻿namespace CBRE.DataStructures.GameData {
+    public enum VariableType {
         Axis,
         Angle,
         AngleNegativePitch,

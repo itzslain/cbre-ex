@@ -1,9 +1,7 @@
 using System.IO;
 
-namespace CBRE.Packages
-{
-    public interface IPackageEntry
-    {
+namespace CBRE.Packages {
+    public interface IPackageEntry {
         string Name { get; }
         string FullName { get; }
         string ParentPath { get; }

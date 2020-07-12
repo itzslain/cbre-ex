@@ -2,10 +2,8 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.UI
-{
-    public class ViewportEvent : EventArgs
-    {
+namespace CBRE.UI {
+    public class ViewportEvent : EventArgs {
         public ViewportBase Sender { get; set; }
 
         public bool Handled { get; set; }
@@ -27,8 +25,7 @@ namespace CBRE.UI
         public int Delta { get; set; }
         public Point Location { get; set; }
 
-        public ViewportEvent(ViewportBase sender, KeyEventArgs e)
-        {
+        public ViewportEvent(ViewportBase sender, KeyEventArgs e) {
             Sender = sender;
             Modifiers = e.Modifiers;
             Control = e.Control;
@@ -38,14 +35,12 @@ namespace CBRE.UI
             KeyValue = e.KeyValue;
         }
 
-        public ViewportEvent(ViewportBase sender, KeyPressEventArgs e)
-        {
+        public ViewportEvent(ViewportBase sender, KeyPressEventArgs e) {
             Sender = sender;
             KeyChar = e.KeyChar;
         }
 
-        public ViewportEvent(ViewportBase sender, MouseEventArgs e)
-        {
+        public ViewportEvent(ViewportBase sender, MouseEventArgs e) {
             Sender = sender;
             Button = e.Button;
             Clicks = e.Clicks;
@@ -55,8 +50,7 @@ namespace CBRE.UI
             Location = e.Location;
         }
 
-        public ViewportEvent(ViewportBase sender, EventArgs e)
-        {
+        public ViewportEvent(ViewportBase sender, EventArgs e) {
             Sender = sender;
         }
     }

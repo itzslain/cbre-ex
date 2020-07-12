@@ -4,10 +4,8 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.IO;
 
-namespace CBRE.Editor.Rendering.Shaders
-{
-    public class MapObject3DShader : IDisposable
-    {
+namespace CBRE.Editor.Rendering.Shaders {
+    public class MapObject3DShader : IDisposable {
         private bool Show3DGrid { set { Shader.Set("showGrid", value); } }
         private float GridSpacing { set { Shader.Set("gridSpacing", value); } }
 
@@ -23,10 +21,8 @@ namespace CBRE.Editor.Rendering.Shaders
         public Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
         public Matrix4 Transformation { set { Shader.Set("transformation", value); } }
 
-        public Matrix4 SelectionTransform
-        {
-            set
-            {
+        public Matrix4 SelectionTransform {
+            set {
                 Shader.Set("selectionTransform", value);
                 Shader.Set("inverseSelectionTransform", Matrix4.Invert(value));
             }
@@ -36,8 +32,7 @@ namespace CBRE.Editor.Rendering.Shaders
 
         private const string ShaderName = "MapObject3D";
 
-        public MapObject3DShader()
-        {
+        public MapObject3DShader() {
             Shader = new ShaderProgram(GetShader(ShaderType.VertexShader), GetShader(ShaderType.FragmentShader));
 
             Shader.Bind();
@@ -58,8 +53,7 @@ namespace CBRE.Editor.Rendering.Shaders
             Shader.Unbind();
         }
 
-        public void Bind(Viewport3DRenderOptions options)
-        {
+        public void Bind(Viewport3DRenderOptions options) {
             Shader.Bind();
 
             Perspective = options.Viewport;
@@ -72,16 +66,13 @@ namespace CBRE.Editor.Rendering.Shaders
             GridSpacing = (float)options.GridSpacing;
         }
 
-        public void Unbind()
-        {
+        public void Unbind() {
             Shader.Unbind();
         }
 
-        private Shader GetShader(ShaderType type)
-        {
+        private Shader GetShader(ShaderType type) {
             string ext;
-            switch (type)
-            {
+            switch (type) {
                 case ShaderType.VertexShader:
                     ext = "vert";
                     break;
@@ -92,18 +83,15 @@ namespace CBRE.Editor.Rendering.Shaders
                     throw new ArgumentOutOfRangeException();
             }
             var ty = GetType();
-            using (var s = ty.Assembly.GetManifestResourceStream(ty, ShaderName + "." + ext))
-            {
+            using (var s = ty.Assembly.GetManifestResourceStream(ty, ShaderName + "." + ext)) {
                 if (s == null) throw new Exception("Shader file not found.");
-                using (var r = new StreamReader(s))
-                {
+                using (var r = new StreamReader(s)) {
                     return new Shader(type, r.ReadToEnd());
                 }
             }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Shader.Dispose();
         }
     }

@@ -1,7 +1,5 @@
-namespace CBRE.DataStructures.MapObjects
-{
-    public enum MapFeature
-    {
+namespace CBRE.DataStructures.MapObjects {
+    public enum MapFeature {
         // Basic capabilities
         Worldspawn,
         Solids,

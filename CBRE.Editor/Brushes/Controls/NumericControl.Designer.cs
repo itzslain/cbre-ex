@@ -1,7 +1,5 @@
-﻿namespace CBRE.Editor.Brushes.Controls
-{
-    partial class NumericControl
-    {
+﻿namespace CBRE.Editor.Brushes.Controls {
+    partial class NumericControl {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -11,10 +9,8 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -26,8 +22,7 @@
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.Numeric = new System.Windows.Forms.NumericUpDown();
             this.Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric)).BeginInit();

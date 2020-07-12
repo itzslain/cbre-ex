@@ -2,10 +2,8 @@
 using System;
 using System.Linq;
 
-namespace CBRE.Settings.Models
-{
-    public class BuildProfile
-    {
+namespace CBRE.Settings.Models {
+    public class BuildProfile {
         public int ID { get; set; }
         public int BuildID { get; set; }
         public string Name { get; set; }
@@ -27,10 +25,8 @@ namespace CBRE.Settings.Models
         public string AdditionalRadParameters { get; set; }
         public string AdditionalSharedParameters { get; set; }
 
-        public string FullCsgParameters
-        {
-            get
-            {
+        public string FullCsgParameters {
+            get {
                 return (GeneratedCsgParameters + ' ' +
                         AdditionalCsgParameters + ' ' +
                         GeneratedSharedParameters + ' ' +
@@ -38,10 +34,8 @@ namespace CBRE.Settings.Models
             }
         }
 
-        public string FullBspParameters
-        {
-            get
-            {
+        public string FullBspParameters {
+            get {
                 return (GeneratedBspParameters + ' ' +
                         AdditionalBspParameters + ' ' +
                         GeneratedSharedParameters + ' ' +
@@ -49,10 +43,8 @@ namespace CBRE.Settings.Models
             }
         }
 
-        public string FullVisParameters
-        {
-            get
-            {
+        public string FullVisParameters {
+            get {
                 return (GeneratedVisParameters + ' ' +
                         AdditionalVisParameters + ' ' +
                         GeneratedSharedParameters + ' ' +
@@ -60,10 +52,8 @@ namespace CBRE.Settings.Models
             }
         }
 
-        public string FullRadParameters
-        {
-            get
-            {
+        public string FullRadParameters {
+            get {
                 return (GeneratedRadParameters + ' ' +
                         AdditionalRadParameters + ' ' +
                         GeneratedSharedParameters + ' ' +
@@ -71,40 +61,30 @@ namespace CBRE.Settings.Models
             }
         }
 
-        public void Read(GenericStructure gs)
-        {
-            foreach (var pi in GetType().GetProperties().Where(x => x.CanWrite))
-            {
+        public void Read(GenericStructure gs) {
+            foreach (var pi in GetType().GetProperties().Where(x => x.CanWrite)) {
                 var val = gs[pi.Name] ?? "";
-                if (pi.PropertyType == typeof(int))
-                {
+                if (pi.PropertyType == typeof(int)) {
                     int i;
                     pi.SetValue(this, Int32.TryParse(val, out i) ? i : 0, null);
-                }
-                else if (pi.PropertyType == typeof(bool))
-                {
+                } else if (pi.PropertyType == typeof(bool)) {
                     bool b;
                     if (!bool.TryParse(val, out b)) b = true;
                     pi.SetValue(this, b, null);
-                }
-                else
-                {
+                } else {
                     pi.SetValue(this, val, null);
                 }
             }
         }
 
-        public void Write(GenericStructure gs)
-        {
-            foreach (var pi in GetType().GetProperties())
-            {
+        public void Write(GenericStructure gs) {
+            foreach (var pi in GetType().GetProperties()) {
                 var val = pi.GetValue(this, null);
                 gs.AddProperty(pi.Name, val == null ? "" : val.ToString());
             }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Name;
         }
     }

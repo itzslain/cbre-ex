@@ -8,23 +8,18 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CBRE.Providers.Texture.Vtf
-{
+namespace CBRE.Providers.Texture.Vtf {
     // Uses a lot of code from the excellent VtfLib
     // Re-created natively for flexibility and portability
-    public static class VtfProvider
-    {
+    public static class VtfProvider {
         private const string VtfHeader = "VTF";
 
-        public static Size GetSize(IFile file)
-        {
+        public static Size GetSize(IFile file) {
             return GetSize(file.Open());
         }
 
-        public static Size GetSize(Stream stream)
-        {
-            using (var br = new BinaryReader(stream))
-            {
+        public static Size GetSize(Stream stream) {
+            using (var br = new BinaryReader(stream)) {
                 var header = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (header != VtfHeader) throw new ProviderException("Invalid VTF header. Expected '" + VtfHeader + "', got '" + header + "'.");
 
@@ -40,15 +35,12 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        public static BitmapRef GetImage(IFile file, int maxWidth = 0, int maxHeight = 0)
-        {
+        public static BitmapRef GetImage(IFile file, int maxWidth = 0, int maxHeight = 0) {
             return GetImage(file.Open(), maxWidth, maxHeight);
         }
 
-        public static BitmapRef GetImage(Stream stream, int maxWidth = 0, int maxHeight = 0)
-        {
-            using (var br = new BinaryReader(stream))
-            {
+        public static BitmapRef GetImage(Stream stream, int maxWidth = 0, int maxHeight = 0) {
+            using (var br = new BinaryReader(stream)) {
                 var header = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (header != VtfHeader) throw new ProviderException("Invalid VTF header. Expected '" + VtfHeader + "', got '" + header + "'.");
 
@@ -82,19 +74,16 @@ namespace CBRE.Providers.Texture.Vtf
                 ushort depth = 1;
                 uint numResources = 0;
 
-                if (version >= 7.2m)
-                {
+                if (version >= 7.2m) {
                     depth = br.ReadUInt16();
                 }
-                if (version >= 7.3m)
-                {
+                if (version >= 7.3m) {
                     br.ReadBytes(3);
                     numResources = br.ReadUInt32();
                 }
 
                 var faces = 1;
-                if (flags.HasFlag(VtfImageFlag.Envmap))
-                {
+                if (flags.HasFlag(VtfImageFlag.Envmap)) {
                     faces = version < 7.5m && firstFrame != 0xFFFF ? 7 : 6;
                 }
 
@@ -106,12 +95,10 @@ namespace CBRE.Providers.Texture.Vtf
                 var thumbnailPos = headerSize;
                 var dataPos = headerSize + thumbnailSize;
 
-                for (var i = 0; i < numResources; i++)
-                {
+                for (var i = 0; i < numResources; i++) {
                     var type = br.ReadUInt32();
                     var data = br.ReadUInt32();
-                    switch (type)
-                    {
+                    switch (type) {
                         case 0x01:
                             // Low res image
                             thumbnailPos = data;
@@ -123,8 +110,7 @@ namespace CBRE.Providers.Texture.Vtf
                     }
                 }
 
-                if (lowResImageFormat != VtfImageFormat.None)
-                {
+                if (lowResImageFormat != VtfImageFormat.None) {
                     br.BaseStream.Position = thumbnailPos;
                     var thumbnail = br.ReadBytes((int)thumbnailSize);
                     //var thumbImage = LoadImage(br, lowResWidth, lowResHeight, lowResImageFormat);
@@ -145,11 +131,9 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static int GetMipToLoad(uint width, uint height, int maxWidth, int maxHeight, int mipCount)
-        {
+        private static int GetMipToLoad(uint width, uint height, int maxWidth, int maxHeight, int mipCount) {
             var mip = 0;
-            while (mip < mipCount - 1 && (width > maxWidth || height > maxHeight))
-            {
+            while (mip < mipCount - 1 && (width > maxWidth || height > maxHeight)) {
                 mip++;
                 width >>= 1;
                 height >>= 1;
@@ -157,13 +141,11 @@ namespace CBRE.Providers.Texture.Vtf
             return mip;
         }
 
-        private static long GetImageDataLocation(int frame, int face, int slice, int mip, VtfImageFormat format, int width, int height, int numFrames, int numFaces, int depth, int numMips)
-        {
+        private static long GetImageDataLocation(int frame, int face, int slice, int mip, VtfImageFormat format, int width, int height, int numFrames, int numFaces, int depth, int numMips) {
             long offset = 0;
 
             // Transverse past all frames and faces of each mipmap (up to the requested one).
-            for (var i = numMips - 1; i > mip; i--)
-            {
+            for (var i = numMips - 1; i > mip; i--) {
                 offset += ComputeMipmapSize(width, height, depth, i, format) * numFrames * numFaces;
             }
 
@@ -178,18 +160,15 @@ namespace CBRE.Providers.Texture.Vtf
             return offset;
         }
 
-        private static int MipmapResize(int input, int level)
-        {
+        private static int MipmapResize(int input, int level) {
             var res = input >> level;
             if (res < 1) res = 1;
             return res;
         }
 
-        private static void TransformBytes(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b, bool bluescreen)
-        {
+        private static void TransformBytes(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b, bool bluescreen) {
             var bytes = br.ReadBytes((int)(width * height * bpp));
-            for (int i = 0, j = 0; i < bytes.Length; i += bpp, j += 4)
-            {
+            for (int i = 0, j = 0; i < bytes.Length; i += bpp, j += 4) {
                 buffer[j + 0] = (b >= 0) ? bytes[i + b] : (byte)0; // b
                 buffer[j + 1] = (g >= 0) ? bytes[i + g] : (byte)0; // g
                 buffer[j + 2] = (r >= 0) ? bytes[i + r] : (byte)0; // r
@@ -198,15 +177,13 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static void TransformShorts(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b)
-        {
+        private static void TransformShorts(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b) {
             a *= 2;
             r *= 2;
             g *= 2;
             b *= 2;
             var bytes = br.ReadBytes((int)(width * height * bpp));
-            for (int i = 0, j = 0; i < bytes.Length; i += bpp, j += 4)
-            {
+            for (int i = 0, j = 0; i < bytes.Length; i += bpp, j += 4) {
                 buffer[j + 0] = (b >= 0) ? (byte)((bytes[i + b] | bytes[i + b + 1] << 8) / 256) : (byte)0; // b
                 buffer[j + 1] = (g >= 0) ? (byte)((bytes[i + g] | bytes[i + g + 1] << 8) / 256) : (byte)0; // g
                 buffer[j + 2] = (r >= 0) ? (byte)((bytes[i + r] | bytes[i + r + 1] << 8) / 256) : (byte)0; // r
@@ -214,8 +191,7 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static void TransformRgba16161616F(byte[] buffer, BinaryReader br, uint width, uint height)
-        {
+        private static void TransformRgba16161616F(byte[] buffer, BinaryReader br, uint width, uint height) {
             // I have no idea how this works. It's just converted straight from VTFLib.
             // I think the half format is slightly different to what it should be, which causes the result to be different to VTFLib.
             // Fortunately CBRE does not need to care about cubemaps, which is what this format seems to be used for...
@@ -226,8 +202,7 @@ namespace CBRE.Providers.Texture.Vtf
             var bytes = br.ReadBytes((int)(width * height * 8));
 
             var log = 0d;
-            for (int i = 0, j = 0; i < bytes.Length; i += 8, j += 4)
-            {
+            for (int i = 0, j = 0; i < bytes.Length; i += 8, j += 4) {
                 var hb = Half.FromBytes(bytes, i + b).ToSingle();
                 var hg = Half.FromBytes(bytes, i + g).ToSingle();
                 var hr = Half.FromBytes(bytes, i + r).ToSingle();
@@ -236,8 +211,7 @@ namespace CBRE.Providers.Texture.Vtf
             }
             log = Math.Exp(log / (width * height));
 
-            for (int i = 0, j = 0; i < bytes.Length; i += 8, j += 4)
-            {
+            for (int i = 0, j = 0; i < bytes.Length; i += 8, j += 4) {
                 var hb = Half.FromBytes(bytes, i + b).ToSingle();
                 var hg = Half.FromBytes(bytes, i + g).ToSingle();
                 var hr = Half.FromBytes(bytes, i + r).ToSingle();
@@ -269,11 +243,9 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static Bitmap LoadImage(BinaryReader br, uint width, uint height, VtfImageFormat format)
-        {
+        private static Bitmap LoadImage(BinaryReader br, uint width, uint height, VtfImageFormat format) {
             var buffer = new byte[width * height * 4];
-            switch (format)
-            {
+            switch (format) {
                 case VtfImageFormat.Rgba8888:
                     TransformBytes(buffer, br, width, height, 4, 3, 0, 1, 2, false);
                     break;
@@ -327,16 +299,13 @@ namespace CBRE.Providers.Texture.Vtf
             return bmp;
         }
 
-        private static void DecompressDxt1(byte[] buffer, BinaryReader br, uint width, uint height)
-        {
+        private static void DecompressDxt1(byte[] buffer, BinaryReader br, uint width, uint height) {
             var num = ((width + 3) / 4) * ((height + 3) / 4) * 8;
             var all = br.ReadBytes((int)num);
             var pos = 0;
             var c = new byte[16];
-            for (var y = 0; y < height; y += 4)
-            {
-                for (var x = 0; x < width; x += 4)
-                {
+            for (var y = 0; y < height; y += 4) {
+                for (var x = 0; x < width; x += 4) {
                     int c0 = all[pos++];
                     c0 |= all[pos++] << 8;
 
@@ -353,8 +322,7 @@ namespace CBRE.Providers.Texture.Vtf
                     c[6] = (byte)((c1 & 0x001F) << 3);
                     c[7] = 255;
 
-                    if (c0 > c1)
-                    {
+                    if (c0 > c1) {
                         // No alpha channel
 
                         c[8] = (byte)((2 * c[0] + c[4]) / 3);
@@ -366,9 +334,7 @@ namespace CBRE.Providers.Texture.Vtf
                         c[13] = (byte)((c[1] + 2 * c[5]) / 3);
                         c[14] = (byte)((c[2] + 2 * c[6]) / 3);
                         c[15] = 255;
-                    }
-                    else
-                    {
+                    } else {
                         // 1-bit alpha channel
 
                         c[8] = (byte)((c[0] + c[4]) / 2);
@@ -386,14 +352,11 @@ namespace CBRE.Providers.Texture.Vtf
                     bytes |= all[pos++] << 16;
                     bytes |= all[pos++] << 24;
 
-                    for (var yy = 0; yy < 4; yy++)
-                    {
-                        for (var xx = 0; xx < 4; xx++)
-                        {
+                    for (var yy = 0; yy < 4; yy++) {
+                        for (var xx = 0; xx < 4; xx++) {
                             var xpos = x + xx;
                             var ypos = y + yy;
-                            if (xpos < width && ypos < height)
-                            {
+                            if (xpos < width && ypos < height) {
                                 var index = bytes & 0x0003;
                                 index *= 4;
                                 var pointer = ypos * width * 4 + xpos * 4;
@@ -409,34 +372,28 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static void DecompressDxt5(byte[] buffer, BinaryReader br, uint width, uint height)
-        {
+        private static void DecompressDxt5(byte[] buffer, BinaryReader br, uint width, uint height) {
             var num = ((width + 3) / 4) * ((height + 3) / 4) * 16;
             var all = br.ReadBytes((int)num);
             var pos = 0;
             var c = new byte[16];
             var a = new int[8];
-            for (var y = 0; y < height; y += 4)
-            {
-                for (var x = 0; x < width; x += 4)
-                {
+            for (var y = 0; y < height; y += 4) {
+                for (var x = 0; x < width; x += 4) {
                     var a0 = all[pos++];
                     var a1 = all[pos++];
 
                     a[0] = a0;
                     a[1] = a1;
 
-                    if (a0 > a1)
-                    {
+                    if (a0 > a1) {
                         a[2] = (6 * a[0] + 1 * a[1] + 3) / 7;
                         a[3] = (5 * a[0] + 2 * a[1] + 3) / 7;
                         a[4] = (4 * a[0] + 3 * a[1] + 3) / 7;
                         a[5] = (3 * a[0] + 4 * a[1] + 3) / 7;
                         a[6] = (2 * a[0] + 5 * a[1] + 3) / 7;
                         a[7] = (1 * a[0] + 6 * a[1] + 3) / 7;
-                    }
-                    else
-                    {
+                    } else {
                         a[2] = (4 * a[0] + 1 * a[1] + 2) / 5;
                         a[3] = (3 * a[0] + 2 * a[1] + 2) / 5;
                         a[4] = (2 * a[0] + 3 * a[1] + 2) / 5;
@@ -479,14 +436,11 @@ namespace CBRE.Providers.Texture.Vtf
                     bytes |= all[pos++] << 16;
                     bytes |= all[pos++] << 24;
 
-                    for (var yy = 0; yy < 4; yy++)
-                    {
-                        for (var xx = 0; xx < 4; xx++)
-                        {
+                    for (var yy = 0; yy < 4; yy++) {
+                        for (var xx = 0; xx < 4; xx++) {
                             var xpos = x + xx;
                             var ypos = y + yy;
-                            if (xpos < width && ypos < height)
-                            {
+                            if (xpos < width && ypos < height) {
                                 var index = bytes & 0x0003;
                                 index *= 4;
                                 var alpha = (byte)a[aindex & 0x07];
@@ -504,23 +458,19 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static VtfImageFormatInfo GetImageFormatInfo(VtfImageFormat imageFormat)
-        {
+        private static VtfImageFormatInfo GetImageFormatInfo(VtfImageFormat imageFormat) {
             return ImageFormats[imageFormat];
         }
 
-        private static uint ComputeMipmapSize(int width, int height, int depth, int mipLevel, VtfImageFormat format)
-        {
+        private static uint ComputeMipmapSize(int width, int height, int depth, int mipLevel, VtfImageFormat format) {
             var w = MipmapResize(width, mipLevel);
             var h = MipmapResize(height, mipLevel);
             var d = MipmapResize(depth, mipLevel);
             return ComputeImageSize((uint)w, (uint)h, (uint)d, format);
         }
 
-        private static uint ComputeImageSize(uint width, uint height, uint depth, VtfImageFormat imageFormat)
-        {
-            switch (imageFormat)
-            {
+        private static uint ComputeImageSize(uint width, uint height, uint depth, VtfImageFormat imageFormat) {
+            switch (imageFormat) {
                 case VtfImageFormat.Dxt1:
                 case VtfImageFormat.Dxt1Onebitalpha:
                     if (width < 4 && width > 0) width = 4;
@@ -536,12 +486,10 @@ namespace CBRE.Providers.Texture.Vtf
             }
         }
 
-        private static uint ComputeImageSize(uint width, uint height, uint depth, uint uiMipmaps, VtfImageFormat imageFormat)
-        {
+        private static uint ComputeImageSize(uint width, uint height, uint depth, uint uiMipmaps, VtfImageFormat imageFormat) {
             uint uiImageSize = 0;
 
-            for (var i = 0; i < uiMipmaps; i++)
-            {
+            for (var i = 0; i < uiMipmaps; i++) {
                 uiImageSize += ComputeImageSize(width, height, depth, imageFormat);
 
                 width >>= 1;
@@ -556,8 +504,7 @@ namespace CBRE.Providers.Texture.Vtf
             return uiImageSize;
         }
 
-        private class VtfImageFormatInfo
-        {
+        private class VtfImageFormatInfo {
             public VtfImageFormat Format { get; set; }
             public uint BitsPerPixel { get; set; }
             public uint BytesPerPixel { get; set; }
@@ -568,8 +515,7 @@ namespace CBRE.Providers.Texture.Vtf
             public bool IsCompressed { get; set; }
             public bool IsSupported { get; set; }
 
-            public VtfImageFormatInfo(VtfImageFormat format, uint bitsPerPixel, uint bytesPerPixel, uint redBitsPerPixel, uint greenBitsPerPixel, uint blueBitsPerPixel, uint alphaBitsPerPixel, bool isCompressed, bool isSupported)
-            {
+            public VtfImageFormatInfo(VtfImageFormat format, uint bitsPerPixel, uint bytesPerPixel, uint redBitsPerPixel, uint greenBitsPerPixel, uint blueBitsPerPixel, uint alphaBitsPerPixel, bool isCompressed, bool isSupported) {
                 Format = format;
                 BitsPerPixel = bitsPerPixel;
                 BytesPerPixel = bytesPerPixel;

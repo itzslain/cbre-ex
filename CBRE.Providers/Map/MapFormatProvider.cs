@@ -8,12 +8,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace CBRE.Providers.Map
-{
-    public class MapFormatProvider : MapProvider
-    {
-        protected override IEnumerable<MapFeature> GetFormatFeatures()
-        {
+namespace CBRE.Providers.Map {
+    public class MapFormatProvider : MapProvider {
+        protected override IEnumerable<MapFeature> GetFormatFeatures() {
             return new[]
             {
                 MapFeature.Worldspawn,
@@ -22,46 +19,39 @@ namespace CBRE.Providers.Map
             };
         }
 
-        protected override bool IsValidForFileName(string filename)
-        {
+        protected override bool IsValidForFileName(string filename) {
             return filename.EndsWith(".map", StringComparison.OrdinalIgnoreCase)
                 || filename.EndsWith(".max", StringComparison.OrdinalIgnoreCase);
         }
 
-        private string CleanLine(string line)
-        {
+        private string CleanLine(string line) {
             if (line == null) return null;
             var ret = line;
             if (ret.Contains("//")) ret = ret.Substring(0, ret.IndexOf("//", StringComparison.Ordinal)); // Comments
             return ret.Trim();
         }
 
-        private void Assert(bool b, string message = "Malformed file.")
-        {
+        private void Assert(bool b, string message = "Malformed file.") {
             if (!b) throw new Exception(message);
         }
 
-        private string FormatCoordinate(Coordinate c)
-        {
+        private string FormatCoordinate(Coordinate c) {
             return c.X.ToString("0.000")
                    + " " + c.Y.ToString("0.000")
                    + " " + c.Z.ToString("0.000");
         }
 
-        private void CollectSolids(List<Solid> solids, MapObject parent)
-        {
+        private void CollectSolids(List<Solid> solids, MapObject parent) {
             solids.AddRange(parent.GetChildren().OfType<Solid>());
             parent.GetChildren().OfType<Group>().ToList().ForEach(x => CollectSolids(solids, x));
         }
 
-        private void CollectEntities(List<Entity> entities, MapObject parent)
-        {
+        private void CollectEntities(List<Entity> entities, MapObject parent) {
             entities.AddRange(parent.GetChildren().OfType<Entity>());
             parent.GetChildren().OfType<Group>().ToList().ForEach(x => CollectEntities(entities, x));
         }
 
-        private Face ReadFace(string line, IDGenerator generator)
-        {
+        private Face ReadFace(string line, IDGenerator generator) {
             const NumberStyles ns = NumberStyles.Float;
 
             var parts = line.Split(' ').Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
@@ -74,8 +64,7 @@ namespace CBRE.Providers.Map
             Assert(parts[10] == "(");
             Assert(parts[14] == ")");
 
-            var face = new Face(generator.GetNextFaceID())
-            {
+            var face = new Face(generator.GetNextFaceID()) {
                 Plane = new Plane(Coordinate.Parse(parts[1], parts[2], parts[3]),
                     Coordinate.Parse(parts[6], parts[7], parts[8]),
                     Coordinate.Parse(parts[11], parts[12], parts[13])),
@@ -83,17 +72,14 @@ namespace CBRE.Providers.Map
             };
 
             // Cater for older-style map formats
-            if (parts.Count == 21)
-            {
+            if (parts.Count == 21) {
                 face.AlignTextureToFace();
                 face.Texture.XShift = decimal.Parse(parts[16], ns);
                 face.Texture.YShift = decimal.Parse(parts[17], ns);
                 face.Texture.Rotation = decimal.Parse(parts[18], ns);
                 face.Texture.XScale = decimal.Parse(parts[19], ns);
                 face.Texture.YScale = decimal.Parse(parts[20], ns);
-            }
-            else
-            {
+            } else {
                 Assert(parts[16] == "[");
                 Assert(parts[21] == "]");
                 Assert(parts[22] == "[");
@@ -111,8 +97,7 @@ namespace CBRE.Providers.Map
             return face;
         }
 
-        private void WriteFace(StreamWriter sw, Face face)
-        {
+        private void WriteFace(StreamWriter sw, Face face) {
             // ( -128 64 64 ) ( -64 64 64 ) ( -64 0 64 ) AAATRIGGER [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
             var strings = face.Vertices.Take(3).Select(x => "( " + FormatCoordinate(x.Location) + " )").ToList();
             strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
@@ -130,22 +115,17 @@ namespace CBRE.Providers.Map
             sw.WriteLine(String.Join(" ", strings));
         }
 
-        private Solid ReadSolid(StreamReader rdr, IDGenerator generator)
-        {
+        private Solid ReadSolid(StreamReader rdr, IDGenerator generator) {
             var faces = new List<Face>();
             string line;
-            while ((line = CleanLine(rdr.ReadLine())) != null)
-            {
+            while ((line = CleanLine(rdr.ReadLine())) != null) {
                 if (String.IsNullOrWhiteSpace(line)) continue;
-                if (line == "}")
-                {
+                if (line == "}") {
                     var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), generator);
                     ret.Colour = Colour.GetRandomBrushColour();
-                    foreach (var face in ret.Faces)
-                    {
+                    foreach (var face in ret.Faces) {
                         var f = faces.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(face.Plane.Normal));
-                        if (f == null)
-                        {
+                        if (f == null) {
                             // TODO: Report invalid solids
                             Debug.WriteLine("Invalid solid!");
                             return null;
@@ -162,8 +142,7 @@ namespace CBRE.Providers.Map
             return null;
         }
 
-        private void WriteSolid(StreamWriter sw, Solid solid)
-        {
+        private void WriteSolid(StreamWriter sw, Solid solid) {
             sw.WriteLine("{");
             solid.Faces.ForEach(x => WriteFace(sw, x));
             sw.WriteLine("}");
@@ -171,77 +150,60 @@ namespace CBRE.Providers.Map
 
         private static readonly string[] ExcludedKeys = new[] { "spawnflags", "classname", "origin", "wad", "mapversion" };
 
-        private static void ReadProperty(Entity ent, string line)
-        {
+        private static void ReadProperty(Entity ent, string line) {
             var split = line.Split(' ');
             var key = split[0].Trim('"');
 
             var val = String.Join(" ", split.Skip(1)).Trim('"');
 
-            if (key == "classname")
-            {
+            if (key == "classname") {
                 ent.EntityData.Name = val;
-            }
-            else if (key == "spawnflags")
-            {
+            } else if (key == "spawnflags") {
                 ent.EntityData.Flags = int.Parse(val);
-            }
-            else if (key == "origin")
-            {
+            } else if (key == "origin") {
                 var osp = val.Split(' ');
                 ent.Origin = Coordinate.Parse(osp[0], osp[1], osp[2]);
-            }
-            else if (!ExcludedKeys.Contains(key.ToLower()))
-            {
+            } else if (!ExcludedKeys.Contains(key.ToLower())) {
                 ent.EntityData.SetPropertyValue(key, val);
             }
         }
 
-        private void WriteProperty(StreamWriter sw, string key, string value)
-        {
+        private void WriteProperty(StreamWriter sw, string key, string value) {
             sw.WriteLine('"' + key + "\" \"" + value + '"');
         }
 
-        private Entity ReadEntity(StreamReader rdr, IDGenerator generator)
-        {
+        private Entity ReadEntity(StreamReader rdr, IDGenerator generator) {
             var ent = new Entity(generator.GetNextObjectID()) { EntityData = new EntityData(), Colour = Colour.GetRandomBrushColour() };
             string line;
-            while ((line = CleanLine(rdr.ReadLine())) != null)
-            {
+            while ((line = CleanLine(rdr.ReadLine())) != null) {
                 if (String.IsNullOrWhiteSpace(line)) continue;
                 if (line[0] == '"') ReadProperty(ent, line);
-                else if (line[0] == '{')
-                {
+                else if (line[0] == '{') {
                     var s = ReadSolid(rdr, generator);
                     if (s != null) s.SetParent(ent, false);
-                }
-                else if (line[0] == '}') break;
+                } else if (line[0] == '}') break;
             }
             ent.UpdateBoundingBox(false);
             return ent;
         }
 
-        private void WriteEntity(StreamWriter sw, Entity ent)
-        {
+        private void WriteEntity(StreamWriter sw, Entity ent) {
             var solids = new List<Solid>();
             CollectSolids(solids, ent);
 
             sw.WriteLine("{");
             WriteProperty(sw, "classname", ent.EntityData.Name);
 
-            if (ent.EntityData.Flags > 0)
-            {
+            if (ent.EntityData.Flags > 0) {
                 // VHE doesn't write the spawnflags when they are zero
                 WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString());
             }
-            foreach (var prop in ent.EntityData.Properties)
-            {
+            foreach (var prop in ent.EntityData.Properties) {
                 if (prop.Key == "classname" || prop.Key == "spawnflags" || prop.Key == "origin") continue;
 
                 // VHE doesn't write empty or zero values to the .map file
                 var gameDataProp = ent.GameData != null ? ent.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)) : null;
-                if (gameDataProp != null)
-                {
+                if (gameDataProp != null) {
                     var emptyGd = String.IsNullOrWhiteSpace(gameDataProp.DefaultValue) || gameDataProp.DefaultValue == "0";
                     var emptyProp = String.IsNullOrWhiteSpace(prop.Value) || prop.Value == "0";
 
@@ -257,8 +219,7 @@ namespace CBRE.Providers.Map
             sw.WriteLine("}");
         }
 
-        private void WriteWorld(StreamWriter sw, World world)
-        {
+        private void WriteWorld(StreamWriter sw, World world) {
             var solids = new List<Solid>();
             var entities = new List<Entity>();
             CollectSolids(solids, world);
@@ -269,8 +230,7 @@ namespace CBRE.Providers.Map
             WriteProperty(sw, "classname", world.EntityData.Name);
             WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString());
             WriteProperty(sw, "mapversion", "220");
-            foreach (var prop in world.EntityData.Properties)
-            {
+            foreach (var prop in world.EntityData.Properties) {
                 if (prop.Key == "classname" || prop.Key == "spawnflags" || prop.Key == "mapversion") continue;
                 WriteProperty(sw, prop.Key, prop.Value);
             }
@@ -281,12 +241,10 @@ namespace CBRE.Providers.Map
             entities.ForEach(x => WriteEntity(sw, x));
         }
 
-        private List<Entity> ReadAllEntities(StreamReader rdr, IDGenerator generator)
-        {
+        private List<Entity> ReadAllEntities(StreamReader rdr, IDGenerator generator) {
             var list = new List<Entity>();
             string line;
-            while ((line = CleanLine(rdr.ReadLine())) != null)
-            {
+            while ((line = CleanLine(rdr.ReadLine())) != null) {
                 if (String.IsNullOrWhiteSpace(line)) continue;
                 if (line == "{") list.Add(ReadEntity(rdr, generator));
             }
@@ -298,10 +256,8 @@ namespace CBRE.Providers.Map
         /// </summary>
         /// <param name="stream">The stream to read from</param>
         /// <returns>The parsed map</returns>
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)
-        {
-            using (var reader = new StreamReader(stream))
-            {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream) {
+            using (var reader = new StreamReader(stream)) {
                 var map = new DataStructures.MapObjects.Map();
                 var allentities = ReadAllEntities(reader, map.IDGenerator);
                 var worldspawn = allentities.FirstOrDefault(x => x.EntityData.Name == "worldspawn")
@@ -309,8 +265,7 @@ namespace CBRE.Providers.Map
                 allentities.Remove(worldspawn);
                 map.WorldSpawn.EntityData = worldspawn.EntityData;
                 allentities.ForEach(x => x.SetParent(map.WorldSpawn, false));
-                foreach (var obj in worldspawn.GetChildren().ToArray())
-                {
+                foreach (var obj in worldspawn.GetChildren().ToArray()) {
                     obj.SetParent(map.WorldSpawn, false);
                 }
                 map.WorldSpawn.UpdateBoundingBox(false);
@@ -323,10 +278,8 @@ namespace CBRE.Providers.Map
         /// </summary>
         /// <param name="stream">The stream to write to</param>
         /// <param name="map">The map to save</param>
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map)
-        {
-            using (var writer = new StreamWriter(stream))
-            {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map) {
+            using (var writer = new StreamWriter(stream)) {
                 WriteWorld(writer, map.WorldSpawn);
             }
         }

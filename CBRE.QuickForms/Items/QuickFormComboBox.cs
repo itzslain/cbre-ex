@@ -2,23 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items
-{
+namespace CBRE.QuickForms.Items {
     /// <summary>
     /// A control that shows a ComboBox control.
     /// </summary>
-    public class QuickFormComboBox : QuickFormItem
-    {
+    public class QuickFormComboBox : QuickFormItem {
         private readonly IEnumerable<object> _items;
 
-        public QuickFormComboBox(string name, IEnumerable<object> items)
-        {
+        public QuickFormComboBox(string name, IEnumerable<object> items) {
             Name = name;
             _items = items;
         }
 
-        public override List<Control> GetControls(QuickForm qf)
-        {
+        public override List<Control> GetControls(QuickForm qf) {
             var controls = new List<Control>();
 
             var l = new Label { Text = Name };
@@ -27,8 +23,7 @@ namespace CBRE.QuickForms.Items
             TextAlign(l);
             controls.Add(l);
 
-            var cb = new ComboBox
-            {
+            var cb = new ComboBox {
                 Name = Name,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 DropDownStyle = ComboBoxStyle.DropDownList

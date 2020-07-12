@@ -1,20 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items
-{
+namespace CBRE.QuickForms.Items {
     /// <summary>
     /// An item that just displays text.
     /// </summary>
-    public class QuickFormLabel : QuickFormItem
-    {
-        public QuickFormLabel(string text)
-        {
+    public class QuickFormLabel : QuickFormItem {
+        public QuickFormLabel(string text) {
             Name = text;
         }
 
-        public override List<Control> GetControls(QuickForm qf)
-        {
+        public override List<Control> GetControls(QuickForm qf) {
             var controls = new List<Control>();
             var l = new Label { Text = Name };
             Anchor(l);
