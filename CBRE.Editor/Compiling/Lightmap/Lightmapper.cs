@@ -150,9 +150,6 @@ namespace CBRE.Editor.Compiling.Lightmap {
                         lmGroups[i].BoundingBox.IntersectsWith(lmGroups[j].BoundingBox)) {
                         lmGroups[i].Faces.AddRange(lmGroups[j].Faces);
                         lmGroups[i].BoundingBox = new BoxF(new BoxF[] { lmGroups[i].BoundingBox, lmGroups[j].BoundingBox });
-#if DEBUG
-                        if (lmGroups[j].DebugBreakpoint) { lmGroups[i].DebugBreakpoint = true; }
-#endif
                         lmGroups.RemoveAt(j);
                         j = i + 1;
                     }
