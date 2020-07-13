@@ -162,7 +162,7 @@
             this.MinimizeBox = false;
             this.Name = "CheckForProblemsDialog";
             this.ShowInTaskbar = false;
-            this.Text = "Problems in Map";
+            this.Text = "Problems in room";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
