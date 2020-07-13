@@ -55,6 +55,9 @@ namespace CBRE.Editor {
         private static void LoadFileGame(string fileName, Game game) {
             try {
                 var map = MapProvider.GetMapFromFile(fileName);
+                if (MapProvider.warnings != "") {
+                    MessageBox.Show(MapProvider.warnings, "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
                 DocumentManager.AddAndSwitch(new Document(fileName, map, game));
             } catch (ProviderException e) {
                 Error.Warning("The map file could not be opened:\n" + e.Message);
