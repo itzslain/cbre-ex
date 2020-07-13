@@ -147,24 +147,28 @@ namespace CBRE.DataStructures.MapObjects {
             Origin = transform.Transform(Origin);
             Coordinate angles = EntityData.GetPropertyCoordinate("angles");
             if (angles != null && transform is UnitMatrixMult uTransform) {
-                Matrix _pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
-                Matrix _yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
-                Matrix _roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
-                var existingRotation = new UnitMatrixMult(_yaw * _roll * _pitch);
-
-                Coordinate unitX = uTransform.Transform(existingRotation.Transform(new Coordinate(1, 0, 0)), 0).Normalise();
-                Coordinate unitY = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 1, 0)), 0).Normalise();
-                Coordinate unitZ = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 0, 1)), 0).Normalise();
-
-                var tempAngles = ToEuler(unitZ.YXZ(), unitY.YXZ(), unitX.YXZ()).XZY() * 180m / DMath.PI;
-                Coordinate finalAngles = new Coordinate(
-                    90 - tempAngles.X,
-                    tempAngles.Y,
-                    90 - tempAngles.Z);
+                var finalAngles = TransformToEuler(uTransform, angles);
 
                 EntityData.SetPropertyValue("angles", finalAngles.ToDataString());
             }
             base.Transform(transform, flags);
+        }
+
+        public static Coordinate TransformToEuler(UnitMatrixMult uTransform, Coordinate angles) {
+            Matrix _pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
+            Matrix _yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
+            Matrix _roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
+            var existingRotation = new UnitMatrixMult(_yaw * _roll * _pitch);
+
+            Coordinate unitX = uTransform.Transform(existingRotation.Transform(new Coordinate(1, 0, 0)), 0).Normalise();
+            Coordinate unitY = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 1, 0)), 0).Normalise();
+            Coordinate unitZ = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 0, 1)), 0).Normalise();
+
+            var tempAngles = ToEuler(unitZ.YXZ(), unitY.YXZ(), unitX.YXZ()).XZY() * 180m / DMath.PI;
+            return new Coordinate(
+                90 - tempAngles.X,
+                tempAngles.Y,
+                90 - tempAngles.Z);
         }
 
         //http://geom3d.com/data/documents/Calculation=20of=20Euler=20angles.pdf
