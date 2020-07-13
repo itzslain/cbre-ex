@@ -231,6 +231,7 @@ namespace CBRE.DataStructures.Geometric {
 
         public string ToDataString() {
             Func<decimal, string> toStringNoTrailing = (v) => {
+                v = Math.Round(v, 5);
                 string retVal = v.ToString("F7");
                 while (retVal.Contains('.') && (retVal.Last() == '0' || retVal.Last() == '.')) {
                     retVal = retVal.Substring(0, retVal.Length - 1);
