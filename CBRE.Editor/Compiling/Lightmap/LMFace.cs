@@ -208,11 +208,6 @@ namespace CBRE.Editor.Compiling.Lightmap {
                         group.Plane = new PlaneF(face.Plane.Normal, face.Vertices[0].Location);
                         lmGroups.Add(group);
                     }
-#if DEBUG
-                    if (face.Texture.ToLowerInvariant() == "tooltextures/debug_breakpoint") {
-                        group.DebugBreakpoint = true;
-                    }
-#endif
                     group.Faces.Add(face);
                     group.Plane = new PlaneF(group.Plane.Normal, (face.Vertices[0].Location + group.Plane.PointOnPlane) / 2);
                     group.BoundingBox = new BoxF(new BoxF[] { group.BoundingBox, faceBox });
