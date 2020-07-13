@@ -15,11 +15,11 @@ namespace CBRE.DataStructures.MapObjects {
         public EntityData EntityData { get; set; }
         public Coordinate Origin {
             get {
-                return EntityData.GetPropertyCoordinate("position", Coordinate.Zero);
+                return EntityData.GetPropertyCoordinate("position", Coordinate.Zero).XZY();
             }
 
             set {
-                EntityData.SetPropertyValue("position", value.ToDataString());
+                EntityData.SetPropertyValue("position", value.XZY().ToDataString());
             }
         }
 
