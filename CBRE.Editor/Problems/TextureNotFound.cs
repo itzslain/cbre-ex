@@ -1,4 +1,4 @@
-using CBRE.DataStructures.MapObjects;
+﻿using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Actions.MapObjects.Operations;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace CBRE.Editor.Problems {
                 .Where(x => x.Texture.Texture == null)
                 .ToList();
             foreach (var name in faces.Select(x => x.Texture.Name).Distinct()) {
-                yield return new Problem(GetType(), map, faces.Where(x => x.Texture.Name == name).ToList(), Fix, "Texture not found: " + name, "This texture was not found in the currently loaded texture packages. Ensure that the correct texture packages are loaded. Fixing the problems will reset the face textures to the default texture.");
+                yield return new Problem(GetType(), map, faces.Where(x => x.Texture.Name == name).ToList(), Fix, "Texture not found: " + name, "This texture was not found in the currently loaded texture folders. Ensure that the correct texture folders are loaded. Fixing the problems will reset the face textures to the default texture.");
             }
         }
 
