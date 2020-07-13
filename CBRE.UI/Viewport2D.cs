@@ -114,6 +114,8 @@ namespace CBRE.UI {
             set {
                 var old = _zoom;
                 _zoom = value;
+                if (_zoom < 0.001m) { _zoom = 0.001m; }
+                if (_zoom > 10000m) { _zoom = 10000m; }
                 Listeners.OfType<IViewport2DEventListener>()
                     .ToList().ForEach(l => l.ZoomChanged(old, _zoom));
             }

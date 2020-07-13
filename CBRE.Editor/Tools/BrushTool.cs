@@ -8,6 +8,7 @@ using CBRE.Editor.Brushes;
 using CBRE.Editor.Properties;
 using CBRE.Editor.Rendering.Immediate;
 using CBRE.Editor.UI;
+using CBRE.Extensions;
 using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
@@ -122,6 +123,10 @@ namespace CBRE.Editor.Tools
 
         private MapObject GetBrush(Box bounds, IDGenerator idg)
         {
+            Box _bounds = new Box(bounds.Start, bounds.End);
+            if ((_bounds.Start-_bounds.End).VectorMagnitude() > 1000000m) {
+                _bounds = new Box(bounds.Start, ((bounds.End - bounds.Start).Normalise() * 1000000m) + bounds.Start);
+            }
             var brush = BrushManager.CurrentBrush;
             var ti = Document.TextureCollection.SelectedTexture;
             var texture = ti != null ? ti.GetTexture() : null;

@@ -86,6 +86,11 @@ namespace CBRE.DataStructures.MapObjects {
         }
 
         public override void Transform(Transformations.IUnitTransformation transform, TransformFlags flags) {
+            Coordinate newStart = transform.Transform(BoundingBox.Start);
+            Coordinate newEnd = transform.Transform(BoundingBox.End);
+
+            if ((newStart-newEnd).VectorMagnitude() > 1000000m) { return; }
+
             Faces.ForEach(f => f.Transform(transform, flags));
 
             // Handle flip transforms / negative scales
