@@ -4,7 +4,6 @@ using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -369,6 +368,9 @@ namespace CBRE.Providers.Map {
                         }
                     }
                 } else {
+                    if (name == "terrain") {
+                        MapProvider.warnings = "This map contains displacements, which are currently not supported. The map will appear incomplete.";
+                    }
                     br.BaseStream.Seek(size, SeekOrigin.Current);
                 }
             }

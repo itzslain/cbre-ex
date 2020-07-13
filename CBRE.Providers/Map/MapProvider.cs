@@ -7,6 +7,8 @@ namespace CBRE.Providers.Map {
     public abstract class MapProvider {
         private static readonly List<MapProvider> RegisteredProviders;
 
+        public static string warnings;
+
         static MapProvider() {
             RegisteredProviders = new List<MapProvider>();
         }
@@ -27,6 +29,7 @@ namespace CBRE.Providers.Map {
             if (!File.Exists(fileName)) throw new ProviderException("The supplied file doesn't exist.");
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFileName(fileName));
             if (provider != null) {
+                warnings = "";
                 return provider.GetFromFile(fileName);
             }
             throw new ProviderNotFoundException("No map provider was found for this file.");
