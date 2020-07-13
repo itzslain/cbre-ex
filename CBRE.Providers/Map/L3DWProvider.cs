@@ -54,10 +54,10 @@ namespace CBRE.Providers.Map {
             for (int i = 0; i < objectCount; i++) {
                 int index = br.ReadInt32() - 1;
                 int size = br.ReadInt32();
-                if (index < 0 || index >= names.Count) {
-                    throw new Exception(i.ToString() + " " + index.ToString());
+                string name = null;
+                if (index >= 0 && index < names.Count) {
+                    name = names[index];
                 }
-                string name = names[index];
 
                 if (name == "meshreference") {
                     byte flags = br.ReadByte();
@@ -85,10 +85,10 @@ namespace CBRE.Providers.Map {
             for (int i = 0; i < objectCount; i++) {
                 int index = br.ReadInt32() - 1;
                 int size = br.ReadInt32();
-                if (index < 0 || index >= names.Count) {
-                    throw new Exception(i.ToString() + " " + index.ToString());
+                string name = null;
+                if (index >= 0 && index < names.Count) {
+                    name = names[index];
                 }
-                string name = names[index];
                 if (name == "mesh") {
                     Property newProperty;
 

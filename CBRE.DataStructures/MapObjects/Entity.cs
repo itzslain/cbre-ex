@@ -145,7 +145,101 @@ namespace CBRE.DataStructures.MapObjects {
 
         public override void Transform(IUnitTransformation transform, TransformFlags flags) {
             Origin = transform.Transform(Origin);
+            Coordinate angles = EntityData.GetPropertyCoordinate("angles");
+            if (angles != null && transform is UnitMatrixMult uTransform) {
+                Matrix _pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
+                Matrix _yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
+                Matrix _roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
+                var existingRotation = new UnitMatrixMult(_yaw * _roll * _pitch);
+
+                Coordinate unitX = uTransform.Transform(existingRotation.Transform(new Coordinate(1, 0, 0)), 0).Normalise();
+                Coordinate unitY = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 1, 0)), 0).Normalise();
+                Coordinate unitZ = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 0, 1)), 0).Normalise();
+
+                //TODO: cleanup
+                int i = 4; //4
+                int k = 3; //1
+                int j = 5; //5
+                int l = 12; //10
+                int p = 5; //3
+
+                var swappers = new Func<Coordinate, Coordinate>[] {
+                    (Coordinate c) => { return c.XYZ(); },
+                    (Coordinate c) => { return c.ZXY(); },
+                    (Coordinate c) => { return c.YZX(); },
+                    (Coordinate c) => { return c.ZYX(); },
+                    (Coordinate c) => { return c.YXZ(); },
+                    (Coordinate c) => { return c.XZY(); }
+                };
+
+                var indices = new Tuple<int, int, int>[] {
+                    new Tuple<int, int, int>(0,1,2),
+                    new Tuple<int, int, int>(1,2,0),
+                    new Tuple<int, int, int>(2,0,1),
+                    new Tuple<int, int, int>(2,1,0),
+                    new Tuple<int, int, int>(0,2,1),
+                    new Tuple<int, int, int>(1,0,2)
+                };
+
+                var flippers = new Coordinate[] {
+                    new Coordinate(1,1,1),
+                    new Coordinate(-1,1,1),
+                    new Coordinate(1,-1,1),
+                    new Coordinate(1,1,-1),
+                    new Coordinate(1,-1,-1),
+                    new Coordinate(-1,1,-1),
+                    new Coordinate(-1,-1,1),
+                    new Coordinate(-1,-1,-1),
+                };
+
+                var adders = new Coordinate[] {
+                    new Coordinate(0,0,0),
+                    new Coordinate(180,0,0),
+                    new Coordinate(0,180,0),
+                    new Coordinate(0,0,180),
+                    new Coordinate(180,180,0),
+                    new Coordinate(180,0,180),
+                    new Coordinate(0,180,180),
+                    new Coordinate(180,180,180),
+                    new Coordinate(90,0,0),
+                    new Coordinate(0,90,0),
+                    new Coordinate(0,0,90),
+                    new Coordinate(90,90,0),
+                    new Coordinate(90,0,90),
+                    new Coordinate(0,90,90),
+                    new Coordinate(90,90,90),
+                };
+
+                var swapperI = swappers[i];
+                var units = new Coordinate[] {
+                    swapperI(unitX), swapperI(unitY), swapperI(unitZ)
+                };
+                var swapperJ = swappers[j];
+                var tempAngles = swapperJ(ToEuler(units[indices[k].Item1], units[indices[k].Item2], units[indices[k].Item3])) * 180m / DMath.PI;
+                Coordinate tempAngles2 = new Coordinate(
+                    adders[l].X + (tempAngles.X * flippers[p].X),
+                    adders[l].Y + (tempAngles.Y * flippers[p].Y),
+                    adders[l].Z + (tempAngles.Z * flippers[p].Z));
+
+                EntityData.SetPropertyValue("angles", tempAngles2.ToDataString());
+            }
             base.Transform(transform, flags);
+        }
+
+        //http://geom3d.com/data/documents/Calculation=20of=20Euler=20angles.pdf
+        private static Coordinate ToEuler(Coordinate X1, Coordinate Y1, Coordinate Z1) {
+            decimal Z1xy = DMath.Sqrt(Z1.X * Z1.X + Z1.Y * Z1.Y);
+            if (Z1xy > 0.0001m) {
+                return new Coordinate(
+                    DMath.Atan2(Y1.X * Z1.Y - Y1.Y * Z1.X, X1.X * Z1.Y - X1.Y * Z1.X),
+                    DMath.Atan2(Z1xy, Z1.Z),
+                    -DMath.Atan2(-Z1.X, Z1.Y));
+            } else {
+                return new Coordinate(
+                    0m,
+                    (Z1.Z > 0m) ? 0m : DMath.PI,
+                    -DMath.Atan2(X1.Y, X1.X));
+            }
         }
 
         /// <summary>

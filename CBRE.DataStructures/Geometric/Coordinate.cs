@@ -171,6 +171,31 @@ namespace CBRE.DataStructures.Geometric {
             return new Coordinate(Math.Abs(_x), Math.Abs(_y), Math.Abs(_z));
         }
 
+        public Coordinate XYZ() {
+            return new Coordinate(_x, _y, _z);
+        }
+
+        public Coordinate ZXY() {
+            return new Coordinate(_z, _x, _y);
+        }
+
+        public Coordinate YZX() {
+            return new Coordinate(_y, _z, _x);
+        }
+
+        public Coordinate ZYX() {
+            return new Coordinate(_z, _y, _x);
+        }
+
+        public Coordinate YXZ() {
+            return new Coordinate(_y, _x, _z);
+        }
+
+        public Coordinate XZY() {
+            return new Coordinate(_x, _z, _y);
+        }
+
+
         public static bool operator ==(Coordinate c1, Coordinate c2) {
             return Equals(c1, null) ? Equals(c2, null) : c1.Equals(c2);
         }
