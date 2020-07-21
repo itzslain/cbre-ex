@@ -25,9 +25,13 @@ namespace CBRE.DataStructures.MapObjects {
 
         public Color GetColour(Color defaultIfInvalid) {
             var spl = Value.Split(' ');
-            if (spl.Length != 4) return defaultIfInvalid;
+            if (spl.Length < 3 || spl.Length > 4) {
+                return defaultIfInvalid;
+            }
             int r, g, b, i;
-            if (int.TryParse(spl[0], out r) && int.TryParse(spl[1], out g) && int.TryParse(spl[2], out b) && int.TryParse(spl[3], out i)) {
+            i = 255;
+            if (int.TryParse(spl[0], out r) && int.TryParse(spl[1], out g) && int.TryParse(spl[2], out b)) {
+                if (spl.Length == 4 && !int.TryParse(spl[3], out i)) { return defaultIfInvalid; }
                 return Color.FromArgb(r, g, b);
             }
             return defaultIfInvalid;
