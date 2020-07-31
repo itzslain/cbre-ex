@@ -189,7 +189,7 @@ namespace CBRE.Editor.Rendering.Renderers {
                         Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
                         Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
                         Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
-                        var tform = (yaw * roll * pitch * Matrix.Scale(scale)).Translate(origin);
+                        var tform = (yaw * pitch * roll * Matrix.Scale(scale)).Translate(origin);
                         _mapObject3DShader.Transformation = tform.ToGLSLMatrix4();
                         arr.RenderTextured(context.Context);
                     }

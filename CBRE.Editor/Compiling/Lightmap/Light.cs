@@ -85,7 +85,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
                     Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
                     Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
 
-                    var m = new UnitMatrixMult(yaw * roll * pitch);
+                    var m = new UnitMatrixMult(yaw * pitch * roll);
 
                     light.Direction = new CoordinateF(m.Transform(Coordinate.UnitY));
                     //TODO: make sure this matches 3dws

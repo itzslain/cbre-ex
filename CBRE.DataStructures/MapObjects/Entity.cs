@@ -81,7 +81,7 @@ namespace CBRE.DataStructures.MapObjects {
                 Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
                 Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
                 Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
-                var tform = ((yaw * roll * pitch) * Matrix.Scale(scale)).Translate(Origin);
+                var tform = ((yaw * pitch * roll) * Matrix.Scale(scale)).Translate(Origin);
                 if (MetaData.Has<bool>("RotateBoundingBox") && !MetaData.Get<bool>("RotateBoundingBox")) tform = Matrix.Translation(Origin);
                 BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(new UnitMatrixMult(tform));
             } else if (GameData != null && GameData.ClassType == ClassType.Point) {
@@ -158,21 +158,21 @@ namespace CBRE.DataStructures.MapObjects {
             Matrix _pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
             Matrix _yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
             Matrix _roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
-            var existingRotation = new UnitMatrixMult(_yaw * _roll * _pitch);
+            var existingRotation = new UnitMatrixMult(_yaw * _pitch * _roll);
 
             Coordinate unitX = uTransform.Transform(existingRotation.Transform(new Coordinate(1, 0, 0)), 0).Normalise();
             Coordinate unitY = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 1, 0)), 0).Normalise();
             Coordinate unitZ = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 0, 1)), 0).Normalise();
-
-            var tempAngles = ToEuler(unitZ.YXZ(), unitY.YXZ(), unitX.YXZ()).XZY() * 180m / DMath.PI;
+            
+            var tempAngles = ToEuler(unitZ, unitX, unitY).YZX() * 180m / DMath.PI;
             return new Coordinate(
-                90 - tempAngles.X,
-                tempAngles.Y,
-                90 - tempAngles.Z);
+                270 + tempAngles.X,
+                -tempAngles.Y,
+                270 + tempAngles.Z);
         }
 
         //http://geom3d.com/data/documents/Calculation=20of=20Euler=20angles.pdf
-        private static Coordinate ToEuler(Coordinate X1, Coordinate Y1, Coordinate Z1) {
+        public static Coordinate ToEuler(Coordinate X1, Coordinate Y1, Coordinate Z1) {
             decimal Z1xy = DMath.Sqrt(Z1.X * Z1.X + Z1.Y * Z1.Y);
             if (Z1xy > 0.0001m) {
                 return new Coordinate(

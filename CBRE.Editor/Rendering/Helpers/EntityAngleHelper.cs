@@ -47,7 +47,7 @@ namespace CBRE.Editor.Rendering.Helpers {
             Matrix yaw = Matrix.Rotation(DataStructures.Geometric.Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
             Matrix roll = Matrix.Rotation(DataStructures.Geometric.Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
 
-            var m = new UnitMatrixMult(yaw * roll * pitch);
+            var m = new UnitMatrixMult(yaw * pitch * roll);
 
             var min = Math.Min(o.BoundingBox.Width, Math.Min(o.BoundingBox.Height, o.BoundingBox.Length));
             var p1 = viewport.Flatten(o.BoundingBox.Center);
