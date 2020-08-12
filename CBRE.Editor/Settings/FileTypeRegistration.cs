@@ -15,13 +15,7 @@ namespace CBRE.Editor.Settings
             return new[]
             {
                 new FileType(".vmf", "Valve Map File", true, true),
-                new FileType(".rmf", "Worldcraft RMF", true, true),
-                new FileType(".map", "Quake MAP Format", true, true),
                 new FileType(".3dw", "Leadwerks 3D World Studio File", false, true),
-
-                new FileType(".rmx", "Worldcraft RMF (Hammer Backup)", false, true),
-                new FileType(".max", "Quake MAP Format (Hammer Backup)", false, true),
-                new FileType(".vmx", "Valve Map File (Hammer Backup)", false, true)
             };
         }
 
