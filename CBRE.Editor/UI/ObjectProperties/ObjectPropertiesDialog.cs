@@ -1,4 +1,4 @@
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
@@ -129,6 +129,7 @@ namespace CBRE.Editor.UI.ObjectProperties
                 if (Class.BackColor == Color.LightGreen)
                 {
                     entityData.Name = Class.Text;
+                    entity.ClassName = Class.Text;
                     changed = true;
                 }
 
