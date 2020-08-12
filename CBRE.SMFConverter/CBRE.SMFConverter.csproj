@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net4.5</TargetFramework>
     <Platforms>x64</Platforms>
+    <ApplicationIcon>Resources\SMFConverter.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
