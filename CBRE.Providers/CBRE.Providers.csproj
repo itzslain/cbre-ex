@@ -57,6 +57,7 @@
     <Compile Include="BinaryExtensions.cs" />
     <Compile Include="Map\L3DWProvider.cs" />
     <Compile Include="Map\MapProvider.cs" />
+    <Compile Include="Map\MSL2Provider.cs" />
     <Compile Include="Map\VmfProvider.cs" />
     <Compile Include="Model\AssimpProvider.cs" />
     <Compile Include="Model\ModelProvider.cs" />

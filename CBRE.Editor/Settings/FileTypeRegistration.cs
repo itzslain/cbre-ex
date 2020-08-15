@@ -16,6 +16,7 @@ namespace CBRE.Editor.Settings
             {
                 new FileType(".vmf", "Valve Map File", true, true),
                 new FileType(".3dw", "Leadwerks 3D World Studio File", false, true),
+                new FileType(".msl", "Mapscape 2 Level", false, true),
             };
         }
 

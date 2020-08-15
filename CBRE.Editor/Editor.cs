@@ -117,6 +117,7 @@ namespace CBRE.Editor {
             TextureProvider.SetCachePath(SettingsManager.GetTextureCachePath());
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new L3DWProvider());
+            MapProvider.Register(new MSL2Provider());
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new SprProvider());
             TextureProvider.Register(new MiscTexProvider());

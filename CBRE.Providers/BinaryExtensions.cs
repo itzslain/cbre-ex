@@ -1,4 +1,4 @@
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,6 +23,17 @@ namespace CBRE.Providers {
             while ((c = br.ReadChar()) != 0) {
                 str += c;
             }
+            return str;
+        }
+
+        public static string ReadLine(this BinaryReader br) {
+            var str = "";
+            char c;
+            while ((c = br.ReadChar()) != 10 && c != 13) {
+                str += c;
+            }
+            while ((c = br.ReadChar()) == 10 || c == 13) { }
+            br.BaseStream.Position -= 1;
             return str;
         }
 
