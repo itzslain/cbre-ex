@@ -40,11 +40,36 @@ namespace CBRE.Providers.Model {
         protected static DataStructures.Models.Mesh AddMesh(DataStructures.Models.Model sledgeModel, Assimp.Mesh assimpMesh, Matrix4x4 selfMatrix) {
             var sledgeMesh = new DataStructures.Models.Mesh(0);
             List<MeshVertex> vertices = new List<MeshVertex>();
+            List<Vector3D> normals = new List<Vector3D>();
+            if (assimpMesh.HasNormals) {
+                normals.AddRange(assimpMesh.Normals);
+            } else {
+                var assimpVertices = assimpMesh.Vertices;
+                for (int i = 0; i < assimpMesh.VertexCount; i++) {
+                    normals.Add(new Vector3D(0, 0, 0));
+                }
+
+                foreach (var face in assimpMesh.Faces) {
+                    var triInds = face.Indices;
+                    for (var i = 1; i < triInds.Count - 1; i++) {
+                        var normal = Vector3D.Cross(assimpVertices[triInds[0]] - assimpVertices[triInds[i]], assimpVertices[triInds[0]] - assimpVertices[triInds[i+1]]);
+                        normal.Normalize();
+
+                        normals[triInds[0]] += normal;
+                        normals[triInds[i]] += normal;
+                        normals[triInds[i+1]] += normal;
+                    }
+                }
+
+                for (int i = 0; i < assimpMesh.VertexCount; i++) {
+                    normals[i].Normalize();
+                }
+            }
 
             for (int i = 0; i < assimpMesh.VertexCount; i++) {
                 var assimpVertex = assimpMesh.Vertices[i];
                 assimpVertex = selfMatrix * assimpVertex;
-                var assimpNormal = assimpMesh.Normals[i];
+                var assimpNormal = normals[i];
                 assimpNormal = selfMatrix * assimpNormal;
                 var assimpUv = assimpMesh.TextureCoordinateChannels[0][i];
 
