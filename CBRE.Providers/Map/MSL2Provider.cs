@@ -30,7 +30,7 @@ namespace CBRE.Providers.Map {
 
         class NormalEq : EqualityComparer<CoordinateF> {
             public override bool Equals(CoordinateF x, CoordinateF y) {
-                return x.Dot(y) >= 0.9f;
+                return x.Dot(y) >= 0.999f;
             }
 
             public override int GetHashCode(CoordinateF obj) {
@@ -52,12 +52,12 @@ namespace CBRE.Providers.Map {
             List<CoordinateF> vertexNormals = new List<CoordinateF>();
             for (int i=0;i<dwVertMax;i++) {
                 float x = br.ReadSingle();
-                float y = br.ReadSingle();
                 float z = br.ReadSingle();
+                float y = br.ReadSingle();
                 vertexPositions.Add(new CoordinateF(x, y, z));
                 float nx = br.ReadSingle();
-                float ny = br.ReadSingle();
                 float nz = br.ReadSingle();
+                float ny = br.ReadSingle();
                 vertexNormals.Add(new CoordinateF(nx, ny, nz).Normalise());
                 for (int j=24;j<dwFVFSize;j+=4) {
                     Console.WriteLine("skipped vertex property " + j + ": " + br.ReadSingle());
@@ -69,7 +69,7 @@ namespace CBRE.Providers.Map {
                     if (normal.LengthSquared() < 0.01f) { continue; }
                     Face newFace = new Face(map.IDGenerator.GetNextFaceID());
                     for (int i = 0; i < vertexPositions.Count; i++) {
-                        if (vertexNormals[i].Dot(normal) < 0.9f) { continue; }
+                        if (vertexNormals[i].Dot(normal) < 0.999f) { continue; }
                         if (newFace.Vertices.Any(v => (new CoordinateF(v.Location)-vertexPositions[i]).LengthSquared()<0.001f)) { continue; }
                         newFace.Vertices.Add(new Vertex(new Coordinate(vertexPositions[i]), newFace));
                     }
@@ -130,27 +130,24 @@ namespace CBRE.Providers.Map {
                     ReadMemblockMesh(br, map, faces);
                 }
 
-                if (faces.Any()) {
-                    Solid newSolid = new Solid(map.IDGenerator.GetNextObjectID());
-                    foreach (Face face in faces) {
-                        face.Parent = newSolid;
-                        newSolid.Faces.Add(face);
-                    }
-                    newSolid.Colour = Colour.GetRandomBrushColour();
-                    newSolid.UpdateBoundingBox();
-
-                    MapObject parent = map.WorldSpawn;
-
-                    newSolid.SetParent(parent);
-
-                    newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
-                }
-
                 bool isBrush = br.ReadSingle() != 0;
                 Console.WriteLine("isBrush: " + isBrush);
                 if (isBrush) {
                     ReadMemblockMesh(br, map);
-                    for (int j = 0; j < 25; j++) {
+                    for (int j = 0; j < 2; j++) {
+                        float skip = br.ReadSingle();
+                        Console.WriteLine("skip " + j + ": " + skip);
+                    }
+
+                    float xTranslate = br.ReadSingle();
+                    float zTranslate = br.ReadSingle();
+                    float yTranslate = br.ReadSingle();
+
+                    float xScale = br.ReadSingle();
+                    float zScale = br.ReadSingle();
+                    float yScale = br.ReadSingle();
+
+                    for (int j = 8; j < 25; j++) {
                         float skip = br.ReadSingle();
                         Console.WriteLine("skip " + j + ": " + skip);
                     }
@@ -161,6 +158,30 @@ namespace CBRE.Providers.Map {
                             float skip2 = br.ReadSingle();
                             Console.WriteLine("skip2 " + k + ": " + skip2);
                         }
+                    }
+
+                    if (faces.Any()) {
+                        Solid newSolid = new Solid(map.IDGenerator.GetNextObjectID());
+                        foreach (Face face in faces) {
+                            face.Parent = newSolid;
+                            newSolid.Faces.Add(face);
+                        }
+                        newSolid.Colour = Colour.GetRandomBrushColour();
+                        newSolid.UpdateBoundingBox();
+
+                        MapObject parent = map.WorldSpawn;
+
+                        newSolid.SetParent(parent);
+
+                        newSolid.Transform(new UnitScale(Coordinate.One, newSolid.BoundingBox.Center), TransformFlags.None);
+                        newSolid.Transform(new UnitScale(new Coordinate(
+                            (decimal)xScale / newSolid.BoundingBox.Width,
+                            (decimal)yScale / newSolid.BoundingBox.Length,
+                            (decimal)zScale / newSolid.BoundingBox.Height), Coordinate.Zero), TransformFlags.None);
+                        newSolid.Transform(new UnitTranslate(new Coordinate(
+                            (decimal)xTranslate,
+                            (decimal)yTranslate,
+                            (decimal)zTranslate)), TransformFlags.None);
                     }
                 } else {
                     for (int j = 0; j < 35; j++) {
