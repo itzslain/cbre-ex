@@ -97,6 +97,15 @@ namespace CBRE.Providers.Map {
             br.BaseStream.Position = startPos + (long)memblockSize;
         }
 
+        protected struct SubmeshTextureInfo {
+            public string TextureName;
+            public float ScaleU;
+            public float ScaleV;
+            public float ShiftU;
+            public float ShiftV;
+            public float Rotation;
+        }
+
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream) {
             Console.WriteLine("");
             Console.WriteLine("");
@@ -157,24 +166,33 @@ namespace CBRE.Providers.Map {
                         float skip = br.ReadSingle();
                         Console.WriteLine("skip " + j + ": " + skip);
                     }
-                    List<string> textureNames = new List<string>();
+                    List<SubmeshTextureInfo> textures = new List<SubmeshTextureInfo>();
                     for (int j = 0; j < meshCount; j++) {
-                        string textureName = System.IO.Path.GetFileNameWithoutExtension(br.ReadLine());
-                        textureNames.Add(textureName);
-                        Console.WriteLine("textureName: " + textureName);
+                        SubmeshTextureInfo submeshTextureInfo = new SubmeshTextureInfo();
+
+                        submeshTextureInfo.TextureName = System.IO.Path.GetFileNameWithoutExtension(br.ReadLine());
+                        Console.WriteLine("textureName: " + submeshTextureInfo.TextureName);
                         float flags = br.ReadSingle();
                         bool faceIsHidden = Math.Abs(flags - 1) < 0.01f;
                         bool faceIsLit = Math.Abs(flags - 800) < 0.01f;
-                        for (int k = 1; k < 10; k++) {
-                            float skip2 = br.ReadSingle();
-                            Console.WriteLine("skip2 " + k + ": " + skip2);
-                        }
                         if (faceIsLit) {
                             br.ReadSingle();
                         }
-                        if (faceIsHidden) {
-                            textureNames[textureNames.Count - 1] = "tooltextures/remove_face";
+                        for (int k = 0; k < 4; k++) {
+                            float skip2 = br.ReadSingle();
+                            Console.WriteLine("skip2 " + k + ": " + skip2);
                         }
+
+                        submeshTextureInfo.ScaleU = br.ReadSingle();
+                        submeshTextureInfo.ScaleV = br.ReadSingle();
+                        submeshTextureInfo.ShiftU = br.ReadSingle();
+                        submeshTextureInfo.ShiftV = br.ReadSingle();
+                        submeshTextureInfo.Rotation = br.ReadSingle();
+
+                        if (faceIsHidden) {
+                            submeshTextureInfo.TextureName = "tooltextures/remove_face";
+                        }
+                        textures.Add(submeshTextureInfo);
                     }
 
                     if (faces.Any()) {
@@ -183,8 +201,6 @@ namespace CBRE.Providers.Map {
                             foreach (Face face in faces[key]) {
                                 face.Parent = newSolid;
                                 newSolid.Faces.Add(face);
-                                face.Texture.Name = textureNames[key];
-                                face.AlignTextureToWorld();
                             }
                         }
                         newSolid.Colour = Colour.GetRandomBrushColour();
@@ -203,6 +219,18 @@ namespace CBRE.Providers.Map {
                             (decimal)xTranslate,
                             (decimal)yTranslate,
                             (decimal)zTranslate)), TransformFlags.None);
+
+                        foreach (int key in faces.Keys) {
+                            foreach (Face face in faces[key]) {
+                                face.Texture.Name = textures[key].TextureName;
+                                face.AlignTextureToWorld();
+                                face.Texture.XScale = (decimal)textures[key].ScaleU * 0.25m;
+                                face.Texture.YScale = (decimal)textures[key].ScaleV * 0.25m;
+                                face.Texture.XShift = (decimal)textures[key].ShiftU;
+                                face.Texture.YShift = (decimal)textures[key].ShiftV;
+                                face.SetTextureRotation((decimal)textures[key].Rotation);
+                            }
+                        }
                     }
                 } else {
                     for (int j = 0; j < 35; j++) {
