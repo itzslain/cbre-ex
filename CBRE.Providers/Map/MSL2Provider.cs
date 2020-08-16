@@ -233,18 +233,113 @@ namespace CBRE.Providers.Map {
                         }
                     }
                 } else {
-                    for (int j = 0; j < 35; j++) {
+                    for (int j = 0; j < 2; j++) {
+                        float skip = br.ReadSingle();
+                        Console.WriteLine("skip " + j + ": " + skip);
+                    }
+                    float x = br.ReadSingle();
+                    float z = br.ReadSingle();
+                    float y = br.ReadSingle();
+                    for (int j = 5; j < 35; j++) {
                         float skip = br.ReadSingle();
                         Console.WriteLine("skip " + j + ": " + skip);
                     }
                     string entityName = br.ReadLine();
                     string entityIcon = br.ReadLine();
                     int propertyCount = (int)br.ReadSingle() + 1;
+                    Dictionary<string, string> properties = new Dictionary<string, string>();
                     for (int j=0;j<propertyCount;j++) {
-                        string propertyName = br.ReadLine();
+                        string propertyName = br.ReadLine().ToLowerInvariant();
                         string propertyValue = br.ReadLine();
                         Console.WriteLine(propertyName + ": " + propertyValue);
+                        properties.Add(propertyName, propertyValue);
                     }
+
+                    Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
+                    Property newProperty = null;
+                    switch (entityName.ToLowerInvariant()) {
+                        case "pointlight":
+                            entity.ClassName = "light";
+                            entity.EntityData.Name = "light";
+                            entity.Colour = Colour.GetDefaultEntityColour();
+
+                            newProperty = new Property();
+                            newProperty.Key = "range";
+                            newProperty.Value = properties["range"];
+                            entity.EntityData.Properties.Add(newProperty);
+
+                            newProperty = new Property();
+                            newProperty.Key = "color";
+                            newProperty.Value = properties["color"].Replace(',',' ').Trim();
+                            entity.EntityData.Properties.Add(newProperty);
+                            break;
+                        case "spotlight":
+                            entity.ClassName = "spotlight";
+                            entity.EntityData.Name = "spotlight";
+                            entity.Colour = Colour.GetDefaultEntityColour();
+
+                            newProperty = new Property();
+                            newProperty.Key = "range";
+                            newProperty.Value = properties["range"];
+                            entity.EntityData.Properties.Add(newProperty);
+
+                            newProperty = new Property();
+                            newProperty.Key = "color";
+                            newProperty.Value = properties["color"].Replace(',', ' ').Trim();
+                            entity.EntityData.Properties.Add(newProperty);
+
+                            newProperty = new Property();
+                            newProperty.Key = "innerconeangle";
+                            newProperty.Value = "45";
+                            if (decimal.TryParse(properties["innerang"], out decimal innerAngle)) {
+                                newProperty.Value = (innerAngle*0.5m).ToString();
+                            }
+                            entity.EntityData.Properties.Add(newProperty);
+
+                            newProperty = new Property();
+                            newProperty.Key = "outerconeangle";
+                            newProperty.Value = "90";
+                            if (decimal.TryParse(properties["outerang"], out decimal outerAngle)) {
+                                newProperty.Value = (outerAngle * 0.5m).ToString();
+                            }
+                            entity.EntityData.Properties.Add(newProperty);
+
+                            newProperty = new Property();
+                            newProperty.Key = "angles";
+                            newProperty.Value = "0 0 0";
+                            string[] dirParts = properties["direction"].Split(',');
+                            if (decimal.TryParse(dirParts[0], out decimal dirX) &&
+                                decimal.TryParse(dirParts[1], out decimal dirY) &&
+                                decimal.TryParse(dirParts[2], out decimal dirZ)) {
+                                Coordinate dir = new Coordinate(dirX, dirY, dirZ).Normalise();
+                                decimal pitch = DMath.RadiansToDegrees(DMath.Asin(-dir.Y));
+                                dir.Y = 0;
+                                decimal yaw = 0m;
+                                if (dir.LengthSquared() > 0.01m) {
+                                    dir = dir.Normalise();
+                                    yaw = DMath.RadiansToDegrees(DMath.Atan2(-dir.X, dir.Z));
+                                }
+
+                                newProperty.Value = $"{pitch} {yaw} 0";
+                            }
+                            entity.EntityData.Properties.Add(newProperty);
+                            break;
+                        default:
+                            entity.ClassName = entityName;
+                            entity.EntityData.Name = entityName;
+                            entity.Colour = Colour.GetDefaultEntityColour();
+
+                            foreach (var key in properties.Keys) {
+                                newProperty = new Property();
+                                newProperty.Key = key;
+                                newProperty.Value = properties[key];
+                                entity.EntityData.Properties.Add(newProperty);
+                            }
+                            break;
+                    }
+
+                    entity.Origin = new Coordinate((decimal)x, (decimal)y, (decimal)z);
+                    entity.SetParent(map.WorldSpawn);
                 }
             }
 
