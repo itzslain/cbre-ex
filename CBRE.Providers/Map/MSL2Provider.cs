@@ -116,8 +116,13 @@ namespace CBRE.Providers.Map {
             BinaryReader br = new BinaryReader(stream);
 
             //header
-            float unknown0 = br.ReadSingle();
-            Console.WriteLine("unknown0: " + unknown0);
+            bool hasLightmap = Math.Abs(br.ReadSingle()) > 0.01f;
+            Console.WriteLine("hasLightmap: " + hasLightmap);
+            if (hasLightmap) {
+                UInt32 lightmapSize = br.ReadUInt32();
+                stream.Position += lightmapSize;
+                Console.WriteLine("skipped lightmap: " + stream.Position + " " + lightmapSize);
+            }
             int entityCount = (int)br.ReadSingle() - 2;
             Console.WriteLine("entityCount: " + entityCount);
             for (int i=0;i<entityCount;i++) {
@@ -130,7 +135,7 @@ namespace CBRE.Providers.Map {
                     ReadMemblockMesh(br, map, faces);
                 }
 
-                bool isBrush = br.ReadSingle() != 0;
+                bool isBrush = Math.Abs(br.ReadSingle()) > 0.01f;
                 Console.WriteLine("isBrush: " + isBrush);
                 if (isBrush) {
                     ReadMemblockMesh(br, map);
@@ -157,6 +162,10 @@ namespace CBRE.Providers.Map {
                         for (int k = 0; k < 10; k++) {
                             float skip2 = br.ReadSingle();
                             Console.WriteLine("skip2 " + k + ": " + skip2);
+                        }
+                        if (hasLightmap) {
+                            //TODO: is this correct?
+                            br.ReadSingle();
                         }
                     }
 
