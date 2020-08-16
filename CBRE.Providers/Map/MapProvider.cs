@@ -25,12 +25,12 @@ namespace CBRE.Providers.Map {
             RegisteredProviders.Clear();
         }
 
-        public static DataStructures.MapObjects.Map GetMapFromFile(string fileName) {
+        public static DataStructures.MapObjects.Map GetMapFromFile(string fileName, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
             if (!File.Exists(fileName)) throw new ProviderException("The supplied file doesn't exist.");
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFileName(fileName));
             if (provider != null) {
                 warnings = "";
-                return provider.GetFromFile(fileName);
+                return provider.GetFromFile(fileName, textureDirs, modelDirs);
             }
             throw new ProviderNotFoundException("No map provider was found for this file.");
         }
@@ -52,9 +52,9 @@ namespace CBRE.Providers.Map {
             throw new ProviderNotFoundException("No map provider was found for this file format.");
         }
 
-        protected virtual DataStructures.MapObjects.Map GetFromFile(string filename) {
+        protected virtual DataStructures.MapObjects.Map GetFromFile(string filename, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
             using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
-                return GetFromStream(strm);
+                return GetFromStream(strm, textureDirs, modelDirs);
             }
         }
 
@@ -65,7 +65,7 @@ namespace CBRE.Providers.Map {
         }
 
         protected abstract bool IsValidForFileName(string filename);
-        protected abstract DataStructures.MapObjects.Map GetFromStream(Stream stream);
+        protected abstract DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs);
         protected abstract void SaveToStream(Stream stream, DataStructures.MapObjects.Map map);
         protected abstract IEnumerable<MapFeature> GetFormatFeatures();
     }

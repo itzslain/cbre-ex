@@ -481,7 +481,7 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream) {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
             using (var reader = new StreamReader(stream)) {
                 var parent = new GenericStructure("Root");
                 parent.Children.AddRange(GenericStructure.Parse(reader));

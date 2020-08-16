@@ -68,7 +68,8 @@ namespace CBRE.Providers.Model {
 
         private static void UnloadModel(DataStructures.Models.Model model) {
             model.Dispose();
-            foreach (var kv in Models.Where(x => x.Value == model)) Models.Remove(kv.Key);
+            var kvs = Models.Where(x => x.Value == model).ToList();
+            foreach (var kv in kvs) Models.Remove(kv.Key);
         }
 
         protected abstract bool IsValidForFile(IFile file);

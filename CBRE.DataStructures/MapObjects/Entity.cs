@@ -163,8 +163,12 @@ namespace CBRE.DataStructures.MapObjects {
             Coordinate unitX = uTransform.Transform(existingRotation.Transform(new Coordinate(1, 0, 0)), 0).Normalise();
             Coordinate unitY = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 1, 0)), 0).Normalise();
             Coordinate unitZ = uTransform.Transform(existingRotation.Transform(new Coordinate(0, 0, 1)), 0).Normalise();
-            
-            var tempAngles = ToEuler(unitZ, unitX, unitY).YZX() * 180m / DMath.PI;
+
+            return ToEuler(unitX, unitY, unitZ);
+        }
+
+        public static Coordinate ToEuler(Coordinate unitX, Coordinate unitY, Coordinate unitZ) {
+            var tempAngles = ToEulerInternal(unitZ, unitX, unitY).YZX() * 180m / DMath.PI;
             return new Coordinate(
                 270 + tempAngles.X,
                 -tempAngles.Y,
@@ -172,7 +176,7 @@ namespace CBRE.DataStructures.MapObjects {
         }
 
         //http://geom3d.com/data/documents/Calculation=20of=20Euler=20angles.pdf
-        public static Coordinate ToEuler(Coordinate X1, Coordinate Y1, Coordinate Z1) {
+        private static Coordinate ToEulerInternal(Coordinate X1, Coordinate Y1, Coordinate Z1) {
             decimal Z1xy = DMath.Sqrt(Z1.X * Z1.X + Z1.Y * Z1.Y);
             if (Z1xy > 0.0001m) {
                 return new Coordinate(

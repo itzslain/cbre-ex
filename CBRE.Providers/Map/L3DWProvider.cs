@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace CBRE.Providers.Map {
     public class L3DWProvider : MapProvider {
-        protected override DataStructures.MapObjects.Map GetFromFile(string filename) {
+        protected override DataStructures.MapObjects.Map GetFromFile(string filename, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
             using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
-                return GetFromStream(strm);
+                return GetFromStream(strm, textureDirs, modelDirs);
             }
         }
 
@@ -25,7 +25,7 @@ namespace CBRE.Providers.Map {
             return filename.EndsWith(".3dw", StringComparison.OrdinalIgnoreCase);
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream) {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
             var map = new DataStructures.MapObjects.Map();
             map.CordonBounds = new Box(Coordinate.One * -16384, Coordinate.One * 16384);
             BinaryReader br = new BinaryReader(stream);
