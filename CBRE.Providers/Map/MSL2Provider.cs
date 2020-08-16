@@ -128,11 +128,12 @@ namespace CBRE.Providers.Map {
             for (int i=0;i<entityCount;i++) {
                 int meshCount = (int)br.ReadSingle();
                 Console.WriteLine("**** meshCount: " + meshCount);
-                List<Face> faces = new List<Face>();
+                Dictionary<int, List<Face>> faces = new Dictionary<int, List<Face>>();
                 for (int j=0;j<meshCount;j++) {
+                    faces.Add(j, new List<Face>());
                     float unknown1 = br.ReadSingle();
                     Console.WriteLine("unknown1: "+unknown1);
-                    ReadMemblockMesh(br, map, faces);
+                    ReadMemblockMesh(br, map, faces[j]);
                 }
 
                 bool isBrush = Math.Abs(br.ReadSingle()) > 0.01f;
@@ -156,24 +157,35 @@ namespace CBRE.Providers.Map {
                         float skip = br.ReadSingle();
                         Console.WriteLine("skip " + j + ": " + skip);
                     }
+                    List<string> textureNames = new List<string>();
                     for (int j = 0; j < meshCount; j++) {
-                        string textureName = br.ReadLine();
+                        string textureName = System.IO.Path.GetFileNameWithoutExtension(br.ReadLine());
+                        textureNames.Add(textureName);
                         Console.WriteLine("textureName: " + textureName);
-                        for (int k = 0; k < 10; k++) {
+                        float flags = br.ReadSingle();
+                        bool faceIsHidden = Math.Abs(flags - 1) < 0.01f;
+                        bool faceIsLit = Math.Abs(flags - 800) < 0.01f;
+                        for (int k = 1; k < 10; k++) {
                             float skip2 = br.ReadSingle();
                             Console.WriteLine("skip2 " + k + ": " + skip2);
                         }
-                        if (hasLightmap) {
-                            //TODO: is this correct?
+                        if (faceIsLit) {
                             br.ReadSingle();
+                        }
+                        if (faceIsHidden) {
+                            textureNames[textureNames.Count - 1] = "tooltextures/remove_face";
                         }
                     }
 
                     if (faces.Any()) {
                         Solid newSolid = new Solid(map.IDGenerator.GetNextObjectID());
-                        foreach (Face face in faces) {
-                            face.Parent = newSolid;
-                            newSolid.Faces.Add(face);
+                        foreach (int key in faces.Keys) {
+                            foreach (Face face in faces[key]) {
+                                face.Parent = newSolid;
+                                newSolid.Faces.Add(face);
+                                face.Texture.Name = textureNames[key];
+                                face.AlignTextureToWorld();
+                            }
                         }
                         newSolid.Colour = Colour.GetRandomBrushColour();
                         newSolid.UpdateBoundingBox();
