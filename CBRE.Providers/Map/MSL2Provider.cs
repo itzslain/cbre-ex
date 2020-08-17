@@ -276,10 +276,12 @@ namespace CBRE.Providers.Map {
                             (decimal)xScale / newSolid.BoundingBox.Width,
                             (decimal)yScale / newSolid.BoundingBox.Length,
                             (decimal)zScale / newSolid.BoundingBox.Height), Coordinate.Zero), TransformFlags.None);
+                        newSolid.UpdateBoundingBox();
                         newSolid.Transform(new UnitTranslate(new Coordinate(
                             (decimal)xTranslate,
                             (decimal)yTranslate,
                             (decimal)zTranslate)), TransformFlags.None);
+                        newSolid.UpdateBoundingBox();
 
                         foreach (int key in faces.Keys) {
                             foreach (Face face in faces[key]) {
@@ -324,12 +326,12 @@ namespace CBRE.Providers.Map {
                         }
 
                         Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
+                        entity.Colour = Colour.GetDefaultEntityColour();
                         Property newProperty = null;
                         switch (entityName.ToLowerInvariant()) {
                             case "pointlight":
                                 entity.ClassName = "light";
                                 entity.EntityData.Name = "light";
-                                entity.Colour = Colour.GetDefaultEntityColour();
 
                                 newProperty = new Property();
                                 newProperty.Key = "range";
@@ -344,7 +346,6 @@ namespace CBRE.Providers.Map {
                             case "spotlight":
                                 entity.ClassName = "spotlight";
                                 entity.EntityData.Name = "spotlight";
-                                entity.Colour = Colour.GetDefaultEntityColour();
 
                                 newProperty = new Property();
                                 newProperty.Key = "range";
@@ -395,7 +396,6 @@ namespace CBRE.Providers.Map {
                             default:
                                 entity.ClassName = entityName;
                                 entity.EntityData.Name = entityName;
-                                entity.Colour = Colour.GetDefaultEntityColour();
 
                                 foreach (var key in properties.Keys) {
                                     newProperty = new Property();
@@ -494,10 +494,16 @@ namespace CBRE.Providers.Map {
                                         Coordinate newY = (dotY0 * points[0].Item2 + dotY1 * points[1].Item2 + dotY2 * points[2].Item2);
                                         Coordinate newZ = (dotZ0 * points[0].Item2 + dotZ1 * points[1].Item2 + dotZ2 * points[2].Item2);
 
+                                        Coordinate unTransformedMin = new Coordinate(
+                                                loadedPoints.Select(p => p.X).Min(),
+                                                loadedPoints.Select(p => p.Y).Min(),
+                                                loadedPoints.Select(p => p.Z).Min()
+                                            );
+
                                         Coordinate unTransformedBounds = new Coordinate(
-                                            loadedPoints.Select(p => p.X).Max() - loadedPoints.Select(p => p.X).Min(),
-                                            loadedPoints.Select(p => p.Y).Max() - loadedPoints.Select(p => p.Y).Min(),
-                                            loadedPoints.Select(p => p.Z).Max() - loadedPoints.Select(p => p.Z).Min());
+                                            loadedPoints.Select(p => p.X).Max(),
+                                            loadedPoints.Select(p => p.Y).Max(),
+                                            loadedPoints.Select(p => p.Z).Max()) - unTransformedMin;
 
                                         Coordinate propScale(Coordinate p) {
                                             Coordinate retVal = p.Clone();
@@ -507,8 +513,11 @@ namespace CBRE.Providers.Map {
                                             return retVal;
                                         }
 
-                                        Coordinate fuck = propScale(new Coordinate(1, 1, 1));
-                                        Coordinate fuck2 = new Coordinate((decimal)xScale, (decimal)yScale, (decimal)zScale);
+                                        Coordinate centerDiff = propScale(loadedCenter - knownCenter);
+
+                                        xTranslate += (float)centerDiff.X;
+                                        yTranslate += (float)centerDiff.Y;
+                                        zTranslate += (float)centerDiff.Z;
 
                                         Coordinate newBounds = new Coordinate(
                                             loadedPoints.Select(p => propScale(p).Dot(newX)).Max() - loadedPoints.Select(p => propScale(p).Dot(newX)).Min(),
@@ -550,6 +559,7 @@ namespace CBRE.Providers.Map {
                         Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
                         entity.ClassName = "model";
                         entity.EntityData.Name = "model";
+                        entity.Colour = Colour.GetDefaultEntityColour();
 
                         Property newProperty;
 
