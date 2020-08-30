@@ -28,7 +28,7 @@ namespace CBRE.Editor.Rendering {
             Rebuild();
         }
 
-        private void Rebuild() {
+        public void Rebuild() {
             _rect = RectangleF.Empty;
             _text = "";
             if (Viewport is Viewport2D) {

@@ -1,7 +1,10 @@
 ﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using CBRE.Editor.Rendering;
+using CBRE.Editor.UI;
 using CBRE.Settings;
+using CBRE.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -337,6 +340,11 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 document.TextureCollection.LightmapTextureOutdated = true;
             }
 
+            foreach (var viewport in ViewportManager.Viewports.Where(vp => vp is Viewport3D).Select(vp => vp as Viewport3D)) {
+                viewport.Type = Viewport3D.ViewType.Lightmapped;
+                var listener = viewport.Listeners.Find(l => l is ViewportLabelListener) as ViewportLabelListener;
+                listener?.Rebuild();
+            }
             UpdateProgress(exportForm, "Lightmapping complete!", 1.0f);
         }
 
