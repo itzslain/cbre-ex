@@ -1,5 +1,6 @@
 ﻿using CBRE.Editor.Documents;
 using CBRE.Settings;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Drawing;
 using System.Globalization;
@@ -10,9 +11,11 @@ using System.Windows.Forms;
 namespace CBRE.Editor.Compiling {
     public partial class ExportForm : Form {
         public Document Document;
+        public static Form exportForm;
 
         public ExportForm() {
             InitializeComponent();
+            exportForm = this;
         }
 
         private void label6_Click(object sender, EventArgs e) {
@@ -196,13 +199,14 @@ namespace CBRE.Editor.Compiling {
                     }
                 }
 
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, exportForm.Handle);
                 ProgressLog.Invoke((MethodInvoker)(() => ProgressLog.AppendText("\nCancelled by the user")));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
             } catch (Exception e) {
                 ProgressLog.Invoke((MethodInvoker)(() => {
                     ProgressLog.SelectionStart = ProgressLog.TextLength;
                     ProgressLog.SelectionLength = 0;
-
+                    TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, exportForm.Handle);
                     ProgressLog.SelectionColor = Color.Red;
                     ProgressLog.AppendText("\nError: " + e.Message + "\n" + e.StackTrace);
                     ProgressLog.SelectionColor = ProgressLog.ForeColor;

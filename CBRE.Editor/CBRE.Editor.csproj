@@ -87,6 +87,7 @@
     <Reference Include="Poly2Tri">
       <HintPath>..\Poly2Tri.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

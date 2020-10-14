@@ -5,12 +5,14 @@ using CBRE.Editor.Rendering;
 using CBRE.Editor.UI;
 using CBRE.Settings;
 using CBRE.UI;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -43,6 +45,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 exportForm.ProgressLog.Invoke((MethodInvoker)(() => exportForm.ProgressLog.AppendText("\n" + msg)));
             }
             exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Value = (int)(progress * 10000)));
+            TaskbarManager.Instance.SetProgressValue(Convert.ToInt32(progress * 10000), 10000, exportForm.Handle);
         }
 
 
@@ -134,6 +137,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
             List<LMFace> exclusiveBlockers = new List<LMFace>();
 
             //get faces
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, exportForm.Handle);
             UpdateProgress(exportForm, "Determining UV coordinates...", 0);
             LMFace.FindFacesAndGroups(map, out faces, out lmGroups);
 
@@ -346,6 +350,8 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 listener?.Rebuild();
             }
             UpdateProgress(exportForm, "Lightmapping complete!", 1.0f);
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, exportForm.Handle);
+            new SoundPlayer(@"C:\Windows\Media\tada.wav").Play();
         }
 
         public static void SaveLightmaps(Document document, int lmCount, string path, bool threeBasisModel) {
