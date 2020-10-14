@@ -101,55 +101,52 @@ namespace CBRE.Providers.Model {
             DataStructures.Models.Bone bone = new DataStructures.Models.Bone(0, -1, null, "rootBone", CoordinateF.Zero, CoordinateF.Zero, CoordinateF.One, CoordinateF.One);
             model.Bones.Add(bone);
 
-            try {
-                Scene scene = importer.ImportFile(file.FullPathName);
+            Scene scene = importer.ImportFile(file.FullPathName);
 
-                DataStructures.Models.Texture tex = null;
+            DataStructures.Models.Texture tex = null;
 
-                if (scene.MaterialCount > 0) {
-                    //TODO: handle several textures
-                    for (int i = 0; i < scene.MaterialCount; i++) {
-                        if (string.IsNullOrEmpty(scene.Materials[i].TextureDiffuse.FilePath)) { continue; }
-                        string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[i].TextureDiffuse.FilePath);
-                        if (!File.Exists(path)) { path = scene.Materials[i].TextureDiffuse.FilePath; }
-                        if (File.Exists(path)) {
-                            Bitmap bmp = new Bitmap(path);
-                            tex = new DataStructures.Models.Texture {
-                                Name = path,
-                                Index = 0,
-                                Width = bmp.Width,
-                                Height = bmp.Height,
-                                Flags = 0,
-                                Image = bmp
-                            };
-                        }
-                        break;
+            if (scene.MaterialCount > 0) {
+                //TODO: handle several textures
+                for (int i = 0; i < scene.MaterialCount; i++) {
+                    if (string.IsNullOrEmpty(scene.Materials[i].TextureDiffuse.FilePath)) { continue; }
+                    string path = Path.Combine(Path.GetDirectoryName(file.FullPathName), scene.Materials[i].TextureDiffuse.FilePath);
+                    if (!File.Exists(path)) { path = scene.Materials[i].TextureDiffuse.FilePath; }
+                    if (File.Exists(path)) {
+                        Bitmap bmp = new Bitmap(path);
+                        tex = new DataStructures.Models.Texture {
+                            Name = path,
+                            Index = 0,
+                            Width = bmp.Width,
+                            Height = bmp.Height,
+                            Flags = 0,
+                            Image = bmp
+                        };
                     }
+                    break;
                 }
-
-                if (tex == null) {
-                    Bitmap bmp = new Bitmap(64, 64);
-                    for (int i = 0; i < 64; i++) {
-                        for (int j = 0; j < 64; j++) {
-                            bmp.SetPixel(i, j, Color.DarkGray);
-                        }
-                    }
-                    tex = new DataStructures.Models.Texture {
-                        Name = "blank",
-                        Index = 0,
-                        Width = 64,
-                        Height = 64,
-                        Flags = 0,
-                        Image = bmp
-                    };
-                }
-
-                model.Textures.Add(tex);
-
-                AddNode(scene, scene.RootNode, model, tex, Matrix4x4.Identity);
-            } catch (AssimpException ex) {
-                Debug.WriteLine(ex.StackTrace);
             }
+
+            if (tex == null) {
+                Bitmap bmp = new Bitmap(64, 64);
+                for (int i = 0; i < 64; i++) {
+                    for (int j = 0; j < 64; j++) {
+                        bmp.SetPixel(i, j, Color.DarkGray);
+                    }
+                }
+                tex = new DataStructures.Models.Texture {
+                    Name = "blank",
+                    Index = 0,
+                    Width = 64,
+                    Height = 64,
+                    Flags = 0,
+                    Image = bmp
+                };
+            }
+
+            model.Textures.Add(tex);
+
+            AddNode(scene, scene.RootNode, model, tex, Matrix4x4.Identity);
+
             return model;
         }
 

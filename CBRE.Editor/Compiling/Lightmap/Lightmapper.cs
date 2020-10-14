@@ -351,7 +351,6 @@ namespace CBRE.Editor.Compiling.Lightmap {
             }
             UpdateProgress(exportForm, "Lightmapping complete!", 1.0f);
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, exportForm.Handle);
-            new SoundPlayer(@"C:\Windows\Media\tada.wav").Play();
         }
 
         public static void SaveLightmaps(Document document, int lmCount, string path, bool threeBasisModel) {
