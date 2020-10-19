@@ -196,7 +196,7 @@ namespace CBRE.Editor.UI
             if (control == null || configuration == null) return;
 
             control.Configuration = configuration.Configuration;
-            var viewports = GetViewportsForTableSplitControl(control);
+            var viewports = GetViewportsForTableSplitControl(control).ToList();
 
             control.Controls.Clear();
             foreach (var vp in viewports)

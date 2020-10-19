@@ -45,7 +45,6 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 exportForm.ProgressLog.Invoke((MethodInvoker)(() => exportForm.ProgressLog.AppendText("\n" + msg)));
             }
             exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Value = (int)(progress * 10000)));
-            TaskbarManager.Instance.SetProgressValue(Convert.ToInt32(progress * 10000), 10000, exportForm.Handle);
         }
 
 
@@ -137,7 +136,6 @@ namespace CBRE.Editor.Compiling.Lightmap {
             List<LMFace> exclusiveBlockers = new List<LMFace>();
 
             //get faces
-            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, exportForm.Handle);
             UpdateProgress(exportForm, "Determining UV coordinates...", 0);
             LMFace.FindFacesAndGroups(map, out faces, out lmGroups);
 
@@ -350,7 +348,6 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 listener?.Rebuild();
             }
             UpdateProgress(exportForm, "Lightmapping complete!", 1.0f);
-            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, exportForm.Handle);
         }
 
         public static void SaveLightmaps(Document document, int lmCount, string path, bool threeBasisModel) {
