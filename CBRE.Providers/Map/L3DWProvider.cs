@@ -9,18 +9,6 @@ using System.Linq;
 
 namespace CBRE.Providers.Map {
     public class L3DWProvider : MapProvider {
-        protected override DataStructures.MapObjects.Map GetFromFile(string filename, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
-            using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
-                return GetFromStream(strm, textureDirs, modelDirs);
-            }
-        }
-
-        protected override void SaveToFile(string filename, DataStructures.MapObjects.Map map) {
-            using (var strm = new FileStream(filename, FileMode.Create, FileAccess.Write)) {
-                SaveToStream(strm, map);
-            }
-        }
-
         protected override bool IsValidForFileName(string filename) {
             return filename.EndsWith(".3dw", StringComparison.OrdinalIgnoreCase);
         }

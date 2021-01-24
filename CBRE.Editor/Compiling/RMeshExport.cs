@@ -65,6 +65,8 @@ namespace CBRE.Editor.Compiling {
 
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
 
+            IEnumerable<Entity> screens = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "screen").OfType<Entity>();
+
             FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
 
@@ -232,7 +234,7 @@ namespace CBRE.Editor.Compiling {
                 br.Write((Int32)0);
             }
 
-            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count()));
+            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count()));
 
             foreach (Light light in lights) {
                 br.WriteB3DString("light");
@@ -294,6 +296,16 @@ namespace CBRE.Editor.Compiling {
                 br.Write((float)scale.X);
                 br.Write((float)scale.Y);
                 br.Write((float)scale.Z);
+            }
+
+            foreach (Entity screen in screens) {
+                br.WriteB3DString("screen");
+
+                br.Write((float)screen.Origin.X);
+                br.Write((float)screen.Origin.Z);
+                br.Write((float)screen.Origin.Y);
+
+                br.WriteB3DString(screen.EntityData.GetPropertyValue("imgpath"));
             }
 
             br.Dispose();

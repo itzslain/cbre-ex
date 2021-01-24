@@ -163,14 +163,21 @@ namespace CBRE.Editor.Compiling.Lightmap {
 
             //put the faces into the bitmap
             lmGroups.Sort((x, y) => {
-                if (x.Width == y.Width) {
-                    if (x.Height == y.Height) { return 0; }
-                    if (x.Height < y.Height) { return 1; }
-                    return -1;
-                }
-
+                if (x.Width > y.Width) { return -1; }
                 if (x.Width < y.Width) { return 1; }
-                return -1;
+                if (x.Height > y.Height) { return -1; }
+                if (x.Height < y.Height) { return 1; }
+                var locXs = x.Faces.SelectMany(f => f.Vertices.Select(v => v.Location)).ToList();
+                var locX = locXs.Aggregate((a, b) => a + b) / (float)locXs.Count;
+                var locYs = y.Faces.SelectMany(f => f.Vertices.Select(v => v.Location)).ToList();
+                var locY = locYs.Aggregate((a, b) => a + b) / (float)locYs.Count;
+                if (locX.X > locY.X) { return -1; }
+                if (locX.X < locY.X) { return 1; }
+                if (locX.Y > locY.Y) { return -1; }
+                if (locX.Y < locY.Y) { return 1; }
+                if (locX.Z > locY.Z) { return -1; }
+                if (locX.Z < locY.Z) { return 1; }
+                return 0;
             });
 
             FaceRenderThreads = new List<Thread>();

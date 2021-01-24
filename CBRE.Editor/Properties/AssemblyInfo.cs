@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CBRE")]
-[assembly: AssemblyDescription("CBRE")]
+[assembly: AssemblyTitle("CBRE.Editor")]
+[assembly: AssemblyDescription("Containment Breach Room Editor")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("CBRE")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CBRE")]
-[assembly: AssemblyCopyright("Copyright © juanjp600 2020, based on Sledge by http://logic-and-trick.com 2014")]
+[assembly: AssemblyCopyright("Copyright © juanjp600 2021, based on Sledge by http://logic-and-trick.com 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.7")]
-[assembly: AssemblyFileVersion("0.1.0.7")]
+[assembly: AssemblyVersion("0.1.0.8")]
+[assembly: AssemblyFileVersion("0.1.0.8")]

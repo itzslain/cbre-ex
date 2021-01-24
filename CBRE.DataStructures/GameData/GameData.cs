@@ -49,6 +49,11 @@ namespace CBRE.DataStructures.GameData {
             modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { ShortDescription = "Scale", DefaultValue = "1 1 1" });
             Classes.Add(modelDataObj);
 
+            var screenDataObj = new GameDataObject("screen", "Savescreen.", ClassType.Point);
+            screenDataObj.Properties.Add(new Property("imgpath", VariableType.Other) { ShortDescription = "Image Path", DefaultValue = "" });
+            screenDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/screen"));
+            Classes.Add(screenDataObj);
+
             var noShadowObj = new GameDataObject("noshadow", "Disables shadow casting for this brush.", ClassType.Solid);
             Classes.Add(noShadowObj);
 
