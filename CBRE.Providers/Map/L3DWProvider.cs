@@ -435,7 +435,7 @@ namespace CBRE.Providers.Map {
             return solid;
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map) {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
             throw new NotImplementedException("don't save to 3dw, ew");
         }
 
