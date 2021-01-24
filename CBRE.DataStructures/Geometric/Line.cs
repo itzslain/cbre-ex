@@ -15,11 +15,25 @@ namespace CBRE.DataStructures.Geometric {
         public Line(Coordinate start, Coordinate end) {
             Start = start;
             End = end;
+
+            if (Start == null) {
+                throw new ArgumentNullException("start");
+            }
+            if (End == null) {
+                throw new ArgumentNullException("end");
+            }
         }
 
         protected Line(SerializationInfo info, StreamingContext context) {
             Start = (Coordinate)info.GetValue("Start", typeof(Coordinate));
             End = (Coordinate)info.GetValue("End", typeof(Coordinate));
+
+            if (Start == null) {
+                throw new ArgumentNullException("start");
+            }
+            if (End == null) {
+                throw new ArgumentNullException("end");
+            }
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context) {

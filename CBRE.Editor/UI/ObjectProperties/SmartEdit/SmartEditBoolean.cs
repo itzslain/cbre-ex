@@ -1,10 +1,10 @@
-using CBRE.DataStructures.GameData;
+﻿using CBRE.DataStructures.GameData;
 using System;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 {
-    [SmartEdit(VariableType.Boolean)]
+    [SmartEdit(VariableType.Bool)]
     internal class SmartEditBoolean : SmartEditControl
     {
         private readonly CheckBox _checkBox;

@@ -428,19 +428,7 @@
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditBoolean.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor1.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor255.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTextureBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditFileBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetDestination.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\DumbEditControl.cs">
@@ -453,9 +441,6 @@
       <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditAttribute.cs" />
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditChoices.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -463,9 +448,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditString.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetSource.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\TableValue.cs" />

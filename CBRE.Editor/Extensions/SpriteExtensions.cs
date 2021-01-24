@@ -64,13 +64,6 @@ namespace CBRE.Editor.Extensions {
                 return spr.Values[0].Trim();
             }
 
-            // Find the first property that is a studio type, or has a name of "sprite"...
-            var prop = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Sprite);
-            if (prop == null) prop = entity.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.OrdinalIgnoreCase));
-            if (prop != null) {
-                var val = entity.EntityData.GetPropertyValue(prop.Name);
-                if (!String.IsNullOrWhiteSpace(val)) return val;
-            }
             return null;
         }
 
