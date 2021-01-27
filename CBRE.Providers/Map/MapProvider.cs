@@ -35,10 +35,10 @@ namespace CBRE.Providers.Map {
             throw new ProviderNotFoundException("No map provider was found for this file.");
         }
 
-        public static void SaveMapToFile(string filename, DataStructures.MapObjects.Map map) {
+        public static void SaveMapToFile(string filename, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFileName(filename));
             if (provider != null) {
-                provider.SaveToFile(filename, map);
+                provider.SaveToFile(filename, map, gameData);
                 return;
             }
             throw new ProviderNotFoundException("No map provider was found for this file format.");
@@ -58,15 +58,15 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected virtual void SaveToFile(string filename, DataStructures.MapObjects.Map map) {
+        protected virtual void SaveToFile(string filename, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
             using (var strm = new FileStream(filename, FileMode.Create, FileAccess.Write)) {
-                SaveToStream(strm, map);
+                SaveToStream(strm, map, gameData);
             }
         }
 
         protected abstract bool IsValidForFileName(string filename);
         protected abstract DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs);
-        protected abstract void SaveToStream(Stream stream, DataStructures.MapObjects.Map map);
+        protected abstract void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData);
         protected abstract IEnumerable<MapFeature> GetFormatFeatures();
     }
 }

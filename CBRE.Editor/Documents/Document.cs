@@ -191,7 +191,7 @@ namespace CBRE.Editor.Documents {
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
             Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
-            MapProvider.SaveMapToFile(path, Map);
+            MapProvider.SaveMapToFile(path, Map, GameData);
             if (switchPath) {
                 MapFile = path;
                 MapFileName = Path.GetFileName(MapFile);
@@ -226,7 +226,7 @@ namespace CBRE.Editor.Documents {
                 if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
 
                 // Save the file
-                MapProvider.SaveMapToFile(Path.Combine(dir, filename), Map);
+                MapProvider.SaveMapToFile(Path.Combine(dir, filename), Map, GameData);
 
                 // Delete extra autosaves if there is a limit
                 if (Game.AutosaveLimit > 0) {

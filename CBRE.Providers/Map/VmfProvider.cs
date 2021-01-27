@@ -560,7 +560,7 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map) {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
             var groups = new List<Group>();
             var solids = new List<Solid>();
             var ents = new List<Entity>();

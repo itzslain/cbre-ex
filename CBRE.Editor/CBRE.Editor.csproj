@@ -428,6 +428,9 @@
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditBoolean.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditChoices.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor255.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -28,11 +28,11 @@ namespace CBRE.DataStructures.MapObjects {
             if (spl.Length < 3 || spl.Length > 4) {
                 return defaultIfInvalid;
             }
-            int r, g, b, i;
-            i = 255;
+            int r, g, b, a;
+            a = 255;
             if (int.TryParse(spl[0], out r) && int.TryParse(spl[1], out g) && int.TryParse(spl[2], out b)) {
-                if (spl.Length == 4 && !int.TryParse(spl[3], out i)) { return defaultIfInvalid; }
-                return Color.FromArgb(r, g, b);
+                if (spl.Length == 4 && !int.TryParse(spl[3], out a)) { return defaultIfInvalid; }
+                return Color.FromArgb(a, r, g, b);
             }
             return defaultIfInvalid;
         }
@@ -47,6 +47,14 @@ namespace CBRE.DataStructures.MapObjects {
                 return new Coordinate(x, y, z);
             }
             return defaultIfInvalid;
+        }
+
+        public static string FromColor(Color color) {
+            return color.R.ToString() + ' ' + color.G + ' ' + color.B + ' ' + color.A;
+        }
+
+        public static string FromCoordinate(Coordinate coordinate) {
+            return coordinate.X.ToString() + ' ' + coordinate.Y + ' ' + coordinate.Z;
         }
 
         public Property Clone() {
