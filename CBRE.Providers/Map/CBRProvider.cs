@@ -12,6 +12,22 @@ namespace CBRE.Providers.Map {
     public class CBRProvider : MapProvider {
         private const uint revision = 0;
 
+        // Hierarchy control bytes
+        // bytes to avoid enum cast
+        private const byte HIERARCHY_PROCCEED = 0;
+        private const byte HIERARCHY_DOWN = 1;
+        private const byte HIERARCHY_UP = 2;
+
+        private struct EntityType {
+            public string name;
+            public List<Property> properties;
+        }
+        
+        private struct Property {
+            public string name;
+            public VariableType type;
+        }
+
         protected override IEnumerable<MapFeature> GetFormatFeatures() {
             return new[] {
                 MapFeature.Solids,
@@ -46,6 +62,7 @@ namespace CBRE.Providers.Map {
             map.WorldSpawn = new World(map.IDGenerator.GetNextObjectID());
 
             // Solids
+            List<MapObject> solids = new List<MapObject>();
             int solidCount = reader.ReadInt32();
             for (int i = 0; i < solidCount; i++) {
                 Solid s = new Solid(map.IDGenerator.GetNextObjectID());
@@ -72,31 +89,39 @@ namespace CBRE.Providers.Map {
                 }
                 s.SetParent(map.WorldSpawn, false);
                 s.UpdateBoundingBox(false);
+                solids.Add(s);
             }
 
             // Entity dictionary
-            List<Tuple<string, List<Tuple<string, int>>>> entityTypes = new List<Tuple<string, List<Tuple<string, int>>>>();
+            List<EntityType> entityTypes = new List<EntityType>();
             string read;
             while ((read = reader.ReadNullTerminatedString()) != "") {
-                List<Tuple<string, int>> properties = new List<Tuple<string, int>>();
+                List<Property> properties = new List<Property>();
                 byte propertyType;
                 while ((propertyType = reader.ReadByte()) != 255) {
-                    properties.Add(new Tuple<string, int>(reader.ReadNullTerminatedString(), propertyType));
+                    properties.Add(new Property() {
+                        name = reader.ReadNullTerminatedString(),
+                        type = (VariableType)propertyType
+                    });
                 }
-                entityTypes.Add(new Tuple<string, List<Tuple<string, int>>>(read, properties));
+                entityTypes.Add(new EntityType() {
+                    name = read,
+                    properties = properties
+                });
             }
 
             // Entities
-            foreach (Tuple<string, List<Tuple<string, int>>> entityType in entityTypes) {
+            List<MapObject> entities = new List<MapObject>(0);
+            foreach (EntityType entityType in entityTypes) {
                 int entitiesOfType = reader.ReadInt32();
+                entities.Capacity += entitiesOfType;
                 for (int i = 0; i < entitiesOfType; i++) {
                     Entity e = new Entity(map.IDGenerator.GetNextObjectID());
-                    Console.WriteLine(entityType.Item1);
-                    e.ClassName = entityType.Item1;
-                    e.EntityData.Name = entityType.Item1;
-                    foreach (Tuple<string, int> property in entityType.Item2) {
+                    e.ClassName = entityType.name;
+                    e.EntityData.Name = entityType.name;
+                    foreach (Property property in entityType.properties) {
                         string propertyVal;
-                        switch ((VariableType)property.Item2) {
+                        switch ((VariableType)property.type) {
                             case VariableType.Bool:
                                 propertyVal = reader.ReadBoolean() ? "Yes" : "No";
                                 break;
@@ -122,15 +147,58 @@ namespace CBRE.Providers.Map {
                                 propertyVal = "";
                                 break;
                         }
-                        e.EntityData.SetPropertyValue(property.Item1, propertyVal);
+                        e.EntityData.SetPropertyValue(property.name, propertyVal);
                     }
                     e.SetParent(map.WorldSpawn);
                     e.UpdateBoundingBox();
+                    entities.Add(e);
                 }
+            }
+
+            // Visgroup dictionary
+            Visgroup currentParent = null;
+            while (true) {
+                byte hierarchyControl;
+                Visgroup newGroup = null;
+                while ((hierarchyControl = reader.ReadByte()) == HIERARCHY_PROCCEED) {
+                    newGroup = new Visgroup();
+                    newGroup.ID = reader.ReadInt32();
+                    newGroup.Name = reader.ReadNullTerminatedString();
+                    if (currentParent != null) {
+                        newGroup.Parent = currentParent;
+                        currentParent.Children.Add(newGroup);
+                    } else {
+                        map.Visgroups.Add(newGroup);
+                    }
+                }
+                if (hierarchyControl == HIERARCHY_DOWN) {
+                    currentParent = newGroup;
+                } else if (currentParent != null) {
+                    currentParent = currentParent.Parent;
+                } else {
+                    break;
+                }
+            }
+
+            // Solid visgroups
+            foreach (Solid mo in solids) {
+                ReadVisgroups(reader, mo);
+            }
+
+            // Entity visgroups
+            foreach (Entity e in entities) {
+                ReadVisgroups(reader, e);
             }
 
             stream.Close();
             return map;
+        }
+
+        private void ReadVisgroups(BinaryReader reader, MapObject mo) {
+            int visNum = reader.ReadInt32();
+            for (int i = 0; i < visNum; i++) {
+                mo.Visgroups.Add(reader.ReadInt32());
+            }
         }
 
         protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
@@ -191,7 +259,7 @@ namespace CBRE.Providers.Map {
                     entityTypeCount++;
                 }
             }
-            writer.Write((byte)0); // Entity dictionary end byte
+            writer.WriteNullTerminatedString("");
 
             // Entities
             foreach (KeyValuePair<string, Tuple<int, GameDataObject>> entityType in entityTypes) {
@@ -224,6 +292,7 @@ namespace CBRE.Providers.Map {
                                 writer.Write(int.Parse(property.Value));
                                 break;
                             case VariableType.String:
+                                // TODO: Implement dictionary.
                                 writer.WriteNullTerminatedString(property.Value);
                                 break;
                             case VariableType.Vector:
@@ -247,7 +316,47 @@ namespace CBRE.Providers.Map {
                 }
             }
 
+            // Visgroup dictionary
+            Stack<IEnumerator<Visgroup>> visStack = new Stack<IEnumerator<Visgroup>>();
+            visStack.Push(map.Visgroups.GetEnumerator());
+            while (visStack.Count > 0) {
+                IEnumerator<Visgroup> v = visStack.Pop();
+                while (v.MoveNext()) {
+                    if (!v.Current.IsAutomatic) {
+                        writer.Write(HIERARCHY_PROCCEED);
+                        writer.Write(v.Current.ID);
+                        writer.WriteNullTerminatedString(v.Current.Name);
+                        if (v.Current.Children.Count != 0) {
+                            writer.Write(HIERARCHY_DOWN);
+                            visStack.Push(v);
+                            v = v.Current.Children.GetEnumerator();
+                        }
+                    }
+                }
+                writer.Write(HIERARCHY_UP);
+            }
+            
+            // Solid visgroups
+            foreach (Solid s in map.WorldSpawn.FindAll().OfType<Solid>()) {
+                WriteVisgroups(writer, s);
+            }
+
+            // Entity visgroups
+            foreach (KeyValuePair<string, Tuple<int, GameDataObject>> entityType in entityTypes) {
+                foreach (Entity e in entites.FindAll(x => x.ClassName == entityType.Key)) {
+                    WriteVisgroups(writer, e);
+                }
+            }
+
             stream.Close();
+        }
+
+        private void WriteVisgroups(BinaryWriter writer, MapObject mo) {
+            IEnumerable<int> visgroupIDs = mo.Visgroups.Except(mo.AutoVisgroups);
+            writer.Write(visgroupIDs.Count());
+            foreach (int v in visgroupIDs) {
+                writer.Write(v);
+            }
         }
     }
 }
