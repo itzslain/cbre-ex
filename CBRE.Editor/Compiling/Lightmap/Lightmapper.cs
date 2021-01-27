@@ -123,6 +123,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
         }
 
         public static void Render(Document document, ExportForm exportForm, out List<LMFace> faces, out int lmCount) {
+            GC.Collect();
             var textureCollection = document.TextureCollection;
 
             var map = document.Map;
@@ -354,6 +355,9 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 var listener = viewport.Listeners.Find(l => l is ViewportLabelListener) as ViewportLabelListener;
                 listener?.Rebuild();
             }
+            buffers = null;
+            GC.Collect();
+
             UpdateProgress(exportForm, "Lightmapping complete!", 1.0f);
         }
 

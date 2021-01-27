@@ -1,4 +1,4 @@
-using CBRE.UI;
+﻿using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -93,6 +93,7 @@ namespace CBRE.Editor.UI
 
         public void PostRender()
         {
+            Screenshot?.Dispose();
             var bmp = new Bitmap(Viewport.ClientSize.Width, Viewport.ClientSize.Height);
             var data = bmp.LockBits(Viewport.ClientRectangle, ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             GL.ReadPixels(0, 0, Viewport.ClientSize.Width, Viewport.ClientSize.Height, PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0);

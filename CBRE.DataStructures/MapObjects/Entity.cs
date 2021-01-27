@@ -11,6 +11,8 @@ using System.Runtime.Serialization;
 namespace CBRE.DataStructures.MapObjects {
     [Serializable]
     public class Entity : MapObject {
+        public override string ClassName { get => EntityData.Name; set => EntityData.Name = value; }
+
         public GameDataObject GameData { get; set; }
         public EntityData EntityData { get; set; }
         public Coordinate Origin {

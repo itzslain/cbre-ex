@@ -12,7 +12,7 @@ namespace CBRE.DataStructures.MapObjects {
     [Serializable]
     public abstract class MapObject : ISerializable {
         public long ID { get; set; }
-        public string ClassName { get; set; }
+        public virtual string ClassName { get; set; }
         public List<int> Visgroups { get; set; }
         public List<int> AutoVisgroups { get; set; }
         protected Dictionary<long, MapObject> Children { get; set; }

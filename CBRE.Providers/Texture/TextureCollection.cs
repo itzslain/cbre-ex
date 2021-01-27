@@ -61,6 +61,7 @@ namespace CBRE.Providers.Texture {
             }
             LastTextureCollectionID++;
             LightmapTexture = TextureHelper.Create("__lightmap" + LastTextureCollectionID.ToString(), bmp, 64, 64, TextureFlags.None);
+            bmp.Dispose();
         }
 
         ~TextureCollection() {
