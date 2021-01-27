@@ -16,12 +16,10 @@ namespace CBRE.Providers.Map {
         // bytes to avoid enum cast
         private const byte HIERARCHY_PROCCEED = 0;
         private const byte HIERARCHY_DOWN = 1;
-        private const byte HIERARCHY_UP = 2;
+        private const byte HIERARCHY_UP = 2; // Should be highest hierarchy byte, smaller than identifiers
 
-        private struct EntityType {
-            public string name;
-            public List<Property> properties;
-        }
+        private const byte IDENTIFIER_SOLID = 3;
+        private const byte IDENTIFIER_ENTITY = 4;
         
         private struct Property {
             public string name;
@@ -159,7 +157,7 @@ namespace CBRE.Providers.Map {
             }
 
             // Visgroup dictionary
-            Visgroup currentParent = null;
+            Visgroup currentParentVisgroup = null;
             while (true) {
                 byte hierarchyControl;
                 Visgroup newGroup = null;
@@ -167,17 +165,17 @@ namespace CBRE.Providers.Map {
                     newGroup = new Visgroup();
                     newGroup.ID = reader.ReadInt32();
                     newGroup.Name = reader.ReadNullTerminatedString();
-                    if (currentParent != null) {
-                        newGroup.Parent = currentParent;
-                        currentParent.Children.Add(newGroup);
+                    if (currentParentVisgroup != null) {
+                        newGroup.Parent = currentParentVisgroup;
+                        currentParentVisgroup.Children.Add(newGroup);
                     } else {
                         map.Visgroups.Add(newGroup);
                     }
                 }
                 if (hierarchyControl == HIERARCHY_DOWN) {
-                    currentParent = newGroup;
-                } else if (currentParent != null) {
-                    currentParent = currentParent.Parent;
+                    currentParentVisgroup = newGroup;
+                } else if (currentParentVisgroup != null) {
+                    currentParentVisgroup = currentParentVisgroup.Parent;
                 } else {
                     break;
                 }
@@ -191,6 +189,32 @@ namespace CBRE.Providers.Map {
             // Entity visgroups
             foreach (Entity e in entities) {
                 ReadVisgroups(reader, e);
+            }
+
+            // Groups
+            int directWorldGroups = reader.ReadInt32();
+            for (int i = 0; i < directWorldGroups; i++) {
+                Group currentParentGroup = new Group(map.IDGenerator.GetNextObjectID());
+                currentParentGroup.SetParent(map.WorldSpawn);
+                while (true) {
+                    byte hierarchyControl;
+                    while ((hierarchyControl = reader.ReadByte()) > HIERARCHY_UP) {
+                        if (hierarchyControl == IDENTIFIER_ENTITY) {
+                            entities[reader.ReadInt32()].SetParent(currentParentGroup);
+                        } else {
+                            solids[reader.ReadInt32()].SetParent(currentParentGroup);
+                        }
+                    }
+                    if (hierarchyControl == HIERARCHY_DOWN) {
+                        Group newGroup = new Group(map.IDGenerator.GetNextObjectID());
+                        newGroup.SetParent(currentParentGroup);
+                        currentParentGroup = newGroup;
+                    } else if (currentParentGroup.Parent != map.WorldSpawn) {
+                        currentParentGroup = (Group)currentParentGroup.Parent;
+                    } else {
+                        break;
+                    }
+                }
             }
 
             stream.Close();
@@ -260,6 +284,9 @@ namespace CBRE.Providers.Map {
             }
             // Move brush entities to front
             entityTypes.Sort((x, y) => (x.ClassType == ClassType.Solid ? -1 : 0));
+            // For later use with groups
+            Dictionary<Entity, int> entityIndices = new Dictionary<Entity, int>();
+            int entityIndicesCounter = 0;
             bool reachedRegular = false;
             foreach (GameDataObject gdo in entityTypes) {
                 if (!reachedRegular && gdo.ClassType != ClassType.Solid) {
@@ -277,21 +304,13 @@ namespace CBRE.Providers.Map {
                 List<MapObject> entitiesOfType = entites.FindAll(x => x.ClassName == gdo.Name);
                 writer.Write(entitiesOfType.Count);
                 foreach (Entity e in entitiesOfType) {
+                    entityIndices.Add(e, entityIndicesCounter++);
                     if (e.GameData.ClassType == ClassType.Solid) {
                         IEnumerable<MapObject> children = e.GetChildren();
-                        if (children.Count() == 0) {
-                            e.Parent.RemoveDescendant(e);
-                            // TODO: Manage properly
-                            throw new ProviderException("Brush entity without children!");
-                        }
                         writer.Write(children.Count());
                         foreach (MapObject mo in children) {
                             int index = solids.FindIndex(x => x == mo);
-                            if (index != -1) {
-                                writer.Write(index);
-                            } else {
-                                throw new ProviderException("Invalid brush in entity!");
-                            }
+                            writer.Write(index);
                         }
                     }
                     for (int i = 0; i < gdo.Properties.Count; i++) {
@@ -374,6 +393,31 @@ namespace CBRE.Providers.Map {
             foreach (GameDataObject entityType in entityTypes) {
                 foreach (Entity e in entites.FindAll(x => x.ClassName == entityType.Name)) {
                     WriteVisgroups(writer, e);
+                }
+            }
+
+            // Groups
+            IEnumerable<Group> groups = map.WorldSpawn.GetChildren().OfType<Group>();
+            writer.Write(groups.Count());
+            foreach (Group g in groups) {
+                Stack<IEnumerator<MapObject>> groupStack = new Stack<IEnumerator<MapObject>>();
+                groupStack.Push(g.GetChildren().GetEnumerator());
+                while (groupStack.Count > 0) {
+                    IEnumerator<MapObject> gg = groupStack.Pop();
+                    while (gg.MoveNext()) {
+                        if (gg.Current is Group) {
+                            writer.Write(HIERARCHY_DOWN);
+                            groupStack.Push(gg);
+                            gg = gg.Current.GetChildren().GetEnumerator();
+                        } else if (gg.Current is Entity) {
+                            writer.Write(IDENTIFIER_ENTITY);
+                            writer.Write(entityIndices[(Entity)gg.Current]);
+                        } else {
+                            writer.Write(IDENTIFIER_SOLID);
+                            writer.Write(solids.FindIndex(x => x == gg.Current));
+                        }
+                    }
+                    writer.Write(HIERARCHY_UP);
                 }
             }
 
