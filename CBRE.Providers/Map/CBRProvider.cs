@@ -92,67 +92,70 @@ namespace CBRE.Providers.Map {
                 solids.Add(s);
             }
 
-            // Entity dictionary
-            List<EntityType> entityTypes = new List<EntityType>();
-            string read;
-            while ((read = reader.ReadNullTerminatedString()) != "") {
-                List<Property> properties = new List<Property>();
-                byte propertyType;
-                while ((propertyType = reader.ReadByte()) != 255) {
-                    properties.Add(new Property() {
-                        name = reader.ReadNullTerminatedString(),
-                        type = (VariableType)propertyType
-                    });
-                }
-                entityTypes.Add(new EntityType() {
-                    name = read,
-                    properties = properties
-                });
-            }
-
             // Entities
             List<MapObject> entities = new List<MapObject>(0);
-            foreach (EntityType entityType in entityTypes) {
-                int entitiesOfType = reader.ReadInt32();
-                entities.Capacity += entitiesOfType;
-                for (int i = 0; i < entitiesOfType; i++) {
-                    Entity e = new Entity(map.IDGenerator.GetNextObjectID());
-                    e.ClassName = entityType.name;
-                    e.EntityData.Name = entityType.name;
-                    foreach (Property property in entityType.properties) {
-                        string propertyVal;
-                        switch ((VariableType)property.type) {
-                            case VariableType.Bool:
-                                propertyVal = reader.ReadBoolean() ? "Yes" : "No";
-                                break;
-                            case VariableType.Color255:
-                                propertyVal = DataStructures.MapObjects.Property.FromColor(reader.ReadRGBAColour());
-                                break;
-                            case VariableType.Float:
-                                propertyVal = reader.ReadSingle().ToString();
-                                break;
-                            case VariableType.Integer:
-                                propertyVal = reader.ReadInt32().ToString();
-                                break;
-                            case VariableType.String:
-                                propertyVal = reader.ReadNullTerminatedString();
-                                break;
-                            case VariableType.Vector:
-                                propertyVal = DataStructures.MapObjects.Property.FromCoordinate(reader.ReadCoordinate());
-                                break;
-                            case VariableType.Choices:
-                                // TODO: Bullshit
-                                throw new NotImplementedException();
-                            default:
-                                propertyVal = "";
-                                break;
-                        }
-                        e.EntityData.SetPropertyValue(property.name, propertyVal);
+            string read;
+            bool isStillSolid = true;
+            for (int i = 0; i < 2; i++) {
+                while ((read = reader.ReadNullTerminatedString()) != "") {
+                    List<Property> properties = new List<Property>();
+                    byte propertyType;
+                    while ((propertyType = reader.ReadByte()) != 255) {
+                        properties.Add(new Property() {
+                            name = reader.ReadNullTerminatedString(),
+                            type = (VariableType)propertyType
+                        });
                     }
-                    e.SetParent(map.WorldSpawn);
-                    e.UpdateBoundingBox();
-                    entities.Add(e);
+
+                    // Entries
+                    int entitiesOfType = reader.ReadInt32();
+                    entities.Capacity += entitiesOfType;
+                    for (int j = 0; j < entitiesOfType; j++) {
+                        Entity e = new Entity(map.IDGenerator.GetNextObjectID());
+                        e.ClassName = read;
+                        e.EntityData.Name = read;
+                        if (isStillSolid) {
+                            int entitySolids = reader.ReadInt32();
+                            for (int k = 0; k < entitySolids; k++) {
+                                solids[reader.ReadInt32()].SetParent(e);
+                            }
+                        }
+                        e.SetParent(map.WorldSpawn);
+                        foreach (Property property in properties) {
+                            string propertyVal;
+                            switch (property.type) {
+                                case VariableType.Bool:
+                                    propertyVal = reader.ReadBoolean() ? "Yes" : "No";
+                                    break;
+                                case VariableType.Color255:
+                                    propertyVal = DataStructures.MapObjects.Property.FromColor(reader.ReadRGBAColour());
+                                    break;
+                                case VariableType.Float:
+                                    propertyVal = reader.ReadSingle().ToString();
+                                    break;
+                                case VariableType.Integer:
+                                    propertyVal = reader.ReadInt32().ToString();
+                                    break;
+                                case VariableType.String:
+                                    propertyVal = reader.ReadNullTerminatedString();
+                                    break;
+                                case VariableType.Vector:
+                                    propertyVal = DataStructures.MapObjects.Property.FromCoordinate(reader.ReadCoordinate());
+                                    break;
+                                case VariableType.Choices:
+                                    // TODO: Bullshit
+                                    throw new NotImplementedException();
+                                default:
+                                    propertyVal = "";
+                                    break;
+                            }
+                            e.EntityData.SetPropertyValue(property.name, propertyVal);
+                        }
+                        e.UpdateBoundingBox();
+                        entities.Add(e);
+                    }
                 }
+                isStillSolid = false;
             }
 
             // Visgroup dictionary
@@ -242,43 +245,68 @@ namespace CBRE.Providers.Map {
                 }
             }
 
-            // Entity dictionary
-            int entityTypeCount = 0;
-            Dictionary<string, Tuple<int, GameDataObject>> entityTypes = new Dictionary<string, Tuple<int, GameDataObject>>();
+            // Entities
+            ISet<string> foundEntityTypes = new HashSet<string>();
+            List<GameDataObject> entityTypes = new List<GameDataObject>();
             List<MapObject> entites = map.WorldSpawn.Find(x => x is Entity && x.ClassName != "");
             foreach (Entity e in entites) {
-                if (!entityTypes.ContainsKey(e.ClassName)) {
+                Console.WriteLine(e.ClassName);
+                Console.WriteLine(e.GameData.Name);
+                if (!foundEntityTypes.Contains(e.ClassName)) {
                     GameDataObject gdo = gameData.Classes.Find(x => x.Name == e.ClassName);
-                    writer.WriteNullTerminatedString(e.ClassName);
-                    foreach (DataStructures.GameData.Property p in gdo.Properties) {
-                        writer.Write((byte)p.VariableType);
-                        writer.WriteNullTerminatedString(p.Name);
-                    }
-                    writer.Write((byte)255); // Property end byte
-                    entityTypes.Add(e.ClassName, new Tuple<int, GameDataObject>(entityTypeCount, gdo));
-                    entityTypeCount++;
+                    entityTypes.Add(gdo);
+                    foundEntityTypes.Add(gdo.Name);
                 }
             }
-            writer.WriteNullTerminatedString("");
+            // Move brush entities to front
+            entityTypes.Sort((x, y) => (x.ClassType == ClassType.Solid ? -1 : 0));
+            bool reachedRegular = false;
+            foreach (GameDataObject gdo in entityTypes) {
+                if (!reachedRegular && gdo.ClassType != ClassType.Solid) {
+                    reachedRegular = true;
+                    writer.WriteNullTerminatedString("");
+                }
+                writer.WriteNullTerminatedString(gdo.Name);
+                foreach (DataStructures.GameData.Property p in gdo.Properties) {
+                    writer.Write((byte)p.VariableType);
+                    writer.WriteNullTerminatedString(p.Name); // Switch from brush to regular entities
+                }
+                writer.Write((byte)255); // Property end byte
 
-            // Entities
-            foreach (KeyValuePair<string, Tuple<int, GameDataObject>> entityType in entityTypes) {
-                List<MapObject> entitiesOfType = entites.FindAll(x => x.ClassName == entityType.Key);
+                // Entries
+                List<MapObject> entitiesOfType = entites.FindAll(x => x.ClassName == gdo.Name);
                 writer.Write(entitiesOfType.Count);
                 foreach (Entity e in entitiesOfType) {
-                    for (int i = 0; i < entityType.Value.Item2.Properties.Count; i++) {
-                        DataStructures.MapObjects.Property property;
-                        if (i < e.EntityData.Properties.Count && entityType.Value.Item2.Properties[i].Name == e.EntityData.Properties[i].Key) {
-                            property = e.EntityData.Properties[i];
-                        } else {
-                            property = e.EntityData.Properties.Find(x => x.Key == entityType.Value.Item2.Properties[i].Name);
-                            if (property == null) {
-                                property = new DataStructures.MapObjects.Property();
-                                property.Key = entityType.Value.Item2.Properties[i].Name;
-                                property.Value = entityType.Value.Item2.Properties[i].DefaultValue;
+                    if (e.GameData.ClassType == ClassType.Solid) {
+                        IEnumerable<MapObject> children = e.GetChildren();
+                        if (children.Count() == 0) {
+                            e.Parent.RemoveDescendant(e);
+                            // TODO: Manage properly
+                            throw new ProviderException("Brush entity without children!");
+                        }
+                        writer.Write(children.Count());
+                        foreach (MapObject mo in children) {
+                            int index = solids.FindIndex(x => x == mo);
+                            if (index != -1) {
+                                writer.Write(index);
+                            } else {
+                                throw new ProviderException("Invalid brush in entity!");
                             }
                         }
-                        switch (entityType.Value.Item2.Properties[i].VariableType) {
+                    }
+                    for (int i = 0; i < gdo.Properties.Count; i++) {
+                        DataStructures.MapObjects.Property property;
+                        if (i < e.EntityData.Properties.Count && gdo.Properties[i].Name == e.EntityData.Properties[i].Key) {
+                            property = e.EntityData.Properties[i];
+                        } else {
+                            property = e.EntityData.Properties.Find(x => x.Key == gdo.Properties[i].Name);
+                            if (property == null) {
+                                property = new DataStructures.MapObjects.Property();
+                                property.Key = gdo.Properties[i].Name;
+                                property.Value = gdo.Properties[i].DefaultValue;
+                            }
+                        }
+                        switch (gdo.Properties[i].VariableType) {
                             case VariableType.Bool:
                                 writer.Write(property.Value == "Yes");
                                 break;
@@ -300,8 +328,8 @@ namespace CBRE.Providers.Map {
                                 break;
                             case VariableType.Choices:
                                 bool found = false;
-                                for (int j = 0; j < entityType.Value.Item2.Properties[i].Options.Count; j++) {
-                                    if (property.Value == entityType.Value.Item2.Properties[i].Options[j].Key) {
+                                for (int j = 0; j < gdo.Properties[i].Options.Count; j++) {
+                                    if (property.Value == gdo.Properties[i].Options[j].Key) {
                                         writer.Write((byte)j);
                                         found = true;
                                         break;
@@ -315,6 +343,7 @@ namespace CBRE.Providers.Map {
                     }
                 }
             }
+            writer.WriteNullTerminatedString("");
 
             // Visgroup dictionary
             Stack<IEnumerator<Visgroup>> visStack = new Stack<IEnumerator<Visgroup>>();
@@ -342,8 +371,8 @@ namespace CBRE.Providers.Map {
             }
 
             // Entity visgroups
-            foreach (KeyValuePair<string, Tuple<int, GameDataObject>> entityType in entityTypes) {
-                foreach (Entity e in entites.FindAll(x => x.ClassName == entityType.Key)) {
+            foreach (GameDataObject entityType in entityTypes) {
+                foreach (Entity e in entites.FindAll(x => x.ClassName == entityType.Name)) {
                     WriteVisgroups(writer, e);
                 }
             }
