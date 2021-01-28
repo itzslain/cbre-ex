@@ -396,7 +396,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
         }
 
         private static void RenderLightOntoFace(Document doc, float[][] bitmaps, List<Light> lights, LightmapGroup group, LMFace targetFace, IEnumerable<LMFace> blockerFaces) {
-            Random rand = new Random();
+            Random rand = new Random(666);
 
             int writeX = group.writeX;
             int writeY = group.writeY;
