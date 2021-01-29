@@ -1,6 +1,7 @@
 ﻿using CBRE.DataStructures.Geometric;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -66,6 +67,11 @@ namespace CBRE.DataStructures.MapObjects {
         public Coordinate GetPropertyCoordinate(string key, Coordinate def = null) {
             var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase));
             return prop == null ? def : prop.GetCoordinate(def);
+        }
+
+        public Color GetPropertyColor(string key, Color def) {
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase));
+            return prop == null ? def : prop.GetColour(def);
         }
     }
 }

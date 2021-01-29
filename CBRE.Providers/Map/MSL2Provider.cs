@@ -5,6 +5,7 @@ using CBRE.DataStructures.Transformations;
 using CBRE.Extensions;
 using CBRE.FileSystem;
 using CBRE.Providers.Model;
+using CBRE.Providers.Texture;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -143,7 +144,8 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> modelDirs, out Image[] lightmaps) {
+            lightmaps = null;
             var map = new DataStructures.MapObjects.Map();
             map.CordonBounds = new Box(Coordinate.One * -16384, Coordinate.One * 16384);
             BinaryReader br = new BinaryReader(stream);
@@ -542,7 +544,7 @@ namespace CBRE.Providers.Map {
             return map;
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData, TextureCollection textureCollection) {
             throw new NotImplementedException("don't save to msl, ew");
         }
 

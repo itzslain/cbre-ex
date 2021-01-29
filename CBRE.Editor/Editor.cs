@@ -4,6 +4,7 @@ using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Menu;
+using CBRE.Editor.Rendering;
 using CBRE.Editor.Settings;
 using CBRE.Editor.Tools;
 using CBRE.Editor.UI;
@@ -22,6 +23,7 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
@@ -54,11 +56,28 @@ namespace CBRE.Editor {
 
         private static void LoadFileGame(string fileName, Game game) {
             try {
-                var map = MapProvider.GetMapFromFile(fileName, Directories.TextureDirs, Directories.ModelDirs);
+                Image[] lightmaps;
+                var map = MapProvider.GetMapFromFile(fileName, Directories.ModelDirs, out lightmaps);
                 if (MapProvider.warnings != "") {
                     MessageBox.Show(MapProvider.warnings, "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                DocumentManager.AddAndSwitch(new Document(fileName, map, game));
+                Document doc = new Document(fileName, map, game);
+                DocumentManager.AddAndSwitch(doc);
+                if (lightmaps != null) {
+                    lock (doc.TextureCollection.Lightmaps) {
+                        for (int i = 0; i < lightmaps.Length; i++) {
+                            doc.TextureCollection.Lightmaps[i]?.Dispose();
+                            doc.TextureCollection.Lightmaps[i] = new Bitmap(lightmaps[i]);
+                            lightmaps[i].Dispose();
+                        }
+                        doc.TextureCollection.LightmapTextureOutdated = true;
+                    }
+                    foreach (var viewport in ViewportManager.Viewports.Where(vp => vp is Viewport3D).Select(vp => vp as Viewport3D)) {
+                        viewport.Type = Viewport3D.ViewType.Lightmapped;
+                        var listener = viewport.Listeners.Find(l => l is ViewportLabelListener) as ViewportLabelListener;
+                        listener?.Rebuild();
+                    }
+                }
             } catch (ProviderException e) {
                 Error.Warning("The map file could not be opened:\n" + e.Message);
             }

@@ -1,4 +1,4 @@
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
@@ -191,7 +191,7 @@ namespace CBRE.Editor.Documents {
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
             Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
-            MapProvider.SaveMapToFile(path, Map, GameData);
+            MapProvider.SaveMapToFile(path, Map, GameData, TextureCollection);
             if (switchPath) {
                 MapFile = path;
                 MapFileName = Path.GetFileName(MapFile);

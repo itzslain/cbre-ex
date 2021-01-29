@@ -4,6 +4,7 @@ using CBRE.DataStructures.Transformations;
 using CBRE.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 
@@ -37,10 +38,13 @@ namespace CBRE.Editor.Compiling.Lightmap {
                     }
                     bool hasSprite = parseBooleanProperty(x.EntityData.GetPropertyValue("hassprite") ?? "true");
 
+                    // TODO: RGB\A color
+                    Color c = x.EntityData.GetPropertyColor("color", System.Drawing.Color.Black);
+
                     return new Light() {
                         Origin = new CoordinateF(x.Origin),
                         Range = range,
-                        Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
+                        Color = new CoordinateF(c.R, c.G, c.B),
                         Intensity = intensity,
                         HasSprite = hasSprite,
                         Direction = null,
@@ -68,10 +72,12 @@ namespace CBRE.Editor.Compiling.Lightmap {
                         outerCos = (float)Math.Cos(outerCos * (float)Math.PI / 180.0f);
                     }
 
+                    Color c = x.EntityData.GetPropertyColor("color", System.Drawing.Color.Black);
+
                     Light light = new Light() {
                         Origin = new CoordinateF(x.Origin),
                         Range = range,
-                        Color = new CoordinateF(x.EntityData.GetPropertyCoordinate("color")),
+                        Color = new CoordinateF(c.R, c.G, c.B),
                         Intensity = intensity,
                         HasSprite = hasSprite,
                         Direction = null,

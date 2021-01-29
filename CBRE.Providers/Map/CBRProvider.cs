@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
+using CBRE.Providers.Texture;
 
 namespace CBRE.Providers.Map {
     public class CBRProvider : MapProvider {
@@ -20,6 +22,12 @@ namespace CBRE.Providers.Map {
 
         private const byte IDENTIFIER_SOLID = 3;
         private const byte IDENTIFIER_ENTITY = 4;
+
+        private enum Lightmapped : byte {
+            No = 0,
+            Fully = 1,
+            Outdated = 2,
+        }
         
         private struct Property {
             public string name;
@@ -38,16 +46,27 @@ namespace CBRE.Providers.Map {
         }
 
         protected override bool IsValidForFileName(string filename) {
-            return filename.EndsWith("cbr", StringComparison.OrdinalIgnoreCase);
+            return filename.EndsWith(".cbr", StringComparison.OrdinalIgnoreCase);
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> modelDirs, out Image[] lightmaps) {
             BinaryReader reader = new BinaryReader(stream);
 
             if (reader.ReadFixedLengthString(Encoding.ASCII, 3) != "CBR") {
                 throw new ProviderException("CBR file is corrupted/invalid!");
             }
             uint revision = reader.ReadUInt32();
+
+            // Lightmaps
+            bool lightmapped = reader.ReadByte() > (byte)Lightmapped.No;
+            if (lightmapped) {
+                lightmaps = new Image[4];
+                for (int i = 0; i < 4; i++) {
+                    lightmaps[i] = Image.FromStream(new MemoryStream(reader.ReadBytes(reader.ReadInt32())));
+                }
+            } else {
+                lightmaps = null;
+            }
 
             // Texture dictionary
             int texSize = reader.ReadInt32();
@@ -78,6 +97,12 @@ namespace CBRE.Providers.Map {
                     int vertexCount = reader.ReadInt32();
                     for (int k = 0; k < vertexCount; k++) {
                         Vertex v = new Vertex(reader.ReadCoordinate(), f);
+                        if (lightmapped) {
+                            v.LMU = reader.ReadSingle();
+                            v.LMV = reader.ReadSingle();
+                            v.TextureU = (decimal)reader.ReadSingle();
+                            v.TextureV = (decimal)reader.ReadSingle();
+                        }
                         f.Vertices.Add(v);
                     }
                     f.Plane = new Plane(f.Vertices[0].Location, f.Vertices[1].Location, f.Vertices[2].Location);
@@ -156,6 +181,8 @@ namespace CBRE.Providers.Map {
                 isStillSolid = false;
             }
 
+            // CBRE ONLY
+
             // Visgroup dictionary
             Visgroup currentParentVisgroup = null;
             while (true) {
@@ -228,11 +255,29 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData, TextureCollection textureCollection) {
             BinaryWriter writer = new BinaryWriter(stream);
 
             writer.WriteFixedLengthString(Encoding.ASCII, 3, "CBR");
             writer.Write(revision);
+
+            // Lightmaps
+            bool lightmapped = textureCollection != null && textureCollection.Lightmaps[0] != null;
+            if (lightmapped) {
+                writer.Write((byte)Lightmapped.Fully); // TODO: Determine changes from last render
+                for (int i = 0; i < 4; i++) {
+                    long prevPos = writer.Seek(0, SeekOrigin.Current);
+                    writer.Write(0);
+                    writer.Flush();
+                    textureCollection.Lightmaps[i].Save(stream, ImageFormat.Png);
+                    int imageOffset = (int)(writer.Seek(0, SeekOrigin.Current) - prevPos);
+                    writer.Seek(-imageOffset, SeekOrigin.Current);
+                    writer.Write(imageOffset - sizeof(int));
+                    writer.Seek(0, SeekOrigin.End);
+                }
+            } else {
+                writer.Write((byte)Lightmapped.No);
+            }
 
             // Texture dictionary
             Dictionary<string, int> texDic = new Dictionary<string, int>();
@@ -265,6 +310,12 @@ namespace CBRE.Providers.Map {
                     writer.Write(f.Vertices.Count);
                     foreach (Vertex v in f.Vertices) {
                         writer.WriteCoordinate(v.Location);
+                        if (lightmapped) {
+                            writer.Write(v.LMU);
+                            writer.Write(v.LMV);
+                            writer.Write((float)v.TextureU);
+                            writer.Write((float)v.TextureV);
+                        }
                     }
                 }
             }
@@ -363,6 +414,8 @@ namespace CBRE.Providers.Map {
                 }
             }
             writer.WriteNullTerminatedString("");
+
+            // CBRE ONLY
 
             // Visgroup dictionary
             Stack<IEnumerator<Visgroup>> visStack = new Stack<IEnumerator<Visgroup>>();

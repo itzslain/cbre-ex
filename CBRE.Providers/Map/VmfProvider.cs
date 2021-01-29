@@ -1,6 +1,7 @@
 ﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
+using CBRE.Providers.Texture;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -481,7 +482,8 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> textureDirs, IEnumerable<string> modelDirs) {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> modelDirs, out Image[] lightmaps) {
+            lightmaps = null;
             using (var reader = new StreamReader(stream)) {
                 var parent = new GenericStructure("Root");
                 parent.Children.AddRange(GenericStructure.Parse(reader));
@@ -560,7 +562,7 @@ namespace CBRE.Providers.Map {
             }
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData) {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData, TextureCollection textureCollection) {
             var groups = new List<Group>();
             var solids = new List<Solid>();
             var ents = new List<Entity>();
