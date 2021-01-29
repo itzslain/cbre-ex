@@ -115,31 +115,29 @@ namespace CBRE.Providers {
         }
 
         public static Coordinate ReadCoordinate(this BinaryReader br) {
-            return new Coordinate(
-                br.ReadSingleAsDecimal(),
-                br.ReadSingleAsDecimal(),
-                br.ReadSingleAsDecimal()
-                );
+            decimal x = br.ReadSingleAsDecimal();
+            decimal z = br.ReadSingleAsDecimal();
+            decimal y = br.ReadSingleAsDecimal();
+            return new Coordinate(x, y, z);
         }
 
         public static CoordinateF ReadCoordinateF(this BinaryReader br) {
-            return new CoordinateF(
-                br.ReadSingle(),
-                br.ReadSingle(),
-                br.ReadSingle()
-                );
+            float x = br.ReadSingle();
+            float z = br.ReadSingle();
+            float y = br.ReadSingle();
+            return new CoordinateF(x, y, z);
         }
 
         public static void WriteCoordinate(this BinaryWriter bw, Coordinate c) {
             bw.WriteDecimalAsSingle(c.X);
-            bw.WriteDecimalAsSingle(c.Y);
             bw.WriteDecimalAsSingle(c.Z);
+            bw.WriteDecimalAsSingle(c.Y);
         }
 
         public static void WriteCoordinateF(this BinaryWriter bw, CoordinateF c) {
             bw.Write(c.X);
-            bw.Write(c.Y);
             bw.Write(c.Z);
+            bw.Write(c.Y);
         }
 
         public static Plane ReadPlane(this BinaryReader br) {
