@@ -1,6 +1,7 @@
 ﻿using CBRE.DataStructures.MapObjects;
 using CBRE.Providers.Texture;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 

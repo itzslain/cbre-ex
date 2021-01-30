@@ -9,6 +9,7 @@ using CBRE.Providers.Texture;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;

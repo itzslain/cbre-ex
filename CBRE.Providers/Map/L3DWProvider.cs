@@ -5,6 +5,7 @@ using CBRE.DataStructures.Transformations;
 using CBRE.Providers.Texture;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 
