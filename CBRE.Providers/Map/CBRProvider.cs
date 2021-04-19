@@ -418,6 +418,7 @@ namespace CBRE.Providers.Map {
             // CBRE ONLY
 
             // Visgroup dictionary
+            // TODO: Visgroup IDs to indices
             Stack<IEnumerator<Visgroup>> visStack = new Stack<IEnumerator<Visgroup>>();
             visStack.Push(map.Visgroups.GetEnumerator());
             while (visStack.Count > 0) {
