@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Reflection;
 
 namespace CBRE.DataStructures.GameData {
     public class GameData {
@@ -15,6 +18,29 @@ namespace CBRE.DataStructures.GameData {
             MapSizeHigh = 16384;
             MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
+
+            IEnumerable<string> jsonFiles = Directory.EnumerateFiles("Entities", "*.json");
+            foreach(string jsonFile in jsonFiles) {
+                string jsonContent = File.ReadAllText(jsonFile);
+                JsonGameDataObj gDataObj = JsonConvert.DeserializeObject<JsonGameDataObj>(jsonContent);
+
+                if (!Enum.TryParse(gDataObj.Type, out ClassType objectType)) continue;
+
+                var gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, objectType);
+
+                foreach(JsonGDProperty property in gDataObj.Properties) {
+                    if (!Enum.TryParse(property.Type, out VariableType varType)) continue;
+
+                    Property actualProperty = new Property(property.Name, varType) {
+                        ShortDescription = property.ShortDescription,
+                        DefaultValue = property.DefaultValue
+                    };
+
+                    gameDataObj.Properties.Add(actualProperty);
+                }
+                gameDataObj.Behaviours.Add(new Behaviour("sprite", gDataObj.Sprite));
+                Classes.Add(gameDataObj);
+            }
 
             var lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
             lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { ShortDescription = "Color", DefaultValue = "255 255 255" });
