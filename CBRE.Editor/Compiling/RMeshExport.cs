@@ -322,7 +322,7 @@ namespace CBRE.Editor.Compiling {
                 br.Write((float)cEnt.Origin.Y);
 
                 int indx = 0;
-                foreach (DataStructures.GameData.Property propt in cEnt.GameData.Properties) {
+                foreach (DataStructures.GameData.Property propt in cEnt.GameData.Properties.Where(x => x.Name != "position")) {
                     WriteCEntityProperty(propt, indx, propt.Name, ref br, cEnt);
                     indx++;
                 }
