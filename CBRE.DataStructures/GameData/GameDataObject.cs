@@ -10,8 +10,9 @@ namespace CBRE.DataStructures.GameData {
         public List<Behaviour> Behaviours { get; private set; }
         public List<Property> Properties { get; private set; }
         public List<IO> InOuts { get; private set; }
+        public bool IsCustom { get; private set; }
 
-        public GameDataObject(string name, string description, ClassType classType) {
+        public GameDataObject(string name, string description, ClassType classType, bool custom = false) {
             Name = name;
             Description = description;
             ClassType = classType;
@@ -19,6 +20,7 @@ namespace CBRE.DataStructures.GameData {
             Behaviours = new List<Behaviour>();
             Properties = new List<Property>();
             InOuts = new List<IO>();
+            IsCustom = custom;
         }
 
         public void Inherit(IEnumerable<GameDataObject> parents) {

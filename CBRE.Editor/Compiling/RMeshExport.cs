@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using CBRE.DataStructures;
 
 namespace CBRE.Editor.Compiling {
     public class RMeshExport {
@@ -40,10 +41,10 @@ namespace CBRE.Editor.Compiling {
             filename = System.IO.Path.GetFileNameWithoutExtension(filename) + ".rmesh";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
-            List<Lightmap.LMFace> faces; int lmCount;
-            List<Lightmap.Light> lights;
-            Lightmap.Lightmapper.Render(document, form, out faces, out lmCount);
-            Lightmap.Light.FindLights(map, out lights);
+            List<LMFace> faces; int lmCount;
+            List<Light> lights;
+            Lightmapper.Render(document, form, out faces, out lmCount);
+            Light.FindLights(map, out lights);
             lights.RemoveAll(l => !l.HasSprite);
 
             IEnumerable<Face> transparentFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => {
@@ -56,7 +57,7 @@ namespace CBRE.Editor.Compiling {
 
             IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name == "tooltextures/invisible_collision");
 
-            Lightmap.Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
+            Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
             List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
@@ -66,6 +67,10 @@ namespace CBRE.Editor.Compiling {
             IEnumerable<Entity> props = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
 
             IEnumerable<Entity> screens = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "screen").OfType<Entity>();
+
+            //Absolute cancer
+            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>();
+            IEnumerable<Entity> filteredEntities = customEntities.Where(x => x.GameData.IsCustom == true);
 
             FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
@@ -234,7 +239,7 @@ namespace CBRE.Editor.Compiling {
                 br.Write((Int32)0);
             }
 
-            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count()));
+            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count() + filteredEntities.Count()));
 
             foreach (Light light in lights) {
                 br.WriteB3DString("light");
@@ -308,11 +313,58 @@ namespace CBRE.Editor.Compiling {
                 br.WriteB3DString(screen.EntityData.GetPropertyValue("imgpath"));
             }
 
+            foreach(Entity cEnt in filteredEntities) {
+                br.WriteB3DString(cEnt.ClassName);
+
+                //Write position
+                br.Write((float)cEnt.Origin.X);
+                br.Write((float)cEnt.Origin.Z);
+                br.Write((float)cEnt.Origin.Y);
+
+                int indx = 0;
+                foreach (DataStructures.GameData.Property propt in cEnt.GameData.Properties) {
+                    WriteCEntityProperty(propt, indx, propt.Name, ref br, cEnt);
+                    indx++;
+                }
+            }
+
             br.Dispose();
             stream.Dispose();
 
             form.ProgressLog.Invoke((MethodInvoker)(() => form.ProgressLog.AppendText("\nDone!")));
             form.ProgressBar.Invoke((MethodInvoker)(() => form.ProgressBar.Value = 10000));
+        }
+
+        //If juan sees this he would probably crush my neck
+        private static void WriteCEntityProperty(DataStructures.GameData.Property property, int index, string name, ref BinaryWriter br, Entity entity) {
+            switch(property.VariableType) {
+                case DataStructures.GameData.VariableType.Bool:
+                    br.Write((int)int.Parse(entity.EntityData.Properties[index].Value));
+                    break;
+                case DataStructures.GameData.VariableType.Color255:
+                    Coordinate colorCoord = entity.EntityData.GetPropertyCoordinate(name);
+                    string color = colorCoord.X + " " + colorCoord.Y + " " + colorCoord.Z;
+                    br.Write((Int32)color.Length);
+                    for (int i = 0; i < color.Length; i++) {
+                        br.Write((byte)color[i]);
+                    }
+                    break;
+                case DataStructures.GameData.VariableType.Float:
+                    br.Write((float)float.Parse(entity.EntityData.Properties[index].Value));
+                    break;
+                case DataStructures.GameData.VariableType.Integer:
+                    br.Write((int)int.Parse(entity.EntityData.Properties[index].Value));
+                    break;
+                case DataStructures.GameData.VariableType.String:
+                    br.WriteB3DString(entity.EntityData.Properties[index].Value);
+                    break;
+                case DataStructures.GameData.VariableType.Vector:
+                    Coordinate coord = entity.EntityData.GetPropertyCoordinate(name);
+                    br.Write((float)coord.X);
+                    br.Write((float)coord.Y);
+                    br.Write((float)coord.Z);
+                    break;
+            }
         }
     }
 }

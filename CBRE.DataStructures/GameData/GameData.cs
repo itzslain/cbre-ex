@@ -24,9 +24,7 @@ namespace CBRE.DataStructures.GameData {
                 string jsonContent = File.ReadAllText(jsonFile);
                 JsonGameDataObj gDataObj = JsonConvert.DeserializeObject<JsonGameDataObj>(jsonContent);
 
-                if (!Enum.TryParse(gDataObj.Type, out ClassType objectType)) continue;
-
-                var gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, objectType);
+                var gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, ClassType.Point, true);
 
                 foreach(JsonGDProperty property in gDataObj.Properties) {
                     if (!Enum.TryParse(property.Type, out VariableType varType)) continue;
