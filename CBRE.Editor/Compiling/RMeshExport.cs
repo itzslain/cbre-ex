@@ -338,6 +338,7 @@ namespace CBRE.Editor.Compiling {
         //If juan sees this he would probably crush my neck
         private static void WriteCEntityProperty(DataStructures.GameData.Property property, int index, string name, ref BinaryWriter br, Entity entity) {
             switch(property.VariableType) {
+                case DataStructures.GameData.VariableType.Integer:
                 case DataStructures.GameData.VariableType.Bool:
                     br.Write((int)int.Parse(entity.EntityData.Properties[index].Value));
                     break;
@@ -351,9 +352,6 @@ namespace CBRE.Editor.Compiling {
                     break;
                 case DataStructures.GameData.VariableType.Float:
                     br.Write((float)float.Parse(entity.EntityData.Properties[index].Value));
-                    break;
-                case DataStructures.GameData.VariableType.Integer:
-                    br.Write((int)int.Parse(entity.EntityData.Properties[index].Value));
                     break;
                 case DataStructures.GameData.VariableType.String:
                     br.WriteB3DString(entity.EntityData.Properties[index].Value);

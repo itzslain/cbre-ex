@@ -82,7 +82,7 @@ namespace CBRE.Providers.Map {
         }
 
         private static void WriteEntityData(GenericStructure obj, EntityData data) {
-            foreach (var property in data.Properties.OrderBy(x => x.Key)) {
+            foreach (var property in data.Properties/*.OrderBy(x => x.Key)*/) {
                 obj[property.Key] = property.Value;
             }
             obj["spawnflags"] = data.Flags.ToString();
