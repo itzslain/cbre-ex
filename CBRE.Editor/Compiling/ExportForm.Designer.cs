@@ -40,15 +40,16 @@
             this.ambientColorBox = new System.Windows.Forms.Panel();
             this.ProgressLog = new System.Windows.Forms.RichTextBox();
             this.export = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(16, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(129, 16);
+            this.label1.Size = new System.Drawing.Size(152, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Lightmap settings";
             // 
@@ -64,7 +65,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 71);
+            this.label3.Location = new System.Drawing.Point(25, 71);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 13);
             this.label3.TabIndex = 2;
@@ -73,7 +74,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 95);
+            this.label4.Location = new System.Drawing.Point(59, 95);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 3;
@@ -81,7 +82,7 @@
             // 
             // textureDims
             // 
-            this.textureDims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.textureDims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textureDims.Location = new System.Drawing.Point(121, 45);
             this.textureDims.Name = "textureDims";
@@ -91,7 +92,7 @@
             // 
             // downscaleFactor
             // 
-            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.downscaleFactor.Location = new System.Drawing.Point(121, 68);
             this.downscaleFactor.Name = "downscaleFactor";
@@ -101,7 +102,7 @@
             // 
             // blurRadius
             // 
-            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.blurRadius.Location = new System.Drawing.Point(121, 92);
             this.blurRadius.Name = "blurRadius";
@@ -112,7 +113,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(17, 134);
+            this.label5.Location = new System.Drawing.Point(44, 121);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(71, 13);
             this.label5.TabIndex = 7;
@@ -120,7 +121,8 @@
             // 
             // ambientRed
             // 
-            this.ambientRed.Location = new System.Drawing.Point(121, 131);
+            this.ambientRed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.ambientRed.Location = new System.Drawing.Point(121, 118);
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
@@ -129,7 +131,8 @@
             // 
             // ambientGreen
             // 
-            this.ambientGreen.Location = new System.Drawing.Point(168, 131);
+            this.ambientGreen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ambientGreen.Location = new System.Drawing.Point(168, 118);
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
@@ -138,7 +141,8 @@
             // 
             // ambientBlue
             // 
-            this.ambientBlue.Location = new System.Drawing.Point(215, 131);
+            this.ambientBlue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.ambientBlue.Location = new System.Drawing.Point(215, 118);
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
@@ -170,7 +174,7 @@
             // 
             // ProgressBar
             // 
-            this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressBar.Enabled = false;
             this.ProgressBar.Location = new System.Drawing.Point(20, 382);
@@ -182,7 +186,7 @@
             // ambientColorBox
             // 
             this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.ambientColorBox.Location = new System.Drawing.Point(263, 131);
+            this.ambientColorBox.Location = new System.Drawing.Point(282, 118);
             this.ambientColorBox.Name = "ambientColorBox";
             this.ambientColorBox.Size = new System.Drawing.Size(42, 20);
             this.ambientColorBox.TabIndex = 16;
@@ -190,14 +194,15 @@
             // 
             // ProgressLog
             // 
-            this.ProgressLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.ProgressLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.ProgressLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ProgressLog.HideSelection = false;
-            this.ProgressLog.Location = new System.Drawing.Point(20, 157);
+            this.ProgressLog.Location = new System.Drawing.Point(20, 144);
             this.ProgressLog.Name = "ProgressLog";
             this.ProgressLog.ReadOnly = true;
-            this.ProgressLog.Size = new System.Drawing.Size(654, 219);
+            this.ProgressLog.Size = new System.Drawing.Size(654, 232);
             this.ProgressLog.TabIndex = 17;
             this.ProgressLog.Text = "";
             // 
@@ -212,11 +217,22 @@
             this.export.UseVisualStyleBackColor = true;
             this.export.Click += new System.EventHandler(this.export_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(262, 121);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(14, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "=";
+            // 
             // ExportForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(686, 442);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.export);
             this.Controls.Add(this.ProgressLog);
             this.Controls.Add(this.ambientColorBox);
@@ -266,5 +282,6 @@
         private System.Windows.Forms.Panel ambientColorBox;
         public System.Windows.Forms.RichTextBox ProgressLog;
         private System.Windows.Forms.Button export;
+        private System.Windows.Forms.Label label6;
     }
 }
