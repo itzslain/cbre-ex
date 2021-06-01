@@ -23,7 +23,6 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -43,20 +42,10 @@
             this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(16, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(152, 20);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Lightmap settings";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 48);
+            this.label2.Location = new System.Drawing.Point(9, 15);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(98, 13);
             this.label2.TabIndex = 1;
@@ -65,7 +54,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 71);
+            this.label3.Location = new System.Drawing.Point(17, 41);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 13);
             this.label3.TabIndex = 2;
@@ -74,7 +63,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(59, 95);
+            this.label4.Location = new System.Drawing.Point(51, 67);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 3;
@@ -84,9 +73,9 @@
             // 
             this.textureDims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textureDims.Location = new System.Drawing.Point(121, 45);
+            this.textureDims.Location = new System.Drawing.Point(113, 12);
             this.textureDims.Name = "textureDims";
-            this.textureDims.Size = new System.Drawing.Size(553, 20);
+            this.textureDims.Size = new System.Drawing.Size(561, 20);
             this.textureDims.TabIndex = 4;
             this.textureDims.LostFocus += new System.EventHandler(this.textureDims_LostFocus);
             // 
@@ -94,9 +83,9 @@
             // 
             this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.downscaleFactor.Location = new System.Drawing.Point(121, 68);
+            this.downscaleFactor.Location = new System.Drawing.Point(113, 38);
             this.downscaleFactor.Name = "downscaleFactor";
-            this.downscaleFactor.Size = new System.Drawing.Size(553, 20);
+            this.downscaleFactor.Size = new System.Drawing.Size(561, 20);
             this.downscaleFactor.TabIndex = 5;
             this.downscaleFactor.LostFocus += new System.EventHandler(this.downscaleFactor_LostFocus);
             // 
@@ -104,16 +93,16 @@
             // 
             this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.blurRadius.Location = new System.Drawing.Point(121, 92);
+            this.blurRadius.Location = new System.Drawing.Point(113, 64);
             this.blurRadius.Name = "blurRadius";
-            this.blurRadius.Size = new System.Drawing.Size(553, 20);
+            this.blurRadius.Size = new System.Drawing.Size(561, 20);
             this.blurRadius.TabIndex = 6;
             this.blurRadius.LostFocus += new System.EventHandler(this.blurRadius_LostFocus);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(44, 121);
+            this.label5.Location = new System.Drawing.Point(36, 93);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(71, 13);
             this.label5.TabIndex = 7;
@@ -122,7 +111,7 @@
             // ambientRed
             // 
             this.ambientRed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.ambientRed.Location = new System.Drawing.Point(121, 118);
+            this.ambientRed.Location = new System.Drawing.Point(113, 90);
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
@@ -132,7 +121,7 @@
             // ambientGreen
             // 
             this.ambientGreen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ambientGreen.Location = new System.Drawing.Point(168, 118);
+            this.ambientGreen.Location = new System.Drawing.Point(160, 90);
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
@@ -142,7 +131,7 @@
             // ambientBlue
             // 
             this.ambientBlue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.ambientBlue.Location = new System.Drawing.Point(215, 118);
+            this.ambientBlue.Location = new System.Drawing.Point(207, 90);
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
@@ -152,7 +141,7 @@
             // render
             // 
             this.render.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.render.Location = new System.Drawing.Point(20, 407);
+            this.render.Location = new System.Drawing.Point(12, 360);
             this.render.Name = "render";
             this.render.Size = new System.Drawing.Size(75, 23);
             this.render.TabIndex = 12;
@@ -164,7 +153,7 @@
             // 
             this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancel.Enabled = false;
-            this.cancel.Location = new System.Drawing.Point(599, 407);
+            this.cancel.Location = new System.Drawing.Point(599, 360);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 13;
@@ -177,16 +166,16 @@
             this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressBar.Enabled = false;
-            this.ProgressBar.Location = new System.Drawing.Point(20, 382);
+            this.ProgressBar.Location = new System.Drawing.Point(12, 331);
             this.ProgressBar.Maximum = 10000;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(654, 23);
+            this.ProgressBar.Size = new System.Drawing.Size(662, 23);
             this.ProgressBar.TabIndex = 14;
             // 
             // ambientColorBox
             // 
             this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.ambientColorBox.Location = new System.Drawing.Point(282, 118);
+            this.ambientColorBox.Location = new System.Drawing.Point(274, 90);
             this.ambientColorBox.Name = "ambientColorBox";
             this.ambientColorBox.Size = new System.Drawing.Size(42, 20);
             this.ambientColorBox.TabIndex = 16;
@@ -199,17 +188,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ProgressLog.HideSelection = false;
-            this.ProgressLog.Location = new System.Drawing.Point(20, 144);
+            this.ProgressLog.Location = new System.Drawing.Point(12, 116);
             this.ProgressLog.Name = "ProgressLog";
             this.ProgressLog.ReadOnly = true;
-            this.ProgressLog.Size = new System.Drawing.Size(654, 232);
+            this.ProgressLog.Size = new System.Drawing.Size(662, 209);
             this.ProgressLog.TabIndex = 17;
             this.ProgressLog.Text = "";
             // 
             // export
             // 
             this.export.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.export.Location = new System.Drawing.Point(101, 407);
+            this.export.Location = new System.Drawing.Point(93, 360);
             this.export.Name = "export";
             this.export.Size = new System.Drawing.Size(75, 23);
             this.export.TabIndex = 18;
@@ -221,7 +210,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(262, 121);
+            this.label6.Location = new System.Drawing.Point(254, 93);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(14, 13);
             this.label6.TabIndex = 19;
@@ -231,7 +220,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(686, 442);
+            this.ClientSize = new System.Drawing.Size(686, 395);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.export);
             this.Controls.Add(this.ProgressLog);
@@ -249,7 +238,6 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.MaximumSize = new System.Drawing.Size(600000, 600000);
             this.MinimumSize = new System.Drawing.Size(420, 270);
             this.Name = "ExportForm";
@@ -264,8 +252,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;

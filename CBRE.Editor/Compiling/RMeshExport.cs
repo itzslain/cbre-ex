@@ -1,17 +1,14 @@
-﻿using CBRE.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Compiling.Lightmap;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
-using CBRE.DataStructures;
 
 namespace CBRE.Editor.Compiling {
     public class RMeshExport {
@@ -68,9 +65,7 @@ namespace CBRE.Editor.Compiling {
 
             IEnumerable<Entity> screens = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "screen").OfType<Entity>();
 
-            //Absolute cancer
-            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>();
-            IEnumerable<Entity> filteredEntities = customEntities.Where(x => x.GameData.IsCustom == true);
+            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>().Where(x => x.GameData.IsCustom == true);
 
             FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
@@ -106,7 +101,7 @@ namespace CBRE.Editor.Compiling {
                 texCount += transparentFaces.Any(x => x.Texture.Name == textures[i].Item1) ? 1 : 0;
             }
 
-            br.Write((Int32)texCount);
+            br.Write(texCount);
 
             for (int i = 0; i < textures.Count; i++) {
                 string texName = Directories.GetTextureExtension(textures[i].Item1);
@@ -239,7 +234,8 @@ namespace CBRE.Editor.Compiling {
                 br.Write((Int32)0);
             }
 
-            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count() + filteredEntities.Count()));
+            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count()
+                + customEntities.Count()));
 
             foreach (Light light in lights) {
                 br.WriteB3DString("light");
@@ -274,7 +270,7 @@ namespace CBRE.Editor.Compiling {
                 br.Write((float)soundEmitter.Origin.Z);
                 br.Write((float)soundEmitter.Origin.Y);
 
-                br.Write((Int32)int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
+                br.Write(int.Parse(soundEmitter.EntityData.GetPropertyValue("sound")));
 
                 br.Write(float.Parse(soundEmitter.EntityData.GetPropertyValue("range")));
             }
@@ -284,7 +280,7 @@ namespace CBRE.Editor.Compiling {
 
                 string modelName = prop.EntityData.GetPropertyValue("file") ?? "";
                 if (!modelName.Contains('.')) {
-                    modelName = System.IO.Path.GetFileName(Directories.GetModelPath(modelName)) ?? (modelName+".x");
+                    modelName = System.IO.Path.GetFileName(Directories.GetModelPath(modelName)) ?? (modelName + ".x");
                 }
                 br.WriteB3DString(modelName);
 
@@ -313,7 +309,7 @@ namespace CBRE.Editor.Compiling {
                 br.WriteB3DString(screen.EntityData.GetPropertyValue("imgpath"));
             }
 
-            foreach(Entity cEnt in filteredEntities) {
+            foreach (Entity cEnt in customEntities) {
                 br.WriteB3DString(cEnt.ClassName);
 
                 //Write position
@@ -323,7 +319,7 @@ namespace CBRE.Editor.Compiling {
 
                 int indx = 0;
                 foreach (DataStructures.GameData.Property propt in cEnt.GameData.Properties.Where(x => x.Name != "position")) {
-                    WriteCEntityProperty(propt, indx, propt.Name, ref br, cEnt);
+                    WriteCEntityProperty(propt, indx, ref br, cEnt);
                     indx++;
                 }
             }
@@ -336,28 +332,32 @@ namespace CBRE.Editor.Compiling {
         }
 
         //If juan sees this he would probably crush my neck
-        private static void WriteCEntityProperty(DataStructures.GameData.Property property, int index, string name, ref BinaryWriter br, Entity entity) {
-            switch(property.VariableType) {
+        private static void WriteCEntityProperty(DataStructures.GameData.Property property, int index, ref BinaryWriter br, Entity entity) {
+            switch (property.VariableType) {
                 case DataStructures.GameData.VariableType.Integer:
                 case DataStructures.GameData.VariableType.Bool:
-                    br.Write((int)int.Parse(entity.EntityData.Properties[index].Value));
+                    br.Write(int.Parse(entity.EntityData.Properties[index].Value));
                     break;
+
                 case DataStructures.GameData.VariableType.Color255:
-                    Coordinate colorCoord = entity.EntityData.GetPropertyCoordinate(name);
+                    Coordinate colorCoord = entity.EntityData.GetPropertyCoordinate(property.Name);
                     string color = colorCoord.X + " " + colorCoord.Y + " " + colorCoord.Z;
-                    br.Write((Int32)color.Length);
+                    br.Write(color.Length);
                     for (int i = 0; i < color.Length; i++) {
                         br.Write((byte)color[i]);
                     }
                     break;
+
                 case DataStructures.GameData.VariableType.Float:
-                    br.Write((float)float.Parse(entity.EntityData.Properties[index].Value));
+                    br.Write(float.Parse(entity.EntityData.Properties[index].Value));
                     break;
+
                 case DataStructures.GameData.VariableType.String:
                     br.WriteB3DString(entity.EntityData.Properties[index].Value);
                     break;
+
                 case DataStructures.GameData.VariableType.Vector:
-                    Coordinate coord = entity.EntityData.GetPropertyCoordinate(name);
+                    Coordinate coord = entity.EntityData.GetPropertyCoordinate(property.Name);
                     br.Write((float)coord.X);
                     br.Write((float)coord.Y);
                     br.Write((float)coord.Z);
