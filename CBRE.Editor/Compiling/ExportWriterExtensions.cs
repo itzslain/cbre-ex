@@ -16,5 +16,12 @@ namespace CBRE.Editor.Compiling {
                 writer.Write((byte)str[i]);
             }
         }
+
+        public static void WriteNullTerminatedString(this BinaryWriter writer, string str) {
+            for (int i = 0; i < str.Length; i++) {
+                writer.Write((byte)str[i]);
+            }
+            writer.Write((byte)0);
+        }
     }
 }
