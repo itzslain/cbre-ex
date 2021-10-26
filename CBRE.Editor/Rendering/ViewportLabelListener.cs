@@ -1,12 +1,12 @@
-﻿using CBRE.Common.Mediator;
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
 using GL = OpenTK.Graphics.OpenGL.GL;
 using View = CBRE.Settings.View;

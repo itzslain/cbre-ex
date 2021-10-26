@@ -1,11 +1,9 @@
-﻿using Assimp;
-using CBRE.Packages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
+using Assimp;
+using CBRE.Packages;
 
 namespace CBRE.SMFConverter {
     class Program {

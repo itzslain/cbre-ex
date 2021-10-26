@@ -1,6 +1,6 @@
-﻿using CBRE.DataStructures.Geometric;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.Transformations {
     [Serializable]

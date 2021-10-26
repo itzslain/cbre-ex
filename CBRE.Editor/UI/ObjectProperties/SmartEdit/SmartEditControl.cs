@@ -1,12 +1,10 @@
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
 
-namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
-{
-    internal abstract class SmartEditControl : FlowLayoutPanel
-    {
+namespace CBRE.Editor.UI.ObjectProperties.SmartEdit {
+    internal abstract class SmartEditControl : FlowLayoutPanel {
         public Document Document { get; set; }
         public List<EntityData> EditingEntityData { get; set; }
 
@@ -20,37 +18,31 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
 
         public event ValueChangedEventHandler ValueChanged;
 
-        protected virtual void OnValueChanged()
-        {
+        protected virtual void OnValueChanged() {
             if (_setting) return;
             PropertyValue = GetValue();
-            if (ValueChanged != null)
-            {
+            if (ValueChanged != null) {
                 ValueChanged(this, PropertyName, PropertyValue);
             }
         }
 
         public event ValueChangedEventHandler NameChanged;
 
-        protected virtual void OnNameChanged()
-        {
+        protected virtual void OnNameChanged() {
             if (_setting) return;
             PropertyName = GetName();
-            if (NameChanged != null)
-            {
+            if (NameChanged != null) {
                 NameChanged(this, OriginalName, PropertyName);
             }
         }
 
-        protected SmartEditControl()
-        {
+        protected SmartEditControl() {
             Dock = DockStyle.Fill;
         }
 
         private bool _setting;
 
-        public void SetProperty(string originalName, string newName, string currentValue, DataStructures.GameData.Property property)
-        {
+        public void SetProperty(string originalName, string newName, string currentValue, DataStructures.GameData.Property property) {
             _setting = true;
             OriginalName = originalName;
             PropertyName = newName;

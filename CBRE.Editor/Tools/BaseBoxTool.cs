@@ -1,22 +1,19 @@
-﻿using CBRE.Common.Mediator;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.Graphics.Helpers;
 using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using TextPrinter = OpenTK.Graphics.TextPrinter;
 using TextQuality = OpenTK.Graphics.TextQuality;
 #pragma warning disable 0612
-namespace CBRE.Editor.Tools
-{
-    public abstract class BaseBoxTool : BaseTool
-    {
+namespace CBRE.Editor.Tools {
+    public abstract class BaseBoxTool : BaseTool {
         // Enum/Class Declarations
-        public enum BoxAction
-        {
+        public enum BoxAction {
             ReadyToDraw,
             DownToDraw,
             Drawing,
@@ -26,17 +23,14 @@ namespace CBRE.Editor.Tools
             Resizing
         }
 
-        public enum ResizeHandle
-        {
+        public enum ResizeHandle {
             TopLeft, Top, TopRight,
             Left, Center, Right,
             BottomLeft, Bottom, BottomRight
         }
 
-        public class BoxState
-        {
-            public BoxState()
-            {
+        public class BoxState {
+            public BoxState() {
                 ActiveViewport = null;
                 Action = BoxAction.ReadyToDraw;
                 Handle = ResizeHandle.Center;
@@ -48,8 +42,7 @@ namespace CBRE.Editor.Tools
                 ClickStart = new Point(0, 0);
             }
 
-            public bool IsValidAndApplicable(ViewportBase vp)
-            {
+            public bool IsValidAndApplicable(ViewportBase vp) {
                 return (Action != BoxAction.DownToDraw
                         && Action != BoxAction.Drawing
                         && Action != BoxAction.DownToResize
@@ -57,14 +50,12 @@ namespace CBRE.Editor.Tools
                         || ActiveViewport == vp;
             }
 
-            public void FixBoxBounds()
-            {
+            public void FixBoxBounds() {
                 if (Action != BoxAction.Drawing && Action != BoxAction.Resizing) return;
                 if (!(ActiveViewport is Viewport2D)) return;
                 var vp = (Viewport2D)ActiveViewport;
 
-                if (BoxStart.X > BoxEnd.X)
-                {
+                if (BoxStart.X > BoxEnd.X) {
                     var temp = BoxStart.X;
                     BoxStart.X = BoxEnd.X;
                     BoxEnd.X = temp;
@@ -72,8 +63,7 @@ namespace CBRE.Editor.Tools
                     if (flat.X == 1) SwapHandle("Left", "Right");
                     if (flat.Y == 1) SwapHandle("Top", "Bottom");
                 }
-                if (BoxStart.Y > BoxEnd.Y)
-                {
+                if (BoxStart.Y > BoxEnd.Y) {
                     var temp = BoxStart.Y;
                     BoxStart.Y = BoxEnd.Y;
                     BoxEnd.Y = temp;
@@ -81,8 +71,7 @@ namespace CBRE.Editor.Tools
                     if (flat.X == 1) SwapHandle("Left", "Right");
                     if (flat.Y == 1) SwapHandle("Top", "Bottom");
                 }
-                if (BoxStart.Z > BoxEnd.Z)
-                {
+                if (BoxStart.Z > BoxEnd.Z) {
                     var temp = BoxStart.Z;
                     BoxStart.Z = BoxEnd.Z;
                     BoxEnd.Z = temp;
@@ -92,15 +81,11 @@ namespace CBRE.Editor.Tools
                 }
             }
 
-            public void SwapHandle(string one, string two)
-            {
+            public void SwapHandle(string one, string two) {
                 var str = Handle.ToString();
-                if (str.Contains(one))
-                {
+                if (str.Contains(one)) {
                     Handle = (ResizeHandle)Enum.Parse(typeof(ResizeHandle), str.Replace(one, two));
-                }
-                else if (str.Contains(two))
-                {
+                } else if (str.Contains(two)) {
                     Handle = (ResizeHandle)Enum.Parse(typeof(ResizeHandle), str.Replace(two, one));
                 }
             }
@@ -117,20 +102,17 @@ namespace CBRE.Editor.Tools
         }
 
         // Static Methods
-        protected static Tuple<Coordinate, Coordinate> GetProperBoxCoordinates(Coordinate start, Coordinate end)
-        {
+        protected static Tuple<Coordinate, Coordinate> GetProperBoxCoordinates(Coordinate start, Coordinate end) {
             var newStart = new Coordinate(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y), Math.Min(start.Z, end.Z));
             var newEnd = new Coordinate(Math.Max(start.X, end.X), Math.Max(start.Y, end.Y), Math.Max(start.Z, end.Z));
             return Tuple.Create(newStart, newEnd);
         }
 
-        private static bool HandleHitTestPoint(decimal hitX, decimal hitY, decimal testX, decimal testY, decimal hitbox)
-        {
+        private static bool HandleHitTestPoint(decimal hitX, decimal hitY, decimal testX, decimal testY, decimal hitbox) {
             return (hitX >= testX - hitbox && hitX <= testX + hitbox && hitY >= testY - hitbox && hitY <= testY + hitbox);
         }
 
-        private static bool HandleHitTestLine(decimal hitX, decimal hitY, decimal test1X, decimal test1Y, decimal test2X, decimal test2Y, decimal hitbox)
-        {
+        private static bool HandleHitTestLine(decimal hitX, decimal hitY, decimal test1X, decimal test1Y, decimal test2X, decimal test2Y, decimal hitbox) {
             if (test1X != test2X && test1Y != test2Y) return false; // Only works on straight lines
             var sx = Math.Min(test1X, test2X);
             var sy = Math.Min(test1Y, test2Y);
@@ -142,8 +124,7 @@ namespace CBRE.Editor.Tools
                        : hitY >= sy && hitY <= ey && hitX >= sx - hitbox && hitX <= sx + hitbox;
         }
 
-        protected static ResizeHandle? GetHandle(Coordinate current, Coordinate boxStart, Coordinate boxEnd, decimal hitbox)
-        {
+        protected static ResizeHandle? GetHandle(Coordinate current, Coordinate boxStart, Coordinate boxEnd, decimal hitbox) {
             var start = new Coordinate(Math.Min(boxStart.X, boxEnd.X), Math.Min(boxStart.Y, boxEnd.Y), 0);
             var end = new Coordinate(Math.Max(boxStart.X, boxEnd.X), Math.Max(boxStart.Y, boxEnd.Y), 0);
             if (HandleHitTestPoint(current.X, current.Y, start.X, start.Y, hitbox)) return ResizeHandle.BottomLeft;
@@ -168,8 +149,7 @@ namespace CBRE.Editor.Tools
         protected abstract Color FillColour { get; }
         internal BoxState State { get; set; }
 
-        protected BaseBoxTool()
-        {
+        protected BaseBoxTool() {
             Usage = ToolUsage.Both;
             State = new BoxState();
 
@@ -177,8 +157,7 @@ namespace CBRE.Editor.Tools
             _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
         }
 
-        protected virtual void OnBoxChanged()
-        {
+        protected virtual void OnBoxChanged() {
             State.FixBoxBounds();
             Mediator.Publish(EditorMediator.SelectionBoxChanged,
                              State.Action == BoxAction.ReadyToDraw
@@ -187,15 +166,13 @@ namespace CBRE.Editor.Tools
         }
 
         // Mouse Down
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e) {
             if (viewport is Viewport3D) MouseDown3D((Viewport3D)viewport, e);
             if (e.Button != MouseButtons.Left) return;
             if (!(viewport is Viewport2D)) return;
             State.ClickStart = new Point(e.X, e.Y);
             var vp = (Viewport2D)viewport;
-            switch (State.Action)
-            {
+            switch (State.Action) {
                 case BoxAction.ReadyToDraw:
                 case BoxAction.Drawn:
                     LeftMouseDownToDraw(vp, e);
@@ -206,13 +183,11 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        protected virtual void MouseDown3D(Viewport3D viewport, ViewportEvent e)
-        {
+        protected virtual void MouseDown3D(Viewport3D viewport, ViewportEvent e) {
             // Virtual
         }
 
-        protected virtual void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e) {
             State.ActiveViewport = viewport;
             State.Action = BoxAction.DownToDraw;
             State.BoxStart = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
@@ -221,8 +196,7 @@ namespace CBRE.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseDownToResize(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void LeftMouseDownToResize(Viewport2D viewport, ViewportEvent e) {
             State.ActiveViewport = viewport;
             State.Action = BoxAction.DownToResize;
             State.MoveStart = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
@@ -230,26 +204,22 @@ namespace CBRE.Editor.Tools
             State.PreTransformBoxEnd = State.BoxEnd;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
         // Mouse Up
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e) {
             if (viewport is Viewport3D) MouseUp3D((Viewport3D)viewport, e);
             Editor.Instance.CaptureAltPresses = false;
             if (e.Button != MouseButtons.Left) return;
             if (!(viewport is Viewport2D)) return;
             var vp = (Viewport2D)viewport;
-            switch (State.Action)
-            {
+            switch (State.Action) {
                 case BoxAction.Drawing:
                     LeftMouseUpDrawing(vp, e);
                     break;
@@ -265,13 +235,11 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        protected virtual void MouseUp3D(Viewport3D viewport, ViewportEvent e)
-        {
+        protected virtual void MouseUp3D(Viewport3D viewport, ViewportEvent e) {
             // Virtual
         }
 
-        protected virtual void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e) {
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
             State.ActiveViewport = null;
@@ -281,8 +249,7 @@ namespace CBRE.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e) {
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
             State.ActiveViewport = null;
@@ -292,8 +259,7 @@ namespace CBRE.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseClick(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void LeftMouseClick(Viewport2D viewport, ViewportEvent e) {
             State.ActiveViewport = null;
             State.Action = BoxAction.ReadyToDraw;
             State.BoxStart = null;
@@ -301,21 +267,18 @@ namespace CBRE.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseClickOnResizeHandle(Viewport2D vp, ViewportEvent e)
-        {
+        protected virtual void LeftMouseClickOnResizeHandle(Viewport2D vp, ViewportEvent e) {
             State.Action = BoxAction.ReadyToResize;
         }
 
         // Mouse Move
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e) {
             if (viewport is Viewport3D) MouseMove3D((Viewport3D)viewport, e);
             if (!(viewport is Viewport2D)) return;
             if (!State.IsValidAndApplicable(viewport)) return;
             if (Math.Abs(e.X - State.ClickStart.X) <= 2 && Math.Abs(e.Y - State.ClickStart.Y) <= 2) return;
             var vp = (Viewport2D)viewport;
-            switch (State.Action)
-            {
+            switch (State.Action) {
                 case BoxAction.Drawing:
                 case BoxAction.DownToDraw:
                     Editor.Instance.CaptureAltPresses = true;
@@ -333,13 +296,11 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        protected virtual void MouseMove3D(Viewport3D viewport, ViewportEvent e)
-        {
+        protected virtual void MouseMove3D(Viewport3D viewport, ViewportEvent e) {
             // Virtual
         }
 
-        protected virtual void MouseDraggingToDraw(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void MouseDraggingToDraw(Viewport2D viewport, ViewportEvent e) {
             State.Action = BoxAction.Drawing;
             var coords = GetResizedBoxCoordinates(viewport, e);
             State.BoxStart = coords.Item1;
@@ -347,8 +308,7 @@ namespace CBRE.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void MouseDraggingToResize(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void MouseDraggingToResize(Viewport2D viewport, ViewportEvent e) {
             State.Action = BoxAction.Resizing;
             var coords = GetResizedBoxCoordinates(viewport, e);
             State.BoxStart = coords.Item1;
@@ -356,10 +316,8 @@ namespace CBRE.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual Cursor CursorForHandle(ResizeHandle handle)
-        {
-            switch (handle)
-            {
+        protected virtual Cursor CursorForHandle(ResizeHandle handle) {
+            switch (handle) {
                 case ResizeHandle.TopLeft:
                 case ResizeHandle.BottomRight:
                     return Cursors.SizeNWSE;
@@ -379,34 +337,28 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        protected virtual void MouseHoverWhenDrawn(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual void MouseHoverWhenDrawn(Viewport2D viewport, ViewportEvent e) {
             var now = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
             var handle = GetHandle(now, start, end, HandleWidth / viewport.Zoom);
-            if (handle.HasValue)
-            {
+            if (handle.HasValue) {
                 viewport.Cursor = CursorForHandle(handle.Value);
                 State.Handle = handle.Value;
                 State.Action = BoxAction.ReadyToResize;
                 State.ActiveViewport = viewport;
-            }
-            else
-            {
+            } else {
                 viewport.Cursor = Cursors.Default;
                 State.Action = BoxAction.Drawn;
                 State.ActiveViewport = null;
             }
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e) {
             // Nope.
         }
 
-        protected virtual Coordinate GetResizeOrigin(Viewport2D viewport)
-        {
+        protected virtual Coordinate GetResizeOrigin(Viewport2D viewport) {
             if (State.Action != BoxAction.Resizing || State.Handle != ResizeHandle.Center) return null;
             var st = viewport.Flatten(State.PreTransformBoxStart);
             var ed = viewport.Flatten(State.PreTransformBoxEnd);
@@ -414,8 +366,7 @@ namespace CBRE.Editor.Tools
             return points.OrderBy(x => (State.MoveStart - x).LengthSquared()).First();
         }
 
-        protected virtual Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e)
-        {
+        protected virtual Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e) {
             var origin = GetResizeOrigin(viewport);
             if (origin == null) return null;
             var before = State.MoveStart;
@@ -423,8 +374,7 @@ namespace CBRE.Editor.Tools
             return SnapIfNeeded(origin + after - before) - origin;
         }
 
-        protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, ViewportEvent e)
-        {
+        protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, ViewportEvent e) {
             if (State.Action != BoxAction.Resizing && State.Action != BoxAction.Drawing) return Tuple.Create(State.BoxStart, State.BoxEnd);
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var cstart = viewport.Flatten(State.BoxStart);
@@ -437,8 +387,7 @@ namespace CBRE.Editor.Tools
             var oheight = oend.Y - ostart.Y;
             var proportional = KeyboardState.Ctrl && State.Action == BoxAction.Resizing && owidth != 0 && oheight != 0;
 
-            switch (State.Handle)
-            {
+            switch (State.Handle) {
                 case ResizeHandle.TopLeft:
                     cstart.X = now.X;
                     cend.Y = now.Y;
@@ -477,8 +426,7 @@ namespace CBRE.Editor.Tools
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            if (proportional)
-            {
+            if (proportional) {
                 var nwidth = cend.X - cstart.X;
                 var nheight = cend.Y - cstart.Y;
                 var mult = Math.Max(nwidth / owidth, nheight / oheight);
@@ -486,8 +434,7 @@ namespace CBRE.Editor.Tools
                 var pheight = oheight * mult;
                 var wdiff = pwidth - nwidth;
                 var hdiff = pheight - nheight;
-                switch (State.Handle)
-                {
+                switch (State.Handle) {
                     case ResizeHandle.TopLeft:
                         cstart.X -= wdiff;
                         cend.Y += hdiff;
@@ -511,16 +458,13 @@ namespace CBRE.Editor.Tools
             return Tuple.Create(cstart, cend);
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e) {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
-            switch (e.KeyCode)
-            {
+            switch (e.KeyCode) {
                 case Keys.Enter:
                     BoxDrawnConfirm(viewport);
                     break;
@@ -530,43 +474,36 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        public virtual void BoxDrawnConfirm(ViewportBase viewport)
-        {
+        public virtual void BoxDrawnConfirm(ViewportBase viewport) {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
             State.Action = BoxAction.ReadyToDraw;
             State.ActiveViewport = null;
         }
 
-        public virtual void BoxDrawnCancel(ViewportBase viewport)
-        {
+        public virtual void BoxDrawnCancel(ViewportBase viewport) {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
             State.Action = BoxAction.ReadyToDraw;
             State.ActiveViewport = null;
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e) {
             // Probably not needed
         }
 
         #region Rendering
-        protected static void Coord(double x, double y, double z)
-        {
+        protected static void Coord(double x, double y, double z) {
             GL.Vertex3(x, y, z);
         }
-        protected static void Coord(Coordinate c)
-        {
+        protected static void Coord(Coordinate c) {
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        public override void Render(ViewportBase viewport)
-        {
+        public override void Render(ViewportBase viewport) {
             if (viewport is Viewport2D) Render2D((Viewport2D)viewport);
             if (viewport is Viewport3D) Render3D((Viewport3D)viewport);
         }
 
-        protected virtual bool ShouldDrawBox(ViewportBase viewport)
-        {
+        protected virtual bool ShouldDrawBox(ViewportBase viewport) {
             return State.Action == BoxAction.Drawing
                    || State.Action == BoxAction.Drawn
                    || State.Action == BoxAction.ReadyToResize
@@ -574,38 +511,31 @@ namespace CBRE.Editor.Tools
                    || State.Action == BoxAction.Resizing;
         }
 
-        protected virtual bool ShouldDrawBoxText(ViewportBase viewport)
-        {
+        protected virtual bool ShouldDrawBoxText(ViewportBase viewport) {
             return ShouldDrawBox(viewport);
         }
 
-        protected virtual Color GetRenderFillColour()
-        {
+        protected virtual Color GetRenderFillColour() {
             return FillColour;
         }
 
-        protected virtual Color GetRenderBoxColour()
-        {
+        protected virtual Color GetRenderBoxColour() {
             return BoxColour;
         }
 
-        protected virtual Color GetRenderSnapHandleColour()
-        {
+        protected virtual Color GetRenderSnapHandleColour() {
             return BoxColour;
         }
 
-        protected virtual Color GetRenderTextColour()
-        {
+        protected virtual Color GetRenderTextColour() {
             return BoxColour;
         }
 
-        protected virtual Color GetRenderResizeHoverColour()
-        {
+        protected virtual Color GetRenderResizeHoverColour() {
             return FillColour;
         }
 
-        protected virtual void RenderBox(Viewport2D viewport, Coordinate start, Coordinate end)
-        {
+        protected virtual void RenderBox(Viewport2D viewport, Coordinate start, Coordinate end) {
             GL.Begin(PrimitiveType.Quads);
             GL.Color4(GetRenderFillColour());
             Coord(start.DX, start.DY, start.DZ);
@@ -614,8 +544,7 @@ namespace CBRE.Editor.Tools
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
 
-            if (CBRE.Settings.View.DrawBoxDashedLines)
-            {
+            if (CBRE.Settings.View.DrawBoxDashedLines) {
                 GL.LineStipple(4, 0xAAAA);
                 GL.Enable(EnableCap.LineStipple);
             }
@@ -630,13 +559,11 @@ namespace CBRE.Editor.Tools
             GL.Disable(EnableCap.LineStipple);
         }
 
-        protected virtual bool ShouldRenderSnapHandle(Viewport2D viewport)
-        {
+        protected virtual bool ShouldRenderSnapHandle(Viewport2D viewport) {
             return State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center;
         }
 
-        protected virtual void RenderSnapHandle(Viewport2D viewport)
-        {
+        protected virtual void RenderSnapHandle(Viewport2D viewport) {
             var start = GetResizeOrigin(viewport);
             if (start == null) return;
             const int size = 6;
@@ -652,22 +579,19 @@ namespace CBRE.Editor.Tools
             GL.End();
         }
 
-        protected virtual bool ShouldRenderResizeBox(Viewport2D viewport)
-        {
+        protected virtual bool ShouldRenderResizeBox(Viewport2D viewport) {
             return State.ActiveViewport == viewport &&
                    (State.Action == BoxAction.ReadyToResize
                     || State.Action == BoxAction.DownToResize);
         }
 
-        protected virtual double[] GetRenderResizeBox(Coordinate start, Coordinate end)
-        {
+        protected virtual double[] GetRenderResizeBox(Coordinate start, Coordinate end) {
             var width = Math.Abs(start.DX - end.DX);
             var height = Math.Abs(start.DY - end.DY);
             double x1, y1, x2, y2;
             var handleWidth = width / 10d;
             var handleHeight = height / 10d;
-            switch (State.Handle)
-            {
+            switch (State.Handle) {
                 case ResizeHandle.TopLeft:
                     x1 = start.DX;
                     x2 = x1 + handleWidth;
@@ -728,8 +652,7 @@ namespace CBRE.Editor.Tools
             return new[] { x1, y1, x2, y2 };
         }
 
-        protected virtual void RenderResizeBox(Viewport2D viewport, Coordinate start, Coordinate end)
-        {
+        protected virtual void RenderResizeBox(Viewport2D viewport, Coordinate start, Coordinate end) {
             var box = GetRenderResizeBox(start, end);
             GL.Begin(PrimitiveType.Quads);
             GL.Color4(FillColour);
@@ -741,8 +664,7 @@ namespace CBRE.Editor.Tools
             GL.End();
         }
 
-        protected void RenderBoxText(Viewport2D viewport, Coordinate boxStart, Coordinate boxEnd)
-        {
+        protected void RenderBoxText(Viewport2D viewport, Coordinate boxStart, Coordinate boxEnd) {
             if (!CBRE.Settings.View.DrawBoxText) return;
 
             var widthText = (Math.Round(boxEnd.X - boxStart.X, 1)).ToString("#.##");
@@ -780,75 +702,61 @@ namespace CBRE.Editor.Tools
             GL.Enable(EnableCap.CullFace);
         }
 
-        protected virtual void Render2D(Viewport2D viewport)
-        {
+        protected virtual void Render2D(Viewport2D viewport) {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
-            if (ShouldDrawBox(viewport))
-            {
+            if (ShouldDrawBox(viewport)) {
                 RenderBox(viewport, start, end);
             }
-            if (ShouldRenderSnapHandle(viewport))
-            {
+            if (ShouldRenderSnapHandle(viewport)) {
                 RenderSnapHandle(viewport);
             }
-            if (ShouldRenderResizeBox(viewport))
-            {
+            if (ShouldRenderResizeBox(viewport)) {
                 RenderResizeBox(viewport, start, end);
             }
-            if (ShouldDrawBoxText(viewport))
-            {
+            if (ShouldDrawBoxText(viewport)) {
                 RenderBoxText(viewport, start, end);
             }
         }
 
-        protected virtual bool ShouldDraw3DBox()
-        {
+        protected virtual bool ShouldDraw3DBox() {
             return State.Action != BoxAction.ReadyToDraw;
         }
 
-        protected virtual void Render3DBox(Viewport3D viewport, Coordinate start, Coordinate end)
-        {
+        protected virtual void Render3DBox(Viewport3D viewport, Coordinate start, Coordinate end) {
             var box = new Box(start, end);
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
             GL.Color4(GetRenderBoxColour());
-            foreach (var line in box.GetBoxLines())
-            {
+            foreach (var line in box.GetBoxLines()) {
                 Coord(line.Start);
                 Coord(line.End);
             }
             GL.End();
         }
 
-        protected virtual void Render3D(Viewport3D viewport)
-        {
+        protected virtual void Render3D(Viewport3D viewport) {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
-            if (ShouldDraw3DBox())
-            {
+            if (ShouldDraw3DBox()) {
                 Render3DBox(viewport, State.BoxStart, State.BoxEnd);
             }
         }
         #endregion
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
-        {
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) {
 
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
         }
 
-        protected bool GetSelectionBox(out Box boundingbox)
-        {
+        protected bool GetSelectionBox(out Box boundingbox) {
             // If one of the dimensions has a depth value of 0, extend it out into infinite space
             // If two or more dimensions have depth 0, do nothing.
 
@@ -859,22 +767,19 @@ namespace CBRE.Editor.Tools
             var end = State.BoxEnd.Clone();
             var invalid = false;
 
-            if (sameX)
-            {
+            if (sameX) {
                 if (sameY || sameZ) invalid = true;
                 start.X = Decimal.MinValue;
                 end.X = Decimal.MaxValue;
             }
 
-            if (sameY)
-            {
+            if (sameY) {
                 if (sameZ) invalid = true;
                 start.Y = Decimal.MinValue;
                 end.Y = Decimal.MaxValue;
             }
 
-            if (sameZ)
-            {
+            if (sameZ) {
                 start.Z = Decimal.MinValue;
                 end.Z = Decimal.MaxValue;
             }

@@ -1,3 +1,7 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
@@ -6,10 +10,6 @@ using CBRE.Graphics.Helpers;
 using CBRE.UI;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace CBRE.Editor.Rendering.Helpers {
     public class EntitySpriteHelper : IHelper {

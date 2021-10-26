@@ -1,7 +1,7 @@
-using CBRE.Editor.Actions;
-using CBRE.Editor.Documents;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.Editor.Actions;
+using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.History {
     public class HistoryAction : IHistoryItem {

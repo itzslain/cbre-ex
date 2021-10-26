@@ -1,16 +1,14 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.SelectTool.TransformationTools
-{
-    public abstract class TransformationTool
-    {
+namespace CBRE.Editor.Tools.SelectTool.TransformationTools {
+    public abstract class TransformationTool {
         public abstract Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent mouseEventArgs, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets);
         public abstract bool RenderCircleHandles { get; }
         public abstract bool FilterHandle(BaseBoxTool.ResizeHandle handle);
@@ -26,8 +24,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
         /// <param name="zoom">The zoom value of the viewport</param>
         /// <param name="offset">The offset from the box bounds to place the handles</param>
         /// <returns>A list of handles for the box in tuple form: (Handle, X, Y)</returns>
-        public IEnumerable<Tuple<BaseBoxTool.ResizeHandle, decimal, decimal>> GetHandles(Coordinate start, Coordinate end, decimal zoom, decimal offset = 7)
-        {
+        public IEnumerable<Tuple<BaseBoxTool.ResizeHandle, decimal, decimal>> GetHandles(Coordinate start, Coordinate end, decimal zoom, decimal offset = 7) {
             var half = (end - start) / 2;
             var dist = offset / zoom;
 
@@ -42,8 +39,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             yield return Tuple.Create(BaseBoxTool.ResizeHandle.Bottom, start.X + half.X, start.Y - dist);
         }
 
-        protected static Coordinate SnapIfNeeded(Coordinate c, Document doc)
-        {
+        protected static Coordinate SnapIfNeeded(Coordinate c, Document doc) {
             return doc.Snap(c);
         }
     }

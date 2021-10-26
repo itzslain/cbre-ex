@@ -1,13 +1,13 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Documents;
 using CBRE.Extensions;
 using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace CBRE.Editor.Rendering.Helpers {
     public class EntityAngleHelper : IHelper {

@@ -1,13 +1,11 @@
-﻿using CBRE.Common.Mediator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Common.Mediator;
 
-namespace CBRE.Editor.Tools.VMTool
-{
-    public partial class VMSidebarPanel : UserControl, IMediatorListener
-    {
+namespace CBRE.Editor.Tools.VMTool {
+    public partial class VMSidebarPanel : UserControl, IMediatorListener {
         #region Events
 
         public delegate void ToolSelectedEventHandler(object sender, VMSubTool tool);
@@ -18,26 +16,20 @@ namespace CBRE.Editor.Tools.VMTool
         public event DeselectAllEventHandler DeselectAll;
         public event ResetEventHandler Reset;
 
-        protected virtual void OnToolSelected(VMSubTool tool)
-        {
-            if (ToolSelected != null)
-            {
+        protected virtual void OnToolSelected(VMSubTool tool) {
+            if (ToolSelected != null) {
                 ToolSelected(this, tool);
             }
         }
 
-        protected virtual void OnDeselectAll()
-        {
-            if (DeselectAll != null)
-            {
+        protected virtual void OnDeselectAll() {
+            if (DeselectAll != null) {
                 DeselectAll(this);
             }
         }
 
-        protected virtual void OnReset()
-        {
-            if (Reset != null)
-            {
+        protected virtual void OnReset() {
+            if (Reset != null) {
                 Reset(this);
             }
         }
@@ -47,16 +39,13 @@ namespace CBRE.Editor.Tools.VMTool
         private readonly List<VMSubTool> _tools;
         public Documents.Document Document { get; set; }
 
-        public VMSidebarPanel()
-        {
+        public VMSidebarPanel() {
             InitializeComponent();
             _tools = new List<VMSubTool>();
         }
 
-        public void AddTool(VMSubTool tool)
-        {
-            var rdo = new RadioButton
-            {
+        public void AddTool(VMSubTool tool) {
+            var rdo = new RadioButton {
                 Name = tool.GetName(),
                 Text = tool.GetName(),
                 //Appearance = Appearance.Button,
@@ -65,20 +54,17 @@ namespace CBRE.Editor.Tools.VMTool
             };
             rdo.Click += (sender, e) => SelectTool(tool);
             ButtonLayoutPanel.Controls.Add(rdo);
-            if (!_tools.Any())
-            {
+            if (!_tools.Any()) {
                 rdo.Checked = true;
                 SelectTool(tool);
             }
             _tools.Add(tool);
         }
 
-        public void SelectTool(VMSubTool tool)
-        {
+        public void SelectTool(VMSubTool tool) {
             ControlPanel.Text = tool.GetName();
             ControlPanel.Controls.Clear();
-            if (tool.Control != null)
-            {
+            if (tool.Control != null) {
                 ControlPanel.Controls.Add(tool.Control);
                 //ControlPanel.Height = tool.Control.PreferredSize.Height;
                 tool.Control.Dock = DockStyle.Top;
@@ -86,27 +72,22 @@ namespace CBRE.Editor.Tools.VMTool
             OnToolSelected(tool);
         }
 
-        public void SetSelectedTool(VMSubTool tool)
-        {
-            foreach (RadioButton rb in ButtonLayoutPanel.Controls)
-            {
+        public void SetSelectedTool(VMSubTool tool) {
+            foreach (RadioButton rb in ButtonLayoutPanel.Controls) {
                 if (rb.Name != tool.GetName()) rb.Checked = false;
                 else if (!rb.Checked) rb.Checked = true;
             }
         }
 
-        private void DeselectAllButtonClicked(object sender, EventArgs e)
-        {
+        private void DeselectAllButtonClicked(object sender, EventArgs e) {
             OnDeselectAll();
         }
 
-        private void ResetButtonClicked(object sender, EventArgs e)
-        {
+        private void ResetButtonClicked(object sender, EventArgs e) {
             OnReset();
         }
 
-        public void Notify(string message, object data)
-        {
+        public void Notify(string message, object data) {
             Mediator.ExecuteDefault(this, message, data);
         }
     }

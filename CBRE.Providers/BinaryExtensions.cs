@@ -1,8 +1,8 @@
-﻿using CBRE.DataStructures.Geometric;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.Providers {
     public static class BinaryExtensions {

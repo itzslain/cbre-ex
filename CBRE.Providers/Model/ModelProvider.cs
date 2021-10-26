@@ -1,9 +1,9 @@
-﻿using CBRE.Common;
-using CBRE.FileSystem;
-using CBRE.Graphics.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.Common;
+using CBRE.FileSystem;
+using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Model {
     public abstract class ModelProvider {

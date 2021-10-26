@@ -1,5 +1,5 @@
-﻿using CBRE.Editor.Documents;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.History {
     public class HistoryStack {

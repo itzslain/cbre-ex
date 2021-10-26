@@ -161,9 +161,10 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(309, 66);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(192, 13);
+            this.label11.Size = new System.Drawing.Size(192, 26);
             this.label11.TabIndex = 9;
-            this.label11.Text = "Made by juanjp600 for use with SCPCB";
+            this.label11.Text = "Made by juanjp600 for use with SCPCB\r\nAdditional changes by AestheticalZ";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label6
             // 

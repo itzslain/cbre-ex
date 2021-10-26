@@ -1,38 +1,30 @@
-﻿using CBRE.DataStructures.Geometric;
-using CBRE.Editor.Enums;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
+using CBRE.Editor.Enums;
 
-namespace CBRE.Editor.UI
-{
-    public partial class TransformDialog : Form
-    {
+namespace CBRE.Editor.UI {
+    public partial class TransformDialog : Form {
         private readonly Box _source;
         private decimal zeroValue = 0;
 
-        public Coordinate TransformValue
-        {
+        public Coordinate TransformValue {
             get { return new Coordinate(ValueX.Value, ValueZ.Value, ValueY.Value); }
-            set
-            {
+            set {
                 ValueX.Value = value.X;
                 ValueZ.Value = value.Y;
                 ValueY.Value = value.Z;
             }
         }
 
-        public TransformType TransformType
-        {
-            get
-            {
+        public TransformType TransformType {
+            get {
                 if (Rotate.Checked) return TransformType.Rotate;
                 if (scale.Checked) return TransformType.Scale;
                 return TransformType.Translate;
             }
-            set
-            {
-                switch (value)
-                {
+            set {
+                switch (value) {
                     case TransformType.Rotate:
                         Rotate.Checked = true;
                         break;
@@ -46,8 +38,7 @@ namespace CBRE.Editor.UI
             }
         }
 
-        public TransformDialog(Box source)
-        {
+        public TransformDialog(Box source) {
             _source = source;
             InitializeComponent();
 
@@ -62,8 +53,7 @@ namespace CBRE.Editor.UI
             TypeChanged(null, null);
         }
 
-        private void TypeChanged(object sender, EventArgs e)
-        {
+        private void TypeChanged(object sender, EventArgs e) {
             SourceValueXButton.Visible
                 = SourceValueYButton.Visible
                   = SourceValueZButton.Visible
@@ -72,15 +62,12 @@ namespace CBRE.Editor.UI
                 = ZeroValueYButton.Text
                   = ZeroValueZButton.Text
                     = scale.Checked ? "1" : "0";
-            if (scale.Checked)
-            {
+            if (scale.Checked) {
                 if (ValueX.Value == 0) ValueX.Value = 1;
                 if (ValueY.Value == 0) ValueY.Value = 1;
                 if (ValueZ.Value == 0) ValueZ.Value = 1;
                 zeroValue = 1;
-            }
-            else
-            {
+            } else {
                 if (ValueX.Value == 1) ValueX.Value = 0;
                 if (ValueY.Value == 1) ValueY.Value = 0;
                 if (ValueZ.Value == 1) ValueZ.Value = 0;
@@ -88,10 +75,8 @@ namespace CBRE.Editor.UI
             }
         }
 
-        private void OkButtonClicked(object sender, EventArgs e)
-        {
-            if (scale.Checked && (ValueX.Value == 0 || ValueY.Value == 0 || ValueZ.Value == 0))
-            {
+        private void OkButtonClicked(object sender, EventArgs e) {
+            if (scale.Checked && (ValueX.Value == 0 || ValueY.Value == 0 || ValueZ.Value == 0)) {
                 MessageBox.Show("Please enter a non-zero value for all axes when scaling.");
                 DialogResult = DialogResult.None;
             }

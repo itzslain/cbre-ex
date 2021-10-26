@@ -1,13 +1,12 @@
-﻿using CBRE.Common;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
-using CBRE.Packages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Common;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.Compiling {
     public class RM2Export {

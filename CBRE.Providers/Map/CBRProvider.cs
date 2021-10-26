@@ -28,7 +28,7 @@ namespace CBRE.Providers.Map {
             Fully = 1,
             Outdated = 2,
         }
-        
+
         private struct Property {
             public string name;
             public VariableType type;
@@ -437,7 +437,7 @@ namespace CBRE.Providers.Map {
                 }
                 writer.Write(HIERARCHY_UP);
             }
-            
+
             // Solid visgroups
             foreach (Solid s in map.WorldSpawn.FindAll().OfType<Solid>()) {
                 WriteVisgroups(writer, s);

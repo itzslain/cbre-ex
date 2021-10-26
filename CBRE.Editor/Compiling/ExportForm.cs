@@ -1,12 +1,11 @@
-﻿using CBRE.Editor.Documents;
-using CBRE.Settings;
-using Microsoft.WindowsAPICodePack.Taskbar;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using CBRE.Editor.Documents;
+using CBRE.Settings;
 
 namespace CBRE.Editor.Compiling {
     public partial class ExportForm : Form {

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Extensions;
@@ -5,9 +8,6 @@ using CBRE.Graphics.Arrays;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Rendering.Arrays {
     public class DecalArray : VBO<MapObject, MapObjectVertex> {

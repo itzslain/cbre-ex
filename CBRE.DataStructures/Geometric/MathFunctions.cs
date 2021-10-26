@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using System;
+﻿using System;
+using OpenTK;
 
 namespace CBRE.DataStructures.Geometric {
     public static class MathFunctions {

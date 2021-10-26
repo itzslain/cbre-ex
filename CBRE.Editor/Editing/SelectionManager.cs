@@ -1,8 +1,8 @@
-﻿using CBRE.Common.Mediator;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Editing {
     public class SelectionManager {

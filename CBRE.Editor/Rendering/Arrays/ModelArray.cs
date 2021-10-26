@@ -1,11 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.Common;
 using CBRE.DataStructures.Models;
 using CBRE.Graphics.Arrays;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Rendering.Arrays {
     public class ModelArray : VBO<Model, MapObjectVertex> {

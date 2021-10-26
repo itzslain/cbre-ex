@@ -1,9 +1,9 @@
-﻿using CBRE.Editor.Brushes.Controls;
-using CBRE.Editor.UI.Sidebar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Editor.Brushes.Controls;
+using CBRE.Editor.UI.Sidebar;
 
 namespace CBRE.Editor.Brushes {
     public static class BrushManager {

@@ -1,32 +1,25 @@
-﻿using CBRE.DataStructures.Geometric;
-using CBRE.Editor.Enums;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
+using CBRE.Editor.Enums;
 
-namespace CBRE.Editor.UI
-{
-    public partial class PasteSpecialDialog : Form
-    {
+namespace CBRE.Editor.UI {
+    public partial class PasteSpecialDialog : Form {
         private readonly Box _source;
 
-        public int NumberOfCopies
-        {
+        public int NumberOfCopies {
             get { return (int)NumCopies.Value; }
             set { NumCopies.Value = value; }
         }
 
-        public PasteSpecialStartPoint StartPoint
-        {
-            get
-            {
+        public PasteSpecialStartPoint StartPoint {
+            get {
                 if (StartOrigin.Checked) return PasteSpecialStartPoint.Origin;
                 if (StartOriginal.Checked) return PasteSpecialStartPoint.CenterOriginal;
                 return PasteSpecialStartPoint.CenterSelection;
             }
-            set
-            {
-                switch (value)
-                {
+            set {
+                switch (value) {
                     case PasteSpecialStartPoint.Origin:
                         StartOrigin.Checked = true;
                         break;
@@ -40,18 +33,14 @@ namespace CBRE.Editor.UI
             }
         }
 
-        public PasteSpecialGrouping Grouping
-        {
-            get
-            {
+        public PasteSpecialGrouping Grouping {
+            get {
                 if (GroupNone.Checked) return PasteSpecialGrouping.None;
                 if (GroupIndividual.Checked) return PasteSpecialGrouping.Individual;
                 return PasteSpecialGrouping.All;
             }
-            set
-            {
-                switch (value)
-                {
+            set {
+                switch (value) {
                     case PasteSpecialGrouping.None:
                         GroupNone.Checked = true;
                         break;
@@ -65,46 +54,38 @@ namespace CBRE.Editor.UI
             }
         }
 
-        public Coordinate AccumulativeOffset
-        {
+        public Coordinate AccumulativeOffset {
             get { return new Coordinate(OffsetX.Value, OffsetY.Value, OffsetZ.Value); }
-            set
-            {
+            set {
                 OffsetX.Value = value.X;
                 OffsetY.Value = value.Y;
                 OffsetZ.Value = value.Z;
             }
         }
 
-        public Coordinate AccumulativeRotation
-        {
+        public Coordinate AccumulativeRotation {
             get { return new Coordinate(RotationX.Value, RotationY.Value, RotationZ.Value); }
-            set
-            {
+            set {
                 RotationX.Value = value.X;
                 RotationY.Value = value.Y;
                 RotationZ.Value = value.Z;
             }
         }
 
-        public bool MakeEntitiesUnique
-        {
+        public bool MakeEntitiesUnique {
             get { return UniqueEntityNames.Checked; }
             set { UniqueEntityNames.Checked = value; }
         }
 
-        public bool PrefixEntityNames
-        {
+        public bool PrefixEntityNames {
             get { return PrefixEntityNamesCheckbox.Checked; }
-            set
-            {
+            set {
                 PrefixEntityNamesCheckbox.Checked = value;
                 EntityPrefix.Enabled = PrefixEntityNamesCheckbox.Checked;
             }
         }
 
-        public string EntityNamePrefix
-        {
+        public string EntityNamePrefix {
             get { return EntityPrefix.Text; }
             set { EntityPrefix.Text = value; }
         }
@@ -117,8 +98,7 @@ namespace CBRE.Editor.UI
         private static decimal _lastYRotation = 0;
         private static decimal _lastZRotation = 0;
 
-        public PasteSpecialDialog(Box source)
-        {
+        public PasteSpecialDialog(Box source) {
             _source = source;
             InitializeComponent();
             EntityPrefix.Enabled = PrefixEntityNamesCheckbox.Checked;
@@ -146,16 +126,14 @@ namespace CBRE.Editor.UI
             RotationZ.Value = _lastZRotation;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
+        protected override void OnLoad(EventArgs e) {
             NumCopies.Focus();
             NumCopies.Select(0, NumCopies.Text.Length);
 
             base.OnLoad(e);
         }
 
-        private void OkButtonClicked(object sender, EventArgs e)
-        {
+        private void OkButtonClicked(object sender, EventArgs e) {
             _lastNumCopies = NumCopies.Value;
             _lastXOffset = OffsetX.Value;
             _lastYOffset = OffsetY.Value;

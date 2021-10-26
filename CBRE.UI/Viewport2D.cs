@@ -1,12 +1,12 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using CBRE.DataStructures.Geometric;
 using CBRE.Extensions;
 using CBRE.Graphics;
 using CBRE.Graphics.Helpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Drawing;
-using System.Linq;
 
 namespace CBRE.UI {
     public class Viewport2D : ViewportBase {

@@ -1,38 +1,30 @@
+using System;
+using System.Drawing;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Drawing;
 
-namespace CBRE.Editor.Tools.Widgets
-{
-    public abstract class Widget : BaseTool
-    {
+namespace CBRE.Editor.Tools.Widgets {
+    public abstract class Widget : BaseTool {
         protected ViewportBase _activeViewport;
 
         private Action<Matrix4?> _transformedCallback = null;
         private Action<Matrix4?> _transformingCallback = null;
 
-        public Action<Matrix4?> OnTransformed
-        {
-            get
-            {
+        public Action<Matrix4?> OnTransformed {
+            get {
                 return _transformedCallback ?? (x => { });
             }
-            set
-            {
+            set {
                 _transformedCallback = value;
             }
         }
 
-        public Action<Matrix4?> OnTransforming
-        {
-            get
-            {
+        public Action<Matrix4?> OnTransforming {
+            get {
                 return _transformingCallback ?? (x => { });
             }
-            set
-            {
+            set {
                 _transformingCallback = value;
             }
         }
@@ -50,13 +42,11 @@ namespace CBRE.Editor.Tools.Widgets
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) { }
         public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) { }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) {
             _activeViewport = viewport;
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
             _activeViewport = null;
         }
 

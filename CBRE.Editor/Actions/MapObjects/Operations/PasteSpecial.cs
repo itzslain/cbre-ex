@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Enums;
 using CBRE.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations {
     public class PasteSpecial : CreateEditDelete {

@@ -1,6 +1,6 @@
-using CBRE.DataStructures.MapObjects.VisgroupFilters;
 using System;
 using System.Linq;
+using CBRE.DataStructures.MapObjects.VisgroupFilters;
 
 namespace CBRE.DataStructures.MapObjects {
     public class AutoVisgroup : Visgroup {

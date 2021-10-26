@@ -1,21 +1,19 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Rendering;
 using CBRE.Editor.UI;
 using CBRE.Settings;
 using CBRE.UI;
-using Microsoft.WindowsAPICodePack.Taskbar;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.Linq;
-using System.Media;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace CBRE.Editor.Compiling.Lightmap {
     static class Lightmapper {
@@ -30,6 +28,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
         }
 
         public static List<Thread> FaceRenderThreads { get; private set; }
+        private static int UsableThreadCount = System.Environment.ProcessorCount;
         private static List<LMThreadException> threadExceptions;
 
         private static void UpdateProgress(ExportForm exportForm, string msg, float progress) {
@@ -144,8 +143,8 @@ namespace CBRE.Editor.Compiling.Lightmap {
 
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()) {
                 foreach (Face tface in solid.Faces) {
-                    LMFace face = new LMFace(tface, solid);
                     if (tface.Texture.Name.ToLower() != "tooltextures/block_light") continue;
+                    LMFace face = new LMFace(tface, solid);
                     exclusiveBlockers.Add(face);
                 }
             }
@@ -222,10 +221,12 @@ namespace CBRE.Editor.Compiling.Lightmap {
                 }
             }
 
+            System.Diagnostics.Debug.WriteLine($"Lightmapper Threads: {UsableThreadCount} threads");
+
             int faceNum = 0;
             UpdateProgress(exportForm, "Started calculating brightness levels...", 0.05f);
             while (FaceRenderThreads.Count > 0) {
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < UsableThreadCount; i++) {
                     if (i >= FaceRenderThreads.Count) break;
                     if (FaceRenderThreads[i].ThreadState == ThreadState.Unstarted) {
                         FaceRenderThreads[i].Start();

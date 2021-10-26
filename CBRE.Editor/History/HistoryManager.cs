@@ -1,6 +1,7 @@
-﻿using CBRE.Common.Mediator;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
-using System.Collections.Generic;
 
 namespace CBRE.Editor.History {
     public class HistoryManager {
@@ -23,6 +24,10 @@ namespace CBRE.Editor.History {
             if (_stacks.Count == 1 && item.ModifiesState) {
                 TotalActionsSinceLastSave++;
                 TotalActionsSinceLastAutoSave++;
+                if(!Editor.Instance.Text.Contains(" *UNSAVED CHANGES*")) {
+                    Editor.Instance.Text += " *UNSAVED CHANGES*";
+                    Editor.Instance.DocumentTabs.TabPages[Editor.Instance.DocumentTabs.SelectedIndex].Text += "*";
+                }
             }
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
@@ -53,6 +58,9 @@ namespace CBRE.Editor.History {
             if (_stacks.Count == 1) {
                 TotalActionsSinceLastSave -= modifiesCount;
                 TotalActionsSinceLastAutoSave -= modifiesCount;
+                TabPage tabPage = Editor.Instance.DocumentTabs.TabPages[Editor.Instance.DocumentTabs.SelectedIndex];
+                tabPage.Text = tabPage.Text.Replace("*", "");
+                Editor.Instance.Text = Editor.Instance.Text.Replace(" *UNSAVED CHANGES*", "");
             }
             Mediator.Publish(EditorMediator.HistoryChanged);
         }

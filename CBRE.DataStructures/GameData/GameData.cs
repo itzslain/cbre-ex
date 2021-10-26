@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using System.Reflection;
 
 namespace CBRE.DataStructures.GameData {
     public class GameData {
@@ -20,13 +19,13 @@ namespace CBRE.DataStructures.GameData {
             Classes = new List<GameDataObject>();
 
             IEnumerable<string> jsonFiles = Directory.EnumerateFiles("Entities", "*.json");
-            foreach(string jsonFile in jsonFiles) {
+            foreach (string jsonFile in jsonFiles) {
                 string jsonContent = File.ReadAllText(jsonFile);
                 JsonGameDataObj gDataObj = JsonConvert.DeserializeObject<JsonGameDataObj>(jsonContent);
 
                 var gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, ClassType.Point, true);
 
-                foreach(JsonGDProperty property in gDataObj.Properties) {
+                foreach (JsonGDProperty property in gDataObj.Properties) {
                     if (!Enum.TryParse(property.Type, out VariableType varType)) continue;
 
                     Property actualProperty = new Property(property.Name, varType) {

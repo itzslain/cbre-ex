@@ -1,40 +1,33 @@
-﻿using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
 
-namespace CBRE.Editor.Visgroups
-{
-    public partial class VisgroupPanel : UserControl
-    {
+namespace CBRE.Editor.Visgroups {
+    public partial class VisgroupPanel : UserControl {
         public delegate void VisgroupToggledEventHandler(object sender, int visgroupId, CheckState state);
         public delegate void VisgroupSelectedEventHandler(object sender, int? visgroupId);
 
         public event VisgroupToggledEventHandler VisgroupToggled;
         public event VisgroupSelectedEventHandler VisgroupSelected;
 
-        protected void OnVisgroupToggled(int visgroupId, CheckState state)
-        {
-            if (VisgroupToggled != null)
-            {
+        protected void OnVisgroupToggled(int visgroupId, CheckState state) {
+            if (VisgroupToggled != null) {
                 VisgroupToggled(this, visgroupId, state);
             }
         }
 
-        protected void OnVisgroupSelected(int? visgroupId)
-        {
-            if (VisgroupSelected != null)
-            {
+        protected void OnVisgroupSelected(int? visgroupId) {
+            if (VisgroupSelected != null) {
                 VisgroupSelected(this, visgroupId);
             }
         }
 
-        public bool ShowCheckboxes
-        {
+        public bool ShowCheckboxes {
             get { return VisgroupTree.StateImageList != null; }
             set { VisgroupTree.StateImageList = value ? CheckboxImages : null; }
         }
@@ -44,8 +37,7 @@ namespace CBRE.Editor.Visgroups
         public bool SortAutomaticFirst { get; set; }
         public bool ShowHidden { get; set; }
 
-        public VisgroupPanel()
-        {
+        public VisgroupPanel() {
             InitializeComponent();
 
             /* http://www.codeproject.com/script/Articles/ViewDownloads.aspx?aid=202435 */
@@ -59,38 +51,32 @@ namespace CBRE.Editor.Visgroups
             CheckboxImages.Images.Add("MixedDisabled", GetCheckboxBitmap(CheckBoxState.MixedDisabled));
         }
 
-        private static Bitmap GetCheckboxBitmap(CheckBoxState state)
-        {
+        private static Bitmap GetCheckboxBitmap(CheckBoxState state) {
             /* http://stackoverflow.com/questions/5626031/tri-state-checkboxes-in-winforms-treeview */
             var bmp = new Bitmap(16, 16);
-            using (var g = System.Drawing.Graphics.FromImage(bmp))
-            {
+            using (var g = System.Drawing.Graphics.FromImage(bmp)) {
                 CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), state);
             }
             return bmp;
         }
 
-        private void VisgroupsChanged()
-        {
+        private void VisgroupsChanged() {
             var visgroups = DocumentManager.CurrentDocument != null
                                 ? DocumentManager.CurrentDocument.Map.Visgroups
                                 : new List<Visgroup>();
             Update(visgroups);
         }
 
-        private IEnumerable<Visgroup> Sort(IEnumerable<Visgroup> list)
-        {
+        private IEnumerable<Visgroup> Sort(IEnumerable<Visgroup> list) {
             return SortAutomaticFirst
                        ? list.OrderBy(x => x.IsAutomatic ? 0 : 1).ThenBy(x => x.Name)
                        : list.OrderBy(x => x.IsAutomatic ? 1 : 0).ThenBy(x => x.Name);
         }
 
-        private void AddNode(TreeNode parent, Visgroup visgroup, Func<Visgroup, string> getCheckState)
-        {
+        private void AddNode(TreeNode parent, Visgroup visgroup, Func<Visgroup, string> getCheckState) {
             if (!ShowHidden && visgroup is AutoVisgroup && ((AutoVisgroup)visgroup).IsHidden) return;
             if (HideAutomatic && visgroup.IsAutomatic) return;
-            var node = new TreeNode(visgroup.Name)
-            {
+            var node = new TreeNode(visgroup.Name) {
                 StateImageKey = getCheckState(visgroup) + (DisableAutomatic && visgroup.IsAutomatic ? "Disabled" : ""),
                 BackColor = visgroup.Colour,
                 Tag = visgroup.ID
@@ -99,14 +85,12 @@ namespace CBRE.Editor.Visgroups
             if (parent == null) VisgroupTree.Nodes.Add(node);
             else parent.Nodes.Add(node);
 
-            foreach (var vg in Sort(visgroup.Children))
-            {
+            foreach (var vg in Sort(visgroup.Children)) {
                 AddNode(node, vg, getCheckState);
             }
         }
 
-        public void Update(Document document)
-        {
+        public void Update(Document document) {
             Clear();
             if (document == null) return;
             var states = document.Map.WorldSpawn
@@ -114,106 +98,88 @@ namespace CBRE.Editor.Visgroups
                 .SelectMany(x => x.GetVisgroups(true).Select(y => new { ID = y, Hidden = x.IsVisgroupHidden }))
                 .GroupBy(x => x.ID)
                 .ToDictionary(x => x.Key, x => GetCheckState(x.Select(y => y.Hidden)));
-            foreach (var v in Sort(document.Map.Visgroups))
-            {
+            foreach (var v in Sort(document.Map.Visgroups)) {
                 AddNode(null, v, x => states.ContainsKey(x.ID) ? states[x.ID] : "Checked");
             }
         }
 
-        private string GetCheckState(IEnumerable<bool> bools)
-        {
+        private string GetCheckState(IEnumerable<bool> bools) {
             var a = bools.Distinct().ToArray();
             if (a.Length == 0) return "Checked";
             if (a.Length == 1) return a[0] ? "Unchecked" : "Checked";
             return "Mixed";
         }
 
-        private IEnumerable<TreeNode> GetAllNodes()
-        {
+        private IEnumerable<TreeNode> GetAllNodes() {
             return GetAllNodes(VisgroupTree.Nodes.OfType<TreeNode>());
         }
 
-        private IEnumerable<TreeNode> GetAllNodes(IEnumerable<TreeNode> nodes)
-        {
+        private IEnumerable<TreeNode> GetAllNodes(IEnumerable<TreeNode> nodes) {
             var n = nodes.ToList();
             return n.SelectMany(x => GetAllNodes(x.Nodes.OfType<TreeNode>())).Union(n);
         }
 
-        public void Update(IEnumerable<Visgroup> visgroups)
-        {
+        public void Update(IEnumerable<Visgroup> visgroups) {
             Clear();
-            foreach (var v in Sort(visgroups))
-            {
+            foreach (var v in Sort(visgroups)) {
                 AddNode(null, v, x => x.Visible ? "Checked" : "Unchecked");
             }
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             VisgroupTree.Nodes.Clear();
         }
 
-        public void ExpandAllNodes()
-        {
+        public void ExpandAllNodes() {
             VisgroupTree.ExpandAll();
         }
 
-        private TreeNode GetNodeForVisgroupID(int visgroupId)
-        {
+        private TreeNode GetNodeForVisgroupID(int visgroupId) {
             return GetAllNodes().FirstOrDefault(x => x.Tag is int && (int)x.Tag == visgroupId);
         }
 
-        public int? GetSelectedVisgroup()
-        {
+        public int? GetSelectedVisgroup() {
             var selected = VisgroupTree.SelectedNode;
             var id = selected == null ? (int?)null : (int)selected.Tag;
             return id;
         }
 
-        public void SetSelectedVisgroup(int visgroupId)
-        {
+        public void SetSelectedVisgroup(int visgroupId) {
             VisgroupTree.SelectedNode = GetNodeForVisgroupID(visgroupId);
         }
 
-        public void UpdateVisgroupName(int visgroupId, string name)
-        {
+        public void UpdateVisgroupName(int visgroupId, string name) {
             var node = GetNodeForVisgroupID(visgroupId);
             if (node != null) node.Text = name;
         }
 
-        public void UpdateVisgroupColour(int visgroupId, Color colour)
-        {
+        public void UpdateVisgroupColour(int visgroupId, Color colour) {
             var node = GetNodeForVisgroupID(visgroupId);
             if (node != null) node.BackColor = colour;
         }
 
-        public CheckState GetCheckState(int visgroupId)
-        {
+        public CheckState GetCheckState(int visgroupId) {
             var node = GetNodeForVisgroupID(visgroupId);
             return GetCheckState(node);
         }
 
-        private CheckState GetCheckState(TreeNode node)
-        {
+        private CheckState GetCheckState(TreeNode node) {
             if (node == null || node.StateImageKey.StartsWith("Unchecked")) return CheckState.Unchecked;
             if (node.StateImageKey.StartsWith("Checked")) return CheckState.Checked;
             return CheckState.Indeterminate;
         }
 
-        public Dictionary<int, CheckState> GetAllCheckStates()
-        {
+        public Dictionary<int, CheckState> GetAllCheckStates() {
             return GetAllNodes()
                 .Where(x => x.Tag is int)
                 .ToDictionary(x => (int)x.Tag, GetCheckState);
         }
 
-        public void SetCheckState(int visgroupId, CheckState state)
-        {
+        public void SetCheckState(int visgroupId, CheckState state) {
             var node = GetNodeForVisgroupID(visgroupId);
             if (node == null) return;
             var disabled = node.StateImageKey.EndsWith("Disabled");
-            switch (state)
-            {
+            switch (state) {
                 case CheckState.Unchecked:
                     node.StateImageKey = "Unchecked";
                     break;
@@ -229,8 +195,7 @@ namespace CBRE.Editor.Visgroups
             if (disabled) node.StateImageKey += "Disabled";
         }
 
-        private void NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
+        private void NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
             if (!ShowCheckboxes) return;
 
             // Only do something if the click is over the image (checkbox)
@@ -247,24 +212,20 @@ namespace CBRE.Editor.Visgroups
             OnVisgroupToggled(id, visible ? CheckState.Checked : CheckState.Unchecked);
         }
 
-        private void NodeSelected(object sender, TreeViewEventArgs e)
-        {
+        private void NodeSelected(object sender, TreeViewEventArgs e) {
             OnVisgroupSelected(GetSelectedVisgroup());
         }
 
-        private void OnItemDrag(object sender, ItemDragEventArgs e)
-        {
+        private void OnItemDrag(object sender, ItemDragEventArgs e) {
             // todo ordering
             //DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
-        private void OnDragDrop(object sender, DragEventArgs e)
-        {
+        private void OnDragDrop(object sender, DragEventArgs e) {
             //MessageBox.Show("blah?");
         }
 
-        private void OnDragEnter(object sender, DragEventArgs e)
-        {
+        private void OnDragEnter(object sender, DragEventArgs e) {
             //if (e.Data.GetData(typeof (TreeNode)) != null) e.Effect = DragDropEffects.Move;
         }
     }

@@ -1,4 +1,7 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Models;
 using CBRE.DataStructures.Transformations;
@@ -10,9 +13,6 @@ using CBRE.Editor.UI;
 using CBRE.Extensions;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Matrix = CBRE.DataStructures.Geometric.Matrix;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
@@ -149,6 +149,7 @@ namespace CBRE.Editor.Rendering.Renderers {
                 Camera = camera,
                 ModelView = modelView,
                 ShowGrid = Document.Map.Show3DGrid,
+                HideToolTextures = Document.Map.HideToolTextures,
                 GridSpacing = Document.Map.GridSpacing,
                 Shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured || type == Viewport3D.ViewType.Lightmapped,
                 Textured = type == Viewport3D.ViewType.Textured || type == Viewport3D.ViewType.Lightmapped,
@@ -229,7 +230,7 @@ namespace CBRE.Editor.Rendering.Renderers {
                 // Render transparent
                 _mapObject3DShader.Bind(opts);
                 _decalArray.RenderTransparent(context.Context, location);
-                _array.RenderTransparent(context.Context, x => _mapObject3DShader.IsTextured = x && opts.Textured, location, lookAt);
+                _array.RenderTransparent(opts, context.Context, x => _mapObject3DShader.IsTextured = x && opts.Textured, location, lookAt);
                 _mapObject3DShader.Unbind();
             }
         }

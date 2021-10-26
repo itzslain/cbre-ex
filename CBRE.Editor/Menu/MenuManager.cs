@@ -1,12 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Properties;
 using CBRE.Settings;
 using CBRE.Settings.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace CBRE.Editor.Menu {
     public static class MenuManager {
@@ -88,12 +88,11 @@ namespace CBRE.Editor.Menu {
             Add("Map", new SimpleMenuBuilder("Texture Lock", HotkeysMediator.ToggleTextureLock) { Image = Resources.Menu_TextureLock, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureLock, ShowInToolStrip = true });
             Add("Map", new SimpleMenuBuilder("Texture Scaling Lock", HotkeysMediator.ToggleTextureScalingLock) { Image = Resources.Menu_TextureScalingLock, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureScalingLock, ShowInToolStrip = true });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Hide Null Textures", HotkeysMediator.ToggleHideNullTextures) { Image = Resources.Menu_HideNullTextures, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.HideNullTextures, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Hide Tool Textures", HotkeysMediator.ToggleHideToolTextures) { Image = Resources.Menu_HideToolTextures, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.HideToolTextures, ShowInToolStrip = true });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { Image = Resources.Menu_ShowInformation, IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { Image = Resources.Menu_ShowBrushID, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { Image = Resources.Menu_EntityReport, IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Check for Problems", HotkeysMediator.CheckForProblems) { Image = Resources.Menu_CheckForProblems, IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Logical Tree", HotkeysMediator.ShowLogicalTree) { Image = Resources.Menu_ShowLogicalTree, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { Image = Resources.Menu_MapProperties, IsVisible = mapOpen });
@@ -117,8 +116,6 @@ namespace CBRE.Editor.Menu {
             Add("Tools", new SimpleMenuBuilder("Group", HotkeysMediator.GroupingGroup) { Image = Resources.Menu_Group, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new SimpleMenuBuilder("Ungroup", HotkeysMediator.GroupingUngroup) { Image = Resources.Menu_Ungroup, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            //Add("Tools", new SimpleMenuBuilder("Enable Cordon", HotkeysMediator.ToggleCordon) { Image = Resources.Menu_Cordon, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Cordon, ShowInToolStrip = true });
-            //Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Tie to Entity", HotkeysMediator.TieToEntity) { Image = Resources.Menu_TieToEntity, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new SimpleMenuBuilder("Move to World", HotkeysMediator.TieToWorld) { Image = Resources.Menu_TieToWorld, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });

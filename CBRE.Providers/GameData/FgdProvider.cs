@@ -1,9 +1,8 @@
-﻿using CBRE.DataStructures.GameData;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
+using CBRE.DataStructures.GameData;
 
 namespace CBRE.Providers.GameData {
     public class FgdProvider : GameDataProvider {

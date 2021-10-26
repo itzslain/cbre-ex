@@ -1,21 +1,16 @@
-﻿using CBRE.Common;
-using CBRE.Editor.Properties;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using CBRE.Common;
+using CBRE.Editor.Properties;
 
-namespace CBRE.Editor.UI
-{
-    public class DockedPanel : Panel
-    {
-        public int DockDimension
-        {
-            get
-            {
-                switch (Dock)
-                {
+namespace CBRE.Editor.UI {
+    public class DockedPanel : Panel {
+        public int DockDimension {
+            get {
+                switch (Dock) {
                     case DockStyle.Top:
                     case DockStyle.Bottom:
                         return Height;
@@ -26,10 +21,8 @@ namespace CBRE.Editor.UI
                         return 0;
                 }
             }
-            set
-            {
-                switch (Dock)
-                {
+            set {
+                switch (Dock) {
                     case DockStyle.Top:
                     case DockStyle.Bottom:
                         Height = value;
@@ -43,19 +36,14 @@ namespace CBRE.Editor.UI
         }
 
         private bool _hidden;
-        public bool Hidden
-        {
+        public bool Hidden {
             get { return _hidden; }
-            set
-            {
+            set {
                 _hidden = value;
-                if (value)
-                {
+                if (value) {
                     _savedDimension = DockDimension;
                     DockDimension = HandleWidth;
-                }
-                else
-                {
+                } else {
                     DockDimension = Math.Max(_savedDimension, 10);
                 }
                 Refresh();
@@ -71,8 +59,7 @@ namespace CBRE.Editor.UI
         [DefaultValue(10)]
         public int MinSize { get; set; }
 
-        public DockedPanel()
-        {
+        public DockedPanel() {
             MinSize = 10;
             MaxSize = 500;
             _resizing = false;
@@ -80,13 +67,10 @@ namespace CBRE.Editor.UI
 
         private static readonly Bitmap _arrow;
 
-        static DockedPanel()
-        {
+        static DockedPanel() {
             _arrow = new Bitmap(Resources.Arrow_Down.Width, Resources.Arrow_Down.Height);
-            using (var g = System.Drawing.Graphics.FromImage(_arrow))
-            {
-                using (var attrs = new ImageAttributes())
-                {
+            using (var g = System.Drawing.Graphics.FromImage(_arrow)) {
+                using (var attrs = new ImageAttributes()) {
                     var colorMatrix = new ColorMatrix(new[]
                     {
                         new float[] {1, 0, 0, 0, 0},
@@ -103,10 +87,8 @@ namespace CBRE.Editor.UI
 
         private const int ResizeHandleSize = 4;
 
-        private bool IsInResizeArea(MouseEventArgs e)
-        {
-            switch (Dock)
-            {
+        private bool IsInResizeArea(MouseEventArgs e) {
+            switch (Dock) {
                 case DockStyle.Left:
                     return Width >= e.X && Width - ResizeHandleSize <= e.X;
                 case DockStyle.Right:
@@ -119,10 +101,8 @@ namespace CBRE.Editor.UI
             return false;
         }
 
-        private bool IsInButtonArea(MouseEventArgs e)
-        {
-            switch (Dock)
-            {
+        private bool IsInButtonArea(MouseEventArgs e) {
+            switch (Dock) {
                 case DockStyle.Left:
                     return Width >= e.X && Width - ButtonHeight <= e.X && e.Y <= ButtonHeight;
                 case DockStyle.Right:
@@ -135,11 +115,9 @@ namespace CBRE.Editor.UI
             return false;
         }
 
-        private void SetDockSize(MouseEventArgs e)
-        {
+        private void SetDockSize(MouseEventArgs e) {
             int width = Width, height = Height;
-            switch (Dock)
-            {
+            switch (Dock) {
                 case DockStyle.Left:
                     width = e.X;
                     break;
@@ -157,40 +135,29 @@ namespace CBRE.Editor.UI
             Height = Math.Min(Math.Max(height, Math.Max(MinSize, ResizeHandleSize + 1)), MaxSize);
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            if (_resizing)
-            {
+        protected override void OnMouseMove(MouseEventArgs e) {
+            if (_resizing) {
                 SetDockSize(e);
-            }
-            else
-            {
+            } else {
                 var ba = IsInButtonArea(e);
                 var ra = IsInResizeArea(e);
-                if (ba || (_hidden && ra))
-                {
+                if (ba || (_hidden && ra)) {
                     Cursor = Cursors.Hand;
-                }
-                else if (ra && !_hidden)
-                {
+                } else if (ra && !_hidden) {
                     Cursor = (Dock == DockStyle.Left || Dock == DockStyle.Right) ? Cursors.SizeWE : Cursors.SizeNS;
-                }
-                else
-                {
+                } else {
                     Cursor = Cursors.Default;
                 }
             }
             base.OnMouseMove(e);
         }
 
-        protected override void OnMouseLeave(EventArgs e)
-        {
+        protected override void OnMouseLeave(EventArgs e) {
             if (!_resizing) Cursor = Cursors.Default;
             base.OnMouseLeave(e);
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
+        protected override void OnMouseDown(MouseEventArgs e) {
             var ba = IsInButtonArea(e);
             var ra = IsInResizeArea(e);
             if (ba || (ra && _hidden)) Hidden = !Hidden;
@@ -198,8 +165,7 @@ namespace CBRE.Editor.UI
             base.OnMouseDown(e);
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
+        protected override void OnMouseUp(MouseEventArgs e) {
             _resizing = false;
             base.OnMouseUp(e);
         }
@@ -208,11 +174,9 @@ namespace CBRE.Editor.UI
         private const int HandleWidth = 8;
         private const int RenderHandleWidth = 3;
 
-        protected override void OnDockChanged(EventArgs e)
-        {
+        protected override void OnDockChanged(EventArgs e) {
             var padding = new Padding(0);
-            switch (Dock)
-            {
+            switch (Dock) {
                 case DockStyle.Top:
                     padding.Bottom = HandleWidth;
                     break;
@@ -229,16 +193,14 @@ namespace CBRE.Editor.UI
             Padding = padding;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
+        protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
 
             const int padding = 4;
             var rect = Rectangle.Empty;
             var rotflip = RotateFlipType.RotateNoneFlipNone;
             int buttonX = 0, buttonY = 0;
-            switch (Dock)
-            {
+            switch (Dock) {
                 case DockStyle.Top:
                     rect = new Rectangle(padding + ButtonHeight, Height - RenderHandleWidth - 1, Width - padding - padding - ButtonHeight, RenderHandleWidth);
                     rotflip = _hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
@@ -262,14 +224,11 @@ namespace CBRE.Editor.UI
                     buttonY = padding;
                     break;
             }
-            if (!rect.IsEmpty)
-            {
-                using (var b = new SolidBrush(BackColor.Darken(_hidden ? 10 : 40)))
-                {
+            if (!rect.IsEmpty) {
+                using (var b = new SolidBrush(BackColor.Darken(_hidden ? 10 : 40))) {
                     e.Graphics.FillRectangle(b, rect);
                 }
-                using (var cl = new Bitmap(_arrow))
-                {
+                using (var cl = new Bitmap(_arrow)) {
                     cl.RotateFlip(rotflip);
                     e.Graphics.DrawImage(cl, buttonX, buttonY);
                 }

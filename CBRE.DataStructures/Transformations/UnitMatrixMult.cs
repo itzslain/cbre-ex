@@ -1,7 +1,7 @@
-﻿using CBRE.DataStructures.Geometric;
-using OpenTK;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
+using CBRE.DataStructures.Geometric;
+using OpenTK;
 
 namespace CBRE.DataStructures.Transformations {
     [Serializable]

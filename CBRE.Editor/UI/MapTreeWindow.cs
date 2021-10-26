@@ -1,54 +1,45 @@
-﻿using CBRE.Common.Mediator;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Actions.MapObjects.Selection;
-using CBRE.Editor.Documents;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Common.Mediator;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Actions.MapObjects.Selection;
+using CBRE.Editor.Documents;
 
-namespace CBRE.Editor.UI
-{
-    public partial class MapTreeWindow : HotkeyForm, IMediatorListener
-    {
+namespace CBRE.Editor.UI {
+    public partial class MapTreeWindow : HotkeyForm, IMediatorListener {
         public Document Document { get; set; }
 
-        public MapTreeWindow(Document document)
-        {
+        public MapTreeWindow(Document document) {
             InitializeComponent();
             Document = document;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
+        protected override void OnLoad(EventArgs e) {
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             RefreshNodes();
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
+        protected override void OnClosed(EventArgs e) {
             Mediator.UnsubscribeAll(this);
         }
 
-        private void DocumentActivated(Document document)
-        {
+        private void DocumentActivated(Document document) {
             Document = document;
             RefreshNodes();
         }
 
-        private void SelectionChanged()
-        {
+        private void SelectionChanged() {
             if (Document == null || Document.Selection.InFaceSelection || Document.Selection.IsEmpty()) return;
             var first = Document.Selection.GetSelectedParents().First();
             var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), first);
             if (node != null) MapTree.SelectedNode = node;
         }
 
-        private TreeNode FindNodeWithTag(IEnumerable<TreeNode> nodes, object tag)
-        {
-            foreach (var tn in nodes)
-            {
+        private TreeNode FindNodeWithTag(IEnumerable<TreeNode> nodes, object tag) {
+            foreach (var tn in nodes) {
                 if (tn.Tag == tag) return tn;
                 var recurse = FindNodeWithTag(tn.Nodes.OfType<TreeNode>(), tag);
                 if (recurse != null) return recurse;
@@ -56,73 +47,57 @@ namespace CBRE.Editor.UI
             return null;
         }
 
-        private void RefreshNodes()
-        {
+        private void RefreshNodes() {
             MapTree.BeginUpdate();
             MapTree.Nodes.Clear();
-            if (Document != null)
-            {
+            if (Document != null) {
                 LoadMapNode(null, Document.Map.WorldSpawn);
             }
             MapTree.EndUpdate();
         }
 
-        private void LoadMapNode(TreeNode parent, MapObject obj)
-        {
+        private void LoadMapNode(TreeNode parent, MapObject obj) {
             var text = GetNodeText(obj);
             var node = new TreeNode(obj.GetType().Name + text) { Tag = obj };
-            if (obj is World)
-            {
+            if (obj is World) {
                 var w = (World)obj;
                 node.Nodes.AddRange(GetEntityNodes(w.EntityData).ToArray());
-            }
-            else if (obj is Entity)
-            {
+            } else if (obj is Entity) {
                 var e = (Entity)obj;
                 node.Nodes.AddRange(GetEntityNodes(e.EntityData).ToArray());
-            }
-            else if (obj is Solid)
-            {
+            } else if (obj is Solid) {
                 var s = (Solid)obj;
                 node.Nodes.AddRange(GetFaceNodes(s.Faces).ToArray());
             }
-            foreach (var mo in obj.GetChildren())
-            {
+            foreach (var mo in obj.GetChildren()) {
                 LoadMapNode(node, mo);
             }
             if (parent == null) MapTree.Nodes.Add(node);
             else parent.Nodes.Add(node);
         }
 
-        private string GetNodeText(MapObject mo)
-        {
-            if (mo is Solid)
-            {
+        private string GetNodeText(MapObject mo) {
+            if (mo is Solid) {
                 return " (" + ((Solid)mo).Faces.Count + " faces)";
             }
-            if (mo is Group)
-            {
+            if (mo is Group) {
                 return " (" + mo.ChildCount + " children)";
             }
             var ed = mo.GetEntityData();
-            if (ed != null)
-            {
+            if (ed != null) {
                 var targetName = ed.GetPropertyValue("targetname");
                 return ": " + ed.Name + (String.IsNullOrWhiteSpace(targetName) ? "" : " (" + targetName + ")");
             }
             return "";
         }
 
-        private IEnumerable<TreeNode> GetEntityNodes(EntityData data)
-        {
+        private IEnumerable<TreeNode> GetEntityNodes(EntityData data) {
             yield return new TreeNode("Flags: " + data.Flags);
         }
 
-        private IEnumerable<TreeNode> GetFaceNodes(IEnumerable<Face> faces)
-        {
+        private IEnumerable<TreeNode> GetFaceNodes(IEnumerable<Face> faces) {
             var c = 0;
-            foreach (var face in faces)
-            {
+            foreach (var face in faces) {
                 var fnode = new TreeNode("Face " + c);
                 c++;
                 var pnode = fnode.Nodes.Add("Plane: " + face.Plane.Normal + " * " + face.Plane.DistanceFromOrigin);
@@ -140,8 +115,7 @@ namespace CBRE.Editor.UI
                 tnode.Nodes.Add("Rotation: " + face.Texture.Rotation);
                 var vnode = fnode.Nodes.Add("Vertices: " + face.Vertices.Count);
                 var d = 0;
-                foreach (var vertex in face.Vertices)
-                {
+                foreach (var vertex in face.Vertices) {
                     var cnode = vnode.Nodes.Add("Vertex " + d + ": " + vertex.Location);
                     d++;
                     cnode.Nodes.Add("Texture U: " + vertex.TextureU);
@@ -151,46 +125,36 @@ namespace CBRE.Editor.UI
             }
         }
 
-        public void Notify(string message, object data)
-        {
+        public void Notify(string message, object data) {
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        private void TreeSelectionChanged(object sender, TreeViewEventArgs e)
-        {
+        private void TreeSelectionChanged(object sender, TreeViewEventArgs e) {
             RefreshSelectionProperties();
-            if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && Document != null && !Document.Selection.InFaceSelection)
-            {
+            if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && Document != null && !Document.Selection.InFaceSelection) {
                 Document.PerformAction("Select object", new ChangeSelection(((MapObject)MapTree.SelectedNode.Tag).FindAll(), Document.Selection.GetSelectedObjects()));
             }
         }
 
-        private void RefreshSelectionProperties()
-        {
+        private void RefreshSelectionProperties() {
             Properties.Items.Clear();
-            if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag != null)
-            {
+            if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag != null) {
                 var list = GetTagProperties(MapTree.SelectedNode.Tag);
-                foreach (var kv in list)
-                {
+                foreach (var kv in list) {
                     Properties.Items.Add(new ListViewItem(new[] { kv.Item1, kv.Item2 }));
                 }
                 Properties.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
         }
 
-        private IEnumerable<Tuple<string, string>> GetTagProperties(object tag)
-        {
+        private IEnumerable<Tuple<string, string>> GetTagProperties(object tag) {
             var list = new List<Tuple<string, string>>();
-            if (tag is MapObject)
-            {
+            if (tag is MapObject) {
                 var mo = (MapObject)tag;
                 var ed = mo.GetEntityData();
-                if (ed != null)
-                {
+                if (ed != null) {
                     var gd = Document.GameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ed.Name, StringComparison.OrdinalIgnoreCase));
-                    foreach (var prop in ed.Properties)
-                    {
+                    foreach (var prop in ed.Properties) {
                         var gdp = gd != null ? gd.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.OrdinalIgnoreCase)) : null;
                         var key = gdp != null && !String.IsNullOrWhiteSpace(gdp.ShortDescription) ? gdp.ShortDescription : prop.Key;
                         list.Add(Tuple.Create(key, prop.Value));

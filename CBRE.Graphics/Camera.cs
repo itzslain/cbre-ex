@@ -1,7 +1,7 @@
-﻿using CBRE.Graphics.Helpers;
+﻿using System;
+using CBRE.Graphics.Helpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
 
 namespace CBRE.Graphics {
     public class Camera {

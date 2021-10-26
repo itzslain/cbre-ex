@@ -1,12 +1,12 @@
-﻿using CBRE.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Graphics.Helpers;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace CBRE.Editor.Rendering.Immediate {
     public static class MapObjectRenderer {

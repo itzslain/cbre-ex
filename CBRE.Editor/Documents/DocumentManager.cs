@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using CBRE.Common.Mediator;
 using CBRE.Editor.Tools;
-using System.Collections.Generic;
 
 namespace CBRE.Editor.Documents {
     public static class DocumentManager {

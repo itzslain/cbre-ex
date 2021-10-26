@@ -1,33 +1,28 @@
-﻿using CBRE.Common.Mediator;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.UI;
 using CBRE.Extensions;
 using CBRE.Settings;
 using CBRE.UI;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools
-{
-    public abstract class BaseTool : IMediatorListener
-    {
-        public enum ToolUsage
-        {
+namespace CBRE.Editor.Tools {
+    public abstract class BaseTool : IMediatorListener {
+        public enum ToolUsage {
             View2D,
             View3D,
             Both
         }
 
-        protected Coordinate SnapIfNeeded(Coordinate c)
-        {
+        protected Coordinate SnapIfNeeded(Coordinate c) {
             return Document.Snap(c);
         }
 
-        protected Coordinate SnapToSelection(Coordinate c, Viewport2D vp)
-        {
+        protected Coordinate SnapToSelection(Coordinate c, Viewport2D vp) {
             if (!Document.Map.SnapToGrid) return c;
 
             var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
@@ -46,8 +41,7 @@ namespace CBRE.Editor.Tools
             var objects = Document.Selection.GetSelectedObjects().ToList();
 
             // Try and snap to an object center
-            foreach (var mo in objects)
-            {
+            foreach (var mo in objects) {
                 if (!(mo is Entity) && !(mo is Solid)) continue;
                 var center = vp.Flatten(mo.BoundingBox.Center);
                 if (DMath.Abs(center.X - c.X) >= mo.BoundingBox.Width / 10) continue;
@@ -56,8 +50,7 @@ namespace CBRE.Editor.Tools
             }
 
             // Get all the edges of the selected objects
-            var lines = objects.SelectMany(x =>
-            {
+            var lines = objects.SelectMany(x => {
                 if (x is Entity) return x.BoundingBox.GetBoxLines();
                 if (x is Solid) return ((Solid)x).Faces.SelectMany(f => f.GetLines());
                 return new Line[0];
@@ -65,8 +58,7 @@ namespace CBRE.Editor.Tools
 
             // Try and snap to an edge
             var closest = snapped;
-            foreach (var line in lines)
-            {
+            foreach (var line in lines) {
                 // if the line and the grid are in the same spot, return the snapped point
                 if (line.ClosestPoint(snapped).EquivalentTo(snapped)) return snapped;
 
@@ -85,15 +77,13 @@ namespace CBRE.Editor.Tools
             return closest;
         }
 
-        protected Coordinate GetNudgeValue(Keys k)
-        {
+        protected Coordinate GetNudgeValue(Keys k) {
             if (!Select.ArrowKeysNudgeSelection) return null;
             var ctrl = KeyboardState.Ctrl;
             var gridoff = Select.NudgeStyle == NudgeStyle.GridOffCtrl;
             var grid = (gridoff && !ctrl) || (!gridoff && ctrl);
             var val = grid ? Document.Map.GridSpacing : Select.NudgeUnits;
-            switch (k)
-            {
+            switch (k) {
                 case Keys.Left:
                     return new Coordinate(-val, 0, 0);
                 case Keys.Right:
@@ -115,40 +105,33 @@ namespace CBRE.Editor.Tools
         public abstract HotkeyTool? GetHotkeyToolType();
         public abstract string GetContextualHelp();
 
-        public virtual IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
-        {
+        public virtual IEnumerable<KeyValuePair<string, Control>> GetSidebarControls() {
             yield break;
         }
 
-        protected BaseTool()
-        {
+        protected BaseTool() {
             Viewport = null;
             Usage = ToolUsage.View2D;
         }
 
-        public void SetDocument(Documents.Document document)
-        {
+        public void SetDocument(Documents.Document document) {
             Document = document;
             DocumentChanged();
         }
 
-        public virtual void ToolSelected(bool preventHistory)
-        {
+        public virtual void ToolSelected(bool preventHistory) {
             // Virtual
         }
 
-        public virtual void ToolDeselected(bool preventHistory)
-        {
+        public virtual void ToolDeselected(bool preventHistory) {
             // Virtual
         }
 
-        public virtual void DocumentChanged()
-        {
+        public virtual void DocumentChanged() {
             // Virtual
         }
 
-        public virtual void Notify(string message, object data)
-        {
+        public virtual void Notify(string message, object data) {
             Mediator.ExecuteDefault(this, message, data);
         }
 
@@ -166,13 +149,11 @@ namespace CBRE.Editor.Tools
         public abstract void UpdateFrame(ViewportBase viewport, FrameInfo frame);
         public abstract void Render(ViewportBase viewport);
 
-        public virtual void PreRender(ViewportBase viewport)
-        {
+        public virtual void PreRender(ViewportBase viewport) {
             return;
         }
 
-        public virtual bool IsCapturingMouseWheel()
-        {
+        public virtual bool IsCapturingMouseWheel() {
             return false;
         }
 
@@ -184,14 +165,12 @@ namespace CBRE.Editor.Tools
         /// <returns>False to prevent execution of the document hotkey</returns>
         public abstract HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters);
 
-        public virtual void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
-        {
+        public virtual void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e) {
             // Default: nothing...
         }
     }
 
-    public enum HotkeyInterceptResult
-    {
+    public enum HotkeyInterceptResult {
         Continue,
         Abort,
         SwitchToSelectTool

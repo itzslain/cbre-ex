@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools;
@@ -5,9 +8,6 @@ using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace CBRE.Editor.Rendering.Helpers {
     public class CordonHelper : IHelper {

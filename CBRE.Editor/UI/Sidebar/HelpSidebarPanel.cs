@@ -1,23 +1,19 @@
-﻿using CBRE.Common.Mediator;
-using CBRE.Editor.Tools;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using CBRE.Common.Mediator;
+using CBRE.Editor.Tools;
 
-namespace CBRE.Editor.UI.Sidebar
-{
-    public partial class HelpSidebarPanel : UserControl, IMediatorListener
-    {
-        public HelpSidebarPanel()
-        {
+namespace CBRE.Editor.UI.Sidebar {
+    public partial class HelpSidebarPanel : UserControl, IMediatorListener {
+        public HelpSidebarPanel() {
             InitializeComponent();
 
             Mediator.Subscribe(EditorMediator.ContextualHelpChanged, this);
             Mediator.Subscribe(EditorMediator.ToolSelected, this);
         }
 
-        private void UpdateHelp()
-        {
+        private void UpdateHelp() {
             var help = "";
             if (ToolManager.ActiveTool != null) help = ToolManager.ActiveTool.GetContextualHelp();
             HelpTextBox.ResetFont();
@@ -27,18 +23,15 @@ namespace CBRE.Editor.UI.Sidebar
             Height = size.Height + HelpTextBox.Margin.Vertical + HelpTextBox.Lines.Length * 5;
         }
 
-        public void Notify(string message, object data)
-        {
+        public void Notify(string message, object data) {
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        private void ContextualHelpChanged()
-        {
+        private void ContextualHelpChanged() {
             UpdateHelp();
         }
 
-        private void ToolSelected()
-        {
+        private void ToolSelected() {
             UpdateHelp();
         }
 
@@ -50,8 +43,7 @@ namespace CBRE.Editor.UI.Sidebar
         /// - Paragraphs/new lines
         /// </summary>
         /// <param name="simpleMarkdown"></param>
-        private string ConvertSimpleMarkdownToRtf(string simpleMarkdown)
-        {
+        private string ConvertSimpleMarkdownToRtf(string simpleMarkdown) {
             /*
              * {\rtf1\utf8\f0\pard
              *   This is some {\b bold} text.\par
@@ -63,8 +55,7 @@ namespace CBRE.Editor.UI.Sidebar
                 .Replace("}", "\\}");
 
             var sb = new StringBuilder();
-            foreach (var c in escaped)
-            {
+            foreach (var c in escaped) {
                 if (c > 127) sb.AppendFormat(@"\u{0}?", (int)c);
                 else if (c == '\\') sb.Append("\\\\");
                 else if (c == '{') sb.Append("\\{");

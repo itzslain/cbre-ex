@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.UI
-{
-    public sealed class QuadSplitControl : TableLayoutPanel
-    {
+namespace CBRE.Editor.UI {
+    public sealed class QuadSplitControl : TableLayoutPanel {
         private bool _inH;
         private bool _inV;
 
@@ -13,8 +11,7 @@ namespace CBRE.Editor.UI
         public int MinimumViewSize { get; set; }
         private int MaximumViewSize { get { return 100 - MinimumViewSize; } }
 
-        public QuadSplitControl()
-        {
+        public QuadSplitControl() {
             MinimumViewSize = 2;
             _resizing = _inH = _inV = false;
             RowCount = ColumnCount = 2;
@@ -24,22 +21,19 @@ namespace CBRE.Editor.UI
             RowStyles.Add(new RowStyle(SizeType.Percent, 50));
         }
 
-        public void ResetViews()
-        {
+        public void ResetViews() {
             foreach (ColumnStyle cs in ColumnStyles) cs.Width = 50;
             foreach (RowStyle rs in RowStyles) rs.Height = 50;
         }
 
-        public void FocusOn(Control ctrl)
-        {
+        public void FocusOn(Control ctrl) {
             if (ctrl == null || !Controls.Contains(ctrl)) return;
             var row = GetRow(ctrl);
             var col = GetColumn(ctrl);
             FocusOn(row, col);
         }
 
-        public void FocusOn(int rowIndex, int columnIndex)
-        {
+        public void FocusOn(int rowIndex, int columnIndex) {
             if (rowIndex < 0 || rowIndex > 1 || columnIndex < 0 || columnIndex > 1) return;
             RememberFocus();
             ColumnStyles[columnIndex].Width = MaximumViewSize;
@@ -48,69 +42,55 @@ namespace CBRE.Editor.UI
             RowStyles[(rowIndex + 1) % 2].Height = MinimumViewSize;
         }
 
-        private void RememberFocus()
-        {
+        private void RememberFocus() {
             _memoryWidth = new float[ColumnStyles.Count];
             _memoryHeight = new float[RowStyles.Count];
-            for (var i = 0; i < ColumnStyles.Count; i++)
-            {
+            for (var i = 0; i < ColumnStyles.Count; i++) {
                 _memoryWidth[i] = ColumnStyles[i].Width;
             }
-            for (var i = 0; i < RowStyles.Count; i++)
-            {
+            for (var i = 0; i < RowStyles.Count; i++) {
                 _memoryHeight[i] = RowStyles[i].Height;
             }
         }
 
-        private void ForgetFocus()
-        {
+        private void ForgetFocus() {
             _memoryWidth = _memoryHeight = null;
         }
 
-        public void Unfocus()
-        {
-            for (var i = 0; i < ColumnStyles.Count; i++)
-            {
+        public void Unfocus() {
+            for (var i = 0; i < ColumnStyles.Count; i++) {
                 ColumnStyles[i].Width = _memoryWidth[i];
             }
-            for (var i = 0; i < RowStyles.Count; i++)
-            {
+            for (var i = 0; i < RowStyles.Count; i++) {
                 RowStyles[i].Height = _memoryHeight[i];
             }
             ForgetFocus();
         }
 
-        public bool IsFocusing()
-        {
+        public bool IsFocusing() {
             return _memoryWidth != null;
         }
 
         private float[] _memoryWidth;
         private float[] _memoryHeight;
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            if (_resizing)
-            {
-                if (_inH && Width > 0)
-                {
+        protected override void OnMouseMove(MouseEventArgs e) {
+            if (_resizing) {
+                if (_inH && Width > 0) {
                     ForgetFocus();
                     var mp = e.Y / (float)Height * 100;
                     mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
                     RowStyles[0].Height = mp;
                     RowStyles[1].Height = 100 - mp;
                 }
-                if (_inV && Height > 0)
-                {
+                if (_inV && Height > 0) {
                     ForgetFocus();
                     var mp = e.X / (float)Width * 100;
                     mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
                     ColumnStyles[0].Width = mp;
                     ColumnStyles[1].Width = 100 - mp;
                 }
-            }
-            else
-            {
+            } else {
                 var cw = GetColumnWidths();
                 var rh = GetRowHeights();
                 var ht = rh[0] - Margin.Bottom;
@@ -130,33 +110,27 @@ namespace CBRE.Editor.UI
             base.OnMouseMove(e);
         }
 
-        protected override void OnMouseLeave(EventArgs e)
-        {
+        protected override void OnMouseLeave(EventArgs e) {
             if (!_resizing) Cursor = Cursors.Default;
             base.OnMouseLeave(e);
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
+        protected override void OnMouseDown(MouseEventArgs e) {
             if (_inV || _inH) _resizing = true;
             base.OnMouseDown(e);
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
+        protected override void OnMouseUp(MouseEventArgs e) {
             _resizing = false;
             base.OnMouseUp(e);
         }
 
-        protected override void OnMouseDoubleClick(MouseEventArgs e)
-        {
-            if (_inH)
-            {
+        protected override void OnMouseDoubleClick(MouseEventArgs e) {
+            if (_inH) {
                 ForgetFocus();
                 RowStyles[0].Height = RowStyles[1].Height = 50;
             }
-            if (_inV)
-            {
+            if (_inV) {
                 ForgetFocus();
                 ColumnStyles[0].Width = ColumnStyles[1].Width = 50;
             }

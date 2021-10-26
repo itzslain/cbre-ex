@@ -1,13 +1,13 @@
-﻿using CBRE.Common;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
-using CBRE.DataStructures.Transformations;
-using CBRE.Providers.Texture;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using CBRE.Common;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
+using CBRE.DataStructures.Transformations;
+using CBRE.Providers.Texture;
 
 namespace CBRE.Providers.Map {
     public class L3DWProvider : MapProvider {
@@ -65,7 +65,7 @@ namespace CBRE.Providers.Map {
                     string groupName = names[br.ReadInt32() - 1];
                     byte colorR = br.ReadByte(); byte colorG = br.ReadByte(); byte colorB = br.ReadByte();
 
-                    Visgroup newGroup = new Visgroup() { Name = groupName, ID = visgroups.Count+1 };
+                    Visgroup newGroup = new Visgroup() { Name = groupName, ID = visgroups.Count + 1 };
                     newGroup.Colour = System.Drawing.Color.FromArgb(colorR, colorG, colorB);
                     map.Visgroups.Add(newGroup);
                     visgroups.Add(i, newGroup.ID);

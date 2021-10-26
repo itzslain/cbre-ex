@@ -1,6 +1,6 @@
-﻿using CBRE.Editor.Properties;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
+using CBRE.Editor.Properties;
 
 namespace CBRE.Editor {
     public static class CBRECursors {

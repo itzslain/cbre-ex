@@ -1,5 +1,5 @@
-﻿using CBRE.Editor.Documents;
-using System;
+﻿using System;
+using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.History {
     public interface IHistoryItem : IDisposable {

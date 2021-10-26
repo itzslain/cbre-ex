@@ -1,7 +1,7 @@
-﻿using CBRE.Graphics.Renderables;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.Graphics.Renderables;
 
 namespace CBRE.Graphics {
     public class RenderContext : IDisposable {

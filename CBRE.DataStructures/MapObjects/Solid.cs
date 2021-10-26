@@ -1,9 +1,9 @@
-﻿using CBRE.DataStructures.Geometric;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects {
     [Serializable]
@@ -89,7 +89,7 @@ namespace CBRE.DataStructures.MapObjects {
             Coordinate newStart = transform.Transform(BoundingBox.Start);
             Coordinate newEnd = transform.Transform(BoundingBox.End);
 
-            if ((newStart-newEnd).VectorMagnitude() > 1000000m) { return; }
+            if ((newStart - newEnd).VectorMagnitude() > 1000000m) { return; }
 
             Faces.ForEach(f => f.Transform(transform, flags));
 

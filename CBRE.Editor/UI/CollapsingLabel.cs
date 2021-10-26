@@ -1,40 +1,33 @@
-﻿using CBRE.Editor.Properties;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using CBRE.Editor.Properties;
 
-namespace CBRE.Editor.UI
-{
-    public partial class CollapsingLabel : UserControl
-    {
+namespace CBRE.Editor.UI {
+    public partial class CollapsingLabel : UserControl {
         private bool _collapsed;
         private int _cachedHeight;
 
-        public bool Collapsed
-        {
+        public bool Collapsed {
             get { return _collapsed; }
-            set
-            {
+            set {
                 _collapsed = value;
                 UpdateCollapsedState();
             }
         }
 
-        public string LabelText
-        {
+        public string LabelText {
             get { return TextLabel.Text; }
             set { TextLabel.Text = value; }
         }
 
         public Control ControlToCollapse { get; set; }
 
-        public CollapsingLabel()
-        {
+        public CollapsingLabel() {
             _collapsed = false;
             InitializeComponent();
         }
 
-        private void UpdateCollapsedState()
-        {
+        private void UpdateCollapsedState() {
             if (ControlToCollapse == null) return;
             var temp = ControlToCollapse.Height;
             ControlToCollapse.Height = _collapsed ? 0 : _cachedHeight;
@@ -42,8 +35,7 @@ namespace CBRE.Editor.UI
             _cachedHeight = temp;
         }
 
-        private void LabelClick(object sender, EventArgs e)
-        {
+        private void LabelClick(object sender, EventArgs e) {
             _collapsed = !_collapsed;
             UpdateCollapsedState();
         }

@@ -1,6 +1,6 @@
-﻿using CBRE.Editor.UI;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using CBRE.Editor.UI;
 
 namespace CBRE.Editor.Brushes.Controls {
     public partial class TextControl : BrushControl {

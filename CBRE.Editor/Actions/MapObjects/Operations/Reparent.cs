@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Operations {
     public class Reparent : IAction {

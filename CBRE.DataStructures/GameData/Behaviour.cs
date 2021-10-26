@@ -1,6 +1,6 @@
-﻿using CBRE.DataStructures.Geometric;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.GameData {
     public class Behaviour {

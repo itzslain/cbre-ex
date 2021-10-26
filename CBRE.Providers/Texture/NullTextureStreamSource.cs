@@ -1,6 +1,6 @@
-﻿using CBRE.Common;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
+using CBRE.Common;
 
 namespace CBRE.Providers.Texture {
     public class NullTextureStreamSource : ITextureStreamSource {

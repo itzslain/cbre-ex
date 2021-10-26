@@ -1,56 +1,46 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.SelectTool.TransformationTools
-{
+namespace CBRE.Editor.Tools.SelectTool.TransformationTools {
     /// <summary>
     /// Allows the selected objects to be scaled and translated
     /// </summary>
-    class ResizeTool : TransformationTool
-    {
+    class ResizeTool : TransformationTool {
 
-        public override bool RenderCircleHandles
-        {
+        public override bool RenderCircleHandles {
             get { return false; }
         }
 
-        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle)
-        {
+        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle) {
             return true;
         }
 
-        public override string GetTransformName()
-        {
+        public override string GetTransformName() {
             return "Resize";
         }
 
-        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle)
-        {
+        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle) {
             return null;
         }
 
         #region 2D Transformation Matrix
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
-        {
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets) {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e, state, doc);
             state.BoxStart = coords.Item1;
             state.BoxEnd = coords.Item2;
             Matrix4 resizeMatrix;
-            if (state.Handle == BaseBoxTool.ResizeHandle.Center)
-            {
+            if (state.Handle == BaseBoxTool.ResizeHandle.Center) {
                 var movement = state.BoxStart - state.PreTransformBoxStart;
                 resizeMatrix = Matrix4.CreateTranslation((float)movement.X, (float)movement.Y, (float)movement.Z);
-            }
-            else
-            {
+            } else {
                 var resize = (state.PreTransformBoxStart - state.BoxStart) +
                              (state.BoxEnd - state.PreTransformBoxEnd);
                 resize = resize.ComponentDivide(state.PreTransformBoxEnd - state.PreTransformBoxStart);
@@ -63,12 +53,10 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             return resizeMatrix;
         }
 
-        private Coordinate GetResizeOrigin(Viewport2D viewport, BaseBoxTool.BoxState state, Document document)
-        {
+        private Coordinate GetResizeOrigin(Viewport2D viewport, BaseBoxTool.BoxState state, Document document) {
             if (state.Action != BaseBoxTool.BoxAction.Resizing || state.Handle != BaseBoxTool.ResizeHandle.Center) return null;
             var sel = document.Selection.GetSelectedParents().ToList();
-            if (sel.Count == 1 && sel[0] is Entity && !sel[0].HasChildren)
-            {
+            if (sel.Count == 1 && sel[0] is Entity && !sel[0].HasChildren) {
                 return viewport.Flatten(((Entity)sel[0]).Origin);
             }
             var st = viewport.Flatten(state.PreTransformBoxStart);
@@ -77,8 +65,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             return points.OrderBy(x => (state.MoveStart - x).LengthSquared()).First();
         }
 
-        private Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
-        {
+        private Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document) {
             var origin = GetResizeOrigin(viewport, state, document);
             if (origin == null) return null;
             var before = state.MoveStart;
@@ -86,8 +73,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             return SnapIfNeeded(origin + after - before, document) - origin;
         }
 
-        private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
-        {
+        private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document) {
             if (state.Action != BaseBoxTool.BoxAction.Resizing) return Tuple.Create(state.BoxStart, state.BoxEnd);
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y), document);
             var cstart = viewport.Flatten(state.BoxStart);
@@ -100,8 +86,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             var oheight = oend.Y - ostart.Y;
             var proportional = KeyboardState.Ctrl && state.Action == BaseBoxTool.BoxAction.Resizing && owidth != 0 && oheight != 0;
 
-            switch (state.Handle)
-            {
+            switch (state.Handle) {
                 case BaseBoxTool.ResizeHandle.TopLeft:
                     cstart.X = Math.Min(now.X, cend.X - 1);
                     cend.Y = Math.Max(now.Y, cstart.Y + 1);
@@ -141,8 +126,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            if (proportional)
-            {
+            if (proportional) {
                 var nwidth = cend.X - cstart.X;
                 var nheight = cend.Y - cstart.Y;
                 var mult = Math.Max(nwidth / owidth, nheight / oheight);
@@ -150,8 +134,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
                 var pheight = oheight * mult;
                 var wdiff = pwidth - nwidth;
                 var hdiff = pheight - nheight;
-                switch (state.Handle)
-                {
+                switch (state.Handle) {
                     case BaseBoxTool.ResizeHandle.TopLeft:
                         cstart.X -= wdiff;
                         cend.Y += hdiff;
@@ -176,14 +159,12 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             return Tuple.Create(cstart, cend);
         }
 
-        private static Coordinate GetOriginForTransform(Viewport2D viewport, BaseBoxTool.BoxState state)
-        {
+        private static Coordinate GetOriginForTransform(Viewport2D viewport, BaseBoxTool.BoxState state) {
             decimal x = 0;
             decimal y = 0;
             var cstart = viewport.Flatten(state.PreTransformBoxStart);
             var cend = viewport.Flatten(state.PreTransformBoxEnd);
-            switch (state.Handle)
-            {
+            switch (state.Handle) {
                 case BaseBoxTool.ResizeHandle.TopLeft:
                 case BaseBoxTool.ResizeHandle.Top:
                 case BaseBoxTool.ResizeHandle.TopRight:
@@ -197,8 +178,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
                     y = cend.Y;
                     break;
             }
-            switch (state.Handle)
-            {
+            switch (state.Handle) {
                 case BaseBoxTool.ResizeHandle.Top:
                 case BaseBoxTool.ResizeHandle.TopRight:
                 case BaseBoxTool.ResizeHandle.Right:
@@ -216,8 +196,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
         }
         #endregion 2D Transformation Matrix
 
-        public override IEnumerable<Widget> GetWidgets(Document document)
-        {
+        public override IEnumerable<Widget> GetWidgets(Document document) {
             yield break;
         }
     }

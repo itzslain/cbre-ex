@@ -366,12 +366,6 @@
     <Compile Include="UI\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\CheckForProblemsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\CheckForProblemsDialog.Designer.cs">
-      <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\DockedPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -652,9 +646,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AngleControl.resx">
       <DependentUpon>AngleControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\CheckForProblemsDialog.resx">
-      <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\CollapsingLabel.resx">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>

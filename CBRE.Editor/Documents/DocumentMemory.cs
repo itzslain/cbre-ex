@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Tools.SelectTool;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace CBRE.Editor.Documents {
     internal class DocumentMemory {

@@ -1,47 +1,40 @@
-﻿using CBRE.Editor.Documents;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.Extensions;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.SelectTool.TransformationTools
-{
+namespace CBRE.Editor.Tools.SelectTool.TransformationTools {
     /// <summary>
     /// Allows the selected objects to be rotated
     /// </summary>
-    class RotateTool : TransformationTool
-    {
-        public override bool RenderCircleHandles
-        {
+    class RotateTool : TransformationTool {
+        public override bool RenderCircleHandles {
             get { return true; }
         }
 
-        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle)
-        {
+        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle) {
             return handle == BaseBoxTool.ResizeHandle.BottomLeft
                    || handle == BaseBoxTool.ResizeHandle.BottomRight
                    || handle == BaseBoxTool.ResizeHandle.TopLeft
                    || handle == BaseBoxTool.ResizeHandle.TopRight;
         }
 
-        public override string GetTransformName()
-        {
+        public override string GetTransformName() {
             return "Rotate";
         }
 
-        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle)
-        {
+        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle) {
             return CBRECursors.RotateCursor;
         }
 
         #region 2D Transformation Matrix
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
-        {
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets) {
             var origin = viewport.ZeroUnusedCoordinate((state.PreTransformBoxStart + state.PreTransformBoxEnd) / 2);
             var rw = activeWidgets.OfType<RotationWidget>().FirstOrDefault();
             if (rw != null) origin = rw.GetPivotPoint();
@@ -57,8 +50,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             var shf = KeyboardState.Shift;
             var def = Select.RotationStyle;
             var snap = (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
-            if (snap)
-            {
+            if (snap) {
                 var deg = angle * (180 / DMath.PI);
                 var rnd = Math.Round(deg / 15) * 15;
                 angle = rnd * (DMath.PI / 180);
@@ -75,8 +67,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
         }
         #endregion 2D Transformation Matrix
 
-        public override IEnumerable<Widget> GetWidgets(Document document)
-        {
+        public override IEnumerable<Widget> GetWidgets(Document document) {
             yield return new RotationWidget(document);
         }
     }

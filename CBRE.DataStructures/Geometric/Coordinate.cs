@@ -1,8 +1,8 @@
-﻿using CBRE.Extensions;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
+using CBRE.Extensions;
 
 namespace CBRE.DataStructures.Geometric {
     [Serializable]

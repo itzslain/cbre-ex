@@ -1,6 +1,6 @@
-﻿using CBRE.Providers;
-using System;
+﻿using System;
 using System.Linq;
+using CBRE.Providers;
 
 namespace CBRE.Settings.Models {
     public class BuildProfile {

@@ -1,4 +1,9 @@
-﻿using CBRE.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
@@ -6,13 +11,6 @@ using CBRE.Extensions;
 using CBRE.FileSystem;
 using CBRE.Providers.Model;
 using CBRE.Providers.Texture;
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Security.Permissions;
 
 namespace CBRE.Providers.Map {
     public class MSL2Provider : MapProvider {
@@ -37,7 +35,7 @@ namespace CBRE.Providers.Map {
             br.BaseStream.Position = startPos + (long)memblockSize;
         }
 
-        protected void ReadMemblockMesh(BinaryReader br, DataStructures.MapObjects.Map map, List<Face> faces=null) {
+        protected void ReadMemblockMesh(BinaryReader br, DataStructures.MapObjects.Map map, List<Face> faces = null) {
             UInt32 memblockSize = br.ReadUInt32();
             long startPos = br.BaseStream.Position;
 
@@ -47,7 +45,7 @@ namespace CBRE.Providers.Map {
 
             List<CoordinateF> vertexPositions = new List<CoordinateF>();
             List<CoordinateF> vertexNormals = new List<CoordinateF>();
-            for (int i=0;i<dwVertMax;i++) {
+            for (int i = 0; i < dwVertMax; i++) {
                 float x = br.ReadSingle();
                 float z = br.ReadSingle();
                 float y = br.ReadSingle();
@@ -56,7 +54,7 @@ namespace CBRE.Providers.Map {
                 float nz = br.ReadSingle();
                 float ny = br.ReadSingle();
                 vertexNormals.Add(new CoordinateF(nx, ny, nz).Normalise());
-                for (int j=24;j<dwFVFSize;j+=4) {
+                for (int j = 24; j < dwFVFSize; j += 4) {
                     br.BaseStream.Position += 4;
                 }
             }
@@ -67,7 +65,7 @@ namespace CBRE.Providers.Map {
                     Face newFace = new Face(map.IDGenerator.GetNextFaceID());
                     for (int i = 0; i < vertexPositions.Count; i++) {
                         if (vertexNormals[i].Dot(normal) < 0.999f) { continue; }
-                        if (newFace.Vertices.Any(v => (new CoordinateF(v.Location)-vertexPositions[i]).LengthSquared()<0.001f)) { continue; }
+                        if (newFace.Vertices.Any(v => (new CoordinateF(v.Location) - vertexPositions[i]).LengthSquared() < 0.001f)) { continue; }
                         newFace.Vertices.Add(new Vertex(new Coordinate(vertexPositions[i]), newFace));
                     }
 
@@ -78,8 +76,7 @@ namespace CBRE.Providers.Map {
 
                     newFace.Vertices.Sort((v1, v2) => {
                         float dot = normal.Dot(new CoordinateF((v1.Location - center.Location).Cross(v2.Location - center.Location)));
-                        if (dot < 0.0f) { return -1; }
-                        else if (dot > 0.0f) { return 1; }
+                        if (dot < 0.0f) { return -1; } else if (dot > 0.0f) { return 1; }
                         return 0;
                     });
 
@@ -160,10 +157,10 @@ namespace CBRE.Providers.Map {
                 stream.Position += lightmapSize;
             }
             int entityCount = (int)br.ReadSingle() - 2;
-            for (int i=0;i<entityCount;i++) {
+            for (int i = 0; i < entityCount; i++) {
                 int meshCount = (int)br.ReadSingle();
                 List<long> memblockLocations = new List<long>();
-                for (int j=0;j<meshCount;j++) {
+                for (int j = 0; j < meshCount; j++) {
                     stream.Position += 4;
                     memblockLocations.Add(stream.Position);
                     SkipMemblock(br);
@@ -273,7 +270,7 @@ namespace CBRE.Providers.Map {
                     float xScale = br.ReadSingle();
                     float zScale = br.ReadSingle();
                     float yScale = br.ReadSingle();
-                    if (Math.Abs(entitySubType-3.0f) < 0.01f) {
+                    if (Math.Abs(entitySubType - 3.0f) < 0.01f) {
                         for (int j = 8; j < 35; j++) {
                             stream.Position += 4;
                         }
@@ -370,7 +367,7 @@ namespace CBRE.Providers.Map {
 
                         entity.Origin = new Coordinate((decimal)xTranslate, (decimal)yTranslate, (decimal)zTranslate);
                         entity.SetParent(map.WorldSpawn);
-                    } else if (Math.Abs(entitySubType-2.0f)<0.01f) {
+                    } else if (Math.Abs(entitySubType - 2.0f) < 0.01f) {
                         if (models == null) {
                             models = LoadAllModels(modelDirs);
                         }
@@ -386,7 +383,7 @@ namespace CBRE.Providers.Map {
                             UInt32 dwFVFSize = br.ReadUInt32();
                             UInt32 dwVertMax = br.ReadUInt32();
 
-                            for (int k=0;k<models.Count;k++) {
+                            for (int k = 0; k < models.Count; k++) {
                                 DataStructures.Models.Mesh currMesh = models[k].Model.BodyParts[0].Meshes.Values.First()[0];
 
                                 if (dwVertMax == currMesh.Vertices.Count) {
@@ -497,7 +494,7 @@ namespace CBRE.Providers.Map {
                             stream.Position += 4;
                         }
                         int materialCount = (int)br.ReadSingle() + 1;
-                        for (int j=0;j<materialCount;j++) {
+                        for (int j = 0; j < materialCount; j++) {
                             string materialName = br.ReadLine();
                             for (int k = 0; k < 10; k++) {
                                 stream.Position += 4;

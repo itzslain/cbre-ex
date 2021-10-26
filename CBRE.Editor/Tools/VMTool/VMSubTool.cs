@@ -1,37 +1,30 @@
-﻿using CBRE.DataStructures.Geometric;
-using CBRE.Settings;
-using CBRE.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
+using CBRE.Settings;
+using CBRE.UI;
 
-namespace CBRE.Editor.Tools.VMTool
-{
-    public abstract class VMSubTool : BaseTool
-    {
+namespace CBRE.Editor.Tools.VMTool {
+    public abstract class VMSubTool : BaseTool {
         public Control Control { get; set; }
         public VMTool MainTool { get; set; }
 
-        protected VMSubTool(VMTool mainTool)
-        {
+        protected VMSubTool(VMTool mainTool) {
             MainTool = mainTool;
         }
 
-        public override Image GetIcon()
-        {
+        public override Image GetIcon() {
             throw new NotImplementedException();
         }
 
-        public override HotkeyTool? GetHotkeyToolType()
-        {
+        public override HotkeyTool? GetHotkeyToolType() {
             return null;
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
-        {
-            switch (hotkeyMessage)
-            {
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters) {
+            switch (hotkeyMessage) {
                 case HotkeysMediator.OperationsCopy:
                 case HotkeysMediator.OperationsCut:
                 case HotkeysMediator.OperationsPaste:

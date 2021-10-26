@@ -1,10 +1,10 @@
-﻿using CBRE.Common.Easings;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.Transformations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using CBRE.Common.Easings;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.Transformations;
 
 namespace CBRE.DataStructures.MapObjects {
     [Serializable]

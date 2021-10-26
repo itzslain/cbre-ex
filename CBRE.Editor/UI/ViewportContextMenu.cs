@@ -1,24 +1,20 @@
+using System;
+using System.Windows.Forms;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
 using CBRE.UI;
-using System;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.UI
-{
-    public sealed class ViewportContextMenu : ContextMenuStrip
-    {
+namespace CBRE.Editor.UI {
+    public sealed class ViewportContextMenu : ContextMenuStrip {
         internal static ViewportContextMenu Instance { get; private set; }
 
-        static ViewportContextMenu()
-        {
+        static ViewportContextMenu() {
             Instance = new ViewportContextMenu();
         }
 
-        public void AddNonSelectionItems(Document doc, ViewportBase viewport)
-        {
+        public void AddNonSelectionItems(Document doc, ViewportBase viewport) {
             Items.Clear();
             Add("Paste", HotkeysMediator.OperationsPaste, Clipboard.ClipboardManager.CanPaste());
             Add("Paste Special", HotkeysMediator.OperationsPasteSpecial, Clipboard.ClipboardManager.CanPaste());
@@ -27,8 +23,7 @@ namespace CBRE.Editor.UI
             Add(doc.History.GetRedoString(), HotkeysMediator.HistoryRedo, doc.History.CanRedo());
         }
 
-        public void AddSelectionItems(Document doc, ViewportBase viewport)
-        {
+        public void AddSelectionItems(Document doc, ViewportBase viewport) {
             Items.Clear();
             Add("Cut", HotkeysMediator.OperationsCut);
             Add("Copy", HotkeysMediator.OperationsCopy);
@@ -50,8 +45,7 @@ namespace CBRE.Editor.UI
             Add("Move To World", HotkeysMediator.TieToWorld);
             Items.Add(new ToolStripSeparator());
             var vp = viewport as Viewport2D;
-            if (vp != null)
-            {
+            if (vp != null) {
                 var flat = vp.Flatten(new Coordinate(1, 2, 3));
                 var left = flat.X == 1 ? HotkeysMediator.AlignXMin : (flat.X == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
                 var right = flat.X == 1 ? HotkeysMediator.AlignXMax : (flat.X == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
@@ -66,15 +60,13 @@ namespace CBRE.Editor.UI
             Add("Properties", HotkeysMediator.ObjectProperties);
         }
 
-        private void Add(string name, Enum onclick, bool enabled = true)
-        {
+        private void Add(string name, Enum onclick, bool enabled = true) {
             var mi = CreateMenuItem(name, onclick);
             mi.Enabled = enabled;
             Items.Add(mi);
         }
 
-        private static ToolStripItem CreateMenuItem(string name, Enum onclick)
-        {
+        private static ToolStripItem CreateMenuItem(string name, Enum onclick) {
             var item = new ToolStripMenuItem(name);
             item.Click += (sender, args) => Mediator.Publish(onclick);
             return item;

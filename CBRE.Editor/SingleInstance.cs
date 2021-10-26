@@ -1,8 +1,8 @@
-﻿using CBRE.Settings;
-using Microsoft.VisualBasic.ApplicationServices;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Settings;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace CBRE.Editor {
     public class SingleInstance : WindowsFormsApplicationBase {

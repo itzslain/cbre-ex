@@ -1,19 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Linq;
 
-namespace CBRE.Editor.UI
-{
-    public class UpdateReleaseDetails
-    {
+namespace CBRE.Editor.UI {
+    public class UpdateReleaseDetails {
         public string Tag { get; set; }
         public string Name { get; set; }
         public string Changelog { get; set; }
         public string FileName { get; set; }
         public string DownloadUrl { get; set; }
 
-        public UpdateReleaseDetails(string jsonString)
-        {
+        public UpdateReleaseDetails(string jsonString) {
             var obj = JsonConvert.DeserializeObject(jsonString) as JArray;
             if (obj == null || obj.Count < 1) return;
             var rel = obj[0] as JObject;

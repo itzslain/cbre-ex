@@ -1,8 +1,8 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace CBRE.Graphics.Shaders {
     public class ShaderProgram : IDisposable {

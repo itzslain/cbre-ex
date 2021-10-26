@@ -1,12 +1,12 @@
-﻿using CBRE.DataStructures.GameData;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.Transformations;
-using CBRE.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using CBRE.DataStructures.GameData;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.Transformations;
+using CBRE.Extensions;
 
 namespace CBRE.DataStructures.MapObjects {
     [Serializable]

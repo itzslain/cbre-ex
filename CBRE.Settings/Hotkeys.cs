@@ -1,7 +1,7 @@
-﻿using CBRE.Settings.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.Settings.Models;
 
 namespace CBRE.Settings {
     public static class Hotkeys {
@@ -70,7 +70,6 @@ namespace CBRE.Settings {
 
                                     new HotkeyDefinition("Toggle Texture Lock", "Toggles texture locking on and off", HotkeysMediator.ToggleTextureLock, "Shift+L"),
                                     new HotkeyDefinition("Transform", "Open the 'Transform' dialog", HotkeysMediator.Transform, "Ctrl+M"),
-                                    new HotkeyDefinition("Check for Problems", "Open the 'Check for Problems' dialog", HotkeysMediator.CheckForProblems, "Alt+P"),
                                     new HotkeyDefinition("Go to Brush ID", "Open the 'Go to Brush ID' dialog", HotkeysMediator.GoToBrushID, "Ctrl+Shift+G"),
 
                                     new HotkeyDefinition("Flip X", "Flip selection along the X axis", HotkeysMediator.FlipX, "Ctrl+L"),

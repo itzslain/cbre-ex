@@ -1,53 +1,45 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools.Widgets;
 using CBRE.UI;
 using OpenTK;
-using System.Collections.Generic;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.SelectTool.TransformationTools
-{
+namespace CBRE.Editor.Tools.SelectTool.TransformationTools {
     /// <summary>
     /// Allows the selected objects to be skewed
     /// </summary>
-    class SkewTool : TransformationTool
-    {
-        public override bool RenderCircleHandles
-        {
+    class SkewTool : TransformationTool {
+        public override bool RenderCircleHandles {
             get { return false; }
         }
 
-        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle)
-        {
+        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle) {
             return handle == BaseBoxTool.ResizeHandle.Bottom
                    || handle == BaseBoxTool.ResizeHandle.Left
                    || handle == BaseBoxTool.ResizeHandle.Top
                    || handle == BaseBoxTool.ResizeHandle.Right;
         }
 
-        public override string GetTransformName()
-        {
+        public override string GetTransformName() {
             return "Skew";
         }
 
-        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle)
-        {
+        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle) {
             return (handle == BaseBoxTool.ResizeHandle.Top || handle == BaseBoxTool.ResizeHandle.Bottom)
                        ? Cursors.SizeWE
                        : Cursors.SizeNS;
         }
 
         #region 2D Transformation Matrix
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
-        {
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets) {
             var shearUpDown = state.Handle == BaseBoxTool.ResizeHandle.Left || state.Handle == BaseBoxTool.ResizeHandle.Right;
             var shearTopRight = state.Handle == BaseBoxTool.ResizeHandle.Top || state.Handle == BaseBoxTool.ResizeHandle.Right;
 
             var nsmd = viewport.ScreenToWorld(e.X, viewport.Height - e.Y) - state.MoveStart;
             var mouseDiff = SnapIfNeeded(nsmd, doc);
-            if (KeyboardState.Shift)
-            {
+            if (KeyboardState.Shift) {
                 mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
             }
 
@@ -61,8 +53,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
             var sax = (float)shearAmount.X;
             var say = (float)shearAmount.Y;
 
-            switch (viewport.Direction)
-            {
+            switch (viewport.Direction) {
                 case Viewport2D.ViewDirection.Top:
                     if (shearUpDown) shearMatrix.M12 = say;
                     else shearMatrix.M21 = sax;
@@ -84,8 +75,7 @@ namespace CBRE.Editor.Tools.SelectTool.TransformationTools
         }
         #endregion 2D Transformation Matrix
 
-        public override IEnumerable<Widget> GetWidgets(Document document)
-        {
+        public override IEnumerable<Widget> GetWidgets(Document document) {
             yield break;
         }
     }

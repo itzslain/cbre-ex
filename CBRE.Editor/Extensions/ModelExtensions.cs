@@ -1,12 +1,11 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.FileSystem;
 using CBRE.Providers.Model;
 using CBRE.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Extensions {
     public static class ModelExtensions {

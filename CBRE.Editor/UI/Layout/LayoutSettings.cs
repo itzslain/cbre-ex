@@ -5,17 +5,14 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.UI.Layout
-{
-    public partial class LayoutSettings : Form
-    {
+namespace CBRE.Editor.UI.Layout {
+    public partial class LayoutSettings : Form {
         private readonly static TableSplitConfiguration[] Presets;
         private readonly static Bitmap[] PresetPreviews;
 
         #region Presets
 
-        static LayoutSettings()
-        {
+        static LayoutSettings() {
             Presets = new[]
             {
                 // Default
@@ -127,16 +124,13 @@ namespace CBRE.Editor.UI.Layout
             var sides = new[] { 2, 2, 0, 0 };
             var blocks = new[] { 12, 5, 4, 3 };
             var gaps = new[] { 0, 2, 2, 1 };
-            for (var i = 0; i < Presets.Length; i++)
-            {
+            for (var i = 0; i < Presets.Length; i++) {
                 var ps = Presets[i];
                 var img = new Bitmap(16, 16);
-                using (var g = System.Drawing.Graphics.FromImage(img))
-                {
+                using (var g = System.Drawing.Graphics.FromImage(img)) {
                     var xi = ps.Columns - 1;
                     var yi = ps.Rows - 1;
-                    foreach (var rec in ps.Rectangles)
-                    {
+                    foreach (var rec in ps.Rectangles) {
                         var x = sides[xi] + blocks[xi] * rec.X + gaps[xi] * rec.X;
                         var y = sides[yi] + blocks[yi] * rec.Y + gaps[yi] * rec.Y;
                         var w = blocks[xi] * rec.Width + gaps[xi] * (rec.Width - 1);
@@ -148,14 +142,11 @@ namespace CBRE.Editor.UI.Layout
             }
         }
 
-        private void LoadPreviews()
-        {
-            for (var i = 0; i < Presets.Length; i++)
-            {
+        private void LoadPreviews() {
+            for (var i = 0; i < Presets.Length; i++) {
                 var preset = Presets[i];
                 var preview = PresetPreviews[i];
-                var button = new Button
-                {
+                var button = new Button {
                     Width = 24,
                     Height = 24,
                     Image = preview,
@@ -163,12 +154,10 @@ namespace CBRE.Editor.UI.Layout
                     Padding = new Padding(0),
                     Margin = new Padding(0)
                 };
-                button.Click += (s, e) =>
-                {
+                button.Click += (s, e) => {
                     Rows.Value = preset.Rows;
                     Columns.Value = preset.Columns;
-                    SelectedConfiguration.Configuration = new TableSplitConfiguration
-                    {
+                    SelectedConfiguration.Configuration = new TableSplitConfiguration {
                         Columns = preset.Columns,
                         Rows = preset.Rows,
                         Rectangles = new List<Rectangle>(preset.Rectangles)
@@ -183,18 +172,15 @@ namespace CBRE.Editor.UI.Layout
 
 
         private List<ViewportWindowConfiguration> _configurations;
-        public LayoutSettings(IEnumerable<ViewportWindowConfiguration> configs)
-        {
+        public LayoutSettings(IEnumerable<ViewportWindowConfiguration> configs) {
             InitializeComponent();
             LoadPreviews();
 
-            _configurations = configs.Select(x => new ViewportWindowConfiguration
-            {
+            _configurations = configs.Select(x => new ViewportWindowConfiguration {
                 Maximised = x.Maximised,
                 Size = x.Size,
                 WindowID = x.WindowID,
-                Configuration = new TableSplitConfiguration
-                {
+                Configuration = new TableSplitConfiguration {
                     Columns = x.Configuration.Columns,
                     Rows = x.Configuration.Rows,
                     Rectangles = new List<Rectangle>(x.Configuration.Rectangles)
@@ -208,20 +194,17 @@ namespace CBRE.Editor.UI.Layout
             WindowDropDown.SelectedIndex = 0;
         }
 
-        private ViewportWindowConfiguration SelectedConfiguration
-        {
+        private ViewportWindowConfiguration SelectedConfiguration {
             get { return _configurations[WindowDropDown.SelectedIndex]; }
         }
 
-        private void WindowDropDownSelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void WindowDropDownSelectedIndexChanged(object sender, EventArgs e) {
             Rows.Value = SelectedConfiguration.Configuration.Rows;
             Columns.Value = SelectedConfiguration.Configuration.Columns;
             UpdateTableLayout();
         }
 
-        private void RegisterPanel(Control panel)
-        {
+        private void RegisterPanel(Control panel) {
             panel.AllowDrop = true;
             panel.MouseDown += PanelMouseDown;
             panel.DragEnter += PanelDragEnter;
@@ -229,8 +212,7 @@ namespace CBRE.Editor.UI.Layout
             panel.DragDrop += PanelDragDrop;
         }
 
-        private void UnregisterPanel(Control panel)
-        {
+        private void UnregisterPanel(Control panel) {
             panel.MouseDown -= PanelMouseDown;
             panel.DragEnter -= PanelDragEnter;
             panel.DragLeave -= PanelDragLeave;
@@ -239,8 +221,7 @@ namespace CBRE.Editor.UI.Layout
 
         private Point _dragStart;
 
-        private void PanelMouseDown(object sender, MouseEventArgs e)
-        {
+        private void PanelMouseDown(object sender, MouseEventArgs e) {
             var pos = TableLayout.GetPositionFromControl((Control)sender);
             _dragStart = new Point(pos.Column, pos.Row);
             ColourPanels(_dragStart);
@@ -250,21 +231,18 @@ namespace CBRE.Editor.UI.Layout
             foreach (Control control in TableLayout.Controls) control.BackColor = Color.Black;
         }
 
-        private void PanelDragEnter(object sender, DragEventArgs e)
-        {
+        private void PanelDragEnter(object sender, DragEventArgs e) {
             var pos = TableLayout.GetPositionFromControl((Control)sender);
             var point = new Point(pos.Column, pos.Row);
             if (e.Data.GetDataPresent(typeof(Point))) e.Effect = DragDropEffects.Link;
             ColourPanels(point);
         }
 
-        private void PanelDragLeave(object sender, EventArgs e)
-        {
+        private void PanelDragLeave(object sender, EventArgs e) {
             ColourPanels(_dragStart);
         }
 
-        private void PanelDragDrop(object sender, DragEventArgs e)
-        {
+        private void PanelDragDrop(object sender, DragEventArgs e) {
             var startPoint = (Point)e.Data.GetData(typeof(Point));
             var pos = TableLayout.GetPositionFromControl((Control)sender);
             var endPoint = new Point(pos.Column, pos.Row);
@@ -282,20 +260,14 @@ namespace CBRE.Editor.UI.Layout
             _dragStart = Point.Empty;
         }
 
-        private void ColourPanels(Point point)
-        {
+        private void ColourPanels(Point point) {
             foreach (Control control in TableLayout.Controls) control.BackColor = Color.Black;
-            if (point.X == _dragStart.X && point.Y == _dragStart.Y)
-            {
+            if (point.X == _dragStart.X && point.Y == _dragStart.Y) {
                 var ctrl = TableLayout.GetControlFromPosition(point.X, point.Y);
                 if (ctrl != null) ctrl.BackColor = Color.Green;
-            }
-            else
-            {
-                for (var i = Math.Min(point.X, _dragStart.X); i <= Math.Max(point.X, _dragStart.X); i++)
-                {
-                    for (var j = Math.Min(point.Y, _dragStart.Y); j <= Math.Max(point.Y, _dragStart.Y); j++)
-                    {
+            } else {
+                for (var i = Math.Min(point.X, _dragStart.X); i <= Math.Max(point.X, _dragStart.X); i++) {
+                    for (var j = Math.Min(point.Y, _dragStart.Y); j <= Math.Max(point.Y, _dragStart.Y); j++) {
                         var ctrl = TableLayout.GetControlFromPosition(i, j);
                         if (ctrl != null) ctrl.BackColor = Color.Blue;
                     }
@@ -303,8 +275,7 @@ namespace CBRE.Editor.UI.Layout
             }
         }
 
-        private void UpdateTableLayout()
-        {
+        private void UpdateTableLayout() {
             FixRectangles(SelectedConfiguration.Configuration);
 
             TableLayout.ColumnCount = (int)Columns.Value;
@@ -319,8 +290,7 @@ namespace CBRE.Editor.UI.Layout
             TableLayout.Controls.Clear();
 
             var counter = 0;
-            foreach (var rec in SelectedConfiguration.Configuration.Rectangles)
-            {
+            foreach (var rec in SelectedConfiguration.Configuration.Rectangles) {
                 var panel = new Panel();
                 panel.BackColor = CBRE.Settings.View.ViewportBackground;
                 panel.Dock = DockStyle.Fill;
@@ -332,54 +302,43 @@ namespace CBRE.Editor.UI.Layout
             }
         }
 
-        private void FixRectangles(TableSplitConfiguration configuration)
-        {
+        private void FixRectangles(TableSplitConfiguration configuration) {
             var cells = new bool[configuration.Rows, configuration.Columns];
             var list = new List<Rectangle>(configuration.Rectangles);
             configuration.Rectangles.RemoveAll(x => list.Where(y => y != x).Any(y => y.IntersectsWith(x)));
-            foreach (var r in configuration.Rectangles.ToList())
-            {
-                if (r.X < 0 || r.X + r.Width > configuration.Columns || r.Y < 0 || r.Y + r.Height > configuration.Rows)
-                {
+            foreach (var r in configuration.Rectangles.ToList()) {
+                if (r.X < 0 || r.X + r.Width > configuration.Columns || r.Y < 0 || r.Y + r.Height > configuration.Rows) {
                     configuration.Rectangles.Remove(r);
                     continue;
                 }
-                for (var i = r.X; i < r.X + r.Width; i++)
-                {
-                    for (var j = r.Y; j < r.Y + r.Height; j++)
-                    {
+                for (var i = r.X; i < r.X + r.Width; i++) {
+                    for (var j = r.Y; j < r.Y + r.Height; j++) {
                         cells[j, i] = true;
                     }
                 }
             }
-            for (var i = 0; i < cells.GetLength(0); i++)
-            {
-                for (var j = 0; j < cells.GetLength(1); j++)
-                {
+            for (var i = 0; i < cells.GetLength(0); i++) {
+                for (var j = 0; j < cells.GetLength(1); j++) {
                     if (!cells[i, j]) configuration.Rectangles.Add(new Rectangle(j, i, 1, 1));
                 }
             }
         }
 
-        private void ApplyButtonClick(object sender, EventArgs e)
-        {
+        private void ApplyButtonClick(object sender, EventArgs e) {
             ViewportManager.SetWindowConfigurations(_configurations);
             Close();
         }
 
-        private void CancelButtonClick(object sender, EventArgs e)
-        {
+        private void CancelButtonClick(object sender, EventArgs e) {
             Close();
         }
 
-        private void RowsValueChanged(object sender, EventArgs e)
-        {
+        private void RowsValueChanged(object sender, EventArgs e) {
             SelectedConfiguration.Configuration.Rows = (int)Rows.Value;
             UpdateTableLayout();
         }
 
-        private void ColumnsValueChanged(object sender, EventArgs e)
-        {
+        private void ColumnsValueChanged(object sender, EventArgs e) {
             SelectedConfiguration.Configuration.Columns = (int)Columns.Value;
             UpdateTableLayout();
         }

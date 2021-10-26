@@ -1,10 +1,10 @@
-﻿using CBRE.Common;
-using OpenTK.Graphics.OpenGL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using CBRE.Common;
+using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace CBRE.Graphics.Helpers {
@@ -125,8 +125,7 @@ namespace CBRE.Graphics.Helpers {
                 );
 
             actualBitmap.UnlockBits(data);
-            if (actualBitmap != bitmap)
-            {
+            if (actualBitmap != bitmap) {
                 actualBitmap.Dispose();
             }
             var texobj = new GLTexture(tex, name, flags, 0) { Width = width, Height = height };

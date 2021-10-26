@@ -1,4 +1,11 @@
-﻿using CBRE.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
@@ -20,13 +27,6 @@ using CBRE.Settings;
 using CBRE.Settings.Models;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using Path = System.IO.Path;
 
 namespace CBRE.Editor.Documents {

@@ -1,5 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System.Drawing;
+﻿using System.Drawing;
+using OpenTK.Graphics.OpenGL;
 
 namespace CBRE.Graphics.Helpers {
     public static class Clear {

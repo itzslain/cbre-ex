@@ -1,33 +1,28 @@
-﻿using CBRE.Common.Mediator;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Actions.MapObjects.Operations;
-using CBRE.Editor.Actions.MapObjects.Selection;
-using CBRE.Editor.Documents;
-using CBRE.Settings;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Common.Mediator;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Actions.MapObjects.Operations;
+using CBRE.Editor.Actions.MapObjects.Selection;
+using CBRE.Editor.Documents;
+using CBRE.Settings;
 
-namespace CBRE.Editor.UI
-{
-    public partial class EntityReportDialog : HotkeyForm, IMediatorListener
-    {
-        private class ColumnComparer : IComparer
-        {
+namespace CBRE.Editor.UI {
+    public partial class EntityReportDialog : HotkeyForm, IMediatorListener {
+        private class ColumnComparer : IComparer {
             public int Column { get; set; }
             public SortOrder SortOrder { get; set; }
 
-            public ColumnComparer(int column)
-            {
+            public ColumnComparer(int column) {
                 Column = column;
                 SortOrder = SortOrder.Ascending;
             }
 
-            public int Compare(object x, object y)
-            {
+            public int Compare(object x, object y) {
                 var i1 = (ListViewItem)x;
                 var i2 = (ListViewItem)y;
                 var compare = String.CompareOrdinal(i1.SubItems[Column].Text, i2.SubItems[Column].Text);
@@ -37,15 +32,13 @@ namespace CBRE.Editor.UI
 
         private readonly ColumnComparer _sorter;
 
-        public EntityReportDialog()
-        {
+        public EntityReportDialog() {
             InitializeComponent();
             _sorter = new ColumnComparer(0);
             EntityList.ListViewItemSorter = _sorter;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
+        protected override void OnLoad(EventArgs e) {
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
@@ -55,54 +48,44 @@ namespace CBRE.Editor.UI
             base.OnLoad(e);
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
+        protected override void OnClosed(EventArgs e) {
             Mediator.UnsubscribeAll(this);
             base.OnClosed(e);
         }
 
-        public void Notify(string message, object data)
-        {
+        public void Notify(string message, object data) {
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        public void DocumentActivated()
-        {
+        public void DocumentActivated() {
             FiltersChanged(null, null);
         }
 
-        public void SelectionChanged()
-        {
+        public void SelectionChanged() {
             if (!FollowSelection.Checked) return;
             var selection = DocumentManager.CurrentDocument.Selection.GetSelectedObjects().LastOrDefault(x => x is Entity);
             SetSelected(selection);
         }
 
-        private void DocumentTreeStructureChanged()
-        {
+        private void DocumentTreeStructureChanged() {
             FiltersChanged(null, null);
         }
 
-        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
-        {
-            if (objects.Any(x => x is Entity))
-            {
+        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects) {
+            if (objects.Any(x => x is Entity)) {
                 FiltersChanged(null, null);
             }
         }
 
-        private void EntityDataChanged(IEnumerable<MapObject> objects)
-        {
+        private void EntityDataChanged(IEnumerable<MapObject> objects) {
             FiltersChanged(null, null);
         }
 
-        private Entity GetSelected()
-        {
+        private Entity GetSelected() {
             return EntityList.SelectedItems.Count == 0 ? null : (Entity)EntityList.SelectedItems[0].Tag;
         }
 
-        private void SetSelected(MapObject selection)
-        {
+        private void SetSelected(MapObject selection) {
             if (selection == null) return;
 
             var item = EntityList.Items.OfType<ListViewItem>().FirstOrDefault(x => x.Tag == selection);
@@ -112,8 +95,7 @@ namespace CBRE.Editor.UI
             EntityList.EnsureVisible(EntityList.Items.IndexOf(item));
         }
 
-        private void FiltersChanged(object sender, EventArgs e)
-        {
+        private void FiltersChanged(object sender, EventArgs e) {
             EntityList.BeginUpdate();
             var selected = GetSelected();
             EntityList.ListViewItemSorter = null;
@@ -133,19 +115,16 @@ namespace CBRE.Editor.UI
             EntityList.EndUpdate();
         }
 
-        private ListViewItem GetListItem(Entity entity)
-        {
+        private ListViewItem GetListItem(Entity entity) {
             var targetname = entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
             return new ListViewItem(new[]
                                         {
                                             entity.EntityData.Name,
                                             targetname == null ? "" : targetname.Value
-                                        })
-            { Tag = entity };
+                                        }) { Tag = entity };
         }
 
-        private bool DoFilters(Entity ent)
-        {
+        private bool DoFilters(Entity ent) {
             var hasChildren = ent.HasChildren;
 
             if (hasChildren && TypePoint.Checked) return false;
@@ -158,15 +137,13 @@ namespace CBRE.Editor.UI
             var valueFilter = FilterValue.Text.ToUpperInvariant();
             var exactKeyValue = FilterKeyValueExact.Checked;
 
-            if (!String.IsNullOrWhiteSpace(classFilter))
-            {
+            if (!String.IsNullOrWhiteSpace(classFilter)) {
                 var name = (ent.EntityData.Name ?? "").ToUpperInvariant();
                 if (exactClass && name != classFilter) return false;
                 if (!exactClass && !name.Contains(classFilter)) return false;
             }
 
-            if (!String.IsNullOrWhiteSpace(keyFilter))
-            {
+            if (!String.IsNullOrWhiteSpace(keyFilter)) {
                 var prop = ent.EntityData.Properties.FirstOrDefault(x => x.Key.ToUpperInvariant() == keyFilter);
                 if (prop == null) return false;
                 var val = prop.Value.ToUpperInvariant();
@@ -177,8 +154,7 @@ namespace CBRE.Editor.UI
             return true;
         }
 
-        private void ResetFilters(object sender, EventArgs e)
-        {
+        private void ResetFilters(object sender, EventArgs e) {
             TypeAll.Checked = true;
             IncludeHidden.Checked = true;
             FilterKeyValueExact.Checked = false;
@@ -189,16 +165,12 @@ namespace CBRE.Editor.UI
             FiltersChanged(null, null);
         }
 
-        private void SortByColumn(object sender, ColumnClickEventArgs e)
-        {
-            if (_sorter.Column == e.Column)
-            {
+        private void SortByColumn(object sender, ColumnClickEventArgs e) {
+            if (_sorter.Column == e.Column) {
                 _sorter.SortOrder = _sorter.SortOrder == SortOrder.Descending
                                         ? SortOrder.Ascending
                                         : SortOrder.Descending;
-            }
-            else
-            {
+            } else {
                 _sorter.Column = e.Column;
                 _sorter.SortOrder = SortOrder.Ascending;
             }
@@ -206,38 +178,33 @@ namespace CBRE.Editor.UI
             SetSelected(GetSelected()); // Reset the scroll value
         }
 
-        private void SelectEntity(Entity sel)
-        {
+        private void SelectEntity(Entity sel) {
             var currentSelection = DocumentManager.CurrentDocument.Selection.GetSelectedObjects();
             var change = new ChangeSelection(sel.FindAll(), currentSelection);
             DocumentManager.CurrentDocument.PerformAction("Select entity", change);
         }
 
-        private void GoToSelectedEntity(object sender, EventArgs e)
-        {
+        private void GoToSelectedEntity(object sender, EventArgs e) {
             var selected = GetSelected();
             if (selected == null) return;
             SelectEntity(selected);
             Mediator.Publish(HotkeysMediator.CenterAllViewsOnSelection);
         }
 
-        private void DeleteSelectedEntity(object sender, EventArgs e)
-        {
+        private void DeleteSelectedEntity(object sender, EventArgs e) {
             var selected = GetSelected();
             if (selected == null) return;
             DocumentManager.CurrentDocument.PerformAction("Delete entity", new Delete(new[] { selected.ID }));
         }
 
-        private void OpenEntityProperties(object sender, EventArgs e)
-        {
+        private void OpenEntityProperties(object sender, EventArgs e) {
             var selected = GetSelected();
             if (selected == null) return;
             SelectEntity(selected);
             Mediator.Publish(HotkeysMediator.ObjectProperties);
         }
 
-        private void CloseButtonClicked(object sender, EventArgs e)
-        {
+        private void CloseButtonClicked(object sender, EventArgs e) {
             Close();
         }
     }

@@ -1,9 +1,9 @@
-﻿using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
-using CBRE.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
+using CBRE.UI;
 
 namespace CBRE.Editor.Rendering.Helpers {
     /// <summary>

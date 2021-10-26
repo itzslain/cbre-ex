@@ -1,6 +1,6 @@
-﻿using CBRE.Editor.Documents;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CBRE.Editor.Documents;
 
 namespace CBRE.Editor.Actions {
     public class ActionCollection : IAction {

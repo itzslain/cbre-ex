@@ -9,6 +9,7 @@ namespace CBRE.Editor.Rendering {
         public bool LightmapEnabled { get; set; }
 
         public bool ShowGrid { get; set; }
+        public bool HideToolTextures { get; set; }
         public decimal GridSpacing { get; set; }
     }
 

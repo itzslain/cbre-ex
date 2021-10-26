@@ -1,19 +1,16 @@
-﻿using CBRE.Editor.Documents;
-using CBRE.Providers.Texture;
-using CBRE.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CBRE.Editor.Documents;
+using CBRE.Providers.Texture;
+using CBRE.UI;
 
-namespace CBRE.Editor.UI
-{
-    public sealed class TextureListPanel : Panel
-    {
-        public enum TextureSortOrder
-        {
+namespace CBRE.Editor.UI {
+    public sealed class TextureListPanel : Panel {
+        public enum TextureSortOrder {
             None,
             Name,
             Width,
@@ -27,20 +24,16 @@ namespace CBRE.Editor.UI
 
         public event TextureSelectedEventHandler TextureSelected;
 
-        private void OnTextureSelected(TextureItem item)
-        {
-            if (TextureSelected != null)
-            {
+        private void OnTextureSelected(TextureItem item) {
+            if (TextureSelected != null) {
                 TextureSelected(this, item);
             }
         }
 
         public event SelectionChangedEventHandler SelectionChanged;
 
-        private void OnSelectionChanged(IEnumerable<TextureItem> selection)
-        {
-            if (SelectionChanged != null)
-            {
+        private void OnSelectionChanged(IEnumerable<TextureItem> selection) {
+            if (SelectionChanged != null) {
                 SelectionChanged(this, selection);
             }
         }
@@ -61,28 +54,22 @@ namespace CBRE.Editor.UI
 
         #region Properties
 
-        public bool AllowSelection
-        {
+        public bool AllowSelection {
             get { return _allowSelection; }
-            set
-            {
+            set {
                 _allowSelection = value;
-                if (!_allowSelection && _selection.Count > 0)
-                {
+                if (!_allowSelection && _selection.Count > 0) {
                     _selection.Clear();
                     Refresh();
                 }
             }
         }
 
-        public bool AllowMultipleSelection
-        {
+        public bool AllowMultipleSelection {
             get { return _allowMultipleSelection; }
-            set
-            {
+            set {
                 _allowMultipleSelection = value;
-                if (!_allowMultipleSelection && _selection.Count > 0)
-                {
+                if (!_allowMultipleSelection && _selection.Count > 0) {
                     var first = _selection.First();
                     _selection.Clear();
                     _selection.Add(first);
@@ -91,15 +78,12 @@ namespace CBRE.Editor.UI
             }
         }
 
-        public int ImageSize
-        {
+        public int ImageSize {
             get { return _imageSize; }
-            set
-            {
+            set {
                 _imageSize = value;
 
-                if (DocumentManager.CurrentDocument != null)
-                {
+                if (DocumentManager.CurrentDocument != null) {
                     var packs = _textures.Select(t => t.Package).Distinct();
                     if (_streamSource != null) _streamSource.Dispose();
                     _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
@@ -109,21 +93,17 @@ namespace CBRE.Editor.UI
             }
         }
 
-        public TextureSortOrder SortOrder
-        {
+        public TextureSortOrder SortOrder {
             get { return _sortOrder; }
-            set
-            {
+            set {
                 _sortOrder = value;
                 UpdateRectangles();
             }
         }
 
-        public bool SortDescending
-        {
+        public bool SortDescending {
             get { return _sortDescending; }
-            set
-            {
+            set {
                 _sortDescending = value;
                 UpdateRectangles();
             }
@@ -133,8 +113,7 @@ namespace CBRE.Editor.UI
 
         #endregion
 
-        public TextureListPanel()
-        {
+        public TextureListPanel() {
             BackColor = Color.Black;
             VScroll = true;
             AutoScroll = true;
@@ -158,16 +137,14 @@ namespace CBRE.Editor.UI
 
         #region Selection
 
-        public void SetSelectedTextures(IEnumerable<TextureItem> items)
-        {
+        public void SetSelectedTextures(IEnumerable<TextureItem> items) {
             _selection.Clear();
             _selection.AddRange(items);
             OnSelectionChanged(_selection);
             Refresh();
         }
 
-        public void ScrollToItem(TextureItem item)
-        {
+        public void ScrollToItem(TextureItem item) {
             var index = GetTextures().ToList().IndexOf(item);
             if (index < 0) return;
 
@@ -177,8 +154,7 @@ namespace CBRE.Editor.UI
             Refresh();
         }
 
-        protected override void OnMouseDoubleClick(MouseEventArgs e)
-        {
+        protected override void OnMouseDoubleClick(MouseEventArgs e) {
             base.OnMouseDoubleClick(e);
             if (KeyboardState.Ctrl || KeyboardState.Shift || _selection.Count != 1) return;
 
@@ -188,8 +164,7 @@ namespace CBRE.Editor.UI
             var clickedIndex = GetIndexAt(x, y);
 
             var item = GetTextures().ElementAt(clickedIndex);
-            if (item == _selection[0])
-            {
+            if (item == _selection[0]) {
                 OnTextureSelected(_selection[0]);
             }
         }
@@ -197,15 +172,13 @@ namespace CBRE.Editor.UI
         private bool _down;
         private Point _downPoint;
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
+        protected override void OnMouseDown(MouseEventArgs e) {
             base.OnMouseDown(e);
 
             if (!AllowSelection) return;
             if (!AllowMultipleSelection || !KeyboardState.Ctrl) _selection.Clear();
 
-            if (e.Button == MouseButtons.Left)
-            {
+            if (e.Button == MouseButtons.Left) {
                 _down = true;
                 _downPoint = e.Location;
             }
@@ -217,24 +190,17 @@ namespace CBRE.Editor.UI
 
             var item = clickedIndex >= 0 && clickedIndex < _textures.Count ? GetTextures().ElementAt(clickedIndex) : null;
 
-            if (item == null)
-            {
+            if (item == null) {
                 _selection.Clear();
-            }
-            else if (AllowMultipleSelection && KeyboardState.Ctrl && _selection.Contains(item))
-            {
+            } else if (AllowMultipleSelection && KeyboardState.Ctrl && _selection.Contains(item)) {
                 _selection.Remove(item);
                 _lastSelectedItem = null;
-            }
-            else if (AllowMultipleSelection && KeyboardState.Shift && _lastSelectedItem != null)
-            {
+            } else if (AllowMultipleSelection && KeyboardState.Shift && _lastSelectedItem != null) {
                 var bef = GetTextures().ToList().IndexOf(_lastSelectedItem);
                 var start = Math.Min(bef, clickedIndex);
                 var count = Math.Abs(clickedIndex - bef) + 1;
                 _selection.AddRange(GetTextures().ToList().GetRange(start, count).Where(i => !_selection.Contains(i)));
-            }
-            else
-            {
+            } else {
                 _selection.Add(item);
                 _lastSelectedItem = item;
             }
@@ -243,34 +209,28 @@ namespace CBRE.Editor.UI
             Refresh();
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
+        protected override void OnMouseMove(MouseEventArgs e) {
             base.OnMouseMove(e);
-            if (_down && EnableDrag && _selection.Any() && (Math.Abs(e.X - _downPoint.X) > 2 || Math.Abs(e.Y - _downPoint.Y) > 2))
-            {
+            if (_down && EnableDrag && _selection.Any() && (Math.Abs(e.X - _downPoint.X) > 2 || Math.Abs(e.Y - _downPoint.Y) > 2)) {
                 _down = false;
                 DoDragDrop(_selection.ToList(), DragDropEffects.Copy);
             }
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
+        protected override void OnMouseUp(MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) _down = false;
             base.OnMouseUp(e);
         }
 
-        public int GetIndexAt(int x, int y)
-        {
+        public int GetIndexAt(int x, int y) {
             int pad = 3,
                 font = 4 + SystemFonts.MessageBoxFont.Height;
-            for (var i = 0; i < _rectangles.Count; i++)
-            {
+            for (var i = 0; i < _rectangles.Count; i++) {
                 var rec = _rectangles[i];
                 if (rec.Left - pad <= x
                     && rec.Right + pad >= x
                     && rec.Top - pad <= y
-                    && rec.Bottom + pad + font >= y)
-                {
+                    && rec.Bottom + pad + font >= y) {
                     return i;
                 }
             }
@@ -281,11 +241,9 @@ namespace CBRE.Editor.UI
 
         #region Add/Remove/Get Textures
 
-        public IEnumerable<TextureItem> GetTextures()
-        {
+        public IEnumerable<TextureItem> GetTextures() {
             IEnumerable<TextureItem> sorted;
-            switch (SortOrder)
-            {
+            switch (SortOrder) {
                 case TextureSortOrder.None:
                     sorted = _textures;
                     break;
@@ -311,15 +269,13 @@ namespace CBRE.Editor.UI
             return sorted;
         }
 
-        public IEnumerable<TextureItem> GetSelectedTextures()
-        {
+        public IEnumerable<TextureItem> GetSelectedTextures() {
             return _selection;
         }
 
         private ITextureStreamSource _streamSource;
 
-        public void RemoveAllTextures()
-        {
+        public void RemoveAllTextures() {
             _textures.Clear();
             _lastSelectedItem = null;
             _selection.Clear();
@@ -331,8 +287,7 @@ namespace CBRE.Editor.UI
             UpdateRectangles();
         }
 
-        public void SetTextureList(IEnumerable<TextureItem> textures)
-        {
+        public void SetTextureList(IEnumerable<TextureItem> textures) {
             _textures.Clear();
             _lastSelectedItem = null;
             _selection.Clear();
@@ -347,8 +302,7 @@ namespace CBRE.Editor.UI
             UpdateRectangles();
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             _textures.Clear();
             _lastSelectedItem = null;
             _selection.Clear();
@@ -359,8 +313,7 @@ namespace CBRE.Editor.UI
             OnSelectionChanged(_selection);
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
             if (disposing) Clear();
             base.Dispose(disposing);
         }
@@ -369,22 +322,18 @@ namespace CBRE.Editor.UI
 
         #region Scrolling
 
-        private void ScrollByAmount(int value)
-        {
+        private void ScrollByAmount(int value) {
             var newValue = _scrollBar.Value + value;
             _scrollBar.Value = newValue < 0 ? 0 : Math.Min(newValue, Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height));
         }
 
-        protected override void OnMouseWheel(MouseEventArgs e)
-        {
+        protected override void OnMouseWheel(MouseEventArgs e) {
             base.OnMouseWheel(e);
             ScrollByAmount(_scrollBar.SmallChange * (e.Delta / -120));
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
+        protected override void OnKeyDown(KeyEventArgs e) {
+            switch (e.KeyCode) {
                 case Keys.PageDown:
                     ScrollByAmount(_scrollBar.LargeChange);
                     break;
@@ -404,8 +353,7 @@ namespace CBRE.Editor.UI
             base.OnKeyDown(e);
         }
 
-        protected override void OnMouseEnter(EventArgs e)
-        {
+        protected override void OnMouseEnter(EventArgs e) {
             Focus();
             base.OnMouseEnter(e);
         }
@@ -414,14 +362,12 @@ namespace CBRE.Editor.UI
 
         #region Updating Rectangles & Dimensions
 
-        protected override void OnResize(EventArgs eventargs)
-        {
+        protected override void OnResize(EventArgs eventargs) {
             base.OnResize(eventargs);
             UpdateRectangles();
         }
 
-        private void UpdateRectangles()
-        {
+        private void UpdateRectangles() {
             int w = ClientRectangle.Width - _scrollBar.Width,
                 pad = 3,
                 font = 4 + SystemFonts.MessageBoxFont.Height,
@@ -429,13 +375,11 @@ namespace CBRE.Editor.UI
                 cy = 0,
                 my = 0;
             _rectangles.Clear();
-            foreach (var ti in GetTextures())
-            {
+            foreach (var ti in GetTextures()) {
                 var rw = w - cx;
                 var wid = (_imageSize > 0 ? _imageSize : ti.Width) + pad + pad;
                 var hei = (_imageSize > 0 ? _imageSize : ti.Height) + pad + pad + font;
-                if (rw < wid)
-                {
+                if (rw < wid) {
                     // New row
                     cx = 0;
                     cy += my;
@@ -450,8 +394,7 @@ namespace CBRE.Editor.UI
             _scrollBar.SmallChange = (_imageSize > 0 ? _imageSize : 128) + pad + pad + font;
             _scrollBar.LargeChange = ClientRectangle.Height;
 
-            if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
-            {
+            if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height) {
                 _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
             }
 
@@ -464,37 +407,30 @@ namespace CBRE.Editor.UI
 
         private Dictionary<TextureItem, BitmapRef> _renderCache = new Dictionary<TextureItem, BitmapRef>();
 
-        private void UpdateCacheableItems(int y, int height)
-        {
+        private void UpdateCacheableItems(int y, int height) {
             if (_streamSource == null) return;
 
             var texs = GetTextures().ToList();
             var cacheable = new List<TextureItem>();
-            for (var i = 0; i < texs.Count; i++)
-            {
+            for (var i = 0; i < texs.Count; i++) {
                 var rec = _rectangles[i];
                 if (rec.Bottom < y) continue;
                 if (rec.Top > y + height) break;
                 cacheable.Add(texs[i]);
             }
-            foreach (var ti in _renderCache.Keys.ToList())
-            {
-                if (!cacheable.Contains(ti))
-                {
+            foreach (var ti in _renderCache.Keys.ToList()) {
+                if (!cacheable.Contains(ti)) {
                     //if (_renderCache[ti] != null) _renderCache[ti].Dispose();
                     _renderCache.Remove(ti);
                 }
             }
-            foreach (var ti in cacheable)
-            {
-                if (!_renderCache.ContainsKey(ti))
-                {
+            foreach (var ti in cacheable) {
+                if (!_renderCache.ContainsKey(ti)) {
                     _renderCache.Add(ti, null);
                 }
             }
 
-            Parallel.ForEach(cacheable, item =>
-            {
+            Parallel.ForEach(cacheable, item => {
                 if (_streamSource == null) return;
                 var img = _streamSource.GetImage(item);
                 if (img == null) return;
@@ -503,14 +439,12 @@ namespace CBRE.Editor.UI
             });
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
+        protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
             RenderTextures(e.Graphics);
         }
 
-        public void RenderTextures(System.Drawing.Graphics g)
-        {
+        public void RenderTextures(System.Drawing.Graphics g) {
             if (_textures.Count == 0 || DocumentManager.CurrentDocument == null) return;
 
             var y = _scrollBar.Value;
@@ -518,8 +452,7 @@ namespace CBRE.Editor.UI
             UpdateCacheableItems(y, height);
 
             var texs = GetTextures().ToList();
-            for (var i = 0; i < texs.Count; i++)
-            {
+            for (var i = 0; i < texs.Count; i++) {
                 var rec = _rectangles[i];
                 if (rec.Bottom < y) continue;
                 if (rec.Top > y + height) break;
@@ -533,32 +466,25 @@ namespace CBRE.Editor.UI
             }
         }
 
-        private void DrawImage(System.Drawing.Graphics g, Image bmp, TextureItem ti, int x, int y, int w, int h)
-        {
+        private void DrawImage(System.Drawing.Graphics g, Image bmp, TextureItem ti, int x, int y, int w, int h) {
             if (bmp == null) return;
 
             var iw = bmp.Width;
             var ih = bmp.Height;
-            if (iw > w && iw >= ih)
-            {
+            if (iw > w && iw >= ih) {
                 ih = (int)Math.Floor(h * (ih / (float)iw));
                 iw = w;
-            }
-            else if (ih > h)
-            {
+            } else if (ih > h) {
                 iw = (int)Math.Floor(w * (iw / (float)ih));
                 ih = h;
             }
             g.FillRectangle(System.Drawing.Brushes.Black, x - 3, y - 3, w + 6, h + 10 + SystemFonts.MessageBoxFont.Height);
 
             g.DrawImage(bmp, x, y, iw, ih);
-            if (_selection.Contains(ti))
-            {
+            if (_selection.Contains(ti)) {
                 g.DrawRectangle(Pens.Red, x - 1, y - 1, w + 2, h + 2);
                 g.DrawRectangle(Pens.Red, x - 2, y - 2, w + 4, h + 4);
-            }
-            else
-            {
+            } else {
                 g.DrawRectangle(Pens.Gray, x - 2, y - 2, w + 4, h + 4);
             }
             g.DrawString(ti.Name, SystemFonts.MessageBoxFont, System.Drawing.Brushes.White, x - 2, y + h + 3);

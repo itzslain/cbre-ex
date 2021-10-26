@@ -1,8 +1,8 @@
-﻿using CBRE.DataStructures.Geometric;
-using CBRE.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.DataStructures.Geometric;
+using CBRE.Settings;
 
 namespace CBRE.Editor.Compiling.Lightmap {
     public class LightmapGroup {

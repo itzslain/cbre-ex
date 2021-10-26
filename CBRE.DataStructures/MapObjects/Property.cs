@@ -1,8 +1,8 @@
-﻿using CBRE.DataStructures.Geometric;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.Serialization;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects {
     [Serializable]

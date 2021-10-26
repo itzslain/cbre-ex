@@ -24,33 +24,27 @@ http://stackoverflow.com/questions/616718/how-do-i-get-common-file-type-icons-in
 http://stackoverflow.com/questions/1599235/how-do-i-fetch-the-folder-icon-on-windows-7-using-shell32-shgetfileinfo
 */
 
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
-namespace CBRE.Editor.UI.FileSystem
-{
-    public static class FileSystemIcons
-    {
+namespace CBRE.Editor.UI.FileSystem {
+    public static class FileSystemIcons {
         #region Custom exceptions class
 
-        public class IconNotFoundException : Exception
-        {
+        public class IconNotFoundException : Exception {
             public IconNotFoundException(string fileName, int index, Exception innerException)
-                : base(string.Format("Icon with Id = {0} wasn't found in file {1}", index, fileName), innerException)
-            {
+                : base(string.Format("Icon with Id = {0} wasn't found in file {1}", index, fileName), innerException) {
             }
         }
 
-        public class UnableToExtractIconsException : Exception
-        {
+        public class UnableToExtractIconsException : Exception {
             public UnableToExtractIconsException(string fileName, int firstIconIndex, int iconCount)
-                : base(string.Format("Tryed to extract {2} icons starting from the one with id {1} from the \"{0}\" file but failed", fileName, firstIconIndex, iconCount))
-            {
+                : base(string.Format("Tryed to extract {2} icons starting from the one with id {1} from the \"{0}\" file but failed", fileName, firstIconIndex, iconCount)) {
             }
         }
 
@@ -61,8 +55,7 @@ namespace CBRE.Editor.UI.FileSystem
         /// <summary>
         /// Contains information about a file object. 
         /// </summary>
-        struct SHFILEINFO
-        {
+        struct SHFILEINFO {
             /// <summary>
             /// Handle to the icon that represents the file. You are responsible for
             /// destroying this handle with DestroyIcon when you no longer need it. 
@@ -97,8 +90,7 @@ namespace CBRE.Editor.UI.FileSystem
         };
 
         [Flags]
-        enum FileInfoFlags : int
-        {
+        enum FileInfoFlags : int {
             /// <summary>
             /// Retrieve the handle to the icon that represents the file and the index 
             /// of the icon within the system image list. The handle is copied to the 
@@ -195,14 +187,12 @@ namespace CBRE.Editor.UI.FileSystem
         /// Two constants extracted from the FileInfoFlags, the only that are
         /// meaningfull for the user of this class.
         /// </summary>
-        public enum SystemIconSize : int
-        {
+        public enum SystemIconSize : int {
             Large = 0x000000000,
             Small = 0x000000001
         }
 
-        public enum SystemFolderType
-        {
+        public enum SystemFolderType {
             Closed = 0x000000000,
             Open = 0x000000002
         }
@@ -214,16 +204,14 @@ namespace CBRE.Editor.UI.FileSystem
         /// </summary>
         /// <param name="fileName">Full path of the file to look for.</param>
         /// <returns></returns>
-        static int GetIconsCountInFile(string fileName)
-        {
+        static int GetIconsCountInFile(string fileName) {
             return ExtractIconEx(fileName, -1, null, null, 0);
         }
 
         #region ExtractIcon-like functions
 
         public static void ExtractEx(string fileName, List<Icon> largeIcons,
-            List<Icon> smallIcons, int firstIconIndex, int iconCount)
-        {
+            List<Icon> smallIcons, int firstIconIndex, int iconCount) {
             /*
              * Memory allocations
              */
@@ -231,12 +219,10 @@ namespace CBRE.Editor.UI.FileSystem
             IntPtr[] smallIconsPtrs = null;
             IntPtr[] largeIconsPtrs = null;
 
-            if (smallIcons != null)
-            {
+            if (smallIcons != null) {
                 smallIconsPtrs = new IntPtr[iconCount];
             }
-            if (largeIcons != null)
-            {
+            if (largeIcons != null) {
                 largeIconsPtrs = new IntPtr[iconCount];
             }
 
@@ -245,8 +231,7 @@ namespace CBRE.Editor.UI.FileSystem
              */
 
             int apiResult = ExtractIconEx(fileName, firstIconIndex, largeIconsPtrs, smallIconsPtrs, iconCount);
-            if (apiResult != iconCount)
-            {
+            if (apiResult != iconCount) {
                 throw new UnableToExtractIconsException(fileName, firstIconIndex, iconCount);
             }
 
@@ -254,31 +239,25 @@ namespace CBRE.Editor.UI.FileSystem
              * Fill lists
              */
 
-            if (smallIcons != null)
-            {
+            if (smallIcons != null) {
                 smallIcons.Clear();
-                foreach (IntPtr actualIconPtr in smallIconsPtrs)
-                {
+                foreach (IntPtr actualIconPtr in smallIconsPtrs) {
                     smallIcons.Add(Icon.FromHandle(actualIconPtr));
                 }
             }
-            if (largeIcons != null)
-            {
+            if (largeIcons != null) {
                 largeIcons.Clear();
-                foreach (IntPtr actualIconPtr in largeIconsPtrs)
-                {
+                foreach (IntPtr actualIconPtr in largeIconsPtrs) {
                     largeIcons.Add(Icon.FromHandle(actualIconPtr));
                 }
             }
         }
 
         public static List<Icon> ExtractEx(string fileName, SystemIconSize size,
-            int firstIconIndex, int iconCount)
-        {
+            int firstIconIndex, int iconCount) {
             List<Icon> iconList = new List<Icon>();
 
-            switch (size)
-            {
+            switch (size) {
                 case SystemIconSize.Large:
                     ExtractEx(fileName, iconList, null, firstIconIndex, iconCount);
                     break;
@@ -294,56 +273,44 @@ namespace CBRE.Editor.UI.FileSystem
             return iconList;
         }
 
-        public static void Extract(string fileName, List<Icon> largeIcons, List<Icon> smallIcons)
-        {
+        public static void Extract(string fileName, List<Icon> largeIcons, List<Icon> smallIcons) {
             int iconCount = GetIconsCountInFile(fileName);
             ExtractEx(fileName, largeIcons, smallIcons, 0, iconCount);
         }
 
-        public static List<Icon> Extract(string fileName, SystemIconSize size)
-        {
+        public static List<Icon> Extract(string fileName, SystemIconSize size) {
             int iconCount = GetIconsCountInFile(fileName);
             return ExtractEx(fileName, size, 0, iconCount);
         }
 
-        public static Icon ExtractOne(string fileName, int index, SystemIconSize size)
-        {
-            try
-            {
+        public static Icon ExtractOne(string fileName, int index, SystemIconSize size) {
+            try {
                 List<Icon> iconList = ExtractEx(fileName, size, index, 1);
                 return iconList[0];
-            }
-            catch (UnableToExtractIconsException e)
-            {
+            } catch (UnableToExtractIconsException e) {
                 throw new IconNotFoundException(fileName, index, e);
             }
         }
 
         public static void ExtractOne(string fileName, int index,
-            out Icon largeIcon, out Icon smallIcon)
-        {
+            out Icon largeIcon, out Icon smallIcon) {
             var smallIconList = new List<Icon>();
             var largeIconList = new List<Icon>();
-            try
-            {
+            try {
                 ExtractEx(fileName, largeIconList, smallIconList, index, 1);
                 largeIcon = largeIconList[0];
                 smallIcon = smallIconList[0];
-            }
-            catch (UnableToExtractIconsException e)
-            {
+            } catch (UnableToExtractIconsException e) {
                 throw new IconNotFoundException(fileName, index, e);
             }
         }
 
         #endregion
 
-        static string GetExtensionIconStringFromKeyUsingDefaultIcon(RegistryKey key)
-        {
+        static string GetExtensionIconStringFromKeyUsingDefaultIcon(RegistryKey key) {
             Debug.Assert(key != null);
 
-            using (var defaultIconKey = key.OpenSubKey("DefaultIcon", false))
-            {
+            using (var defaultIconKey = key.OpenSubKey("DefaultIcon", false)) {
                 if (defaultIconKey == null) return null;
 
                 var value = defaultIconKey.GetValue(null);
@@ -353,17 +320,14 @@ namespace CBRE.Editor.UI.FileSystem
             }
         }
 
-        static string GetExtensionIconStringFromKeyFromClsid(RegistryKey classesRootKey, string clsid)
-        {
+        static string GetExtensionIconStringFromKeyFromClsid(RegistryKey classesRootKey, string clsid) {
             Debug.Assert(classesRootKey != null);
             Debug.Assert(clsid != null);
 
-            using (var clsidKey = classesRootKey.OpenSubKey("CLSID", false))
-            {
+            using (var clsidKey = classesRootKey.OpenSubKey("CLSID", false)) {
                 if (clsidKey == null) return null;
 
-                using (var applicationClsidKey = clsidKey.OpenSubKey(clsid, false))
-                {
+                using (var applicationClsidKey = clsidKey.OpenSubKey(clsid, false)) {
                     if (applicationClsidKey == null) return null;
 
                     return GetExtensionIconStringFromKeyUsingDefaultIcon(applicationClsidKey);
@@ -371,13 +335,11 @@ namespace CBRE.Editor.UI.FileSystem
             }
         }
 
-        static string GetExtensionIconStringFromKeyUsingClsid(RegistryKey key)
-        {
+        static string GetExtensionIconStringFromKeyUsingClsid(RegistryKey key) {
             Debug.Assert(key != null);
 
             string applicationClsid;
-            using (var clsidKey = key.OpenSubKey("CLSID", false))
-            {
+            using (var clsidKey = key.OpenSubKey("CLSID", false)) {
                 if (clsidKey == null) return null;
 
                 var value = clsidKey.GetValue(null);
@@ -386,13 +348,11 @@ namespace CBRE.Editor.UI.FileSystem
                 applicationClsid = value.ToString();
             }
 
-            using (var classesRootKey = Registry.ClassesRoot)
-            {
+            using (var classesRootKey = Registry.ClassesRoot) {
                 var fromNormalClsid = GetExtensionIconStringFromKeyFromClsid(classesRootKey, applicationClsid);
                 if (fromNormalClsid != null) return fromNormalClsid;
 
-                using (var wow6432ClassesRootKey = classesRootKey.OpenSubKey("Wow6432Node"))
-                {
+                using (var wow6432ClassesRootKey = classesRootKey.OpenSubKey("Wow6432Node")) {
                     if (wow6432ClassesRootKey == null) return null;
 
                     return GetExtensionIconStringFromKeyFromClsid(wow6432ClassesRootKey, applicationClsid);
@@ -400,25 +360,21 @@ namespace CBRE.Editor.UI.FileSystem
             }
         }
 
-        static string GetExtensionIconStringFromRegistry(string extension)
-        {
+        static string GetExtensionIconStringFromRegistry(string extension) {
             Debug.Assert(extension != null);
             Debug.Assert(extension.Length > 1);
             Debug.Assert(extension.StartsWith("."));
 
             using (var classesRootKey = Registry.ClassesRoot)
-            using (var extensionKey = classesRootKey.OpenSubKey(extension, false))
-            {
+            using (var extensionKey = classesRootKey.OpenSubKey(extension, false)) {
                 if (extensionKey == null) return null;
 
                 var fileTypeObject = extensionKey.GetValue(null);
                 if (fileTypeObject == null) return null;
 
-                using (var applicationKey = classesRootKey.OpenSubKey(fileTypeObject.ToString(), false))
-                {
+                using (var applicationKey = classesRootKey.OpenSubKey(fileTypeObject.ToString(), false)) {
                     var result = GetExtensionIconStringFromKeyUsingClsid(applicationKey);
-                    if (result == null)
-                    {
+                    if (result == null) {
                         result = GetExtensionIconStringFromKeyUsingDefaultIcon(applicationKey);
                     }
 
@@ -427,8 +383,7 @@ namespace CBRE.Editor.UI.FileSystem
             }
         }
 
-        public static Icon IconFromExtensionUsingRegistry(string extension, SystemIconSize size)
-        {
+        public static Icon IconFromExtensionUsingRegistry(string extension, SystemIconSize size) {
             if (extension == null) throw new ArgumentNullException("extension");
             if (extension.Length == 0 || extension == ".") throw new ArgumentException("Empty extension", "extension");
 
@@ -440,8 +395,7 @@ namespace CBRE.Editor.UI.FileSystem
             return ExtractFromRegistryString(iconLocation, size);
         }
 
-        public static Icon IconFromExtension(string extension, SystemIconSize size)
-        {
+        public static Icon IconFromExtension(string extension, SystemIconSize size) {
             if (extension == null) throw new ArgumentNullException("extension");
             if (extension.Length == 0 || extension == ".") throw new ArgumentException("Empty extension", "extension");
 
@@ -456,8 +410,7 @@ namespace CBRE.Editor.UI.FileSystem
             return (Icon)fromHandle;
         }
 
-        public static Icon GetFolderIcon(SystemIconSize size, SystemFolderType systemFolderType)
-        {
+        public static Icon GetFolderIcon(SystemIconSize size, SystemFolderType systemFolderType) {
             var fileInfo = new SHFILEINFO();
 
             SHGetFileInfo(System.Environment.CurrentDirectory, (int)FILE_ATTRIBUTE_DIRECTORY, out fileInfo,
@@ -470,8 +423,7 @@ namespace CBRE.Editor.UI.FileSystem
             return (Icon)fromHandle;
         }
 
-        public static Icon IconFromResource(string resourceName)
-        {
+        public static Icon IconFromResource(string resourceName) {
             var assembly = Assembly.GetCallingAssembly();
             var stream = assembly.GetManifestResourceStream(resourceName);
 
@@ -486,31 +438,25 @@ namespace CBRE.Editor.UI.FileSystem
         /// <param name="fileName">The "path" part of the string.</param>
         /// <param name="index">The "index" part of the string.</param>
         public static void ExtractInformationsFromRegistryString(
-            string regString, out string fileName, out int index)
-        {
+            string regString, out string fileName, out int index) {
             if (regString == null) throw new ArgumentNullException("regString");
             if (regString.Length == 0) throw new ArgumentException("Empty regString", "regString");
 
             index = 0;
             string[] strArr = regString.Replace("\"", "").Split(',');
             fileName = strArr[0].Trim();
-            if (strArr.Length > 1)
-            {
+            if (strArr.Length > 1) {
                 int.TryParse(strArr[1].Trim(), out index);
             }
         }
 
-        public static Icon ExtractFromRegistryString(string regString, SystemIconSize size)
-        {
+        public static Icon ExtractFromRegistryString(string regString, SystemIconSize size) {
             string fileName;
             int index;
             ExtractInformationsFromRegistryString(regString, out fileName, out index);
-            try
-            {
+            try {
                 return ExtractOne(fileName, index, size);
-            }
-            catch (IconNotFoundException)
-            {
+            } catch (IconNotFoundException) {
                 return null;
             }
         }

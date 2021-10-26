@@ -1,7 +1,6 @@
-﻿using CBRE.Providers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using CBRE.Providers;
 
 namespace CBRE.Settings.Models {
     public class Build {

@@ -1,4 +1,9 @@
-﻿using CBRE.DataStructures;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.DataStructures;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Extensions;
@@ -8,18 +13,10 @@ using CBRE.Settings;
 using CBRE.UI;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.Widgets
-{
-    public class RotationWidget : Widget
-    {
-        private enum CircleType
-        {
+namespace CBRE.Editor.Tools.Widgets {
+    public class RotationWidget : Widget {
+        private enum CircleType {
             None,
             Outer,
             X,
@@ -27,13 +24,11 @@ namespace CBRE.Editor.Tools.Widgets
             Z
         }
 
-        public RotationWidget(Document document)
-        {
+        public RotationWidget(Document document) {
             Document = document;
         }
 
-        private class CachedLines
-        {
+        private class CachedLines {
             public int Width { get; set; }
             public int Height { get; set; }
             public Coordinate CameraLocation { get; set; }
@@ -42,8 +37,7 @@ namespace CBRE.Editor.Tools.Widgets
             public Viewport3D Viewport3D { get; set; }
             public Dictionary<CircleType, List<Line>> Cache { get; set; }
 
-            public CachedLines(Viewport3D viewport3D)
-            {
+            public CachedLines(Viewport3D viewport3D) {
                 Viewport3D = viewport3D;
                 Cache = new Dictionary<CircleType, List<Line>>
                 {
@@ -66,13 +60,11 @@ namespace CBRE.Editor.Tools.Widgets
         private Coordinate _mouseDownPoint;
         private Coordinate _mouseMovePoint;
 
-        public Coordinate GetPivotPoint()
-        {
+        public Coordinate GetPivotPoint() {
             return _pivotPoint;
         }
 
-        public override void SelectionChanged()
-        {
+        public override void SelectionChanged() {
             if (Document.Selection.IsEmpty()) _autoPivot = true;
             if (!_autoPivot) return;
 
@@ -82,13 +74,11 @@ namespace CBRE.Editor.Tools.Widgets
 
         #region Line cache
 
-        private void AddLine(CircleType type, Coordinate start, Coordinate end, Plane test, CachedLines cache)
-        {
+        private void AddLine(CircleType type, Coordinate start, Coordinate end, Plane test, CachedLines cache) {
             var line = new Line(start, end);
             var cls = line.ClassifyAgainstPlane(test);
             if (cls == PlaneClassification.Back) return;
-            if (cls == PlaneClassification.Spanning)
-            {
+            if (cls == PlaneClassification.Spanning) {
                 var isect = test.GetIntersectionPoint(line, true);
                 var first = test.OnPlane(line.Start) > 0 ? line.Start : line.End;
                 line = new Line(first, isect);
@@ -96,14 +86,12 @@ namespace CBRE.Editor.Tools.Widgets
             cache.Cache[type].Add(new Line(cache.Viewport3D.WorldToScreen(line.Start), cache.Viewport3D.WorldToScreen(line.End)));
         }
 
-        private void UpdateCache(Viewport3D viewport, Document document)
-        {
+        private void UpdateCache(Viewport3D viewport, Document document) {
             var ccl = new Coordinate((decimal)viewport.Camera.Location.X, (decimal)viewport.Camera.Location.Y, (decimal)viewport.Camera.Location.Z);
             var ccla = new Coordinate((decimal)viewport.Camera.LookAt.X, (decimal)viewport.Camera.LookAt.Y, (decimal)viewport.Camera.LookAt.Z);
 
             var cache = _cachedLines.FirstOrDefault(x => x.Viewport3D == viewport);
-            if (cache == null)
-            {
+            if (cache == null) {
                 cache = new CachedLines(viewport);
                 _cachedLines.Add(cache);
             }
@@ -136,8 +124,7 @@ namespace CBRE.Editor.Tools.Widgets
             cache.Cache[CircleType.Y].Clear();
             cache.Cache[CircleType.Z].Clear();
 
-            for (var i = 0; i < sides; i++)
-            {
+            for (var i = 0; i < sides; i++) {
                 var cos1 = DMath.Cos(diff * i);
                 var sin1 = DMath.Sin(diff * i);
                 var cos2 = DMath.Cos(diff * (i + 1));
@@ -176,8 +163,7 @@ namespace CBRE.Editor.Tools.Widgets
 
         #endregion
 
-        private Matrix4? GetTransformationMatrix(Viewport3D viewport)
-        {
+        private Matrix4? GetTransformationMatrix(Viewport3D viewport) {
             if (_mouseMovePoint == null || _mouseDownPoint == null || _pivotPoint == null) return null;
 
             var originPoint = viewport.WorldToScreen(_pivotPoint);
@@ -189,8 +175,7 @@ namespace CBRE.Editor.Tools.Widgets
             var shf = KeyboardState.Shift;
             var def = Select.RotationStyle;
             var snap = (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
-            if (snap)
-            {
+            if (snap) {
                 var deg = angle * (180 / DMath.PI);
                 var rnd = Math.Round(deg / 15) * 15;
                 angle = rnd * (DMath.PI / 180);
@@ -198,8 +183,7 @@ namespace CBRE.Editor.Tools.Widgets
 
             Vector3 axis;
             var dir = (viewport.Camera.Location - _pivotPoint.ToVector3()).Normalized();
-            switch (_mouseDown)
-            {
+            switch (_mouseDown) {
                 case CircleType.Outer:
                     axis = dir;
                     break;
@@ -224,8 +208,7 @@ namespace CBRE.Editor.Tools.Widgets
             return Matrix4.Mult(rot, Matrix4.Invert(mov));
         }
 
-        private bool MouseOver(CircleType type, ViewportEvent ev, Viewport3D viewport)
-        {
+        private bool MouseOver(CircleType type, ViewportEvent ev, Viewport3D viewport) {
             var cache = _cachedLines.FirstOrDefault(x => x.Viewport3D == viewport);
             if (cache == null) return false;
             var lines = cache.Cache[type];
@@ -233,8 +216,7 @@ namespace CBRE.Editor.Tools.Widgets
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
 
-        private bool MouseOverPivot(Viewport2D vp, ViewportEvent e)
-        {
+        private bool MouseOverPivot(Viewport2D vp, ViewportEvent e) {
             if (Document.Selection.IsEmpty()) return false;
 
             var pivot = vp.WorldToScreen(vp.Flatten(_pivotPoint));
@@ -244,30 +226,22 @@ namespace CBRE.Editor.Tools.Widgets
                    pivot.Y > y - 8 && pivot.Y < y + 8;
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
             viewport.Cursor = Cursors.Default;
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
-        {
-            if (viewport is Viewport2D)
-            {
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e) {
+            if (viewport is Viewport2D) {
                 var vp2 = (Viewport2D)viewport;
-                if (_movingPivot)
-                {
+                if (_movingPivot) {
                     var pp = SnapToSelection(vp2.ScreenToWorld(e.X, vp2.Height - e.Y), vp2);
                     _pivotPoint = vp2.GetUnusedCoordinate(_pivotPoint) + vp2.Expand(pp);
                     _autoPivot = false;
                     e.Handled = true;
-                }
-                else if (MouseOverPivot(vp2, e))
-                {
+                } else if (MouseOverPivot(vp2, e)) {
                     vp2.Cursor = Cursors.Cross;
                     e.Handled = true;
-                }
-                else
-                {
+                } else {
                     vp2.Cursor = Cursors.Default;
                 }
                 return;
@@ -278,15 +252,12 @@ namespace CBRE.Editor.Tools.Widgets
 
             if (Document.Selection.IsEmpty() || !vp.IsUnlocked(this)) return;
 
-            if (_mouseDown != CircleType.None)
-            {
+            if (_mouseDown != CircleType.None) {
                 _mouseMovePoint = new Coordinate(e.X, vp.Height - e.Y, 0);
                 e.Handled = true;
                 var tform = GetTransformationMatrix(vp);
                 OnTransforming(tform);
-            }
-            else
-            {
+            } else {
                 UpdateCache(vp, Document);
 
                 if (MouseOver(CircleType.Z, e, vp)) _mouseOver = CircleType.Z;
@@ -297,13 +268,10 @@ namespace CBRE.Editor.Tools.Widgets
             }
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent ve)
-        {
-            if (viewport is Viewport2D)
-            {
+        public override void MouseDown(ViewportBase viewport, ViewportEvent ve) {
+            if (viewport is Viewport2D) {
                 var vp2 = (Viewport2D)viewport;
-                if (ve.Button == MouseButtons.Left && MouseOverPivot(vp2, ve))
-                {
+                if (ve.Button == MouseButtons.Left && MouseOverPivot(vp2, ve)) {
                     _movingPivot = true;
                     ve.Handled = true;
                 }
@@ -321,13 +289,10 @@ namespace CBRE.Editor.Tools.Widgets
             vp.AquireInputLock(this);
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent ve)
-        {
-            if (viewport is Viewport2D)
-            {
+        public override void MouseUp(ViewportBase viewport, ViewportEvent ve) {
+            if (viewport is Viewport2D) {
                 // var vp2 = (Viewport2D) viewport;
-                if (_movingPivot && ve.Button == MouseButtons.Left)
-                {
+                if (_movingPivot && ve.Button == MouseButtons.Left) {
                     _movingPivot = false;
                     ve.Handled = true;
                 }
@@ -346,18 +311,15 @@ namespace CBRE.Editor.Tools.Widgets
             vp.ReleaseInputLock(this);
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent ve)
-        {
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent ve) {
             if (viewport != _activeViewport) return;
             if (_mouseDown != CircleType.None) ve.Handled = true;
         }
 
-        public override void Render(ViewportBase viewport)
-        {
+        public override void Render(ViewportBase viewport) {
             if (Document.Selection.IsEmpty()) return;
 
-            if (viewport is Viewport2D)
-            {
+            if (viewport is Viewport2D) {
                 Render2D((Viewport2D)viewport);
                 return;
             }
@@ -365,8 +327,7 @@ namespace CBRE.Editor.Tools.Widgets
             var vp = viewport as Viewport3D;
             if (vp == null) return;
 
-            switch (_mouseMovePoint == null ? CircleType.None : _mouseDown)
-            {
+            switch (_mouseMovePoint == null ? CircleType.None : _mouseDown) {
                 case CircleType.None:
                     RenderCircleTypeNone(vp, Document);
                     break;
@@ -379,8 +340,7 @@ namespace CBRE.Editor.Tools.Widgets
             }
         }
 
-        private void Render2D(Viewport2D viewport)
-        {
+        private void Render2D(Viewport2D viewport) {
             var pp = viewport.Flatten(_pivotPoint);
             GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.Cyan);
@@ -390,32 +350,27 @@ namespace CBRE.Editor.Tools.Widgets
             GL.End();
         }
 
-        private void RenderAxisRotating(Viewport3D viewport, Document document)
-        {
+        private void RenderAxisRotating(Viewport3D viewport, Document document) {
             var axis = Vector3.UnitX;
             var c = Color.Red;
 
-            if (_mouseDown == CircleType.Y)
-            {
+            if (_mouseDown == CircleType.Y) {
                 axis = Vector3.UnitY;
                 c = Color.Lime;
             }
 
-            if (_mouseDown == CircleType.Z)
-            {
+            if (_mouseDown == CircleType.Z) {
                 axis = Vector3.UnitZ;
                 c = Color.Blue;
             }
 
-            if (_mouseDown == CircleType.Outer)
-            {
+            if (_mouseDown == CircleType.Outer) {
                 var vp3 = _activeViewport as Viewport3D;
                 if (vp3 != null) axis = (vp3.Camera.LookAt - vp3.Camera.Location).Normalized();
                 c = Color.White;
             }
 
-            if (_activeViewport != viewport || _mouseDown != CircleType.Outer)
-            {
+            if (_activeViewport != viewport || _mouseDown != CircleType.Outer) {
                 GL.Begin(PrimitiveType.Lines);
 
                 var zero = new Vector3((float)_pivotPoint.DX, (float)_pivotPoint.DY, (float)_pivotPoint.DZ);
@@ -427,8 +382,7 @@ namespace CBRE.Editor.Tools.Widgets
                 GL.End();
             }
 
-            if (_activeViewport == viewport)
-            {
+            if (_activeViewport == viewport) {
                 GL.Disable(EnableCap.DepthTest);
                 GL.Enable(EnableCap.LineStipple);
                 GL.LineStipple(5, 0xAAAA);
@@ -448,8 +402,7 @@ namespace CBRE.Editor.Tools.Widgets
             }
         }
 
-        private void RenderCircleTypeNone(Viewport3D viewport, Document document)
-        {
+        private void RenderCircleTypeNone(Viewport3D viewport, Document document) {
             var center = _pivotPoint;
             var origin = new Vector3((float)center.DX, (float)center.DY, (float)center.DZ);
             var distance = (viewport.Camera.Location - origin).Length;
@@ -470,8 +423,7 @@ namespace CBRE.Editor.Tools.Widgets
             const float diff = (float)(2 * Math.PI) / sides;
 
             GL.Begin(PrimitiveType.Lines);
-            for (var i = 0; i < sides; i++)
-            {
+            for (var i = 0; i < sides; i++) {
                 var cos1 = (float)Math.Cos(diff * i);
                 var sin1 = (float)Math.Sin(diff * i);
                 var cos2 = (float)Math.Cos(diff * (i + 1));
@@ -490,8 +442,7 @@ namespace CBRE.Editor.Tools.Widgets
 
             GL.LineWidth(2);
             GL.Begin(PrimitiveType.Lines);
-            for (var i = 0; i < sides; i++)
-            {
+            for (var i = 0; i < sides; i++) {
                 var cos1 = (float)Math.Cos(diff * i) * radius;
                 var sin1 = (float)Math.Sin(diff * i) * radius;
                 var cos2 = (float)Math.Cos(diff * (i + 1)) * radius;

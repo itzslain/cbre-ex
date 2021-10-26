@@ -1,7 +1,7 @@
-﻿using CBRE.Extensions;
-using OpenTK;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
+using CBRE.Extensions;
+using OpenTK;
 
 namespace CBRE.DataStructures.Geometric {
     /// <summary>

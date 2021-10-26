@@ -1,6 +1,6 @@
-﻿using CBRE.DataStructures.GameData;
-using System;
+﻿using System;
 using System.Linq;
+using CBRE.DataStructures.GameData;
 
 namespace CBRE.DataStructures.MapObjects.VisgroupFilters {
 

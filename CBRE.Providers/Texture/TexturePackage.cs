@@ -1,6 +1,6 @@
-﻿using CBRE.Graphics.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Texture {
     public class TexturePackage : IDisposable {

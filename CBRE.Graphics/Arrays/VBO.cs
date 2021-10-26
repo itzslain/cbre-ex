@@ -1,8 +1,8 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using OpenTK.Graphics.OpenGL;
 using IGraphicsContext = OpenTK.Graphics.IGraphicsContext;
 
 namespace CBRE.Graphics.Arrays {

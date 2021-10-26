@@ -1,7 +1,7 @@
-﻿using CBRE.Graphics.Helpers;
+﻿using System.Drawing;
+using CBRE.Graphics.Helpers;
 using CBRE.Graphics.Renderables;
 using OpenTK.Graphics.OpenGL;
-using System.Drawing;
 
 namespace CBRE.Editor.Rendering {
     public class WidgetLinesRenderable : IRenderable {

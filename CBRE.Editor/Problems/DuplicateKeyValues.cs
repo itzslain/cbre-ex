@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Actions.MapObjects.Entities;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Problems {
     public class DuplicateKeyValues : IProblemCheck {

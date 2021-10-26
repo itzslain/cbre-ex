@@ -1,9 +1,9 @@
-﻿using CBRE.Common;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.Common;
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
 
 namespace CBRE.Editor.Compiling.Lightmap {
     public class LMFace {
@@ -155,27 +155,28 @@ namespace CBRE.Editor.Compiling.Lightmap {
         /// <param name="box">The box to test against</param>
         /// <returns>True if the box intersects</returns>
         public bool IntersectsWithBox(BoxF box) {
-            var verts = Vertices.ToList();
+            List<Vertex> verts = Vertices.ToList();
             return box.GetBoxLines().Any(x => GetIntersectionPoint(this, x, true) != null);
         }
 
         protected static CoordinateF GetIntersectionPoint(LMFace face, LineF line, bool ignoreDirection = false) {
-            var plane = face.Plane;
-            var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
-            List<CoordinateF> coordinates = face.Vertices.Select(x => x.Location).ToList();
+            PlaneF plane = face.Plane;
+            CoordinateF intersect = plane.GetIntersectionPoint(line, ignoreDirection);
             if (intersect == null) return null;
+
+            List<CoordinateF> coordinates = face.Vertices.Select(x => x.Location).ToList();
             BoxF bbox = new BoxF(face.BoundingBox.Start - new CoordinateF(0.5f, 0.5f, 0.5f), face.BoundingBox.End + new CoordinateF(0.5f, 0.5f, 0.5f));
             if (!bbox.CoordinateIsInside(intersect)) return null;
 
             CoordinateF centerPoint = face.BoundingBox.Center;
-            for (var i = 0; i < coordinates.Count; i++) {
-                var i1 = i;
-                var i2 = (i + 1) % coordinates.Count;
+            for (int i = 0; i < coordinates.Count; i++) {
+                int i1 = i;
+                int i2 = (i + 1) % coordinates.Count;
 
-                var lineMiddle = (coordinates[i1] + coordinates[i2]) * 0.5f;
-                var middleToCenter = centerPoint - lineMiddle;
-                var v = coordinates[i1] - coordinates[i2];
-                var lineNormal = face.Plane.Normal.Cross(v);
+                CoordinateF lineMiddle = (coordinates[i1] + coordinates[i2]) * 0.5f;
+                CoordinateF middleToCenter = centerPoint - lineMiddle;
+                CoordinateF v = coordinates[i1] - coordinates[i2];
+                CoordinateF lineNormal = face.Plane.Normal.Cross(v);
 
                 if ((middleToCenter - lineNormal).LengthSquared() > (middleToCenter + lineNormal).LengthSquared()) {
                     lineNormal = -lineNormal;

@@ -2,24 +2,19 @@
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.UI
-{
-    public class ClosableTabControl : TabControl
-    {
+namespace CBRE.Editor.UI {
+    public class ClosableTabControl : TabControl {
         public delegate void RequestCloseEventHandler(object sender, int index);
 
         public event RequestCloseEventHandler RequestClose;
 
-        private void OnRequestClose(int index)
-        {
-            if (RequestClose != null)
-            {
+        private void OnRequestClose(int index) {
+            if (RequestClose != null) {
                 RequestClose(this, index);
             }
         }
 
-        public ClosableTabControl()
-        {
+        public ClosableTabControl() {
             SetStyle(ControlStyles.UserPaint, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -37,22 +32,18 @@ namespace CBRE.Editor.UI
             TabPages.Add("Test 66666");
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
+        protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
             Render(e.Graphics);
         }
 
-        protected override void OnControlAdded(ControlEventArgs e)
-        {
+        protected override void OnControlAdded(ControlEventArgs e) {
             ((TabPage)e.Control).ImageIndex = 0;
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
+        protected override void OnMouseDown(MouseEventArgs e) {
             if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Middle) return;
-            for (var i = 0; i < TabPages.Count; i++)
-            {
+            for (var i = 0; i < TabPages.Count; i++) {
                 var rect = e.Button == MouseButtons.Left ? GetCloseRect(i) : GetTabRect(i);
                 if (!rect.Contains(e.Location)) continue;
                 OnRequestClose(i);
@@ -64,13 +55,10 @@ namespace CBRE.Editor.UI
         private const int WM_MBUTTONDOWN = 0x0207;
         private const int WM_LBUTTONDOWN = 0x0201;
 
-        protected override void WndProc(ref Message m)
-        {
-            if (!DesignMode && (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_MBUTTONDOWN))
-            {
+        protected override void WndProc(ref Message m) {
+            if (!DesignMode && (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)) {
                 var pt = PointToClient(Cursor.Position);
-                for (var i = 0; i < TabPages.Count; i++)
-                {
+                for (var i = 0; i < TabPages.Count; i++) {
                     var rect = m.Msg == WM_LBUTTONDOWN ? GetCloseRect(i) : GetTabRect(i);
                     if (!rect.Contains(pt)) continue;
                     m.Msg = WM_NULL;
@@ -81,16 +69,13 @@ namespace CBRE.Editor.UI
             base.WndProc(ref m);
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
+        protected override void OnMouseMove(MouseEventArgs e) {
             Invalidate();
         }
 
-        private void Render(System.Drawing.Graphics g)
-        {
+        private void Render(System.Drawing.Graphics g) {
             if (!Visible) return;
-            using (var b = new SolidBrush(BackColor))
-            {
+            using (var b = new SolidBrush(BackColor)) {
                 g.FillRectangle(b, ClientRectangle);
             }
             var display = new Rectangle(DisplayRectangle.Location, DisplayRectangle.Size);
@@ -100,15 +85,13 @@ namespace CBRE.Editor.UI
             g.DrawLine(SystemPens.ControlDark, display.X, display.Y, display.X + display.Width, display.Y);
             var clip = g.Clip;
             g.SetClip(new Rectangle(display.Left, ClientRectangle.Top, display.Width, ClientRectangle.Height));
-            for (var i = 0; i < TabPages.Count; i++)
-            {
+            for (var i = 0; i < TabPages.Count; i++) {
                 RenderTab(g, i);
             }
             g.Clip = clip;
         }
 
-        private void RenderTab(System.Drawing.Graphics g, int index)
-        {
+        private void RenderTab(System.Drawing.Graphics g, int index) {
             var rect = GetTabRect(index);
             var closeRect = GetCloseRect(index);
             var selected = SelectedIndex == index;
@@ -132,17 +115,14 @@ namespace CBRE.Editor.UI
             var backColour = tab.BackColor;
             if (selected) backColour = ControlPaint.Light(backColour, 1);
             else if (hover) backColour = ControlPaint.Light(backColour, 0.8f);
-            using (var b = new SolidBrush(backColour))
-            {
+            using (var b = new SolidBrush(backColour)) {
                 g.FillPolygon(b, points);
             }
             // Border
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawPolygon(SystemPens.ControlDark, points);
-            if (selected)
-            {
-                using (var pen = new Pen(tab.BackColor))
-                {
+            if (selected) {
+                using (var pen = new Pen(tab.BackColor)) {
                     g.DrawLine(pen, rect.Left, rect.Bottom, rect.Right, rect.Bottom);
                 }
             }
@@ -151,15 +131,12 @@ namespace CBRE.Editor.UI
             var textLeft = rect.X + 14;
             var textRight = rect.Right - 26;
             var textRect = new Rectangle(textLeft + (textRight - textLeft - textWidth) / 2, rect.Y + 4, rect.Width - 26, rect.Height - 5);
-            using (var b = new SolidBrush(tab.ForeColor))
-            {
+            using (var b = new SolidBrush(tab.ForeColor)) {
                 g.DrawString(tab.Text, Font, b, textRect);
             }
             // Close icon
-            using (var pen = new Pen(tab.ForeColor))
-            {
-                if (hoverClose)
-                {
+            using (var pen = new Pen(tab.ForeColor)) {
+                if (hoverClose) {
                     g.DrawRectangle(pen, closeRect.Left + 1, closeRect.Top + 1, closeRect.Width - 2, closeRect.Height - 2);
                 }
                 const int padding = 5;
@@ -168,8 +145,7 @@ namespace CBRE.Editor.UI
             }
         }
 
-        private Rectangle GetCloseRect(int index)
-        {
+        private Rectangle GetCloseRect(int index) {
             var rect = GetTabRect(index);
             return new Rectangle(rect.Right - 20, rect.Top + 1 + (rect.Height - 16) / 2, 16, 16);
         }

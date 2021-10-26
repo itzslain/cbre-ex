@@ -1,6 +1,6 @@
-﻿using CBRE.Common;
+﻿using System.Collections.Generic;
+using CBRE.Common;
 using CBRE.Graphics.Helpers;
-using System.Collections.Generic;
 
 namespace CBRE.Providers.Texture {
     public class TextureItem {

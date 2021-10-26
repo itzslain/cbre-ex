@@ -1,12 +1,11 @@
-﻿using CBRE.FileSystem;
-using CBRE.Providers.Texture;
-using CBRE.Settings;
-using CBRE.Settings.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CBRE.FileSystem;
+using CBRE.Providers.Texture;
+using CBRE.Settings;
+using CBRE.Settings.Models;
 
 namespace CBRE.Editor.Environment {
     public class GameEnvironment {

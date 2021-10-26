@@ -1,4 +1,9 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Operations;
 using CBRE.Editor.Properties;
@@ -8,19 +13,11 @@ using CBRE.Settings;
 using CBRE.UI;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using Matrix = CBRE.Graphics.Helpers.Matrix;
 
-namespace CBRE.Editor.Tools
-{
-    public class ClipTool : BaseTool
-    {
-        public enum ClipState
-        {
+namespace CBRE.Editor.Tools {
+    public class ClipTool : BaseTool {
+        public enum ClipState {
             None,
             Drawing,
             Drawn,
@@ -29,8 +26,7 @@ namespace CBRE.Editor.Tools
             MovingPoint3
         }
 
-        public enum ClipSide
-        {
+        public enum ClipSide {
             Both,
             Front,
             Back
@@ -44,38 +40,32 @@ namespace CBRE.Editor.Tools
         private ClipState _state;
         private ClipSide _side;
 
-        public ClipTool()
-        {
+        public ClipTool() {
             Usage = ToolUsage.Both;
             _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
             _state = _prevState = ClipState.None;
             _side = ClipSide.Both;
         }
 
-        public override Image GetIcon()
-        {
+        public override Image GetIcon() {
             return Resources.Tool_Clip;
         }
 
-        public override string GetName()
-        {
+        public override string GetName() {
             return "Clip Tool";
         }
 
-        public override HotkeyTool? GetHotkeyToolType()
-        {
+        public override HotkeyTool? GetHotkeyToolType() {
             return HotkeyTool.Clip;
         }
 
-        public override string GetContextualHelp()
-        {
+        public override string GetContextualHelp() {
             return "*Click* and drag to define the clipping plane.\n" +
                    "*Click* and drag any of the three points to change the orientation of the plane.\n" +
                    "Press *enter* to cut the selected solids along the clipping plane.";
         }
 
-        private ClipState GetStateAtPoint(int x, int y, Viewport2D viewport)
-        {
+        private ClipState GetStateAtPoint(int x, int y, Viewport2D viewport) {
             if (_clipPlanePoint1 == null || _clipPlanePoint2 == null || _clipPlanePoint3 == null) return ClipState.None;
 
             var p = viewport.ScreenToWorld(x, y);
@@ -92,98 +82,77 @@ namespace CBRE.Editor.Tools
             return ClipState.None;
         }
 
-        public override void MouseDown(ViewportBase vp, ViewportEvent e)
-        {
+        public override void MouseDown(ViewportBase vp, ViewportEvent e) {
             if (!(vp is Viewport2D)) return;
             var viewport = (Viewport2D)vp;
             _prevState = _state;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             var st = GetStateAtPoint(e.X, viewport.Height - e.Y, viewport);
-            if (_state == ClipState.None || st == ClipState.None)
-            {
+            if (_state == ClipState.None || st == ClipState.None) {
                 _state = ClipState.Drawing;
                 _drawingPoint = point;
-            }
-            else if (_state == ClipState.Drawn)
-            {
+            } else if (_state == ClipState.Drawn) {
                 _state = st;
             }
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase vp, ViewportEvent e)
-        {
+        public override void MouseUp(ViewportBase vp, ViewportEvent e) {
             if (!(vp is Viewport2D)) return;
             var viewport = (Viewport2D)vp;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
-            if (_state == ClipState.Drawing)
-            {
+            if (_state == ClipState.Drawing) {
                 // Do nothing
                 _state = _prevState;
-            }
-            else
-            {
+            } else {
                 _state = ClipState.Drawn;
             }
 
             Editor.Instance.CaptureAltPresses = false;
         }
 
-        public override void MouseMove(ViewportBase vp, ViewportEvent e)
-        {
+        public override void MouseMove(ViewportBase vp, ViewportEvent e) {
             if (!(vp is Viewport2D)) return;
             var viewport = (Viewport2D)vp;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             var st = GetStateAtPoint(e.X, viewport.Height - e.Y, viewport);
-            if (_state == ClipState.Drawing)
-            {
+            if (_state == ClipState.Drawing) {
                 _state = ClipState.MovingPoint2;
                 _clipPlanePoint1 = _drawingPoint;
                 _clipPlanePoint2 = point;
                 _clipPlanePoint3 = _clipPlanePoint1 + SnapIfNeeded(viewport.GetUnusedCoordinate(new Coordinate(128, 128, 128)));
-            }
-            else if (_state == ClipState.MovingPoint1)
-            {
+            } else if (_state == ClipState.MovingPoint1) {
                 // Move point 1
                 var cp1 = viewport.GetUnusedCoordinate(_clipPlanePoint1) + point;
-                if (KeyboardState.Ctrl)
-                {
+                if (KeyboardState.Ctrl) {
                     var diff = _clipPlanePoint1 - cp1;
                     _clipPlanePoint2 -= diff;
                     _clipPlanePoint3 -= diff;
                 }
                 _clipPlanePoint1 = cp1;
-            }
-            else if (_state == ClipState.MovingPoint2)
-            {
+            } else if (_state == ClipState.MovingPoint2) {
                 // Move point 2
                 var cp2 = viewport.GetUnusedCoordinate(_clipPlanePoint2) + point;
-                if (KeyboardState.Ctrl)
-                {
+                if (KeyboardState.Ctrl) {
                     var diff = _clipPlanePoint2 - cp2;
                     _clipPlanePoint1 -= diff;
                     _clipPlanePoint3 -= diff;
                 }
                 _clipPlanePoint2 = cp2;
-            }
-            else if (_state == ClipState.MovingPoint3)
-            {
+            } else if (_state == ClipState.MovingPoint3) {
                 // Move point 3
                 var cp3 = viewport.GetUnusedCoordinate(_clipPlanePoint3) + point;
-                if (KeyboardState.Ctrl)
-                {
+                if (KeyboardState.Ctrl) {
                     var diff = _clipPlanePoint3 - cp3;
                     _clipPlanePoint1 -= diff;
                     _clipPlanePoint2 -= diff;
@@ -193,18 +162,14 @@ namespace CBRE.Editor.Tools
 
             Editor.Instance.CaptureAltPresses = _state != ClipState.None && _state != ClipState.Drawn;
 
-            if (st != ClipState.None || (_state != ClipState.None && _state != ClipState.Drawn))
-            {
+            if (st != ClipState.None || (_state != ClipState.None && _state != ClipState.Drawn)) {
                 viewport.Cursor = Cursors.Cross;
-            }
-            else
-            {
+            } else {
                 viewport.Cursor = Cursors.Default;
             }
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e) {
             if (e.KeyChar == 13) // Enter
             {
                 if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
@@ -221,29 +186,24 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        private void PerformClip()
-        {
+        private void PerformClip() {
             var objects = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
             Document.PerformAction("Perform Clip", new Clip(objects, plane, _side != ClipSide.Back, _side != ClipSide.Front));
         }
 
-        public override void Render(ViewportBase viewport)
-        {
+        public override void Render(ViewportBase viewport) {
             if (viewport is Viewport2D) Render2D((Viewport2D)viewport);
             if (viewport is Viewport3D) Render3D((Viewport3D)viewport);
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
-        {
-            switch (hotkeyMessage)
-            {
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters) {
+            switch (hotkeyMessage) {
                 case HotkeysMediator.OperationsPasteSpecial:
                 case HotkeysMediator.OperationsPaste:
                     return HotkeyInterceptResult.SwitchToSelectTool;
                 case HotkeysMediator.SwitchTool:
-                    if (parameters is HotkeyTool && (HotkeyTool)parameters == GetHotkeyToolType())
-                    {
+                    if (parameters is HotkeyTool && (HotkeyTool)parameters == GetHotkeyToolType()) {
                         CycleClipSide();
                         return HotkeyInterceptResult.Abort;
                     }
@@ -252,15 +212,13 @@ namespace CBRE.Editor.Tools
             return HotkeyInterceptResult.Continue;
         }
 
-        private void CycleClipSide()
-        {
+        private void CycleClipSide() {
             var side = (int)_side;
             side = (side + 1) % (Enum.GetValues(typeof(ClipSide)).Length);
             _side = (ClipSide)side;
         }
 
-        private void Render2D(Viewport2D vp)
-        {
+        private void Render2D(Viewport2D vp) {
             if (_state == ClipState.None
                 || _clipPlanePoint1 == null
                 || _clipPlanePoint2 == null
@@ -299,16 +257,13 @@ namespace CBRE.Editor.Tools
             // Draw the clipped brushes
             if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
                     && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
-                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3))
-            {
+                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3)) {
                 var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
                 var faces = new List<Face>();
                 var idg = new IDGenerator();
-                foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList())
-                {
+                foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList()) {
                     Solid back, front;
-                    if (solid.Split(plane, out back, out front, idg))
-                    {
+                    if (solid.Split(plane, out back, out front, idg)) {
                         if (_side != ClipSide.Front) faces.AddRange(back.Faces);
                         if (_side != ClipSide.Back) faces.AddRange(front.Faces);
                     }
@@ -328,8 +283,7 @@ namespace CBRE.Editor.Tools
 
         }
 
-        private void Render3D(Viewport3D vp)
-        {
+        private void Render3D(Viewport3D vp) {
             if (_state == ClipState.None
                 || _clipPlanePoint1 == null
                 || _clipPlanePoint2 == null
@@ -342,8 +296,7 @@ namespace CBRE.Editor.Tools
 
             if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
                     && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
-                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3))
-            {
+                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3)) {
                 var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
 
                 // Draw clipped solids
@@ -352,11 +305,9 @@ namespace CBRE.Editor.Tools
 
                 var faces = new List<Face>();
                 var idg = new IDGenerator();
-                foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList())
-                {
+                foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList()) {
                     Solid back, front;
-                    if (solid.Split(plane, out back, out front, idg))
-                    {
+                    if (solid.Split(plane, out back, out front, idg)) {
                         if (_side != ClipSide.Front) faces.AddRange(back.Faces);
                         if (_side != ClipSide.Back) faces.AddRange(front.Faces);
                     }
@@ -373,8 +324,7 @@ namespace CBRE.Editor.Tools
                 var poly = new Polygon(plane);
                 var bbox = Document.Selection.GetSelectionBoundingBox();
                 var point = bbox.Center;
-                foreach (var boxPlane in bbox.GetBoxPlanes())
-                {
+                foreach (var boxPlane in bbox.GetBoxPlanes()) {
                     var proj = boxPlane.Project(point);
                     var dist = (point - proj).VectorMagnitude() * 0.1m;
                     poly.Split(new Plane(boxPlane.Normal, proj + boxPlane.Normal * Math.Max(dist, 100)));
@@ -389,33 +339,27 @@ namespace CBRE.Editor.Tools
             }
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
-        {
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) {
             //
         }
     }

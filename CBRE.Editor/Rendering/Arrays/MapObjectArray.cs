@@ -1,3 +1,6 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
@@ -7,9 +10,6 @@ using CBRE.Graphics.Helpers;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using GL = OpenTK.Graphics.OpenGL.GL;
 
 namespace CBRE.Editor.Rendering.Arrays {
@@ -24,9 +24,10 @@ namespace CBRE.Editor.Rendering.Arrays {
         }
 
         public void RenderTextured(IGraphicsContext context, ITexture lightmapTexture) {
-            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null)) {
+            foreach (Subset subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null)) {
+                ITexture tex = (ITexture)subset.Instance;
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
-                var tex = (ITexture)subset.Instance;
+                
                 tex.Bind();
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
                 lightmapTexture.Bind();
@@ -57,16 +58,22 @@ namespace CBRE.Editor.Rendering.Arrays {
             return (point - cameraLocation).Dot(lookAt);
         }
 
-        public void RenderTransparent(IGraphicsContext context, Action<bool> isTextured, Coordinate cameraLocation, Coordinate lookAt) {
+        public void RenderTransparent(Viewport3DRenderOptions opts, IGraphicsContext context,
+            Action<bool> isTextured, Coordinate cameraLocation, Coordinate lookAt) {
 
-            var sorted =
+            IEnumerable<Subset> sorted =
                 from subset in GetSubsets<Face>(Transparent)
                 let face = subset.Instance as Face
                 where face != null
                 orderby LookAtOrder(face, cameraLocation, lookAt) ascending
                 select subset;
-            foreach (var subset in sorted) {
-                var tex = ((Face)subset.Instance).Texture;
+            foreach (Subset subset in sorted) {
+                TextureReference tex = ((Face)subset.Instance).Texture;
+                if(opts.HideToolTextures) {
+                    if (tex.Name.ToLowerInvariant() == "tooltextures/invisible_collision") continue;
+                    if (tex.Name.ToLowerInvariant() == "tooltextures/remove_face") continue;
+                    if (tex.Name.ToLowerInvariant() == "tooltextures/block_light") continue;
+                }
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();
                 isTextured(tex.Texture != null);

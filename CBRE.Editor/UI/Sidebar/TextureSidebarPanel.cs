@@ -1,18 +1,15 @@
-﻿using CBRE.Common.Mediator;
-using CBRE.Editor.Documents;
-using CBRE.Providers.Texture;
-using CBRE.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Common.Mediator;
+using CBRE.Editor.Documents;
+using CBRE.Providers.Texture;
+using CBRE.Settings;
 
-namespace CBRE.Editor.UI.Sidebar
-{
-    public partial class TextureSidebarPanel : UserControl, IMediatorListener
-    {
-        public TextureSidebarPanel()
-        {
+namespace CBRE.Editor.UI.Sidebar {
+    public partial class TextureSidebarPanel : UserControl, IMediatorListener {
+        public TextureSidebarPanel() {
             InitializeComponent();
             SizeLabel.Text = "";
 
@@ -21,60 +18,49 @@ namespace CBRE.Editor.UI.Sidebar
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
         }
 
-        public TextureItem GetSelectedTexture()
-        {
+        public TextureItem GetSelectedTexture() {
             return TextureComboBox.GetSelectedTexture();
         }
 
-        private void ApplyButtonClicked(object sender, EventArgs e)
-        {
+        private void ApplyButtonClicked(object sender, EventArgs e) {
             Mediator.Publish(HotkeysMediator.ApplyCurrentTextureToSelection);
         }
 
-        private void BrowseButtonClicked(object sender, EventArgs e)
-        {
+        private void BrowseButtonClicked(object sender, EventArgs e) {
             if (DocumentManager.CurrentDocument == null) return;
-            using (var tb = new TextureBrowser())
-            {
+            using (var tb = new TextureBrowser()) {
                 tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllBrowsableItems());
                 tb.ShowDialog();
-                if (tb.SelectedTexture != null)
-                {
+                if (tb.SelectedTexture != null) {
                     Mediator.Publish(EditorMediator.TextureSelected, tb.SelectedTexture);
                 }
             }
         }
 
-        private void ReplaceButtonClicked(object sender, EventArgs e)
-        {
+        private void ReplaceButtonClicked(object sender, EventArgs e) {
             Mediator.Publish(HotkeysMediator.ReplaceTextures);
         }
 
-        private void GroupChanged(object sender, EventArgs e)
-        {
+        private void GroupChanged(object sender, EventArgs e) {
             var tp = GroupComboBox.SelectedItem as TexturePackage;
             TextureComboBox.Update(tp == null ? null : tp.ToString());
         }
 
-        private void TextureSelectionChanged(object sender, EventArgs e)
-        {
+        private void TextureSelectionChanged(object sender, EventArgs e) {
             Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
         }
 
-        public void Notify(string message, object data)
-        {
+        public void Notify(string message, object data) {
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        private void DocumentActivated(Document doc)
-        {
+        private void DocumentActivated(Document doc) {
             // Textures
             var index = GroupComboBox.SelectedIndex;
             GroupComboBox.Items.Clear();
             GroupComboBox.Items.Add("All Textures");
             var takenNames = new HashSet<string>();
-            foreach (var package in doc.TextureCollection.Packages)
-            {
+            foreach (var package in doc.TextureCollection.Packages) {
                 if (takenNames.Contains(package.PackageRelativePath)) { continue; }
                 takenNames.Add(package.PackageRelativePath);
                 GroupComboBox.Items.Add(package);
@@ -84,32 +70,25 @@ namespace CBRE.Editor.UI.Sidebar
             TextureSelected(doc.TextureCollection.GetRecentTextures().FirstOrDefault());
         }
 
-        private void DocumentAllClosed()
-        {
+        private void DocumentAllClosed() {
             GroupComboBox.Items.Clear();
             TextureComboBox.Items.Clear();
             TextureSelected(null);
         }
 
-        private void TextureSelected(TextureItem selection)
-        {
+        private void TextureSelected(TextureItem selection) {
             var dis = SelectionPictureBox.Image;
             SelectionPictureBox.Image = null;
             //if (dis != null) dis.Dispose();
             SizeLabel.Text = "";
             if (selection == null || DocumentManager.CurrentDocument == null) return;
             TextureComboBox.SetSelectedTexture(selection);
-            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(128, 128))
-            {
+            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(128, 128)) {
                 var bmp = tp.GetImage(selection);
-                if (bmp != null)
-                {
-                    if (bmp.Bitmap.Width > SelectionPictureBox.Width || bmp.Bitmap.Height > SelectionPictureBox.Height)
-                    {
+                if (bmp != null) {
+                    if (bmp.Bitmap.Width > SelectionPictureBox.Width || bmp.Bitmap.Height > SelectionPictureBox.Height) {
                         SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                    }
-                    else
-                    {
+                    } else {
                         SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
                     }
                 }

@@ -1,98 +1,79 @@
-﻿using CBRE.UI;
-using OpenTK.Graphics.OpenGL;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
+using CBRE.UI;
+using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
-namespace CBRE.Editor.UI
-{
-    public class ScreenshotViewportListener : IViewportEventListener
-    {
+namespace CBRE.Editor.UI {
+    public class ScreenshotViewportListener : IViewportEventListener {
         public ViewportBase Viewport { get; set; }
         public Image Screenshot { get; private set; }
 
-        public ScreenshotViewportListener(ViewportBase viewport)
-        {
+        public ScreenshotViewportListener(ViewportBase viewport) {
             Viewport = viewport;
         }
 
-        public void KeyUp(ViewportEvent e)
-        {
+        public void KeyUp(ViewportEvent e) {
 
         }
 
-        public void KeyDown(ViewportEvent e)
-        {
+        public void KeyDown(ViewportEvent e) {
 
         }
 
-        public void KeyPress(ViewportEvent e)
-        {
+        public void KeyPress(ViewportEvent e) {
 
         }
 
-        public void MouseMove(ViewportEvent e)
-        {
+        public void MouseMove(ViewportEvent e) {
 
         }
 
-        public void MouseWheel(ViewportEvent e)
-        {
+        public void MouseWheel(ViewportEvent e) {
 
         }
 
-        public void MouseUp(ViewportEvent e)
-        {
+        public void MouseUp(ViewportEvent e) {
 
         }
 
-        public void MouseDown(ViewportEvent e)
-        {
+        public void MouseDown(ViewportEvent e) {
 
         }
 
-        public void MouseClick(ViewportEvent e)
-        {
+        public void MouseClick(ViewportEvent e) {
 
         }
 
-        public void MouseDoubleClick(ViewportEvent e)
-        {
+        public void MouseDoubleClick(ViewportEvent e) {
 
         }
 
-        public void MouseEnter(ViewportEvent e)
-        {
+        public void MouseEnter(ViewportEvent e) {
 
         }
 
-        public void MouseLeave(ViewportEvent e)
-        {
+        public void MouseLeave(ViewportEvent e) {
 
         }
 
-        public void UpdateFrame(FrameInfo frame)
-        {
+        public void UpdateFrame(FrameInfo frame) {
 
         }
 
-        public void PreRender()
-        {
+        public void PreRender() {
 
         }
 
-        public void Render3D()
-        {
+        public void Render3D() {
 
         }
 
-        public void Render2D()
-        {
+        public void Render2D() {
 
         }
 
-        public void PostRender()
-        {
+        public void PostRender() {
             Screenshot?.Dispose();
             var bmp = new Bitmap(Viewport.ClientSize.Width, Viewport.ClientSize.Height);
             var data = bmp.LockBits(Viewport.ClientRectangle, ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);

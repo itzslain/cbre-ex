@@ -1,43 +1,35 @@
-﻿using CBRE.DataStructures.Geometric;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
 using CBRE.UI;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.VMTool
-{
-    public class EditFaceTool : VMSubTool
-    {
+namespace CBRE.Editor.Tools.VMTool {
+    public class EditFaceTool : VMSubTool {
         private List<Face> _selection;
 
-        public EditFaceTool(VMTool mainTool) : base(mainTool)
-        {
+        public EditFaceTool(VMTool mainTool) : base(mainTool) {
             var ef = new EditFaceControl();
             ef.Poke += Poke;
             ef.Bevel += Bevel;
             Control = ef;
         }
 
-        private void Poke(object sender, int num)
-        {
-            foreach (var face in _selection.ToArray())
-            {
+        private void Poke(object sender, int num) {
+            foreach (var face in _selection.ToArray()) {
                 PokeFace(face, num);
             }
         }
 
-        private void Bevel(object sender, int num)
-        {
-            foreach (var face in _selection.ToArray())
-            {
+        private void Bevel(object sender, int num) {
+            foreach (var face in _selection.ToArray()) {
                 BevelFace(face, num);
             }
         }
 
-        private void PokeFace(Face face, int num)
-        {
+        private void PokeFace(Face face, int num) {
             var solid = face.Parent;
             // Remove the face
             solid.Faces.Remove(face);
@@ -45,13 +37,11 @@ namespace CBRE.Editor.Tools.VMTool
             _selection.Remove(face);
 
             var center = face.BoundingBox.Center + face.Plane.Normal * num;
-            foreach (var edge in face.GetEdges())
-            {
+            foreach (var edge in face.GetEdges()) {
                 var v1 = face.Vertices.First(x => x.Location == edge.Start);
                 var v2 = face.Vertices.First(x => x.Location == edge.End);
                 var verts = new[] { v1.Location, v2.Location, center };
-                var f = new Face(Document.Map.IDGenerator.GetNextFaceID())
-                {
+                var f = new Face(Document.Map.IDGenerator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(verts[0], verts[1], verts[2]),
                     Colour = solid.Colour,
@@ -69,20 +59,17 @@ namespace CBRE.Editor.Tools.VMTool
             MainTool.SetDirty(true, true);
         }
 
-        private void BevelFace(Face face, int num)
-        {
+        private void BevelFace(Face face, int num) {
             var solid = face.Parent;
             var vertexCoordinates = face.Vertices.ToDictionary(x => x, x => x.Location);
             // Scale the face a bit and move it away by the bevel distance
             face.Transform(new UnitScale(Coordinate.One * 0.9m, face.BoundingBox.Center), TransformFlags.TextureLock);
             face.Transform(new UnitTranslate(face.Plane.Normal * num), TransformFlags.TextureLock);
-            foreach (var edge in face.GetEdges())
-            {
+            foreach (var edge in face.GetEdges()) {
                 var v1 = face.Vertices.First(x => x.Location == edge.Start);
                 var v2 = face.Vertices.First(x => x.Location == edge.End);
                 var verts = new[] { vertexCoordinates[v1], vertexCoordinates[v2], v2.Location, v1.Location };
-                var f = new Face(Document.Map.IDGenerator.GetNextFaceID())
-                {
+                var f = new Face(Document.Map.IDGenerator.GetNextFaceID()) {
                     Parent = solid,
                     Plane = new Plane(verts[0], verts[1], verts[2]),
                     Colour = solid.Colour,
@@ -100,66 +87,54 @@ namespace CBRE.Editor.Tools.VMTool
             MainTool.SetDirty(true, true);
         }
 
-        public override string GetName()
-        {
+        public override string GetName() {
             return "Edit Face";
         }
 
-        public override string GetContextualHelp()
-        {
+        public override string GetContextualHelp() {
             return "*Click* a face in the 3D view to select it.\n" +
                    "Hold *control* to select multiple faces.";
         }
 
-        public override void ToolSelected(bool preventHistory)
-        {
+        public override void ToolSelected(bool preventHistory) {
             _selection = new List<Face>();
             UpdateSelection();
         }
 
-        public override void ToolDeselected(bool preventHistory)
-        {
+        public override void ToolDeselected(bool preventHistory) {
             _selection.Clear();
             UpdateSelection();
         }
 
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
-        {
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport) {
             return new List<VMPoint>();
         }
 
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
-        {
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport) {
             return new List<VMPoint>();
         }
 
-        public override void DragStart(List<VMPoint> clickedPoints)
-        {
+        public override void DragStart(List<VMPoint> clickedPoints) {
 
         }
 
-        public override void DragMove(Coordinate distance)
-        {
+        public override void DragMove(Coordinate distance) {
 
         }
 
-        public override void DragEnd()
-        {
+        public override void DragEnd() {
 
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e) {
             var vp = viewport as Viewport3D;
             if (vp == null || e.Button != MouseButtons.Left) return;
 
@@ -175,8 +150,7 @@ namespace CBRE.Editor.Tools.VMTool
                 .FirstOrDefault();
 
             var faces = new List<Face>();
-            if (clickedFace != null)
-            {
+            if (clickedFace != null) {
                 if (KeyboardState.Shift) faces.AddRange(clickedFace.Parent.Faces);
                 else faces.Add(clickedFace);
             }
@@ -187,97 +161,78 @@ namespace CBRE.Editor.Tools.VMTool
             UpdateSelection();
         }
 
-        private void UpdateSelection()
-        {
-            foreach (var s in MainTool.GetCopies())
-            {
+        private void UpdateSelection() {
+            foreach (var s in MainTool.GetCopies()) {
                 s.IsSelected = false;
                 foreach (var f in s.Faces) f.IsSelected = _selection.Contains(f);
             }
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e) {
 
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
-        {
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) {
 
         }
 
-        public override void Render(ViewportBase viewport)
-        {
+        public override void Render(ViewportBase viewport) {
 
         }
 
-        public override void Render2D(Viewport2D viewport)
-        {
+        public override void Render2D(Viewport2D viewport) {
 
         }
 
-        public override void Render3D(Viewport3D viewport)
-        {
+        public override void Render3D(Viewport3D viewport) {
 
         }
 
-        public override void SelectionChanged()
-        {
+        public override void SelectionChanged() {
 
         }
 
-        public override bool ShouldDeselect(List<VMPoint> vtxs)
-        {
+        public override bool ShouldDeselect(List<VMPoint> vtxs) {
             return true;
         }
 
-        public override bool NoSelection()
-        {
+        public override bool NoSelection() {
             return true;
         }
 
-        public override bool No3DSelection()
-        {
+        public override bool No3DSelection() {
             return true;
         }
 
-        public override bool DrawVertices()
-        {
+        public override bool DrawVertices() {
             return false;
         }
     }

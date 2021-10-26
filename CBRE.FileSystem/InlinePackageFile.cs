@@ -1,11 +1,11 @@
-﻿using CBRE.Packages;
-using CBRE.Packages.Pak;
-using CBRE.Packages.Vpk;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CBRE.Packages;
+using CBRE.Packages.Pak;
+using CBRE.Packages.Vpk;
 
 namespace CBRE.FileSystem {
     /// <summary>

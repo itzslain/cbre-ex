@@ -1,5 +1,5 @@
-using CBRE.Extensions;
 using System;
+using CBRE.Extensions;
 
 namespace CBRE.Common.Easings {
     public class Easing {

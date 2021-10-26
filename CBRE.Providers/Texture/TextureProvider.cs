@@ -1,7 +1,6 @@
-﻿using CBRE.Graphics.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Texture {
     public abstract class TextureProvider {

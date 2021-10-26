@@ -1,9 +1,9 @@
-﻿using CBRE.Common;
-using CBRE.Graphics.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using CBRE.Common;
+using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Texture {
     public class TextureCollection {

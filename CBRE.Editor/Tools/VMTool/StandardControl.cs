@@ -1,63 +1,51 @@
-﻿using CBRE.Common.Easings;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using CBRE.Common.Easings;
 
-namespace CBRE.Editor.Tools.VMTool
-{
-    public partial class StandardControl : UserControl
-    {
+namespace CBRE.Editor.Tools.VMTool {
+    public partial class StandardControl : UserControl {
         public delegate void SplitEventHandler(object sender);
         public delegate void MergeEventHandler(object sender);
 
         public event SplitEventHandler Split;
         public event MergeEventHandler Merge;
 
-        protected virtual void OnSplit()
-        {
-            if (Split != null)
-            {
+        protected virtual void OnSplit() {
+            if (Split != null) {
                 Split(this);
             }
         }
 
-        protected virtual void OnMerge()
-        {
-            if (Merge != null)
-            {
+        protected virtual void OnMerge() {
+            if (Merge != null) {
                 Merge(this);
             }
         }
 
-        public bool AutomaticallyMerge
-        {
+        public bool AutomaticallyMerge {
             get { return AutoMerge.Checked; }
             set { AutoMerge.Checked = value; }
         }
 
-        public bool SplitEnabled
-        {
+        public bool SplitEnabled {
             get { return SplitButton.Enabled; }
             set { SplitButton.Enabled = value; }
         }
 
-        public StandardControl()
-        {
+        public StandardControl() {
             InitializeComponent();
         }
 
-        private void SplitButtonClicked(object sender, EventArgs e)
-        {
+        private void SplitButtonClicked(object sender, EventArgs e) {
             OnSplit();
         }
 
-        private void MergeButtonClicked(object sender, EventArgs e)
-        {
+        private void MergeButtonClicked(object sender, EventArgs e) {
             OnMerge();
         }
 
-        public void ShowMergeResult(int mergedVertices, int removedFaces)
-        {
+        public void ShowMergeResult(int mergedVertices, int removedFaces) {
             if (mergedVertices + removedFaces <= 0) return;
             MergeResultsLabel.Text = String.Format("{0} vert{1} merged, {2} face{3} removed",
                 mergedVertices, mergedVertices == 1 ? "ex" : "ices",
@@ -66,28 +54,23 @@ namespace CBRE.Editor.Tools.VMTool
         }
 
     }
-    public class FadeLabel : Label
-    {
+    public class FadeLabel : Label {
         private long _lastTick;
         private long _remaining;
         private Timer _timer;
         private int _fadeTime = 1000;
         private Easing _easing;
 
-        public int FadeTime
-        {
+        public int FadeTime {
             get { return _fadeTime; }
-            set
-            {
+            set {
                 _fadeTime = value;
             }
         }
 
-        public FadeLabel()
-        {
+        public FadeLabel() {
             _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.Out);
-            _timer = new Timer
-            {
+            _timer = new Timer {
                 Enabled = false,
                 Interval = 50
             };
@@ -95,8 +78,7 @@ namespace CBRE.Editor.Tools.VMTool
             _remaining = 0;
         }
 
-        private void Tick()
-        {
+        private void Tick() {
             var tick = DateTime.Now.Ticks / 10000;
             _remaining -= (tick - _lastTick);
             _lastTick = tick;
@@ -105,28 +87,24 @@ namespace CBRE.Editor.Tools.VMTool
             Refresh();
         }
 
-        public void Trigger()
-        {
+        public void Trigger() {
             _remaining = _fadeTime;
             _lastTick = DateTime.Now.Ticks / 10000;
             _timer.Start();
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
             if (disposing) _timer.Dispose();
             base.Dispose(disposing);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
+        protected override void OnPaint(PaintEventArgs e) {
             var val = _easing.Evaluate((_remaining * 1m) / _fadeTime);
             val = Math.Min(1, Math.Max(0, val));
             var a = (int)(val * 255);
             var c = Color.FromArgb(a, ForeColor);
 
-            using (var brush = new SolidBrush(c))
-            {
+            using (var brush = new SolidBrush(c)) {
                 e.Graphics.DrawString(Text, Font, brush, ClientRectangle);
             }
         }

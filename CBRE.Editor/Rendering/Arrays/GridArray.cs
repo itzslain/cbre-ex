@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using System.Drawing;
 using CBRE.Graphics.Arrays;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace CBRE.Editor.Rendering.Arrays {
     public class GridArray : VBO<object, MapObjectVertex> {

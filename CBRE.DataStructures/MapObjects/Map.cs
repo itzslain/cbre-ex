@@ -1,11 +1,11 @@
-﻿using CBRE.Common;
-using CBRE.DataStructures.GameData;
-using CBRE.DataStructures.Geometric;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using CBRE.Common;
+using CBRE.DataStructures.GameData;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.MapObjects {
     [Serializable]
@@ -23,7 +23,7 @@ namespace CBRE.DataStructures.MapObjects {
         public decimal GridSpacing { get; set; }
         public bool HideFaceMask { get; set; }
         public bool HideDisplacementSolids { get; set; }
-        public bool HideNullTextures { get; set; }
+        public bool HideToolTextures { get; set; }
         public bool IgnoreGrouping { get; set; }
         public bool TextureLock { get; set; }
         public bool TextureScalingLock { get; set; }
@@ -213,7 +213,7 @@ namespace CBRE.DataStructures.MapObjects {
                             f.Opacity = 0;
                         } else if (f.Texture.Texture != null) {
                             f.Opacity = textureOpacity(f.Texture.Name.ToLowerInvariant());
-                            if (!HideNullTextures && f.Opacity < 0.1) f.Opacity = 1;
+                            if (!HideToolTextures && f.Opacity < 0.1) f.Opacity = 1;
                         }
                     });
                 }

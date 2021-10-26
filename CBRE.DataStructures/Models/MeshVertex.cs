@@ -1,5 +1,5 @@
-using CBRE.DataStructures.Geometric;
 using System.Collections.Generic;
+using CBRE.DataStructures.Geometric;
 
 namespace CBRE.DataStructures.Models {
     public class MeshVertex {

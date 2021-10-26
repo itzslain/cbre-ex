@@ -1,4 +1,9 @@
-﻿using CBRE.Common.Mediator;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.Editor.Properties;
 using CBRE.Editor.UI;
@@ -7,19 +12,11 @@ using CBRE.Settings;
 using CBRE.UI;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using Camera = CBRE.DataStructures.MapObjects.Camera;
 
-namespace CBRE.Editor.Tools
-{
-    public class CameraTool : BaseTool
-    {
-        private enum State
-        {
+namespace CBRE.Editor.Tools {
+    public class CameraTool : BaseTool {
+        private enum State {
             None,
             MovingPosition,
             MovingLook
@@ -28,15 +25,13 @@ namespace CBRE.Editor.Tools
         private State _state;
         private Camera _stateCamera;
 
-        public override void ToolSelected(bool preventHistory)
-        {
+        public override void ToolSelected(bool preventHistory) {
             _state = State.None;
             Mediator.Subscribe(HotkeysMediator.CameraNext, this);
             Mediator.Subscribe(HotkeysMediator.CameraPrevious, this);
         }
 
-        private void CameraNext()
-        {
+        private void CameraNext() {
             if (_state != State.None || Document.Map.Cameras.Count < 2) return;
             var idx = Document.Map.Cameras.IndexOf(Document.Map.ActiveCamera);
             idx = (idx + 1) % Document.Map.Cameras.Count;
@@ -44,8 +39,7 @@ namespace CBRE.Editor.Tools
             SetViewportCamera(Document.Map.ActiveCamera.EyePosition, Document.Map.ActiveCamera.LookPosition);
         }
 
-        private void CameraPrevious()
-        {
+        private void CameraPrevious() {
             if (_state != State.None || Document.Map.Cameras.Count < 2) return;
             var idx = Document.Map.Cameras.IndexOf(Document.Map.ActiveCamera);
             idx = (idx + Document.Map.Cameras.Count - 1) % Document.Map.Cameras.Count;
@@ -53,38 +47,32 @@ namespace CBRE.Editor.Tools
             SetViewportCamera(Document.Map.ActiveCamera.EyePosition, Document.Map.ActiveCamera.LookPosition);
         }
 
-        private void CameraDelete()
-        {
+        private void CameraDelete() {
             if (_state != State.None || Document.Map.Cameras.Count < 2) return;
             var del = Document.Map.ActiveCamera;
             CameraPrevious();
             if (del != Document.Map.ActiveCamera) Document.Map.Cameras.Remove(del);
         }
 
-        public override Image GetIcon()
-        {
+        public override Image GetIcon() {
             return Resources.Tool_Camera;
         }
 
-        public override string GetName()
-        {
+        public override string GetName() {
             return "Camera Tool";
         }
 
-        public override HotkeyTool? GetHotkeyToolType()
-        {
+        public override HotkeyTool? GetHotkeyToolType() {
             return HotkeyTool.Camera;
         }
 
-        public override string GetContextualHelp()
-        {
+        public override string GetContextualHelp() {
             return "*Click* the camera origin or direction arrow to move the camera.\n" +
                    "Hold *shift* and *click* to create multiple cameras.\n" +
                    "Press *Tab* to cycle between cameras";
         }
 
-        private Tuple<Coordinate, Coordinate> GetViewportCamera()
-        {
+        private Tuple<Coordinate, Coordinate> GetViewportCamera() {
             var cam = ViewportManager.Viewports.OfType<Viewport3D>().Select(x => x.Camera).FirstOrDefault();
             if (cam == null) return null;
 
@@ -95,8 +83,7 @@ namespace CBRE.Editor.Tools
             return Tuple.Create(pos, pos + dir);
         }
 
-        private void SetViewportCamera(Coordinate position, Coordinate look)
-        {
+        private void SetViewportCamera(Coordinate position, Coordinate look) {
             var cam = ViewportManager.Viewports.OfType<Viewport3D>().Select(x => x.Camera).FirstOrDefault();
             if (cam == null) return;
 
@@ -105,12 +92,10 @@ namespace CBRE.Editor.Tools
             cam.LookAt = new Vector3((float)look.X, (float)look.Y, (float)look.Z);
         }
 
-        private State GetStateAtPoint(int x, int y, Viewport2D viewport, out Camera activeCamera)
-        {
+        private State GetStateAtPoint(int x, int y, Viewport2D viewport, out Camera activeCamera) {
             var d = 5 / viewport.Zoom;
 
-            foreach (var cam in GetCameras())
-            {
+            foreach (var cam in GetCameras()) {
                 var p = viewport.ScreenToWorld(x, y);
                 var pos = viewport.Flatten(cam.EyePosition);
                 var look = viewport.Flatten(cam.LookPosition);
@@ -123,88 +108,73 @@ namespace CBRE.Editor.Tools
             return State.None;
         }
 
-        private IEnumerable<Camera> GetCameras()
-        {
+        private IEnumerable<Camera> GetCameras() {
             var c = GetViewportCamera();
-            if (!Document.Map.Cameras.Any())
-            {
+            if (!Document.Map.Cameras.Any()) {
                 Document.Map.Cameras.Add(new Camera { EyePosition = c.Item1, LookPosition = c.Item2 });
             }
-            if (Document.Map.ActiveCamera == null || !Document.Map.Cameras.Contains(Document.Map.ActiveCamera))
-            {
+            if (Document.Map.ActiveCamera == null || !Document.Map.Cameras.Contains(Document.Map.ActiveCamera)) {
                 Document.Map.ActiveCamera = Document.Map.Cameras.First();
             }
             var len = Document.Map.ActiveCamera.Length;
             Document.Map.ActiveCamera.EyePosition = c.Item1;
             Document.Map.ActiveCamera.LookPosition = c.Item1 + (c.Item2 - c.Item1).Normalise() * len;
-            foreach (var camera in Document.Map.Cameras)
-            {
+            foreach (var camera in Document.Map.Cameras) {
                 var dir = camera.LookPosition - camera.EyePosition;
                 camera.LookPosition = camera.EyePosition + dir.Normalise() * Math.Max(Document.Map.GridSpacing * 1.5m, dir.VectorMagnitude());
                 yield return camera;
             }
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e) {
             var vp = viewport as Viewport2D;
             if (vp == null) return;
             _state = GetStateAtPoint(e.X, vp.Height - e.Y, vp, out _stateCamera);
-            if (_state == State.None && KeyboardState.Shift)
-            {
+            if (_state == State.None && KeyboardState.Shift) {
                 var p = SnapIfNeeded(vp.Expand(vp.ScreenToWorld(e.X, vp.Height - e.Y)));
                 _stateCamera = new Camera { EyePosition = p, LookPosition = p + Coordinate.UnitX * 1.5m * Document.Map.GridSpacing };
                 Document.Map.Cameras.Add(_stateCamera);
                 _state = State.MovingLook;
             }
-            if (_stateCamera != null)
-            {
+            if (_stateCamera != null) {
                 SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                 Document.Map.ActiveCamera = _stateCamera;
             }
 
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e) {
             _state = State.None;
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e) {
             var vp = viewport as Viewport2D;
             if (vp == null) return;
 
             var p = SnapIfNeeded(vp.Expand(vp.ScreenToWorld(e.X, vp.Height - e.Y)));
             var cursor = Cursors.Default;
 
-            switch (_state)
-            {
+            switch (_state) {
                 case State.None:
                     var st = GetStateAtPoint(e.X, vp.Height - e.Y, vp, out _stateCamera);
                     if (st != State.None) cursor = Cursors.SizeAll;
@@ -227,28 +197,23 @@ namespace CBRE.Editor.Tools
             vp.Cursor = cursor;
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
-        {
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e) {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
-        {
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) {
             //
         }
 
-        public override void Render(ViewportBase viewport)
-        {
+        public override void Render(ViewportBase viewport) {
             var vp = viewport as Viewport2D;
             if (vp == null) return;
 
@@ -263,8 +228,7 @@ namespace CBRE.Editor.Tools
             // Draw lines between points and point outlines
             GL.Begin(PrimitiveType.Lines);
 
-            foreach (var camera in cams)
-            {
+            foreach (var camera in cams) {
                 var p1 = vp.Flatten(camera.EyePosition);
                 var p2 = vp.Flatten(camera.LookPosition);
 
@@ -280,8 +244,7 @@ namespace CBRE.Editor.Tools
             GL.Enable(EnableCap.PolygonSmooth);
             GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Nicest);
 
-            foreach (var camera in cams)
-            {
+            foreach (var camera in cams) {
                 var p1 = vp.Flatten(camera.EyePosition);
 
                 // Position circle
@@ -290,8 +253,7 @@ namespace CBRE.Editor.Tools
                 GLX.Circle(new Vector2d(p1.DX, p1.DY), 4, z, loop: true);
                 GL.End();
             }
-            foreach (var camera in cams)
-            {
+            foreach (var camera in cams) {
                 var p1 = vp.Flatten(camera.EyePosition);
                 var p2 = vp.Flatten(camera.LookPosition);
 
@@ -312,8 +274,7 @@ namespace CBRE.Editor.Tools
 
             GL.Begin(PrimitiveType.Lines);
 
-            foreach (var camera in cams)
-            {
+            foreach (var camera in cams) {
                 var p1 = vp.Flatten(camera.EyePosition);
                 var p2 = vp.Flatten(camera.LookPosition);
 
@@ -336,15 +297,12 @@ namespace CBRE.Editor.Tools
             GL.Disable(EnableCap.LineSmooth);
         }
 
-        protected static void Coord(Coordinate c)
-        {
+        protected static void Coord(Coordinate c) {
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
-        {
-            if (hotkeyMessage == HotkeysMediator.OperationsDelete)
-            {
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters) {
+            if (hotkeyMessage == HotkeysMediator.OperationsDelete) {
                 CameraDelete();
                 return HotkeyInterceptResult.Abort;
             }

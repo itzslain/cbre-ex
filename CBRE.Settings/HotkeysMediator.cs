@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace CBRE.Settings {
@@ -72,7 +72,7 @@ namespace CBRE.Settings {
         [Description("Toggle Hide Displacement Solids")]
         ToggleHideDisplacementSolids,
         [Description("Toggle Hide Null Textures")]
-        ToggleHideNullTextures,
+        ToggleHideToolTextures,
 
         [Description("Show Logical Tree")]
         ShowLogicalTree,

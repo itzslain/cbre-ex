@@ -1,4 +1,13 @@
-﻿using CBRE.Common.Mediator;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes;
@@ -20,15 +29,6 @@ using CBRE.Settings;
 using CBRE.Settings.Models;
 using CBRE.UI;
 using Microsoft.WindowsAPICodePack.Taskbar;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
 
 namespace CBRE.Editor {
@@ -102,8 +102,6 @@ namespace CBRE.Editor {
 
             UpdateDocumentTabs();
             UpdateRecentFiles();
-
-            DockBottom.Hidden = DockLeft.Hidden = DockRight.Hidden = true;
 
             MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
@@ -397,6 +395,9 @@ namespace CBRE.Editor {
             var si = DocumentTabs.SelectedIndex;
             if (si >= 0 && si < DocumentManager.Documents.Count) {
                 DocumentManager.SwitchTo(DocumentManager.Documents[si]);
+                if (DocumentManager.Documents[si].History.TotalActionsSinceLastSave > 0) {
+                    this.Text += " *UNSAVED CHANGES*";
+                }
             }
         }
 
@@ -546,34 +547,36 @@ namespace CBRE.Editor {
         }
 
         public void ScreenshotViewport(object parameter) {
-            var focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+            ViewportBase focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
             if (focused == null) return;
 
-            var screen = Screen.FromControl(this);
-            var area = screen.Bounds;
+            Screen screen = Screen.FromControl(this);
+            Rectangle area = screen.Bounds;
 
-            using (var qf = new QuickForm("Select screenshot size") { UseShortcutKeys = true }
+            using (QuickForm qf = new QuickForm("Select screenshot size") { UseShortcutKeys = true }
                 .NumericUpDown("Width", 640, 5000, 0, area.Width)
                 .NumericUpDown("Height", 480, 5000, 0, area.Height)
+                .CheckBox("Copy to Clipboard", false)
                 .OkCancel()) {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
-                var shot = ViewportManager.CreateScreenshot(focused, (int)qf.Decimal("Width"), (int)qf.Decimal("Height"));
+                Image shot = ViewportManager.CreateScreenshot(focused, (int)qf.Decimal("Width"), (int)qf.Decimal("Height"));
                 if (shot == null) return;
 
-                var ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
+                string ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
 
-                using (var sfd = new SaveFileDialog()) {
+                using (SaveFileDialog sfd = new SaveFileDialog()) {
                     sfd.FileName = "CBRE - "
                                    + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
                                    + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ext;
                     sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
+
                     if (sfd.ShowDialog() == DialogResult.OK) {
                         if (sfd.FileName.EndsWith("jpg")) {
-                            var encoder = GetJpegEncoder();
+                            ImageCodecInfo encoder = GetJpegEncoder();
                             if (encoder != null) {
-                                var p = new EncoderParameter(Encoder.Quality, 90L);
-                                var ep = new EncoderParameters(1);
+                                EncoderParameter p = new EncoderParameter(Encoder.Quality, 100L);
+                                EncoderParameters ep = new EncoderParameters(1);
                                 ep.Param[0] = p;
                                 shot.Save(sfd.FileName, encoder, ep);
                             } else {
@@ -581,6 +584,9 @@ namespace CBRE.Editor {
                             }
                         } else {
                             shot.Save(sfd.FileName);
+                        }
+                        if (qf.Bool("Copy to Clipboard")) {
+                            System.Windows.Forms.Clipboard.SetFileDropList(new StringCollection { sfd.FileName });
                         }
                     }
                 }

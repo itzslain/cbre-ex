@@ -1,3 +1,8 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
@@ -26,12 +31,6 @@ using CBRE.QuickForms;
 using CBRE.QuickForms.Items;
 using CBRE.Settings;
 using CBRE.UI;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Windows.Forms;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
 namespace CBRE.Editor.Documents {
@@ -119,7 +118,7 @@ namespace CBRE.Editor.Documents {
             //Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideFaceMask, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideDisplacementSolids, this);
-            Mediator.Subscribe(HotkeysMediator.ToggleHideNullTextures, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleHideToolTextures, this);
 
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
@@ -767,8 +766,8 @@ namespace CBRE.Editor.Documents {
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideNullTextures() {
-            _document.Map.HideNullTextures = !_document.Map.HideNullTextures;
+        public void ToggleHideToolTextures() {
+            _document.Map.HideToolTextures = !_document.Map.HideToolTextures;
             _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
@@ -796,12 +795,6 @@ namespace CBRE.Editor.Documents {
         public void ShowEntityReport() {
             var erd = new EntityReportDialog();
             erd.Show(Editor.Instance);
-        }
-
-        public void CheckForProblems() {
-            using (var cfpd = new CheckForProblemsDialog(_document)) {
-                cfpd.ShowDialog(Editor.Instance);
-            }
         }
 
         public void ViewportRightClick(Viewport2D vp, ViewportEvent e) {

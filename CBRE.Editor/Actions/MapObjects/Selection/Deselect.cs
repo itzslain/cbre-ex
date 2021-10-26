@@ -1,5 +1,5 @@
-using CBRE.DataStructures.MapObjects;
 using System.Collections.Generic;
+using CBRE.DataStructures.MapObjects;
 
 namespace CBRE.Editor.Actions.MapObjects.Selection {
     public class Deselect : ChangeSelection {

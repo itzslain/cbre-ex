@@ -1,6 +1,6 @@
+using System.Linq;
 using CBRE.DataStructures.Models;
 using OpenTK.Graphics.OpenGL;
-using System.Linq;
 
 namespace CBRE.Editor.Rendering.Immediate {
     public static class ModelRenderer {

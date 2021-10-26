@@ -1,6 +1,4 @@
-﻿using CBRE.Common;
-using CBRE.Graphics.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -8,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using CBRE.Common;
+using CBRE.Graphics.Helpers;
 
 namespace CBRE.Providers.Texture {
     public class SprProvider : TextureProvider {

@@ -1,27 +1,21 @@
-﻿using CBRE.UI;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+using CBRE.UI;
 
-namespace CBRE.Editor.UI
-{
-    public class HotkeyForm : Form
-    {
+namespace CBRE.Editor.UI {
+    public class HotkeyForm : Form {
         public bool PreventSimpleHotkeyPassthrough { get; set; }
 
-        public HotkeyForm()
-        {
+        public HotkeyForm() {
             PreventSimpleHotkeyPassthrough = true;
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             var source = FromHandle(msg.HWnd);
             if (source != null && source.Tag == Hotkeys.SuppressHotkeysTag) return base.ProcessCmdKey(ref msg, keyData);
 
-            if (PreventSimpleHotkeyPassthrough)
-            {
+            if (PreventSimpleHotkeyPassthrough) {
                 var str = KeyboardState.KeysToString(keyData).ToLowerInvariant();
-                if (!str.Contains("ctrl") && !str.Contains("alt") && !str.Contains("shift"))
-                {
+                if (!str.Contains("ctrl") && !str.Contains("alt") && !str.Contains("shift")) {
                     return base.ProcessCmdKey(ref msg, keyData);
                 }
             }

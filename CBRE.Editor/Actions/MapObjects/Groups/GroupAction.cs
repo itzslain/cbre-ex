@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Actions.MapObjects.Groups {
     public class GroupAction : IAction {

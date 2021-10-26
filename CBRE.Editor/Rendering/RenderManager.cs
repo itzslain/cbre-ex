@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Rendering.Renderers;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK;
-using System;
-using System.Collections.Generic;
 
 namespace CBRE.Editor.Rendering {
     public class RenderManager : IDisposable {

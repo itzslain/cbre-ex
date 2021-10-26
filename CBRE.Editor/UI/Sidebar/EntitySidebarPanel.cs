@@ -1,20 +1,16 @@
-﻿using CBRE.DataStructures.GameData;
-using CBRE.Editor.Documents;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.DataStructures.GameData;
+using CBRE.Editor.Documents;
 
-namespace CBRE.Editor.UI.Sidebar
-{
-    public partial class EntitySidebarPanel : UserControl
-    {
-        public EntitySidebarPanel()
-        {
+namespace CBRE.Editor.UI.Sidebar {
+    public partial class EntitySidebarPanel : UserControl {
+        public EntitySidebarPanel() {
             InitializeComponent();
         }
 
-        public void RefreshEntities(Document doc)
-        {
+        public void RefreshEntities(Document doc) {
             if (doc == null) return;
 
             EntityTypeList.BeginUpdate();
@@ -24,8 +20,7 @@ namespace CBRE.Editor.UI.Sidebar
             var sel = selEnt == null ? null : selEnt.Name;
             var def = doc.Game.DefaultPointEntity;
             GameDataObject reselect = null, redef = null;
-            foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant()))
-            {
+            foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant())) {
                 EntityTypeList.Items.Add(gdo);
                 if (String.Equals(sel, gdo.Name, StringComparison.OrdinalIgnoreCase)) reselect = gdo;
                 if (String.Equals(def, gdo.Name, StringComparison.OrdinalIgnoreCase)) redef = gdo;
@@ -39,13 +34,11 @@ namespace CBRE.Editor.UI.Sidebar
             EntityTypeList.EndUpdate();
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             EntityTypeList.Items.Clear();
         }
 
-        public GameDataObject GetSelectedEntity()
-        {
+        public GameDataObject GetSelectedEntity() {
             return EntityTypeList.SelectedItem as GameDataObject;
         }
     }

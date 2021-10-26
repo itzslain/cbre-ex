@@ -1,11 +1,11 @@
-﻿using CBRE.Common;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes.Controls;
 using CBRE.Extensions;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace CBRE.Editor.Brushes {
     public class SphereBrush : IBrush {

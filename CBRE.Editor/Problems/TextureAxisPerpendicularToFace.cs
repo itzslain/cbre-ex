@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Actions.MapObjects.Operations;
 using CBRE.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBRE.Editor.Problems {
     public class TextureAxisPerpendicularToFace : IProblemCheck {

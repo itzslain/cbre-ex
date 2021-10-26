@@ -1,11 +1,10 @@
-﻿using CBRE.Providers;
-using CBRE.Settings.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CBRE.Providers;
+using CBRE.Settings.Models;
 
 namespace CBRE.Settings {
     public static class SettingsManager {

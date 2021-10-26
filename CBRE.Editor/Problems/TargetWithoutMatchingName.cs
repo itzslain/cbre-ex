@@ -1,9 +1,9 @@
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Actions;
-using CBRE.Editor.Actions.MapObjects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Actions;
+using CBRE.Editor.Actions.MapObjects.Entities;
 
 namespace CBRE.Editor.Problems {
     public class TargetWithoutMatchingName : IProblemCheck {

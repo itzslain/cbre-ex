@@ -1,9 +1,9 @@
-﻿using CBRE.DataStructures.MapObjects;
-using CBRE.Providers.Texture;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Providers.Texture;
 
 namespace CBRE.Providers.Map {
     public abstract class MapProvider {

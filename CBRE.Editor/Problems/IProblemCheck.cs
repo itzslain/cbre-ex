@@ -1,6 +1,6 @@
-﻿using CBRE.DataStructures.MapObjects;
+﻿using System.Collections.Generic;
+using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
-using System.Collections.Generic;
 
 namespace CBRE.Editor.Problems {
     public interface IProblemCheck {

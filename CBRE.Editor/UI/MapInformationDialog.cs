@@ -1,22 +1,18 @@
-﻿using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
-using System.Data;
+﻿using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
 
-namespace CBRE.Editor.UI
-{
-    public partial class MapInformationDialog : Form
-    {
-        public MapInformationDialog(Document document)
-        {
+namespace CBRE.Editor.UI {
+    public partial class MapInformationDialog : Form {
+        public MapInformationDialog(Document document) {
             InitializeComponent();
             CalculateStats(document);
         }
 
-        private void CalculateStats(Document document)
-        {
+        private void CalculateStats(Document document) {
             var all = document.Map.WorldSpawn.FindAll();
             var solids = all.OfType<Solid>().ToList();
             var faces = solids.SelectMany(x => x.Faces).ToList();
@@ -42,8 +38,7 @@ namespace CBRE.Editor.UI
             // TextureMemory.Text = textureMemory.ToString(CultureInfo.CurrentCulture);
             TextureMemory.Text = textureMemory.ToString("#,##0", CultureInfo.CurrentCulture)
                 + " bytes (" + textureMemoryMb.ToString("0.00", CultureInfo.CurrentCulture) + " MB)";
-            foreach (var tp in document.GetUsedTexturePackages())
-            {
+            foreach (var tp in document.GetUsedTexturePackages()) {
                 TexturePackages.Items.Add(tp);
             }
         }

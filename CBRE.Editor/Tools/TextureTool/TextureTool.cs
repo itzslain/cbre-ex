@@ -1,4 +1,9 @@
-﻿using CBRE.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
@@ -13,11 +18,6 @@ using CBRE.Providers.Texture;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace CBRE.Editor.Tools.TextureTool {
     public class TextureTool : BaseTool {
@@ -395,7 +395,7 @@ namespace CBRE.Editor.Tools.TextureTool {
             return HotkeyInterceptResult.Continue;
         }
 
-        public  void OperationsDelete() {
+        public void OperationsDelete() {
 
         }
 
