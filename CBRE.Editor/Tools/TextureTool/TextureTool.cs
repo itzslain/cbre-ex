@@ -248,25 +248,39 @@ namespace CBRE.Editor.Tools.TextureTool {
         }
 
         public override void MouseDown(ViewportBase viewport, ViewportEvent e) {
-            var vp = viewport as Viewport3D;
+            Viewport3D vp = viewport as Viewport3D;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
 
-            var behaviour = e.Button == MouseButtons.Left
+            SelectBehaviour behaviour = e.Button == MouseButtons.Left
                                 ? _form.GetLeftClickBehaviour(KeyboardState.Ctrl, KeyboardState.Shift, KeyboardState.Alt)
                                 : _form.GetRightClickBehaviour(KeyboardState.Ctrl, KeyboardState.Shift, KeyboardState.Alt);
 
-            var ray = vp.CastRayFromScreen(e.X, e.Y);
-            var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray).OfType<Solid>();
-            var clickedFace = hits.SelectMany(f => f.Faces)
-                .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
-                .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
-                .Select(x => x.Item)
-                .FirstOrDefault();
+            Line ray = vp.CastRayFromScreen(e.X, e.Y);
+            IEnumerable<Solid> hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray).OfType<Solid>();
+            Face clickedFace = null;
+
+            //Didnt want a linq mess, so I did this instead. God forgive me.
+            if(Document.Map.HideToolTextures) {
+                clickedFace = hits.SelectMany(f => f.Faces)
+                    .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
+                    .Where(x => x.Intersection != null && x.Item.Texture.Name != "tooltextures/invisible_collision" &&
+                    x.Item.Texture.Name != "tooltextures/remove_face" && x.Item.Texture.Name != "tooltextures/block_light")
+                    .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                    .Select(x => x.Item)
+                    .FirstOrDefault();
+            }
+            else {
+                clickedFace = hits.SelectMany(f => f.Faces)
+                    .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
+                    .Where(x => x.Intersection != null)
+                    .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                    .Select(x => x.Item)
+                    .FirstOrDefault();
+            }
 
             if (clickedFace == null) return;
 
-            var faces = new List<Face>();
+            List<Face> faces = new List<Face>();
             if (KeyboardState.Shift) faces.AddRange(clickedFace.Parent.Faces);
             else faces.Add(clickedFace);
 
