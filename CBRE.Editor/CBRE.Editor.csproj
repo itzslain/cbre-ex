@@ -186,7 +186,6 @@
     <Compile Include="Brushes\TetrahedronBrush.cs" />
     <Compile Include="Brushes\WedgeBrush.cs" />
     <Compile Include="Clipboard\ClipboardManager.cs" />
-    <Compile Include="Compiling\BExport.cs" />
     <Compile Include="Compiling\ExportWriterExtensions.cs" />
     <Compile Include="Compiling\GenericExport.cs" />
     <Compile Include="Compiling\Lightmap\LMFace.cs" />
