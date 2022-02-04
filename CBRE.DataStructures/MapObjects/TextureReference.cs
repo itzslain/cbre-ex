@@ -16,6 +16,9 @@ namespace CBRE.DataStructures.MapObjects {
             }
         }
 
+        public bool IsToolTexture
+            => Name.StartsWith("tooltextures/", StringComparison.OrdinalIgnoreCase);
+
         public decimal Rotation { get; set; }
 
         private Coordinate _uAxis;

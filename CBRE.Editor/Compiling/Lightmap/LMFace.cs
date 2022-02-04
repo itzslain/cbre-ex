@@ -194,9 +194,7 @@ namespace CBRE.Editor.Compiling.Lightmap {
                     tface.Vertices.ForEach(v => { v.LMU = -500.0f; v.LMV = -500.0f; });
                     tface.UpdateBoundingBox();
                     if (tface.Texture?.Texture == null) continue;
-                    if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/invisible_collision") continue;
-                    if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/remove_face") continue;
-                    if (tface.Texture.Name.ToLowerInvariant() == "tooltextures/block_light") continue;
+                    if (tface.Texture.IsToolTexture) continue;
                     if (tface.Texture.Texture.HasTransparency()) continue;
                     LMFace face = new LMFace(tface, solid);
                     LightmapGroup group = LightmapGroup.FindCoplanar(lmGroups, face);

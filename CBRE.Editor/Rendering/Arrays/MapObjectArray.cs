@@ -1,4 +1,4 @@
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Extensions;
@@ -30,7 +30,6 @@ namespace CBRE.Editor.Rendering.Arrays {
                 tex.Bind();
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
                 lightmapTexture.Bind();
-
                 Render(context, PrimitiveType.Triangles, subset);
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
             }
@@ -52,12 +51,10 @@ namespace CBRE.Editor.Rendering.Arrays {
         }
 
         private decimal LookAtOrder(Face face, Coordinate cameraLocation, Coordinate lookAt) {
-            var point = face.Plane.GetIntersectionPoint(new Line(cameraLocation, cameraLocation + lookAt), true, true);
-            if (point == null) { return decimal.MaxValue; }
-            return (point - cameraLocation).Dot(lookAt);
+            return -(face.BoundingBox.Center - cameraLocation).LengthSquared();
         }
 
-        public void RenderTransparent(IGraphicsContext context, Action<bool> isTextured, Coordinate cameraLocation, Coordinate lookAt) {
+        public void RenderTransparent(IGraphicsContext context, Action<TextureReference> textureCallback, Coordinate cameraLocation, Coordinate lookAt) {
 
             var sorted =
                 from subset in GetSubsets<Face>(Transparent)
@@ -69,9 +66,15 @@ namespace CBRE.Editor.Rendering.Arrays {
                 var tex = ((Face)subset.Instance).Texture;
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();
-                isTextured(tex.Texture != null);
+                textureCallback(tex);
+                GL.DepthMask(false);
+                if (!tex.IsToolTexture) {
+                    GL.Disable(OpenTK.Graphics.OpenGL.EnableCap.CullFace);
+                }
                 //program.Set("isTextured", tex.Texture != null);
                 Render(context, PrimitiveType.Triangles, subset);
+                GL.DepthMask(true);
+                GL.Enable(OpenTK.Graphics.OpenGL.EnableCap.CullFace);
             }
         }
 

@@ -68,6 +68,7 @@ namespace CBRE.Editor.Rendering.Immediate {
                 var alpha = g.Key.Opacity * 255;
                 var blendAlpha = (byte)((color.A) / 255f * (alpha / 255f) * 255);
                 GL.End();
+                GL.DepthMask(!g.Key.Transparent);
                 if (g.Key.Texture != null && textured) {
                     texture = true;
                     GL.Color4(Color.FromArgb(blendAlpha, color));
@@ -94,6 +95,7 @@ namespace CBRE.Editor.Rendering.Immediate {
 
             GL.End();
             GL.Color4(Color.White);
+            GL.DepthMask(true);
         }
 
         public static void DrawWireframe(IEnumerable<Face> faces, bool overrideColor, bool drawVertices) {

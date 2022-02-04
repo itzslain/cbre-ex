@@ -39,7 +39,7 @@ namespace CBRE.Providers.Texture {
 
                 foreach (var spr in sprs) {
                     var rel = Path.GetFullPath(spr).Substring(dir.Path.Length).TrimStart('/', '\\').Replace('\\', '/');
-                    rel = rel.Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "").ToLower();
+                    rel = rel.Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "").ToLowerInvariant();
 
                     if (rel.Contains("_lm") || rel.EndsWith("bump") || rel.Contains("sky") || rel.EndsWith("_mask")) continue;
 

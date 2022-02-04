@@ -17,6 +17,7 @@ namespace CBRE.Editor.Rendering.Shaders {
         private bool IsLit { set { Shader.Set("isLit", value); } }
 
         public bool LightmapEnabled { set { Shader.Set("lightmapEnabled", value); } }
+        public bool SqrtAlpha { set { Shader.Set("sqrtAlpha", value); } }
 
         public Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
         public Matrix4 Transformation { set { Shader.Set("transformation", value); } }
@@ -41,6 +42,7 @@ namespace CBRE.Editor.Rendering.Shaders {
             IsTextured = true;
             IsLit = true;
             LightmapEnabled = false;
+            SqrtAlpha = false;
             Show3DGrid = false;
             GridSpacing = 64;
             SelectionColourMultiplier = new Vector4(1, 0.5f, 0.5f, 1);
@@ -67,6 +69,7 @@ namespace CBRE.Editor.Rendering.Shaders {
         }
 
         public void Unbind() {
+            SqrtAlpha = false;
             Shader.Unbind();
         }
 

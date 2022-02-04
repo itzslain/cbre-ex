@@ -11,6 +11,7 @@ varying float vertexSelected;
 uniform bool isTextured;
 uniform bool isLit;
 uniform bool lightmapEnabled;
+uniform bool sqrtAlpha;
 uniform vec4 selectionColourMultiplier;
 uniform bool showGrid;
 uniform float gridSpacing;
@@ -22,10 +23,14 @@ void main()
     vec4 outputColor;
 	float lighting = vertexLighting;
 	if (!isLit) lighting = 1;
+    if (sqrtAlpha && lightmapEnabled) lighting = 1;
     float alpha = vertexColour.w;
 
     if (isTextured) {
         vec4 texColour = texture2D(currentTexture, texCoord);
+        if (sqrtAlpha) {
+            texColour.w = sqrt(texColour.w);
+        }
         outputColor = texColour;
         if (lightmapEnabled && lightmapCoord.x > -100.0) {
             outputColor = texColour * 2.0 * texture2D(lightmapTexture, lightmapCoord);
