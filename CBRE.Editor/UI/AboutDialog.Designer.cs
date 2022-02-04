@@ -124,7 +124,7 @@
             this.GithubLink.Size = new System.Drawing.Size(136, 13);
             this.GithubLink.TabIndex = 6;
             this.GithubLink.TabStop = true;
-            this.GithubLink.Text = "github.com/juanjp600/cbre\r\n";
+            this.GithubLink.Text = "github.com/SCP-CBN/cbre\r\n";
             // 
             // GPLLink
             // 

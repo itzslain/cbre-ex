@@ -14,7 +14,7 @@ namespace CBRE.Editor.UI
             VersionLabel.Text = FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location).FileVersion;
 
             LTLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://logic-and-trick.com");
-            GithubLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/juanjp600/sledge");
+            GithubLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/SCP-CBN/cbre");
             GPLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://www.gnu.org/licenses/gpl-2.0.html");
         }
     }
