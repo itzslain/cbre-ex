@@ -52,7 +52,7 @@ namespace CBRE.Editor.Compiling {
                 return true;
             });
 
-            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name == "tooltextures/invisible_collision");
+            IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name.ToLowerInvariant() == "tooltextures/invisible_collision");
 
             Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
@@ -107,13 +107,13 @@ namespace CBRE.Editor.Compiling {
                 string texName = Directories.GetTextureExtension(textures[i].Item1);
 
                 for (int lmInd = 0; lmInd < lmCount; lmInd++) {
-                    IEnumerable<LMFace> tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1 && x.LmIndex == lmInd);
-                    IEnumerable<Face> tTrptFaces = transparentFaces.Where(x => x.Texture.Name == textures[i].Item1);
+                    LMFace[] tLmFaces = faces.FindAll(x => x.Texture == textures[i].Item1 && x.LmIndex == lmInd).ToArray();
+                    Face[] tTrptFaces = transparentFaces.Where(x => x.Texture.Name == textures[i].Item1).ToArray();
                     vertCount = 0;
                     vertOffset = 0;
                     triCount = 0;
 
-                    if (tLmFaces.Count() > 0) {
+                    if (tLmFaces.Length > 0) {
                         foreach (LMFace face in tLmFaces) {
                             vertCount += face.Vertices.Count;
                             triCount += face.GetTriangleIndices().Count() / 3;
@@ -160,7 +160,7 @@ namespace CBRE.Editor.Compiling {
 
                             vertOffset += face.Vertices.Count;
                         }
-                    } else if (lmInd == 0 && tTrptFaces.Count() > 0) {
+                    } else if (lmInd == 0 && tTrptFaces.Length > 0) {
                         foreach (Face face in tTrptFaces) {
                             vertCount += face.Vertices.Count;
                             triCount += face.GetTriangleIndices().Count() / 3;
@@ -180,10 +180,10 @@ namespace CBRE.Editor.Compiling {
                                 br.Write((float)face.Vertices[j].Location.Z);
                                 br.Write((float)face.Vertices[j].Location.Y);
 
-                                br.Write(0.0f);
-                                br.Write(0.0f);
                                 br.Write((float)face.Vertices[j].TextureU);
                                 br.Write((float)face.Vertices[j].TextureV);
+                                br.Write(0.0f);
+                                br.Write(0.0f);
 
                                 br.Write((byte)255); //r
                                 br.Write((byte)255); //g

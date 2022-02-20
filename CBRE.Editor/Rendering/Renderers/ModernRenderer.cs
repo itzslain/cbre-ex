@@ -230,7 +230,10 @@ namespace CBRE.Editor.Rendering.Renderers {
                 // Render transparent
                 _mapObject3DShader.Bind(opts);
                 _decalArray.RenderTransparent(context.Context, location);
-                _array.RenderTransparent(opts, context.Context, x => _mapObject3DShader.IsTextured = x && opts.Textured, location, lookAt);
+                _array.RenderTransparent(context.Context, x => {
+                    _mapObject3DShader.IsTextured = x.Texture != null && opts.Textured;
+                    _mapObject3DShader.SqrtAlpha = !x.IsToolTexture;
+                }, location, lookAt);
                 _mapObject3DShader.Unbind();
             }
         }

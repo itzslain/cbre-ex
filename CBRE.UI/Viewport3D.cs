@@ -65,7 +65,7 @@ namespace CBRE.UI {
         }
 
         public override Matrix4 GetViewportMatrix() {
-            const float near = 0.1f;
+            const float near = 1.0f;
             var ratio = Width / (float)Height;
             if (ratio <= 0) ratio = 1;
             return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), ratio, near, Camera.ClipDistance);
@@ -79,7 +79,7 @@ namespace CBRE.UI {
             base.SetViewport();
             var fov = Camera == null ? 60 : Camera.FOV;
             var clip = Camera == null ? 6000 : Camera.ClipDistance;
-            Viewport.Perspective(0, 0, Width, Height, fov, 0.1f, clip);
+            Viewport.Perspective(0, 0, Width, Height, fov, 1.0f, clip);
         }
 
         protected override void UpdateBeforeClearViewport() {

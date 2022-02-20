@@ -6,6 +6,10 @@ using CBRE.Editor.Documents;
 using CBRE.FileSystem;
 using CBRE.Providers.Model;
 using CBRE.Settings;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CBRE.Editor.Extensions {
     public static class ModelExtensions {
@@ -76,14 +80,17 @@ namespace CBRE.Editor.Extensions {
                 try
                 {
 #endif
-                var mr = ModelProvider.CreateModelReference(file);
-                SetModel(e, mr);
-                cache.Add(model, mr);
-                return true;
+                    var mr = ModelProvider.CreateModelReference(file);
+                    SetModel(e, mr);
+                    cache.Add(model, mr);
+                    return true;
 #if !DEBUG
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
+                    File.AppendAllText("modelLoadErrors.txt", $"\nFailed to load {file.FullPathName}: " +
+                        $"{exception.Message} ({exception.GetType().Name})\n" +
+                        $"{exception.StackTrace}");
                     // Couldn't load
                     cache.Add(model, null);
                     return updatedChildren;

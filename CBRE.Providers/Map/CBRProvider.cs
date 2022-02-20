@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CBRE.Common;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
@@ -83,9 +84,11 @@ namespace CBRE.Providers.Map {
             int solidCount = reader.ReadInt32();
             for (int i = 0; i < solidCount; i++) {
                 Solid s = new Solid(map.IDGenerator.GetNextObjectID());
+                s.Colour = Colour.GetRandomBrushColour();
                 int faceCount = reader.ReadInt32();
                 for (int j = 0; j < faceCount; j++) {
                     Face f = new Face(map.IDGenerator.GetNextFaceID());
+                    f.Colour = s.Colour;
                     f.Texture.Name = textures[reader.ReadInt32()];
                     f.Texture.UAxis = reader.ReadCoordinate();
                     f.Texture.VAxis = reader.ReadCoordinate();
@@ -135,6 +138,7 @@ namespace CBRE.Providers.Map {
                     entities.Capacity += entitiesOfType;
                     for (int j = 0; j < entitiesOfType; j++) {
                         Entity e = new Entity(map.IDGenerator.GetNextObjectID());
+                        e.Colour = Colour.GetDefaultEntityColour();
                         e.ClassName = read;
                         e.EntityData.Name = read;
                         if (isStillSolid) {
@@ -190,6 +194,7 @@ namespace CBRE.Providers.Map {
                 Visgroup newGroup = null;
                 while ((hierarchyControl = reader.ReadByte()) == HIERARCHY_PROCCEED) {
                     newGroup = new Visgroup();
+                    newGroup.Colour = Colour.GetRandomBrushColour();
                     newGroup.ID = reader.ReadInt32();
                     newGroup.Name = reader.ReadNullTerminatedString();
                     if (currentParentVisgroup != null) {

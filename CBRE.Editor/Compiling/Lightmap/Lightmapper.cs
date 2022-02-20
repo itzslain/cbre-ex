@@ -143,8 +143,8 @@ namespace CBRE.Editor.Compiling.Lightmap {
 
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()) {
                 foreach (Face tface in solid.Faces) {
-                    if (tface.Texture.Name.ToLower() != "tooltextures/block_light") continue;
                     LMFace face = new LMFace(tface, solid);
+                    if (tface.Texture.Name.ToLowerInvariant() != "tooltextures/block_light") continue;
                     exclusiveBlockers.Add(face);
                 }
             }

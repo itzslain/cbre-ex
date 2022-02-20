@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CBRE")]
-[assembly: AssemblyCopyright("Copyright © juanjp600 2021, based on Sledge by http://logic-and-trick.com 2014")]
+[assembly: AssemblyCopyright("Copyright © juanjp600 2022, based on Sledge by http://logic-and-trick.com 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.8")]
-[assembly: AssemblyFileVersion("0.1.0.8")]
+[assembly: AssemblyVersion("0.1.0.9")]
+[assembly: AssemblyFileVersion("0.1.0.9")]

@@ -29,6 +29,16 @@ using CBRE.Settings;
 using CBRE.Settings.Models;
 using CBRE.UI;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
 
 namespace CBRE.Editor {
@@ -425,12 +435,17 @@ namespace CBRE.Editor {
             UpdateTitle();
         }
 
+        private static readonly Version Version = Assembly.GetEntryAssembly().GetName().Version;
+
+        private string titleStart
+            => $"CBRE v{Version}";
+
         private void UpdateTitle() {
             if (DocumentManager.CurrentDocument != null) {
                 var doc = DocumentManager.CurrentDocument;
-                Text = "CBRE - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
+                Text = $"{titleStart} - {(String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile))}";
             } else {
-                Text = "CBRE";
+                Text = titleStart;
             }
         }
 
@@ -445,7 +460,7 @@ namespace CBRE.Editor {
             StatusZoomLabel.Text = "";
             StatusSnapLabel.Text = "";
             StatusTextLabel.Text = "";
-            Text = "CBRE";
+            Text = titleStart;
         }
 
         private void MouseCoordinatesChanged(Coordinate coord) {
@@ -565,8 +580,8 @@ namespace CBRE.Editor {
 
                 string ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
 
-                using (SaveFileDialog sfd = new SaveFileDialog()) {
-                    sfd.FileName = "CBRE - "
+                using (var sfd = new SaveFileDialog()) {
+                    sfd.FileName = $"{titleStart} - "
                                    + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
                                    + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ext;
                     sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
