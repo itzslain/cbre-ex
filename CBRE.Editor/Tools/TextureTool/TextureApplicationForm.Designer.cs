@@ -37,7 +37,6 @@ namespace CBRE.Editor.Tools.TextureTool
             this.HideMaskCheckbox = new System.Windows.Forms.CheckBox();
             this.RecentFilterTextbox = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.SmoothingGroupsButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.AlignToFaceCheckbox = new System.Windows.Forms.CheckBox();
             this.AlignToWorldCheckbox = new System.Windows.Forms.CheckBox();
@@ -68,8 +67,6 @@ namespace CBRE.Editor.Tools.TextureTool
             this.ScaleYValue = new System.Windows.Forms.NumericUpDown();
             this.ShiftXValue = new System.Windows.Forms.NumericUpDown();
             this.ShiftYValue = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
-            this.LightmapValue = new System.Windows.Forms.NumericUpDown();
             this.HoverTip = new System.Windows.Forms.ToolTip(this.components);
             this.RecentTexturesList = new CBRE.Editor.UI.TextureListPanel();
             this.SelectedTexturesList = new CBRE.Editor.UI.TextureListPanel();
@@ -81,7 +78,6 @@ namespace CBRE.Editor.Tools.TextureTool
             ((System.ComponentModel.ISupportInitialize)(this.ScaleYValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShiftXValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShiftYValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LightmapValue)).BeginInit();
             this.SuspendLayout();
             // 
             // label11
@@ -137,17 +133,6 @@ namespace CBRE.Editor.Tools.TextureTool
             this.label9.TabIndex = 32;
             this.label9.Text = "Filter Recent:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // SmoothingGroupsButton
-            // 
-            this.SmoothingGroupsButton.Enabled = false;
-            this.SmoothingGroupsButton.Location = new System.Drawing.Point(180, 69);
-            this.SmoothingGroupsButton.Name = "SmoothingGroupsButton";
-            this.SmoothingGroupsButton.Size = new System.Drawing.Size(117, 23);
-            this.SmoothingGroupsButton.TabIndex = 31;
-            this.SmoothingGroupsButton.Text = "Smoothing Groups";
-            this.SmoothingGroupsButton.UseVisualStyleBackColor = true;
-            this.SmoothingGroupsButton.Click += new System.EventHandler(this.SmoothingGroupsButtonClicked);
             // 
             // groupBox2
             // 
@@ -389,7 +374,7 @@ namespace CBRE.Editor.Tools.TextureTool
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 208F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 209F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -553,40 +538,6 @@ namespace CBRE.Editor.Tools.TextureTool
             this.ShiftYValue.ValueChanged += new System.EventHandler(this.ShiftYValueChanged);
             this.ShiftYValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(174, 38);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(59, 25);
-            this.label8.TabIndex = 16;
-            this.label8.Text = "Lightmap";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // LightmapValue
-            // 
-            this.LightmapValue.Enabled = false;
-            this.LightmapValue.Location = new System.Drawing.Point(239, 43);
-            this.LightmapValue.Maximum = new decimal(new int[] {
-            512,
-            0,
-            0,
-            0});
-            this.LightmapValue.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.LightmapValue.Name = "LightmapValue";
-            this.LightmapValue.Size = new System.Drawing.Size(58, 20);
-            this.LightmapValue.TabIndex = 19;
-            this.LightmapValue.Value = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.LightmapValue.ValueChanged += new System.EventHandler(this.LightmapValueChanged);
-            this.LightmapValue.Enter += new System.EventHandler(this.FocusTextInControl);
-            // 
             // HoverTip
             // 
             this.HoverTip.AutoPopDelay = 5000;
@@ -638,7 +589,6 @@ namespace CBRE.Editor.Tools.TextureTool
             this.Controls.Add(this.label10);
             this.Controls.Add(this.RecentFilterTextbox);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.SmoothingGroupsButton);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.RightClickCombo);
@@ -652,8 +602,6 @@ namespace CBRE.Editor.Tools.TextureTool
             this.Controls.Add(this.label5);
             this.Controls.Add(this.TextureDetailsLabel);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.LightmapValue);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximumSize = new System.Drawing.Size(433, 459);
             this.MinimumSize = new System.Drawing.Size(433, 459);
@@ -672,7 +620,6 @@ namespace CBRE.Editor.Tools.TextureTool
             ((System.ComponentModel.ISupportInitialize)(this.ScaleYValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShiftXValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShiftYValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LightmapValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -685,7 +632,6 @@ namespace CBRE.Editor.Tools.TextureTool
         private System.Windows.Forms.CheckBox HideMaskCheckbox;
         private System.Windows.Forms.TextBox RecentFilterTextbox;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button SmoothingGroupsButton;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button JustifyTopButton;
@@ -714,8 +660,6 @@ namespace CBRE.Editor.Tools.TextureTool
         private System.Windows.Forms.NumericUpDown ScaleYValue;
         private System.Windows.Forms.NumericUpDown ShiftXValue;
         private System.Windows.Forms.NumericUpDown ShiftYValue;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.NumericUpDown LightmapValue;
         private TextureListPanel SelectedTexturesList;
         private TextureListPanel RecentTexturesList;
         private System.Windows.Forms.ToolTip HoverTip;

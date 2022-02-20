@@ -146,7 +146,6 @@ namespace CBRE.Editor {
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new L3DWProvider());
             MapProvider.Register(new MSL2Provider());
-            GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new SprProvider());
             TextureProvider.Register(new MiscTexProvider());
             ModelProvider.Register(new AssimpProvider());
