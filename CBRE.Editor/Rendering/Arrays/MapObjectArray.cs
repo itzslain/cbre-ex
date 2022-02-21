@@ -1,4 +1,7 @@
-﻿using CBRE.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Extensions;
@@ -62,10 +65,8 @@ namespace CBRE.Editor.Rendering.Arrays {
                 select subset;
             foreach (Subset subset in sorted) {
                 TextureReference tex = ((Face)subset.Instance).Texture;
-                if(opts.HideToolTextures) {
-                    if (tex.Name.ToLowerInvariant() == "tooltextures/invisible_collision") continue;
-                    if (tex.Name.ToLowerInvariant() == "tooltextures/remove_face") continue;
-                    if (tex.Name.ToLowerInvariant() == "tooltextures/block_light") continue;
+                if(Documents.DocumentManager.CurrentDocument.Map.HideToolTextures) {
+                    if (tex.IsToolTexture) continue;
                 }
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();

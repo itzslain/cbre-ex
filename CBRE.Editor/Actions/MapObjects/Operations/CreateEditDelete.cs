@@ -1,4 +1,6 @@
-﻿using CBRE.Common.Mediator;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions.MapObjects.Operations.EditOperations;
 using CBRE.Editor.Documents;
