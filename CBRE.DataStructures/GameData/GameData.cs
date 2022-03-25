@@ -44,7 +44,7 @@ namespace CBRE.DataStructures.GameData {
             lightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { ShortDescription = "Intensity", DefaultValue = "1.0" });
             lightDataObj.Properties.Add(new Property("range", VariableType.Float) { ShortDescription = "Range", DefaultValue = "1.0" });
             lightDataObj.Properties.Add(new Property("hassprite", VariableType.Bool) { ShortDescription = "Has sprite", DefaultValue = "Yes" });
-            lightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/lightbulb.spr"));
+            lightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/lightbulb"));
             Classes.Add(lightDataObj);
 
             var spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
@@ -63,7 +63,7 @@ namespace CBRE.DataStructures.GameData {
 
             var soundEmitterDataObj = new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point);
             soundEmitterDataObj.Properties.Add(new Property("sound", VariableType.Integer) { ShortDescription = "Ambience index", DefaultValue = "1" });
-            soundEmitterDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/speaker.spr"));
+            soundEmitterDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/speaker"));
             Classes.Add(soundEmitterDataObj);
 
             var modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
