@@ -105,18 +105,15 @@ namespace CBRE.Providers.Map {
                     }
 
 #if !DEBUG
-                try
-                {
+                    try {
 #endif
-                    var mr = ModelProvider.CreateModelReference(file);
-                    models.Add(mr);
+                        var mr = ModelProvider.CreateModelReference(file);
+                        models.Add(mr);
 #if !DEBUG
-                }
-                catch (Exception)
-                {
-                    // Couldn't load
-                    continue;
-                }
+                    } catch (Exception) {
+                        // Couldn't load
+                        continue;
+                    }
 #endif
                 }
             }
