@@ -333,6 +333,10 @@ namespace CBRE.Editor {
             this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.Size = new System.Drawing.Size(615, 653);
             this.TableSplitView.TabIndex = 0;
             // 
@@ -353,7 +357,7 @@ namespace CBRE.Editor {
             this.tabPage1.ImageIndex = 0;
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(559, -5);
+            this.tabPage1.Size = new System.Drawing.Size(607, -5);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Tab";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -393,7 +397,7 @@ namespace CBRE.Editor {
             this.KeyPreview = true;
             this.MainMenuStrip = this.mnuMain;
             this.Name = "Editor";
-            this.Text = "CBRE";
+            this.Text = "CBRE-EX";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditorClosing);
             this.Load += new System.EventHandler(this.EditorLoad);

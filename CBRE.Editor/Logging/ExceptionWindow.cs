@@ -31,12 +31,12 @@ namespace CBRE.Editor.Logging {
                 Directory.CreateDirectory("Error Logs");
                 string fn = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
                 using (StreamWriter sw = new StreamWriter($"Error Logs\\{fn}.txt")) {
-                    string content = "CBRE has encountered an error. Details are found below.\n" +
-                                     "-------------------------------------------------\n" +
+                    string content = "CBRE-EX has encountered an error. Details are found below.\n" +
+                                     "-----------------------------------------------------------\n" +
                                      $".NET Version: {info.RuntimeVersion}\n" +
                                      $"Operating System: {info.OperatingSystem}\n" +
                                      $"CBRE Version: {info.ApplicationVersion}\n" +
-                                     "------------------ERROR MESSAGE------------------\n" +
+                                     "-----------------------ERROR MESSAGE-----------------------\n" +
                                      info.FullStackTrace;
                     sw.Write(content);
                 }

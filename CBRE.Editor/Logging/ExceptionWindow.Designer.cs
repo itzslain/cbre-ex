@@ -23,7 +23,6 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.FrameworkVersion = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -37,20 +36,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(464, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Oops! Something went horribly wrong.";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 74);
+            this.label4.Location = new System.Drawing.Point(12, 37);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(70, 13);
             this.label4.TabIndex = 2;
@@ -58,9 +47,9 @@
             // 
             // FrameworkVersion
             // 
-            this.FrameworkVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.FrameworkVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FrameworkVersion.Location = new System.Drawing.Point(135, 71);
+            this.FrameworkVersion.Location = new System.Drawing.Point(135, 34);
             this.FrameworkVersion.Name = "FrameworkVersion";
             this.FrameworkVersion.ReadOnly = true;
             this.FrameworkVersion.Size = new System.Drawing.Size(337, 20);
@@ -69,7 +58,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 100);
+            this.label5.Location = new System.Drawing.Point(12, 63);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(90, 13);
             this.label5.TabIndex = 2;
@@ -77,9 +66,9 @@
             // 
             // OperatingSystem
             // 
-            this.OperatingSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.OperatingSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OperatingSystem.Location = new System.Drawing.Point(135, 97);
+            this.OperatingSystem.Location = new System.Drawing.Point(135, 60);
             this.OperatingSystem.Name = "OperatingSystem";
             this.OperatingSystem.ReadOnly = true;
             this.OperatingSystem.Size = new System.Drawing.Size(337, 20);
@@ -88,17 +77,17 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 126);
+            this.label6.Location = new System.Drawing.Point(12, 89);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(74, 13);
+            this.label6.Size = new System.Drawing.Size(91, 13);
             this.label6.TabIndex = 2;
-            this.label6.Text = "CBRE Version";
+            this.label6.Text = "CBRE-EX Version";
             // 
             // CBREVersion
             // 
-            this.CBREVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.CBREVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CBREVersion.Location = new System.Drawing.Point(135, 123);
+            this.CBREVersion.Location = new System.Drawing.Point(135, 86);
             this.CBREVersion.Name = "CBREVersion";
             this.CBREVersion.ReadOnly = true;
             this.CBREVersion.Size = new System.Drawing.Size(337, 20);
@@ -107,7 +96,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 149);
+            this.label7.Location = new System.Drawing.Point(12, 115);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 13);
             this.label7.TabIndex = 2;
@@ -115,15 +104,15 @@
             // 
             // FullError
             // 
-            this.FullError.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.FullError.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FullError.Location = new System.Drawing.Point(135, 149);
+            this.FullError.Location = new System.Drawing.Point(135, 112);
             this.FullError.Multiline = true;
             this.FullError.Name = "FullError";
             this.FullError.ReadOnly = true;
             this.FullError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.FullError.Size = new System.Drawing.Size(337, 318);
+            this.FullError.Size = new System.Drawing.Size(337, 355);
             this.FullError.TabIndex = 3;
             // 
             // cancelButton
@@ -150,11 +139,13 @@
             // 
             // label2
             // 
+            this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(9, 40);
+            this.label2.Location = new System.Drawing.Point(12, 9);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(454, 25);
+            this.label2.Size = new System.Drawing.Size(130, 16);
             this.label2.TabIndex = 6;
+            this.label2.Text = "funny placeholder";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ExceptionWindow
@@ -173,22 +164,19 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.FrameworkVersion);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(500, 486);
             this.Name = "ExceptionWindow";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Ouch!";
+            this.Text = "Error! Something went horribly wrong.";
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox FrameworkVersion;
         private System.Windows.Forms.Label label5;

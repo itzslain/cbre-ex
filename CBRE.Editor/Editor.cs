@@ -427,7 +427,7 @@ namespace CBRE.Editor {
         private static readonly Version Version = Assembly.GetEntryAssembly().GetName().Version;
 
         private string titleStart
-            => $"CBRE v{Version}";
+            => $"CBRE-EX v{Version}";
 
         private void UpdateTitle() {
             if (DocumentManager.CurrentDocument != null) {

@@ -781,17 +781,6 @@
     <Content Include="ToolTextures\REMOVE_FACE.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\Logo\Logo.svg" />
-    <None Include="Resources\Logo\Sledge Render 128.png" />
-    <None Include="Resources\Logo\Sledge Render 16.png" />
-    <None Include="Resources\Logo\Sledge Render 256.png" />
-    <None Include="Resources\Logo\Sledge Render 32.png" />
-    <None Include="Resources\Logo\Sledge Render 48.png" />
-    <None Include="Resources\Logo\Sledge Render 64.png" />
-    <None Include="Resources\Logo\Sledge Render.png" />
-    <None Include="Resources\Logo\Sledge Trace Deus.png" />
-    <None Include="Resources\Logo\Sledge Trace.png" />
-    <None Include="Resources\Logo\Sledge.ico" />
     <None Include="Resources\Button_ColourPicker.png" />
     <Content Include="Resources\embedded_icons.txt" />
     <Content Include="Resources\Menu_Align.png" />
