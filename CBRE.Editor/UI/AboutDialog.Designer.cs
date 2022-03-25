@@ -107,17 +107,17 @@
             // GithubLink
             // 
             this.GithubLink.AutoSize = true;
-            this.GithubLink.Location = new System.Drawing.Point(360, 200);
+            this.GithubLink.Location = new System.Drawing.Point(352, 200);
             this.GithubLink.Name = "GithubLink";
-            this.GithubLink.Size = new System.Drawing.Size(149, 13);
+            this.GithubLink.Size = new System.Drawing.Size(163, 13);
             this.GithubLink.TabIndex = 6;
             this.GithubLink.TabStop = true;
-            this.GithubLink.Text = "github.com/AestheticalZ/cbre\r\n";
+            this.GithubLink.Text = "github.com/AestheticalZ/cbre-ex\r\n";
             // 
             // GPLLink
             // 
             this.GPLLink.AutoSize = true;
-            this.GPLLink.Location = new System.Drawing.Point(360, 232);
+            this.GPLLink.Location = new System.Drawing.Point(352, 232);
             this.GPLLink.Name = "GPLLink";
             this.GPLLink.Size = new System.Drawing.Size(145, 13);
             this.GPLLink.TabIndex = 6;
@@ -177,7 +177,7 @@
             // OriginalLink
             // 
             this.OriginalLink.AutoSize = true;
-            this.OriginalLink.Location = new System.Drawing.Point(360, 216);
+            this.OriginalLink.Location = new System.Drawing.Point(352, 216);
             this.OriginalLink.Name = "OriginalLink";
             this.OriginalLink.Size = new System.Drawing.Size(136, 13);
             this.OriginalLink.TabIndex = 12;
