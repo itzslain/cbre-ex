@@ -27,7 +27,7 @@ namespace CBRE.Editor.Rendering.Arrays {
             foreach (Subset subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null)) {
                 ITexture tex = (ITexture)subset.Instance;
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0);
-                
+
                 tex.Bind();
                 GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
                 lightmapTexture.Bind();
@@ -65,7 +65,7 @@ namespace CBRE.Editor.Rendering.Arrays {
                 select subset;
             foreach (Subset subset in sorted) {
                 TextureReference tex = ((Face)subset.Instance).Texture;
-                if(Documents.DocumentManager.CurrentDocument.Map.HideToolTextures) {
+                if (Documents.DocumentManager.CurrentDocument.Map.HideToolTextures) {
                     if (tex.IsToolTexture) continue;
                 }
                 if (tex.Texture != null) tex.Texture.Bind();

@@ -24,7 +24,7 @@ namespace CBRE.Editor.History {
             if (_stacks.Count == 1 && item.ModifiesState) {
                 TotalActionsSinceLastSave++;
                 TotalActionsSinceLastAutoSave++;
-                if(!Editor.Instance.Text.Contains(" *UNSAVED CHANGES*")) {
+                if (!Editor.Instance.Text.Contains(" *UNSAVED CHANGES*")) {
                     Editor.Instance.Text += " *UNSAVED CHANGES*";
                     Editor.Instance.DocumentTabs.TabPages[Editor.Instance.DocumentTabs.SelectedIndex].Text += "*";
                 }

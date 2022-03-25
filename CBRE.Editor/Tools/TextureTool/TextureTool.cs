@@ -260,7 +260,7 @@ namespace CBRE.Editor.Tools.TextureTool {
             Face clickedFace = null;
 
             //Didnt want a linq mess, so I did this instead. God forgive me.
-            if(Document.Map.HideToolTextures) {
+            if (Document.Map.HideToolTextures) {
                 clickedFace = hits.SelectMany(f => f.Faces)
                     .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
                     .Where(x => x.Intersection != null && x.Item.Texture.Name != "tooltextures/invisible_collision" &&
@@ -268,8 +268,7 @@ namespace CBRE.Editor.Tools.TextureTool {
                     .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                     .Select(x => x.Item)
                     .FirstOrDefault();
-            }
-            else {
+            } else {
                 clickedFace = hits.SelectMany(f => f.Faces)
                     .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
                     .Where(x => x.Intersection != null)
