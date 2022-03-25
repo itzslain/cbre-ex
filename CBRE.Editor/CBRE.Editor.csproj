@@ -732,10 +732,10 @@
     <EmbeddedResource Include="Rendering\Shaders\MapObject3D.vert" />
     <EmbeddedResource Include="Rendering\Shaders\MapObject2D.vert" />
     <EmbeddedResource Include="Rendering\Shaders\MapObject2D.frag" />
-    <None Include="Sprites\lightbulb.spr">
+    <None Include="Sprites\lightbulb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Sprites\speaker.spr">
+    <None Include="Sprites\speaker.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="Tools\CameraTool.cs" />
