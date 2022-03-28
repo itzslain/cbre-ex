@@ -107,6 +107,7 @@ namespace CBRE.Editor.Rendering.Helpers {
                 if (helper.Is3DHelper && vp3 != null && _helperCache.ContainsKey(helper)) {
                     helper.BeforeRender3D(vp3);
                     foreach (var obj in helper.Order(vp3, _helperCache[helper])) {
+                        if (DocumentManager.CurrentDocument.Map.HideEntitySprites) continue;
                         helper.Render3D(vp3, obj);
                     }
                     helper.AfterRender3D(vp3);

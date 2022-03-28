@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -460,22 +460,14 @@ namespace CBRE.Editor.Settings {
             AddSetting(() => CBRE.Settings.View.KeepCameraPositions, "Keep current camera positions when switching between maps");
             AddSetting(() => CBRE.Settings.View.KeepSelectedTool, "Keep current selected tool when switching between maps");
 
-            AddHeading("Compiling");
-            AddSetting(() => CBRE.Settings.View.CompileOpenOutput, "Open the output panel on compile start");
-            AddSetting(() => CBRE.Settings.View.CompileDefaultAdvanced, "Use advanced compile dialog by default");
-
             AddHeading("Textures");
             AddSetting(() => CBRE.Settings.Select.ApplyTextureImmediately, "Apply texture immediately after browsing in the texture application tool");
 
-            AddHeading("Rendering (these settings will be applied after CBRE is restarted)");
-            AddSetting(() => CBRE.Settings.View.Renderer, "Renderer");
-            AddSetting(() => CBRE.Settings.View.DisableWadTransparency, "Disable WAD texture transparency");
+            AddHeading("Rendering");
             AddSetting(() => CBRE.Settings.View.DisableToolTextureTransparency, "Disable tool texture transparency");
             AddSetting(() => CBRE.Settings.View.GloballyDisableTransparency, "Disable transparent textures globally");
             AddSetting(() => CBRE.Settings.View.DisableModelRendering, "Disable model rendering");
             AddSetting(() => CBRE.Settings.View.DisableSpriteRendering, "Disable sprite rendering");
-            AddSetting(() => CBRE.Settings.View.DisableTextureFiltering, "Disable texture filtering (try this if textures render incorrectly)");
-            AddSetting(() => CBRE.Settings.View.ForcePowerOfTwoTextureResizing, "Force non power of two textures to be resized (try this if only 64, 128, 256, 512, etc size textures work)");
 
             AddHeading("Center Handles");
             AddSetting(() => CBRE.Settings.Select.DrawCenterHandles, "Render brush center handles");
@@ -506,7 +498,7 @@ namespace CBRE.Editor.Settings {
             AddSetting(() => CBRE.Settings.View.Camera3DPanRequiresMouseClick, "Require mouse click to enable free-look in 3D viewports when holding spacebar");
 
             AddHeading("Undo Stack");
-            AddSetting(() => CBRE.Settings.Select.UndoStackSize, 1, 1000, "Undo stack size (caution: setting too high may result in an out of memory crash!)");
+            AddSetting(() => CBRE.Settings.Select.UndoStackSize, 1, 1000, "Undo stack size (High value may cause out of memory situations)");
             AddSetting(() => CBRE.Settings.Select.SkipSelectionInUndoStack, "Fast-forward selection operations when performing undo/redo (selection, deselection)");
             AddSetting(() => CBRE.Settings.Select.SkipVisibilityInUndoStack, "Fast-forward visibility operations when performing undo/redo (visgroup visibility, quick show/hide)");
 

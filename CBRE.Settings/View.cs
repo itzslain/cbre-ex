@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace CBRE.Settings {
     public class View {
@@ -38,17 +38,10 @@ namespace CBRE.Settings {
         public static bool KeepCameraPositions { get; set; }
         public static bool KeepSelectedTool { get; set; }
 
-        public static RenderMode Renderer { get; set; }
-        public static bool DisableWadTransparency { get; set; }
         public static bool DisableToolTextureTransparency { get; set; }
         public static bool GloballyDisableTransparency { get; set; }
         public static bool DisableModelRendering { get; set; }
         public static bool DisableSpriteRendering { get; set; }
-        public static bool DisableTextureFiltering { get; set; }
-        public static bool ForcePowerOfTwoTextureResizing { get; set; }
-
-        public static bool CompileOpenOutput { get; set; }
-        public static bool CompileDefaultAdvanced { get; set; }
 
         static View() {
             SingleInstance = true;
@@ -88,17 +81,10 @@ namespace CBRE.Settings {
             KeepCameraPositions = false;
             KeepSelectedTool = false;
 
-            Renderer = RenderMode.OpenGL3;
-            DisableWadTransparency = false;
             DisableToolTextureTransparency = false;
             GloballyDisableTransparency = false;
             DisableModelRendering = false;
             DisableSpriteRendering = false;
-            DisableTextureFiltering = false;
-            ForcePowerOfTwoTextureResizing = false;
-
-            CompileOpenOutput = true;
-            CompileDefaultAdvanced = false;
         }
     }
 }

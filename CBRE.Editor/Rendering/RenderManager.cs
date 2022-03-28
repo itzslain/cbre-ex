@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
@@ -14,16 +14,7 @@ namespace CBRE.Editor.Rendering {
 
         public RenderManager(Document document) {
             _document = document;
-            switch (View.Renderer) {
-                case RenderMode.OpenGL3:
-                    _renderer = new ModernRenderer(_document);
-                    break;
-                /*case RenderMode.OpenGL1DisplayLists:
-                    _renderer = new DisplayListRenderer(_document);
-                    break;*/
-                default:
-                    throw new ArgumentOutOfRangeException("This isn't a valid render mode.");
-            }
+            _renderer = new ModernRenderer(_document);
         }
 
         public void Dispose() {

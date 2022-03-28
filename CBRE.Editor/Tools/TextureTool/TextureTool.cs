@@ -263,8 +263,7 @@ namespace CBRE.Editor.Tools.TextureTool {
             if (Document.Map.HideToolTextures) {
                 clickedFace = hits.SelectMany(f => f.Faces)
                     .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
-                    .Where(x => x.Intersection != null && x.Item.Texture.Name != "tooltextures/invisible_collision" &&
-                    x.Item.Texture.Name != "tooltextures/remove_face" && x.Item.Texture.Name != "tooltextures/block_light")
+                    .Where(x => x.Intersection != null && x.Item.Texture.IsToolTexture == false)
                     .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                     .Select(x => x.Item)
                     .FirstOrDefault();

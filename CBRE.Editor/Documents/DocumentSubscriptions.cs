@@ -115,10 +115,11 @@ namespace CBRE.Editor.Documents {
             Mediator.Subscribe(HotkeysMediator.ToggleIgnoreGrouping, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureScalingLock, this);
-            //Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideFaceMask, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideDisplacementSolids, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideToolTextures, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleHideEntitySprites, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleHideMapOrigin, this);
 
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
@@ -726,10 +727,6 @@ namespace CBRE.Editor.Documents {
 
         public void ToggleShow3DGrid() {
             _document.Map.Show3DGrid = !_document.Map.Show3DGrid;
-            if (_document.Map.Show3DGrid && CBRE.Settings.View.Renderer != RenderMode.OpenGL3) {
-                MessageBox.Show("The 3D grid is only available when the OpenGL 3.0 renderer is used.");
-                _document.Map.Show3DGrid = false;
-            }
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
@@ -768,6 +765,18 @@ namespace CBRE.Editor.Documents {
 
         public void ToggleHideToolTextures() {
             _document.Map.HideToolTextures = !_document.Map.HideToolTextures;
+            _document.RenderAll();
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
+        }
+
+        public void ToggleHideEntitySprites() {
+            _document.Map.HideEntitySprites = !_document.Map.HideEntitySprites;
+            _document.RenderAll();
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
+        }
+
+        public void ToggleHideMapOrigin() {
+            _document.Map.HideMapOrigin = !_document.Map.HideMapOrigin;
             _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }

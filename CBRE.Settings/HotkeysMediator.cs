@@ -71,8 +71,12 @@ namespace CBRE.Settings {
         ToggleHideFaceMask,
         [Description("Toggle Hide Displacement Solids")]
         ToggleHideDisplacementSolids,
-        [Description("Toggle Hide Null Textures")]
+        [Description("Toggle Hide Tool Textures")]
         ToggleHideToolTextures,
+        [Description("Toggle Hide Entity Sprites")]
+        ToggleHideEntitySprites,
+        [Description("Toggle Hide Map Origin")]
+        ToggleHideMapOrigin,
 
         [Description("Show Logical Tree")]
         ShowLogicalTree,

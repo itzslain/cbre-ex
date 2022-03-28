@@ -56,13 +56,13 @@ namespace CBRE.Editor.Rendering.Arrays {
         }
 
         public void RenderTransparent(IGraphicsContext context, Action<TextureReference> textureCallback, Coordinate cameraLocation, Coordinate lookAt) {
-
             IEnumerable<Subset> sorted =
                 from subset in GetSubsets<Face>(Transparent)
                 let face = subset.Instance as Face
                 where face != null
                 orderby LookAtOrder(face, cameraLocation, lookAt) ascending
                 select subset;
+
             foreach (Subset subset in sorted) {
                 TextureReference tex = ((Face)subset.Instance).Texture;
                 if (Documents.DocumentManager.CurrentDocument.Map.HideToolTextures) {

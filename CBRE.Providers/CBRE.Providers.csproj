@@ -82,7 +82,6 @@
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
     <Compile Include="Texture\SpriteOrientation.cs" />
-    <Compile Include="Texture\SprProvider.cs" />
     <Compile Include="Texture\TextureCollection.cs" />
     <Compile Include="Texture\TextureItem.cs" />
     <Compile Include="Texture\TexturePackage.cs" />

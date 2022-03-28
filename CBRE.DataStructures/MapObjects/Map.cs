@@ -24,6 +24,8 @@ namespace CBRE.DataStructures.MapObjects {
         public bool HideFaceMask { get; set; }
         public bool HideDisplacementSolids { get; set; }
         public bool HideToolTextures { get; set; }
+        public bool HideEntitySprites { get; set; }
+        public bool HideMapOrigin { get; set; }
         public bool IgnoreGrouping { get; set; }
         public bool TextureLock { get; set; }
         public bool TextureScalingLock { get; set; }

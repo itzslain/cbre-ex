@@ -553,6 +553,8 @@ namespace CBRE.Providers.Map {
                     map.IgnoreGrouping = viewsettings.PropertyBoolean("bIgnoreGrouping", map.IgnoreGrouping);
                     map.HideFaceMask = viewsettings.PropertyBoolean("bHideFaceMask", map.HideFaceMask);
                     map.HideToolTextures = viewsettings.PropertyBoolean("bHideToolTextures", map.HideToolTextures);
+                    map.HideMapOrigin = viewsettings.PropertyBoolean("bHideMapOrigin", map.HideMapOrigin);
+                    map.HideEntitySprites = viewsettings.PropertyBoolean("bHideEntitySprites", map.HideEntitySprites);
                     map.TextureLock = viewsettings.PropertyBoolean("bTextureLock", map.TextureLock);
                     map.TextureScalingLock = viewsettings.PropertyBoolean("bTextureScalingLock", map.TextureScalingLock);
                 }
@@ -590,6 +592,8 @@ namespace CBRE.Providers.Map {
             viewsettings.AddProperty("bIgnoreGrouping", map.IgnoreGrouping ? "1" : "0");
             viewsettings.AddProperty("bHideFaceMask", map.HideFaceMask ? "1" : "0");
             viewsettings.AddProperty("bHideToolTextures", map.HideToolTextures ? "1" : "0");
+            viewsettings.AddProperty("bHideEntitySprites", map.HideEntitySprites ? "1" : "0");
+            viewsettings.AddProperty("bHideMapOrigin", map.HideMapOrigin ? "1" : "0");
             viewsettings.AddProperty("bTextureLock", map.TextureLock ? "1" : "0");
             viewsettings.AddProperty("bTextureScalingLock", map.TextureScalingLock ? "1" : "0");
 

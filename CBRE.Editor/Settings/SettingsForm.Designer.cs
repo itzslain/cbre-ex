@@ -37,6 +37,7 @@ namespace CBRE.Editor.Settings
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -698,7 +699,7 @@ namespace CBRE.Editor.Settings
             // 
             // label43
             // 
-            this.label43.Location = new System.Drawing.Point(238, 148);
+            this.label43.Location = new System.Drawing.Point(253, 148);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(148, 20);
             this.label43.TabIndex = 6;
@@ -769,7 +770,7 @@ namespace CBRE.Editor.Settings
             // 
             // MouseWheelMoveDistance
             // 
-            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(392, 148);
+            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(407, 150);
             this.MouseWheelMoveDistance.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -837,7 +838,7 @@ namespace CBRE.Editor.Settings
             // ForwardSpeed
             // 
             this.ForwardSpeed.AutoSize = false;
-            this.ForwardSpeed.BackColor = System.Drawing.SystemColors.Window;
+            this.ForwardSpeed.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ForwardSpeed.Location = new System.Drawing.Point(125, 20);
             this.ForwardSpeed.Maximum = 5000;
             this.ForwardSpeed.Minimum = 100;
@@ -1734,10 +1735,11 @@ namespace CBRE.Editor.Settings
             this.Controls.Add(this.btnApplyAndCloseSettings);
             this.Controls.Add(this.btnCancelSettings);
             this.Controls.Add(this.tbcSettings);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "CBRE Settings";
+            this.Text = "CBRE-EX Settings";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsFormClosed);
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.groupBox10.ResumeLayout(false);

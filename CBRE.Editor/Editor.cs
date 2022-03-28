@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using CBRE.Common.Mediator;
@@ -35,6 +36,9 @@ namespace CBRE.Editor {
     public partial class Editor : HotkeyForm, IMediatorListener {
         private JumpList _jumpList;
         public static Editor Instance { get; private set; }
+
+        private const string UPDATES_URL = "https://gist.githubusercontent.com/AestheticalZ/d76ea0cfb25556df1d191d5a8c64667f/raw/cbreexver.txt";
+        private const string RELEASES_URL = "https://github.com/AestheticalZ/cbre-ex/releases/latest";
 
         public bool CaptureAltPresses { get; set; }
 
@@ -136,13 +140,10 @@ namespace CBRE.Editor {
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new L3DWProvider());
             MapProvider.Register(new MSL2Provider());
-            TextureProvider.Register(new SprProvider());
             TextureProvider.Register(new MiscTexProvider());
             ModelProvider.Register(new AssimpProvider());
 
             TextureHelper.EnableTransparency = !CBRE.Settings.View.GloballyDisableTransparency;
-            TextureHelper.DisableTextureFiltering = CBRE.Settings.View.DisableTextureFiltering;
-            TextureHelper.ForceNonPowerOfTwoResize = CBRE.Settings.View.ForcePowerOfTwoTextureResizing;
 
             Subscribe();
 
@@ -161,12 +162,37 @@ namespace CBRE.Editor {
             ProcessArguments(System.Environment.GetCommandLineArgs());
 
             ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
+
+            CheckForUpdates();
         }
 
         #region Updates
-        private String GetCurrentVersion() {
+        private Version GetCurrentVersion() {
             var info = typeof(Editor).Assembly.GetName().Version;
-            return info.ToString();
+            return info;
+        }
+
+        private void CheckForUpdates() {
+            string currentVersion = string.Empty;
+            Version parsedVersion;
+
+            using (WebClient webClient = new WebClient()) {
+                try {
+                    currentVersion = webClient.DownloadString(UPDATES_URL);
+                } catch (Exception) {
+                    return;
+                }
+            }
+
+            if (string.IsNullOrEmpty(currentVersion)) return;
+            if (!Version.TryParse(currentVersion, out parsedVersion)) return;
+
+            if (parsedVersion > GetCurrentVersion()) {
+                if (MessageBox.Show($"A new version of CBRE-EX (v{parsedVersion}) is available on GitHub.\n" +
+                    $"Would you like to download this update?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    OpenWebsite(RELEASES_URL);
+                }
+            }
         }
         #endregion
 
@@ -345,8 +371,6 @@ namespace CBRE.Editor {
             }
             ViewportManager.RefreshClearColour(Instance.DocumentTabs.TabPages.Count == 0);
             TextureHelper.EnableTransparency = !CBRE.Settings.View.GloballyDisableTransparency;
-            TextureHelper.DisableTextureFiltering = CBRE.Settings.View.DisableTextureFiltering;
-            TextureHelper.ForceNonPowerOfTwoResize = CBRE.Settings.View.ForcePowerOfTwoTextureResizing;
         }
 
         private void Exit() {

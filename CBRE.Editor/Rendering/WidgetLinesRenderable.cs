@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using CBRE.Editor.Documents;
 using CBRE.Graphics.Helpers;
 using CBRE.Graphics.Renderables;
 using OpenTK.Graphics.OpenGL;
@@ -6,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 namespace CBRE.Editor.Rendering {
     public class WidgetLinesRenderable : IRenderable {
         public void Render(object sender) {
+            if (DocumentManager.CurrentDocument.Map.HideMapOrigin) return;
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.FromArgb(128, Color.Red));

@@ -333,6 +333,26 @@ namespace CBRE.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideEntitySprites {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideEntitySprites", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideMapOrigin {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideMapOrigin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_HideSelected {
             get {
                 object obj = ResourceManager.GetObject("Menu_HideSelected", resourceCulture);
@@ -727,6 +747,16 @@ namespace CBRE.Editor.Properties {
             get {
                 object obj = ResourceManager.GetObject("Menu_WindowSettings", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Options {
+            get {
+                object obj = ResourceManager.GetObject("Options", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
