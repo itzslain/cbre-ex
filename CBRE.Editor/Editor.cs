@@ -30,6 +30,7 @@ using CBRE.Settings;
 using CBRE.Settings.Models;
 using CBRE.UI;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using Newtonsoft.Json;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
 
 namespace CBRE.Editor {
@@ -37,8 +38,12 @@ namespace CBRE.Editor {
         private JumpList _jumpList;
         public static Editor Instance { get; private set; }
 
-        private const string UPDATES_URL = "https://gist.githubusercontent.com/AestheticalZ/d76ea0cfb25556df1d191d5a8c64667f/raw/cbreexver.txt";
-        private const string RELEASES_URL = "https://github.com/AestheticalZ/cbre-ex/releases/latest";
+        private const string RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
+
+        private class UpdaterResponse {
+            public string html_url { get; set; }
+            public string tag_name { get; set; }
+        }
 
         public bool CaptureAltPresses { get; set; }
 
@@ -131,8 +136,7 @@ namespace CBRE.Editor {
                     AutoSize = false,
                     Width = 36,
                     Height = 36
-                }
-                    );
+                });
             }
 
             TextureProvider.SetCachePath(SettingsManager.GetTextureCachePath());
@@ -173,24 +177,29 @@ namespace CBRE.Editor {
         }
 
         private void CheckForUpdates() {
-            string currentVersion = string.Empty;
-            Version parsedVersion;
-
             using (WebClient webClient = new WebClient()) {
                 try {
-                    currentVersion = webClient.DownloadString(UPDATES_URL);
+                    Version parsedVersion;
+
+                    webClient.Headers.Add("Accept", "application/vnd.github.v3+json");
+                    webClient.Headers.Add("User-Agent", "cbre-ex");
+
+                    JsonSerializerSettings settings = new JsonSerializerSettings {
+                        MissingMemberHandling = MissingMemberHandling.Ignore
+                    };
+
+                    UpdaterResponse apiResponse = JsonConvert.DeserializeObject<UpdaterResponse>(webClient.DownloadString(RELEASES_URL), settings);
+
+                    if (!Version.TryParse(apiResponse.tag_name, out parsedVersion)) return;
+
+                    if (parsedVersion > GetCurrentVersion()) {
+                        if (MessageBox.Show($"A new version of CBRE-EX (v{parsedVersion}) is available on GitHub.\n" +
+                            "Would you like to download this update?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                            OpenWebsite(apiResponse.html_url);
+                        }
+                    }
                 } catch (Exception) {
-                    return;
-                }
-            }
-
-            if (string.IsNullOrEmpty(currentVersion)) return;
-            if (!Version.TryParse(currentVersion, out parsedVersion)) return;
-
-            if (parsedVersion > GetCurrentVersion()) {
-                if (MessageBox.Show($"A new version of CBRE-EX (v{parsedVersion}) is available on GitHub.\n" +
-                    $"Would you like to download this update?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    OpenWebsite(RELEASES_URL);
+                    return; //Do nothing. Interrupting the user with an exception window for this would be dumb.
                 }
             }
         }
