@@ -61,6 +61,7 @@ namespace CBRE.DataStructures.GameData
             spotlightDataObj.Properties.Add(new Property("innerconeangle", VariableType.Float) { ShortDescription = "Inner cone angle", DefaultValue = "45" });
             spotlightDataObj.Properties.Add(new Property("outerconeangle", VariableType.Float) { ShortDescription = "Outer cone angle", DefaultValue = "90" });
             spotlightDataObj.Properties.Add(new Property("angles", VariableType.Vector) { ShortDescription = "Rotation", DefaultValue = "0 0 0" });
+            spotlightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/spotlight"));
             Classes.Add(spotlightDataObj);
 
             GameDataObject waypointDataObj = new GameDataObject("waypoint", "AI waypoint.", ClassType.Point);
