@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace CBRE.FileSystem {
-    public class VirtualFile : IFile {
+namespace CBRE.FileSystem
+{
+    public class VirtualFile : IFile
+    {
         public FileSystemType Type { get { return FileSystemType.Virtual; } }
         public bool IsContainer { get; private set; }
         public IFile Parent { get; private set; }
@@ -20,7 +22,8 @@ namespace CBRE.FileSystem {
 
         public List<IFile> Children { get; private set; }
 
-        public VirtualFile(IFile parent, string name) {
+        public VirtualFile(IFile parent, string name)
+        {
             Parent = parent;
             Name = name;
             IsContainer = false;
@@ -32,7 +35,8 @@ namespace CBRE.FileSystem {
             Children = new List<IFile>();
         }
 
-        public VirtualFile(IFile parent, string name, IEnumerable<IFile> children) {
+        public VirtualFile(IFile parent, string name, IEnumerable<IFile> children)
+        {
             Parent = parent;
             Name = name;
             IsContainer = true;
@@ -44,51 +48,63 @@ namespace CBRE.FileSystem {
             Children = children.ToList();
         }
 
-        public Stream Open() {
+        public Stream Open()
+        {
             throw new NotImplementedException();
         }
 
-        public byte[] ReadAll() {
+        public byte[] ReadAll()
+        {
             throw new NotImplementedException();
         }
 
-        public byte[] Read(long offset, long count) {
+        public byte[] Read(long offset, long count)
+        {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IFile> GetRelatedFiles() {
+        public IEnumerable<IFile> GetRelatedFiles()
+        {
             return new List<IFile>();
         }
 
-        public IFile GetRelatedFile(string extension) {
+        public IFile GetRelatedFile(string extension)
+        {
             return null;
         }
 
-        public IFile GetChild(string name) {
+        public IFile GetChild(string name)
+        {
             return Children.FirstOrDefault(x => x.Name == name);
         }
 
-        public IEnumerable<IFile> GetChildren() {
+        public IEnumerable<IFile> GetChildren()
+        {
             return Children.Where(x => x.IsContainer);
         }
 
-        public IEnumerable<IFile> GetChildren(string regex) {
+        public IEnumerable<IFile> GetChildren(string regex)
+        {
             return GetChildren().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
-        public IFile GetFile(string name) {
+        public IFile GetFile(string name)
+        {
             return GetFiles().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
-        public IEnumerable<IFile> GetFiles() {
+        public IEnumerable<IFile> GetFiles()
+        {
             return Children.Where(x => !x.IsContainer);
         }
 
-        public IEnumerable<IFile> GetFiles(string regex) {
+        public IEnumerable<IFile> GetFiles(string regex)
+        {
             return GetFiles().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
-        public IEnumerable<IFile> GetFilesWithExtension(string extension) {
+        public IEnumerable<IFile> GetFilesWithExtension(string extension)
+        {
             return GetFiles().Where(x => x.Name.EndsWith("." + extension));
         }
     }

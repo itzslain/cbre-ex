@@ -1,18 +1,20 @@
-﻿using System;
+﻿using CBRE.Packages;
+using CBRE.Packages.Pak;
+using CBRE.Packages.Vpk;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CBRE.Packages;
-using CBRE.Packages.Pak;
-using CBRE.Packages.Vpk;
 
-namespace CBRE.FileSystem {
+namespace CBRE.FileSystem
+{
     /// <summary>
     /// Represents a PAK/VPK container or sub-file in these file system.
     /// PAK/VPK aren't subfolders, they are a part of the folder itself.
     /// </summary>
-    public class InlinePackageFile : IFile {
+    public class InlinePackageFile : IFile
+    {
         private IPackage _package;
         private IPackageEntry _entry;
         private string FilePath { get; set; }
@@ -20,8 +22,10 @@ namespace CBRE.FileSystem {
         private HashSet<string> _files;
         private HashSet<string> _folders;
 
-        public InlinePackageFile(string fileName) {
-            switch (Path.GetExtension(fileName)) {
+        public InlinePackageFile(string fileName)
+        {
+            switch (Path.GetExtension(fileName))
+            {
                 case ".pak":
                     _package = new PakPackage(new FileInfo(fileName));
                     break;
@@ -37,7 +41,8 @@ namespace CBRE.FileSystem {
             _folders = new HashSet<string>(_package.GetDirectories(FilePath));
         }
 
-        public InlinePackageFile(IPackage package, string path) {
+        public InlinePackageFile(IPackage package, string path)
+        {
             _package = package;
             _entry = package.GetEntry(path);
             FilePath = path;
@@ -45,19 +50,23 @@ namespace CBRE.FileSystem {
             _folders = new HashSet<string>(_package.GetDirectories(FilePath));
         }
 
-        public FileSystemType Type {
+        public FileSystemType Type
+        {
             get { return FileSystemType.Package; }
         }
 
-        private T IfContainer<T>(Func<T> noPath, Func<T> container, Func<T> notContainer) {
+        private T IfContainer<T>(Func<T> noPath, Func<T> container, Func<T> notContainer)
+        {
             if (FilePath == null) return noPath();
             return _entry == null ? container() : notContainer();
         }
 
-        public IFile Parent {
-            get {
-                var path = FilePath;
-                var idx = path.LastIndexOf('/');
+        public IFile Parent
+        {
+            get
+            {
+                string path = FilePath;
+                int idx = path.LastIndexOf('/');
                 if (idx < 0) path = "";
                 path = path.Substring(0, idx);
                 return IfContainer<IFile>(
@@ -68,8 +77,10 @@ namespace CBRE.FileSystem {
             }
         }
 
-        public string FullPathName {
-            get {
+        public string FullPathName
+        {
+            get
+            {
 
                 return IfContainer(
                     () => _package.PackageFile.Directory.FullName,
@@ -79,8 +90,10 @@ namespace CBRE.FileSystem {
             }
         }
 
-        public string Name {
-            get {
+        public string Name
+        {
+            get
+            {
                 return IfContainer(
                     () => _package.PackageFile.Directory.Name,
                     () => Path.GetFileName(FilePath),
@@ -89,8 +102,10 @@ namespace CBRE.FileSystem {
             }
         }
 
-        public string NameWithoutExtension {
-            get {
+        public string NameWithoutExtension
+        {
+            get
+            {
                 return IfContainer(
                     () => Name,
                     () => Name,
@@ -99,8 +114,10 @@ namespace CBRE.FileSystem {
             }
         }
 
-        public string Extension {
-            get {
+        public string Extension
+        {
+            get
+            {
                 return IfContainer(
                     () => "",
                     () => "",
@@ -109,29 +126,36 @@ namespace CBRE.FileSystem {
             }
         }
 
-        public bool Exists {
-            get {
+        public bool Exists
+        {
+            get
+            {
                 return _entry != null || _files.Any() || _folders.Any();
             }
         }
 
-        public long Size {
+        public long Size
+        {
             get { return IfContainer(() => 0, () => 0, () => _entry.Length); }
         }
 
-        public int NumFiles {
+        public int NumFiles
+        {
             get { return _files.Count; }
         }
 
-        public bool IsContainer {
+        public bool IsContainer
+        {
             get { return IfContainer(() => true, () => true, () => false); }
         }
 
-        public int NumChildren {
+        public int NumChildren
+        {
             get { return _folders.Count; }
         }
 
-        public Stream Open() {
+        public Stream Open()
+        {
             // Allow opening the PAK stream, but not a subfolder stream.
             return IfContainer(
                 () => null,
@@ -140,60 +164,73 @@ namespace CBRE.FileSystem {
                 );
         }
 
-        public byte[] ReadAll() {
-            var stream = Open();
+        public byte[] ReadAll()
+        {
+            Stream stream = Open();
             if (stream == null) return new byte[0];
-            using (stream) {
-                var arr = new byte[stream.Length];
+            using (stream)
+            {
+                byte[] arr = new byte[stream.Length];
                 stream.Read(arr, 0, arr.Length);
                 return arr;
             }
         }
 
-        public byte[] Read(long offset, long count) {
-            var stream = Open();
+        public byte[] Read(long offset, long count)
+        {
+            Stream stream = Open();
             if (stream == null) return new byte[0];
-            using (stream) {
-                var arr = new byte[count];
+            using (stream)
+            {
+                byte[] arr = new byte[count];
                 stream.Read(arr, (int)offset, (int)count);
                 return arr;
             }
         }
 
-        public IEnumerable<IFile> GetRelatedFiles() {
+        public IEnumerable<IFile> GetRelatedFiles()
+        {
             // No related files.
             return new List<IFile>();
         }
 
-        public IFile GetRelatedFile(string extension) {
+        public IFile GetRelatedFile(string extension)
+        {
             return null;
         }
 
-        public IFile GetChild(string name) {
+        public IFile GetChild(string name)
+        {
             return GetChildren().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
-        public IEnumerable<IFile> GetChildren() {
+        public IEnumerable<IFile> GetChildren()
+        {
             return _folders.Select(x => new InlinePackageFile(_package, x));
         }
 
-        public IEnumerable<IFile> GetChildren(string regex) {
+        public IEnumerable<IFile> GetChildren(string regex)
+        {
             return GetChildren().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
-        public IFile GetFile(string name) {
+        public IFile GetFile(string name)
+        {
             return GetFiles().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
-        public IEnumerable<IFile> GetFiles() {
+        public IEnumerable<IFile> GetFiles()
+        {
             return _files.Select(x => new InlinePackageFile(_package, x));
         }
 
-        public IEnumerable<IFile> GetFiles(string regex) {
+        public IEnumerable<IFile> GetFiles(string regex)
+        {
             return GetFiles().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
-        public IEnumerable<IFile> GetFilesWithExtension(string extension) {
+        public IEnumerable<IFile> GetFilesWithExtension(string extension)
+        {
             return GetFiles().Where(x => x.Name.EndsWith("." + extension));
         }
     }

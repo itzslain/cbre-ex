@@ -1,20 +1,22 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Documents;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
 using GL = OpenTK.Graphics.OpenGL.GL;
 using View = CBRE.Settings.View;
 #pragma warning disable 0612
-namespace CBRE.Editor.Rendering {
+namespace CBRE.Editor.Rendering
+{
     // ReSharper disable CSharpWarnings::CS0612
     // OpenTK's TextPrinter is marked as obsolete but no suitable replacement exists
-    public class ViewportLabelListener : IViewportEventListener, IDisposable {
+    public class ViewportLabelListener : IViewportEventListener, IDisposable
+    {
         public ViewportBase Viewport { get; set; }
         private TextPrinter _printer;
         private RectangleF _rect;
@@ -22,19 +24,23 @@ namespace CBRE.Editor.Rendering {
         private bool _showing;
         private ContextMenu _menu;
 
-        public ViewportLabelListener(ViewportBase viewport) {
+        public ViewportLabelListener(ViewportBase viewport)
+        {
             Viewport = viewport;
             _printer = new TextPrinter(TextQuality.Low);
             Rebuild();
         }
 
-        public void Rebuild() {
+        public void Rebuild()
+        {
             _rect = RectangleF.Empty;
             _text = "";
-            if (Viewport is Viewport2D) {
-                var dir = ((Viewport2D)Viewport).Direction;
+            if (Viewport is Viewport2D)
+            {
+                Viewport2D.ViewDirection dir = ((Viewport2D)Viewport).Direction;
                 _text = "";
-                switch (dir) {
+                switch (dir)
+                {
                     case Viewport2D.ViewDirection.Top:
                         _text = "Top (x/z)";
                         break;
@@ -45,8 +51,10 @@ namespace CBRE.Editor.Rendering {
                         _text = "Side (x/y)";
                         break;
                 }
-            } else if (Viewport is Viewport3D) {
-                var type = ((Viewport3D)Viewport).Type;
+            }
+            else if (Viewport is Viewport3D)
+            {
+                Viewport3D.ViewType type = ((Viewport3D)Viewport).Type;
                 _text = type.ToString();
             }
             if (_menu != null) _menu.Dispose();
@@ -66,38 +74,49 @@ namespace CBRE.Editor.Rendering {
                                         });
         }
 
-        private MenuItem ScreenshotMenuItem() {
-            var menu = new MenuItem("Take Screenshot...");
+        private MenuItem ScreenshotMenuItem()
+        {
+            MenuItem menu = new MenuItem("Take Screenshot...");
             menu.Click += (s, e) => Mediator.Publish(HotkeysMediator.ScreenshotViewport, Viewport);
             return menu;
         }
 
-        private MenuItem CreateMenu(string text, Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir) {
-            var menu = new MenuItem(text);
+        private MenuItem CreateMenu(string text, Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir)
+        {
+            MenuItem menu = new MenuItem(text);
             menu.Click += (sender, e) => SwitchType(type, dir);
-            if (dir.HasValue && Viewport is Viewport2D) {
-                var vpdir = ((Viewport2D)Viewport).Direction;
+            if (dir.HasValue && Viewport is Viewport2D)
+            {
+                Viewport2D.ViewDirection vpdir = ((Viewport2D)Viewport).Direction;
                 menu.Checked = vpdir == dir.Value;
-            } else if (type.HasValue && Viewport is Viewport3D) {
-                var vptype = ((Viewport3D)Viewport).Type;
+            }
+            else if (type.HasValue && Viewport is Viewport3D)
+            {
+                Viewport3D.ViewType vptype = ((Viewport3D)Viewport).Type;
                 menu.Checked = vptype == type.Value;
             }
             return menu;
         }
 
-        private void SwitchType(Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir) {
-            var doc = DocumentManager.CurrentDocument;
+        private void SwitchType(Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir)
+        {
+            Document doc = DocumentManager.CurrentDocument;
             if (doc == null) return;
-            if (type.HasValue) {
-                var vp = Viewport as Viewport3D;
-                if (vp == null) {
+            if (type.HasValue)
+            {
+                Viewport3D vp = Viewport as Viewport3D;
+                if (vp == null)
+                {
                     doc.Make3D(Viewport, type.Value);
                     return;
                 }
                 vp.Type = type.Value;
-            } else if (dir.HasValue) {
-                var vp = Viewport as Viewport2D;
-                if (vp == null) {
+            }
+            else if (dir.HasValue)
+            {
+                Viewport2D vp = Viewport as Viewport2D;
+                if (vp == null)
+                {
                     doc.Make2D(Viewport, dir.Value);
                     return;
                 }
@@ -106,9 +125,11 @@ namespace CBRE.Editor.Rendering {
             Rebuild();
         }
 
-        public void Render2D() {
-            if (_rect.IsEmpty) {
-                var te = _printer.Measure(_text, SystemFonts.MessageBoxFont, new RectangleF(0, 0, Viewport.Width, Viewport.Height));
+        public void Render2D()
+        {
+            if (_rect.IsEmpty)
+            {
+                TextExtents te = _printer.Measure(_text, SystemFonts.MessageBoxFont, new RectangleF(0, 0, Viewport.Width, Viewport.Height));
                 _rect = te.BoundingBox;
                 _rect.X += 5;
                 _rect.Y += 2;
@@ -119,7 +140,8 @@ namespace CBRE.Editor.Rendering {
             GL.Disable(EnableCap.CullFace);
 
             _printer.Begin();
-            if (_showing) {
+            if (_showing)
+            {
                 GL.Begin(PrimitiveType.Quads);
                 GL.Color3(Viewport is Viewport3D ? View.ViewportBackground : Grid.Background);
                 GL.Vertex2(0, 0);
@@ -134,71 +156,88 @@ namespace CBRE.Editor.Rendering {
             GL.Enable(EnableCap.CullFace);
         }
 
-        public void PostRender() {
+        public void PostRender()
+        {
             // 
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _printer.Dispose();
         }
 
-        public void KeyUp(ViewportEvent e) {
+        public void KeyUp(ViewportEvent e)
+        {
 
         }
 
-        public void KeyDown(ViewportEvent e) {
+        public void KeyDown(ViewportEvent e)
+        {
 
         }
 
-        public void KeyPress(ViewportEvent e) {
+        public void KeyPress(ViewportEvent e)
+        {
 
         }
 
-        public void MouseMove(ViewportEvent e) {
+        public void MouseMove(ViewportEvent e)
+        {
             if (_rect.IsEmpty) return;
             _showing = _rect.Contains(e.X, e.Y);
         }
 
-        public void MouseWheel(ViewportEvent e) {
+        public void MouseWheel(ViewportEvent e)
+        {
 
         }
 
-        public void MouseUp(ViewportEvent e) {
+        public void MouseUp(ViewportEvent e)
+        {
 
         }
 
-        public void MouseDown(ViewportEvent e) {
-            if (_showing) {
+        public void MouseDown(ViewportEvent e)
+        {
+            if (_showing)
+            {
                 _menu.Show(Viewport, new Point(e.X, e.Y));
                 e.Handled = true;
             }
         }
 
-        public void MouseClick(ViewportEvent e) {
+        public void MouseClick(ViewportEvent e)
+        {
 
         }
 
-        public void MouseDoubleClick(ViewportEvent e) {
+        public void MouseDoubleClick(ViewportEvent e)
+        {
 
         }
 
-        public void MouseEnter(ViewportEvent e) {
+        public void MouseEnter(ViewportEvent e)
+        {
 
         }
 
-        public void MouseLeave(ViewportEvent e) {
+        public void MouseLeave(ViewportEvent e)
+        {
             _showing = false;
         }
 
-        public void UpdateFrame(FrameInfo frame) {
+        public void UpdateFrame(FrameInfo frame)
+        {
 
         }
 
-        public void PreRender() {
+        public void PreRender()
+        {
 
         }
 
-        public void Render3D() {
+        public void Render3D()
+        {
 
         }
     }

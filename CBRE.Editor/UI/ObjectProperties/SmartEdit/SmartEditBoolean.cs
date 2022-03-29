@@ -1,26 +1,32 @@
-﻿using System;
+﻿using CBRE.DataStructures.GameData;
+using System;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
 
-namespace CBRE.Editor.UI.ObjectProperties.SmartEdit {
+namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
+{
     [SmartEdit(VariableType.Bool)]
-    internal class SmartEditBoolean : SmartEditControl {
+    internal class SmartEditBoolean : SmartEditControl
+    {
         private readonly CheckBox _checkBox;
-        public SmartEditBoolean() {
+        public SmartEditBoolean()
+        {
             _checkBox = new CheckBox { AutoSize = true, Checked = false, Text = "Enabled / Active" };
             _checkBox.CheckedChanged += (sender, e) => OnValueChanged();
             Controls.Add(_checkBox);
         }
 
-        protected override string GetName() {
+        protected override string GetName()
+        {
             return OriginalName;
         }
 
-        protected override string GetValue() {
+        protected override string GetValue()
+        {
             return _checkBox.Checked ? "Yes" : "No";
         }
 
-        protected override void OnSetProperty() {
+        protected override void OnSetProperty()
+        {
             _checkBox.Text = Property.DisplayText();
             _checkBox.Checked = String.Equals(PropertyValue, "Yes", StringComparison.CurrentCultureIgnoreCase);
         }

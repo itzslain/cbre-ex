@@ -1,7 +1,9 @@
 ﻿using System.Drawing;
 
-namespace CBRE.Settings {
-    public static class Grid {
+namespace CBRE.Settings
+{
+    public static class Grid
+    {
         public static Color Background { get; set; }
         public static Color GridLines { get; set; }
         public static Color ZeroLines { get; set; }
@@ -21,7 +23,8 @@ namespace CBRE.Settings {
         public static int HideSmallerThan { get; set; }
         public static int HideFactor { get; set; }
 
-        static Grid() {
+        static Grid()
+        {
             Background = Color.Black;
             GridLines = Color.FromArgb(75, 75, 75);
             ZeroLines = Color.FromArgb(0, 100, 100);

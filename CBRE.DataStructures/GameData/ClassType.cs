@@ -1,5 +1,7 @@
-﻿namespace CBRE.DataStructures.GameData {
-    public enum ClassType {
+﻿namespace CBRE.DataStructures.GameData
+{
+    public enum ClassType
+    {
         Any,
         Base,
         Filter,

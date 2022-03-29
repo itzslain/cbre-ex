@@ -1,22 +1,27 @@
-﻿using System;
-using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using OpenTK;
+using System;
+using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Transformations {
+namespace CBRE.DataStructures.Transformations
+{
     [Serializable]
-    public class UnitMatrixMult : IUnitTransformation {
+    public class UnitMatrixMult : IUnitTransformation
+    {
         public Matrix Matrix { get; set; }
 
-        public UnitMatrixMult(decimal[] matrix) {
+        public UnitMatrixMult(decimal[] matrix)
+        {
             Matrix = new Matrix(matrix);
         }
 
-        public UnitMatrixMult(Matrix matrix) {
+        public UnitMatrixMult(Matrix matrix)
+        {
             Matrix = matrix;
         }
 
-        public UnitMatrixMult(Matrix4 mat) {
+        public UnitMatrixMult(Matrix4 mat)
+        {
             Matrix = new Matrix(new[]
             {
                 (decimal) mat.M11, (decimal) mat.M21, (decimal) mat.M31, (decimal) mat.M41,
@@ -26,29 +31,34 @@ namespace CBRE.DataStructures.Transformations {
             });
         }
 
-        protected UnitMatrixMult(SerializationInfo info, StreamingContext context) {
+        protected UnitMatrixMult(SerializationInfo info, StreamingContext context)
+        {
             Matrix = (Matrix)info.GetValue("Matrix", typeof(Matrix));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context) {
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
             info.AddValue("Matrix", Matrix);
         }
 
-        public Coordinate Transform(Coordinate c) {
+        public Coordinate Transform(Coordinate c)
+        {
             return Transform(c, 1);
         }
 
-        public Coordinate Transform(Coordinate c, decimal w) {
-            var x = Matrix[0] * c.X + Matrix[1] * c.Y + Matrix[2] * c.Z + Matrix[3] * w;
-            var y = Matrix[4] * c.X + Matrix[5] * c.Y + Matrix[6] * c.Z + Matrix[7] * w;
-            var z = Matrix[8] * c.X + Matrix[9] * c.Y + Matrix[10] * c.Z + Matrix[11] * w;
+        public Coordinate Transform(Coordinate c, decimal w)
+        {
+            decimal x = Matrix[0] * c.X + Matrix[1] * c.Y + Matrix[2] * c.Z + Matrix[3] * w;
+            decimal y = Matrix[4] * c.X + Matrix[5] * c.Y + Matrix[6] * c.Z + Matrix[7] * w;
+            decimal z = Matrix[8] * c.X + Matrix[9] * c.Y + Matrix[10] * c.Z + Matrix[11] * w;
             return new Coordinate(x, y, z);
         }
 
-        public CoordinateF Transform(CoordinateF c) {
-            var x = (float)Matrix[0] * c.X + (float)Matrix[1] * c.Y + (float)Matrix[2] * c.Z + (float)Matrix[3];
-            var y = (float)Matrix[4] * c.X + (float)Matrix[5] * c.Y + (float)Matrix[6] * c.Z + (float)Matrix[7];
-            var z = (float)Matrix[8] * c.X + (float)Matrix[9] * c.Y + (float)Matrix[10] * c.Z + (float)Matrix[11];
+        public CoordinateF Transform(CoordinateF c)
+        {
+            float x = (float)Matrix[0] * c.X + (float)Matrix[1] * c.Y + (float)Matrix[2] * c.Z + (float)Matrix[3];
+            float y = (float)Matrix[4] * c.X + (float)Matrix[5] * c.Y + (float)Matrix[6] * c.Z + (float)Matrix[7];
+            float z = (float)Matrix[8] * c.X + (float)Matrix[9] * c.Y + (float)Matrix[10] * c.Z + (float)Matrix[11];
             return new CoordinateF(x, y, z);
         }
     }

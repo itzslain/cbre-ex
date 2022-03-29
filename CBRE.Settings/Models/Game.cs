@@ -1,7 +1,9 @@
 ﻿using System.IO;
 
-namespace CBRE.Settings.Models {
-    public class Game {
+namespace CBRE.Settings.Models
+{
+    public class Game
+    {
         public int ID { get; set; }
         public string Name { get; set; }
         public string GameDir { get; set; }
@@ -29,7 +31,8 @@ namespace CBRE.Settings.Models {
         public string PackageBlacklist { get; set; }
         public string PackageWhitelist { get; set; }
 
-        public Game() {
+        public Game()
+        {
             AutosaveTime = 5;
             AutosaveLimit = 5;
             AutosaveOnlyOnChanged = true;
@@ -39,23 +42,28 @@ namespace CBRE.Settings.Models {
             DefaultPointEntity = "light";
         }
 
-        public string GetMapDirectory() {
+        public string GetMapDirectory()
+        {
             return Path.Combine(GetModDirectory(), "maps");
         }
 
-        public string GetModDirectory() {
+        public string GetModDirectory()
+        {
             return Path.Combine(GameDir, ModDir);
         }
 
-        public string GetBaseDirectory() {
+        public string GetBaseDirectory()
+        {
             return Path.Combine(GameDir, BaseDir);
         }
 
-        public string GetExecutable() {
+        public string GetExecutable()
+        {
             return Path.Combine(GameDir, Executable);
         }
 
-        public string GetGameLaunchArgument() {
+        public string GetGameLaunchArgument()
+        {
             //TODO: remove?
             return "";
         }

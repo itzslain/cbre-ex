@@ -1,5 +1,7 @@
-namespace CBRE.Settings {
-    public enum HotkeyTool {
+namespace CBRE.Settings
+{
+    public enum HotkeyTool
+    {
         Selection,
         Entity,
         Brush,

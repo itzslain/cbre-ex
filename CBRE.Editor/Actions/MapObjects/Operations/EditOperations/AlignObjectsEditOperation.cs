@@ -1,17 +1,21 @@
-using System;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
+using System;
 
-namespace CBRE.Editor.Actions.MapObjects.Operations.EditOperations {
-    public class AlignObjectsEditOperation : IEditOperation {
-        public enum AlignAxis {
+namespace CBRE.Editor.Actions.MapObjects.Operations.EditOperations
+{
+    public class AlignObjectsEditOperation : IEditOperation
+    {
+        public enum AlignAxis
+        {
             X,
             Y,
             Z
         }
 
-        public enum AlignDirection {
+        public enum AlignDirection
+        {
             Min,
             Max
         }
@@ -21,25 +25,29 @@ namespace CBRE.Editor.Actions.MapObjects.Operations.EditOperations {
         private readonly AlignAxis _axis;
         private readonly AlignDirection _direction;
 
-        public AlignObjectsEditOperation(Box alignBox, AlignAxis axis, AlignDirection direction, TransformFlags transformFlags) {
+        public AlignObjectsEditOperation(Box alignBox, AlignAxis axis, AlignDirection direction, TransformFlags transformFlags)
+        {
             _alignBox = alignBox;
             _axis = axis;
             _direction = direction;
             _transformFlags = transformFlags;
         }
 
-        public void PerformOperation(MapObject mo) {
-            var current = Extractor(mo.BoundingBox);
-            var target = Extractor(_alignBox);
-            var value = target - current;
-            var translate = Creator(value);
-            var transform = new UnitTranslate(translate);
+        public void PerformOperation(MapObject mo)
+        {
+            decimal current = Extractor(mo.BoundingBox);
+            decimal target = Extractor(_alignBox);
+            decimal value = target - current;
+            Coordinate translate = Creator(value);
+            UnitTranslate transform = new UnitTranslate(translate);
             mo.Transform(transform, _transformFlags);
         }
 
-        private decimal Extractor(Box box) {
+        private decimal Extractor(Box box)
+        {
             Coordinate coord;
-            switch (_direction) {
+            switch (_direction)
+            {
                 case AlignDirection.Min:
                     coord = box.Start;
                     break;
@@ -49,7 +57,8 @@ namespace CBRE.Editor.Actions.MapObjects.Operations.EditOperations {
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            switch (_axis) {
+            switch (_axis)
+            {
                 case AlignAxis.X:
                     return coord.X;
                 case AlignAxis.Y:
@@ -61,8 +70,10 @@ namespace CBRE.Editor.Actions.MapObjects.Operations.EditOperations {
             }
         }
 
-        private Coordinate Creator(decimal value) {
-            switch (_axis) {
+        private Coordinate Creator(decimal value)
+        {
+            switch (_axis)
+            {
                 case AlignAxis.X:
                     return new Coordinate(value, 0, 0);
                 case AlignAxis.Y:

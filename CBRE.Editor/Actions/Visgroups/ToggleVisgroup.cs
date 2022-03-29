@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CBRE.Editor.Actions.Visgroups {
-    public class ToggleVisgroup : IAction {
+namespace CBRE.Editor.Actions.Visgroups
+{
+    public class ToggleVisgroup : IAction
+    {
         public bool SkipInStack { get { return CBRE.Settings.Select.SkipVisibilityInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
@@ -14,23 +16,27 @@ namespace CBRE.Editor.Actions.Visgroups {
         private List<MapObject> _changed;
         private List<MapObject> _deselected;
 
-        public ToggleVisgroup(int visgroupId, bool visible) {
+        public ToggleVisgroup(int visgroupId, bool visible)
+        {
             // Visible makes more sense as a parameter, but hide makes more sense in implementation, so flip it in the ctor.
             _visgroupId = visgroupId;
             _hide = !visible;
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _changed = null;
             _deselected = null;
         }
 
-        public void Reverse(Document document) {
+        public void Reverse(Document document)
+        {
             _changed.ForEach(x => x.IsVisgroupHidden = !_hide);
-            var vg = document.Map.Visgroups.FirstOrDefault(x => x.ID == _visgroupId);
+            Visgroup vg = document.Map.Visgroups.FirstOrDefault(x => x.ID == _visgroupId);
             if (vg != null) vg.Visible = _hide;
 
-            if (_deselected != null) {
+            if (_deselected != null)
+            {
                 document.Selection.Select(_deselected);
                 Mediator.Publish(EditorMediator.SelectionChanged);
             }
@@ -42,15 +48,17 @@ namespace CBRE.Editor.Actions.Visgroups {
             _deselected = null;
         }
 
-        public void Perform(Document document) {
+        public void Perform(Document document)
+        {
             _changed = document.Map.WorldSpawn
                 .Find(x => x.IsInVisgroup(_visgroupId, true), true)
                 .Where(x => x.IsVisgroupHidden != _hide).ToList();
             _changed.ForEach(x => x.IsVisgroupHidden = _hide);
-            var vg = document.Map.Visgroups.FirstOrDefault(x => x.ID == _visgroupId);
+            Visgroup vg = document.Map.Visgroups.FirstOrDefault(x => x.ID == _visgroupId);
             if (vg != null) vg.Visible = !_hide;
 
-            if (_hide) {
+            if (_hide)
+            {
                 _deselected = _changed.Where(x => x.IsSelected).ToList();
                 document.Selection.Deselect(_deselected);
                 Mediator.Publish(EditorMediator.SelectionChanged);

@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes;
@@ -31,77 +20,107 @@ using CBRE.Settings.Models;
 using CBRE.UI;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
 
-namespace CBRE.Editor {
-    public partial class Editor : HotkeyForm, IMediatorListener {
+namespace CBRE.Editor
+{
+    public partial class Editor : HotkeyForm, IMediatorListener
+    {
         private JumpList _jumpList;
         public static Editor Instance { get; private set; }
 
         private const string RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
 
-        private class UpdaterResponse {
+        private class UpdaterResponse
+        {
             public string html_url { get; set; }
             public string tag_name { get; set; }
         }
 
         public bool CaptureAltPresses { get; set; }
 
-        public Editor() {
+        public Editor()
+        {
             PreventSimpleHotkeyPassthrough = false;
             InitializeComponent();
             Instance = this;
         }
 
-        public void SelectTool(BaseTool t) {
+        public void SelectTool(BaseTool t)
+        {
             ToolManager.Activate(t);
         }
 
-        public static void ProcessArguments(IEnumerable<string> args) {
-            foreach (var file in args.Skip(1).Where(File.Exists)) {
+        public static void ProcessArguments(IEnumerable<string> args)
+        {
+            foreach (string file in args.Skip(1).Where(File.Exists))
+            {
                 Mediator.Publish(EditorMediator.LoadFile, file);
             }
         }
 
-        private static void LoadFileGame(string fileName, Game game) {
-            try {
+        private static void LoadFileGame(string fileName, Game game)
+        {
+            try
+            {
                 Image[] lightmaps;
-                var map = MapProvider.GetMapFromFile(fileName, Directories.ModelDirs, out lightmaps);
-                if (MapProvider.warnings != "") {
+                Map map = MapProvider.GetMapFromFile(fileName, Directories.ModelDirs, out lightmaps);
+                if (MapProvider.warnings != "")
+                {
                     MessageBox.Show(MapProvider.warnings, "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 Document doc = new Document(fileName, map, game);
                 DocumentManager.AddAndSwitch(doc);
-                if (lightmaps != null) {
-                    lock (doc.TextureCollection.Lightmaps) {
-                        for (int i = 0; i < lightmaps.Length; i++) {
+                if (lightmaps != null)
+                {
+                    lock (doc.TextureCollection.Lightmaps)
+                    {
+                        for (int i = 0; i < lightmaps.Length; i++)
+                        {
                             doc.TextureCollection.Lightmaps[i]?.Dispose();
                             doc.TextureCollection.Lightmaps[i] = new Bitmap(lightmaps[i]);
                             lightmaps[i].Dispose();
                         }
                         doc.TextureCollection.LightmapTextureOutdated = true;
                     }
-                    foreach (var viewport in ViewportManager.Viewports.Where(vp => vp is Viewport3D).Select(vp => vp as Viewport3D)) {
+                    foreach (Viewport3D viewport in ViewportManager.Viewports.Where(vp => vp is Viewport3D).Select(vp => vp as Viewport3D))
+                    {
                         viewport.Type = Viewport3D.ViewType.Lightmapped;
-                        var listener = viewport.Listeners.Find(l => l is ViewportLabelListener) as ViewportLabelListener;
+                        ViewportLabelListener listener = viewport.Listeners.Find(l => l is ViewportLabelListener) as ViewportLabelListener;
                         listener?.Rebuild();
                     }
                 }
-            } catch (ProviderException e) {
+            }
+            catch (ProviderException e)
+            {
                 Error.Warning("The map file could not be opened:\n" + e.Message);
             }
         }
 
-        private static void LoadFile(string fileName) {
+        private static void LoadFile(string fileName)
+        {
             LoadFileGame(fileName, SettingsManager.Game);
         }
 
-        private void EditorLoad(object sender, EventArgs e) {
+        private void EditorLoad(object sender, EventArgs e)
+        {
             FileTypeRegistration.RegisterFileTypes();
 
             SettingsManager.Read();
 
-            if (TaskbarManager.IsPlatformSupported) {
+            if (TaskbarManager.IsPlatformSupported)
+            {
                 TaskbarManager.Instance.ApplicationId = FileTypeRegistration.ProgramId;
 
                 _jumpList = JumpList.CreateJumpList();
@@ -121,14 +140,16 @@ namespace CBRE.Editor {
             ViewportManager.Init(TableSplitView);
             ToolManager.Init();
 
-            foreach (var tool in ToolManager.Tools) {
-                var tl = tool;
-                var hotkey = CBRE.Settings.Hotkeys.GetHotkeyForMessage(HotkeysMediator.SwitchTool, tool.GetHotkeyToolType());
+            foreach (BaseTool tool in ToolManager.Tools)
+            {
+                BaseTool tl = tool;
+                HotkeyImplementation hotkey = CBRE.Settings.Hotkeys.GetHotkeyForMessage(HotkeysMediator.SwitchTool, tool.GetHotkeyToolType());
                 tspTools.Items.Add(new ToolStripButton(
                     "",
                     tl.GetIcon(),
                     (s, ea) => Mediator.Publish(HotkeysMediator.SwitchTool, tl.GetHotkeyToolType()),
-                    tl.GetName()) {
+                    tl.GetName())
+                {
                     Checked = (tl == ToolManager.ActiveTool),
                     ToolTipText = tl.GetName() + (hotkey != null ? " (" + hotkey.Hotkey + ")" : ""),
                     DisplayStyle = ToolStripItemDisplayStyle.Image,
@@ -153,12 +174,15 @@ namespace CBRE.Editor {
 
             Mediator.MediatorException += (mthd, ex) => Logging.Logger.ShowException(ex.Exception, "Mediator Error: " + ex.Message);
 
-            if (!Directories.TextureDirs.Any()) {
+            if (!Directories.TextureDirs.Any())
+            {
                 OpenSettings(4);
             }
 
-            if (CBRE.Settings.View.LoadSession) {
-                foreach (var session in SettingsManager.LoadSession()) {
+            if (CBRE.Settings.View.LoadSession)
+            {
+                foreach (string session in SettingsManager.LoadSession())
+                {
                     LoadFileGame(session, SettingsManager.Game);
                 }
             }
@@ -171,20 +195,25 @@ namespace CBRE.Editor {
         }
 
         #region Updates
-        private Version GetCurrentVersion() {
-            var info = typeof(Editor).Assembly.GetName().Version;
+        private Version GetCurrentVersion()
+        {
+            Version info = typeof(Editor).Assembly.GetName().Version;
             return info;
         }
 
-        private void CheckForUpdates() {
-            using (WebClient webClient = new WebClient()) {
-                try {
+        private void CheckForUpdates()
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                try
+                {
                     Version parsedVersion;
 
                     webClient.Headers.Add("Accept", "application/vnd.github.v3+json");
                     webClient.Headers.Add("User-Agent", "cbre-ex");
 
-                    JsonSerializerSettings settings = new JsonSerializerSettings {
+                    JsonSerializerSettings settings = new JsonSerializerSettings
+                    {
                         MissingMemberHandling = MissingMemberHandling.Ignore
                     };
 
@@ -192,27 +221,36 @@ namespace CBRE.Editor {
 
                     if (!Version.TryParse(apiResponse.tag_name, out parsedVersion)) return;
 
-                    if (parsedVersion > GetCurrentVersion()) {
+                    if (parsedVersion > GetCurrentVersion())
+                    {
                         if (MessageBox.Show($"A new version of CBRE-EX (v{parsedVersion}) is available on GitHub.\n" +
-                            "Would you like to download this update?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                            "Would you like to download this update?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
                             OpenWebsite(apiResponse.html_url);
                         }
                     }
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     return; //Do nothing. Interrupting the user with an exception window for this would be dumb.
                 }
             }
         }
         #endregion
 
-        private bool PromptForChanges(Document doc) {
-            if (doc.History.TotalActionsSinceLastSave > 0) {
-                var result = MessageBox.Show("Would you like to save your changes to " + doc.MapFileName + "?", "Changes Detected", MessageBoxButtons.YesNoCancel);
-                if (result == DialogResult.Cancel) {
+        private bool PromptForChanges(Document doc)
+        {
+            if (doc.History.TotalActionsSinceLastSave > 0)
+            {
+                DialogResult result = MessageBox.Show("Would you like to save your changes to " + doc.MapFileName + "?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Cancel)
+                {
                     return false;
                 }
-                if (result == DialogResult.Yes) {
-                    if (!doc.SaveFile()) {
+                if (result == DialogResult.Yes)
+                {
+                    if (!doc.SaveFile())
+                    {
                         return false;
                     }
                 }
@@ -220,9 +258,12 @@ namespace CBRE.Editor {
             return true;
         }
 
-        private void EditorClosing(object sender, FormClosingEventArgs e) {
-            foreach (var doc in DocumentManager.Documents.ToArray()) {
-                if (!PromptForChanges(doc)) {
+        private void EditorClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Document doc in DocumentManager.Documents.ToArray())
+            {
+                if (!PromptForChanges(doc))
+                {
                     e.Cancel = true;
                     return;
                 }
@@ -233,21 +274,25 @@ namespace CBRE.Editor {
             SettingsManager.Write();
         }
 
-        protected override void OnDragDrop(DragEventArgs drgevent) {
-            if (drgevent.Data.GetDataPresent(DataFormats.FileDrop)) {
-                var supported = FileTypeRegistration.GetSupportedExtensions();
-                var files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
+        protected override void OnDragDrop(DragEventArgs drgevent)
+        {
+            if (drgevent.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                FileType[] supported = FileTypeRegistration.GetSupportedExtensions();
+                List<string> files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
                     .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
-                foreach (var file in files) LoadFile(file);
+                foreach (string file in files) LoadFile(file);
             }
             base.OnDragDrop(drgevent);
         }
 
-        protected override void OnDragEnter(DragEventArgs drgevent) {
-            if (drgevent.Data.GetDataPresent(DataFormats.FileDrop)) {
-                var supported = FileTypeRegistration.GetSupportedExtensions();
-                var files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
+        protected override void OnDragEnter(DragEventArgs drgevent)
+        {
+            if (drgevent.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                FileType[] supported = FileTypeRegistration.GetSupportedExtensions();
+                List<string> files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
                     .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
                 drgevent.Effect = files.Any() ? DragDropEffects.Link : DragDropEffects.None;
@@ -257,7 +302,8 @@ namespace CBRE.Editor {
 
         #region Mediator
 
-        private void Subscribe() {
+        private void Subscribe()
+        {
             Mediator.Subscribe(HotkeysMediator.ViewportAutosize, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomLeft, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomRight, this);
@@ -312,25 +358,31 @@ namespace CBRE.Editor {
             Mediator.Subscribe(EditorMediator.About, this);
         }
 
-        private void OpenWebsite(string url) {
+        private void OpenWebsite(string url)
+        {
             Process.Start(url);
         }
 
-        private void About() {
-            using (var ad = new AboutDialog()) {
+        private void About()
+        {
+            using (AboutDialog ad = new AboutDialog())
+            {
                 ad.ShowDialog();
             }
         }
 
-        public static void FileNew() {
+        public static void FileNew()
+        {
             DocumentManager.AddAndSwitch(new Document(null, new Map(), SettingsManager.Game));
         }
 
-        private static void FileOpen() {
-            using (var ofd = new OpenFileDialog()) {
-                var filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanLoad)
+        private static void FileOpen()
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                string filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanLoad)
                         .Select(x => x.Description + " (*" + x.Extension + ")|*" + x.Extension));
-                var all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanLoad).Select(x => "*" + x.Extension).ToArray();
+                string[] all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.CanLoad).Select(x => "*" + x.Extension).ToArray();
                 ofd.Filter = "All supported formats (" + String.Join(", ", all) + ")|" + String.Join(";", all) + "|" + filter;
 
                 if (ofd.ShowDialog() != DialogResult.OK) return;
@@ -338,43 +390,52 @@ namespace CBRE.Editor {
             }
         }
 
-        private void PreviousTab() {
-            var count = DocumentTabs.TabCount;
+        private void PreviousTab()
+        {
+            int count = DocumentTabs.TabCount;
             if (count <= 1) return;
-            var sel = DocumentTabs.SelectedIndex;
-            var prev = sel - 1;
+            int sel = DocumentTabs.SelectedIndex;
+            int prev = sel - 1;
             if (prev < 0) prev = count - 1;
             DocumentTabs.SelectedIndex = prev;
         }
 
-        private void NextTab() {
-            var count = DocumentTabs.TabCount;
+        private void NextTab()
+        {
+            int count = DocumentTabs.TabCount;
             if (count <= 1) return;
-            var sel = DocumentTabs.SelectedIndex;
-            var next = sel + 1;
+            int sel = DocumentTabs.SelectedIndex;
+            int next = sel + 1;
             if (next >= count) next = 0;
             DocumentTabs.SelectedIndex = next;
         }
 
-        private static void OpenSettings(int selectTab = -1) {
-            using (var sf = new SettingsForm()) {
+        private static void OpenSettings(int selectTab = -1)
+        {
+            using (SettingsForm sf = new SettingsForm())
+            {
                 if (selectTab >= 0) { sf.SelectTab(selectTab); }
                 sf.ShowDialog();
             }
         }
 
-        private static void CreateNewLayoutWindow() {
+        private static void CreateNewLayoutWindow()
+        {
             ViewportManager.CreateNewWindow();
         }
 
-        private static void OpenLayoutSettings() {
-            using (var dlg = new LayoutSettings(ViewportManager.GetWindowConfigurations())) {
+        private static void OpenLayoutSettings()
+        {
+            using (LayoutSettings dlg = new LayoutSettings(ViewportManager.GetWindowConfigurations()))
+            {
                 dlg.ShowDialog();
             }
         }
 
-        private static void SettingsChanged() {
-            foreach (var vp in ViewportManager.Viewports.OfType<CBRE.UI.Viewport3D>()) {
+        private static void SettingsChanged()
+        {
+            foreach (Viewport3D vp in ViewportManager.Viewports.OfType<CBRE.UI.Viewport3D>())
+            {
                 vp.Camera.FOV = CBRE.Settings.View.CameraFOV;
                 vp.Camera.ClipDistance = CBRE.Settings.View.BackClippingPane;
             }
@@ -382,11 +443,13 @@ namespace CBRE.Editor {
             TextureHelper.EnableTransparency = !CBRE.Settings.View.GloballyDisableTransparency;
         }
 
-        private void Exit() {
+        private void Exit()
+        {
             Close();
         }
 
-        private void DocumentActivated(Document doc) {
+        private void DocumentActivated(Document doc)
+        {
             // Status bar
             StatusSelectionLabel.Text = "";
             StatusCoordinatesLabel.Text = "";
@@ -403,31 +466,41 @@ namespace CBRE.Editor {
             UpdateTitle();
         }
 
-        private void UpdateDocumentTabs() {
-            if (DocumentTabs.TabPages.Count != DocumentManager.Documents.Count) {
+        private void UpdateDocumentTabs()
+        {
+            if (DocumentTabs.TabPages.Count != DocumentManager.Documents.Count)
+            {
                 DocumentTabs.TabPages.Clear();
-                foreach (var doc in DocumentManager.Documents) {
+                foreach (Document doc in DocumentManager.Documents)
+                {
                     DocumentTabs.TabPages.Add(doc.MapFileName);
                 }
-            } else {
-                for (var i = 0; i < DocumentManager.Documents.Count; i++) {
-                    var doc = DocumentManager.Documents[i];
+            }
+            else
+            {
+                for (int i = 0; i < DocumentManager.Documents.Count; i++)
+                {
+                    Document doc = DocumentManager.Documents[i];
                     DocumentTabs.TabPages[i].Text = doc.MapFileName + (doc.History.TotalActionsSinceLastSave > 0 ? " *" : "");
                 }
             }
-            if (DocumentManager.CurrentDocument != null) {
-                var si = DocumentManager.Documents.IndexOf(DocumentManager.CurrentDocument);
+            if (DocumentManager.CurrentDocument != null)
+            {
+                int si = DocumentManager.Documents.IndexOf(DocumentManager.CurrentDocument);
                 if (si >= 0 && si != DocumentTabs.SelectedIndex) DocumentTabs.SelectedIndex = si;
             }
             ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
         }
 
-        private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e) {
+        private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e)
+        {
             if (_closingDocumentTab) return;
-            var si = DocumentTabs.SelectedIndex;
-            if (si >= 0 && si < DocumentManager.Documents.Count) {
+            int si = DocumentTabs.SelectedIndex;
+            if (si >= 0 && si < DocumentManager.Documents.Count)
+            {
                 DocumentManager.SwitchTo(DocumentManager.Documents[si]);
-                if (DocumentManager.Documents[si].History.TotalActionsSinceLastSave > 0) {
+                if (DocumentManager.Documents[si].History.TotalActionsSinceLastSave > 0)
+                {
                     this.Text += " *UNSAVED CHANGES*";
                 }
             }
@@ -435,11 +508,13 @@ namespace CBRE.Editor {
 
         private bool _closingDocumentTab = false;
 
-        private void DocumentTabsRequestClose(object sender, int index) {
+        private void DocumentTabsRequestClose(object sender, int index)
+        {
             if (index < 0 || index >= DocumentManager.Documents.Count) return;
 
-            var doc = DocumentManager.Documents[index];
-            if (!PromptForChanges(doc)) {
+            Document doc = DocumentManager.Documents[index];
+            if (!PromptForChanges(doc))
+            {
                 return;
             }
             _closingDocumentTab = true;
@@ -447,11 +522,13 @@ namespace CBRE.Editor {
             _closingDocumentTab = false;
         }
 
-        private void DocumentOpened(Document doc) {
+        private void DocumentOpened(Document doc)
+        {
             UpdateDocumentTabs();
         }
 
-        private void DocumentSaved(Document doc) {
+        private void DocumentSaved(Document doc)
+        {
             FileOpened(doc.MapFile);
             UpdateDocumentTabs();
             UpdateTitle();
@@ -462,20 +539,26 @@ namespace CBRE.Editor {
         private string titleStart
             => $"CBRE-EX v{Version}";
 
-        private void UpdateTitle() {
-            if (DocumentManager.CurrentDocument != null) {
-                var doc = DocumentManager.CurrentDocument;
+        private void UpdateTitle()
+        {
+            if (DocumentManager.CurrentDocument != null)
+            {
+                Document doc = DocumentManager.CurrentDocument;
                 Text = $"{titleStart} - {(String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile))}";
-            } else {
+            }
+            else
+            {
                 Text = titleStart;
             }
         }
 
-        private void DocumentClosed(Document doc) {
+        private void DocumentClosed(Document doc)
+        {
             UpdateDocumentTabs();
         }
 
-        private void DocumentAllClosed() {
+        private void DocumentAllClosed()
+        {
             StatusSelectionLabel.Text = "";
             StatusCoordinatesLabel.Text = "";
             StatusBoxLabel.Text = "";
@@ -485,105 +568,136 @@ namespace CBRE.Editor {
             Text = titleStart;
         }
 
-        private void MouseCoordinatesChanged(Coordinate coord) {
-            if (DocumentManager.CurrentDocument != null) {
+        private void MouseCoordinatesChanged(Coordinate coord)
+        {
+            if (DocumentManager.CurrentDocument != null)
+            {
                 coord = DocumentManager.CurrentDocument.Snap(coord);
             }
             StatusCoordinatesLabel.Text = coord.X.ToString("0") + " " + coord.Y.ToString("0") + " " + coord.Z.ToString("0");
         }
 
-        private void SelectionBoxChanged(Box box) {
+        private void SelectionBoxChanged(Box box)
+        {
             if (box == null || box.IsEmpty()) StatusBoxLabel.Text = "";
             else StatusBoxLabel.Text = box.Width.ToString("0") + " x " + box.Length.ToString("0") + " x " + box.Height.ToString("0");
         }
 
-        private void SelectionChanged() {
+        private void SelectionChanged()
+        {
             StatusSelectionLabel.Text = "";
             if (DocumentManager.CurrentDocument == null) return;
 
-            var sel = DocumentManager.CurrentDocument.Selection.GetSelectedParents().ToList();
-            var count = sel.Count;
-            if (count == 0) {
+            List<MapObject> sel = DocumentManager.CurrentDocument.Selection.GetSelectedParents().ToList();
+            int count = sel.Count;
+            if (count == 0)
+            {
                 StatusSelectionLabel.Text = "No objects selected";
-            } else if (count == 1) {
-                var obj = sel[0];
-                var ed = obj.GetEntityData();
-                if (ed != null) {
-                    var name = ed.GetPropertyValue("targetname");
+            }
+            else if (count == 1)
+            {
+                MapObject obj = sel[0];
+                EntityData ed = obj.GetEntityData();
+                if (ed != null)
+                {
+                    string name = ed.GetPropertyValue("targetname");
                     StatusSelectionLabel.Text = ed.Name + (String.IsNullOrWhiteSpace(name) ? "" : " - " + name);
-                } else {
+                }
+                else
+                {
                     StatusSelectionLabel.Text = sel[0].GetType().Name;
                 }
-            } else {
+            }
+            else
+            {
                 StatusSelectionLabel.Text = count.ToString() + " objects selected";
             }
         }
 
-        private void ViewZoomChanged(decimal zoom) {
+        private void ViewZoomChanged(decimal zoom)
+        {
             StatusZoomLabel.Text = "Zoom: " + zoom.ToString("0.00");
         }
 
-        private void ViewFocused() {
+        private void ViewFocused()
+        {
 
         }
 
-        private void ViewUnfocused() {
+        private void ViewUnfocused()
+        {
             StatusCoordinatesLabel.Text = "";
             StatusZoomLabel.Text = "";
         }
 
-        private void DocumentGridSpacingChanged(decimal spacing) {
+        private void DocumentGridSpacingChanged(decimal spacing)
+        {
             StatusSnapLabel.Text = "Grid: " + spacing.ToString("0.##");
         }
 
-        public void ToolSelected() {
-            var at = ToolManager.ActiveTool;
+        public void ToolSelected()
+        {
+            BaseTool at = ToolManager.ActiveTool;
             if (at == null) return;
-            foreach (var tsb in from object item in tspTools.Items select ((ToolStripButton)item)) {
+            foreach (ToolStripButton tsb in from object item in tspTools.Items select ((ToolStripButton)item))
+            {
                 tsb.Checked = (tsb.Name == at.GetName());
             }
         }
 
-        public void FileOpened(string path) {
+        public void FileOpened(string path)
+        {
             RecentFile(path);
         }
 
-        public void FileSaved(string path) {
+        public void FileSaved(string path)
+        {
             RecentFile(path);
         }
 
-        public void ViewportAutosize() {
+        public void ViewportAutosize()
+        {
             TableSplitView.ResetViews();
         }
 
-        public void FourViewFocusTopLeft() {
+        public void FourViewFocusTopLeft()
+        {
             TableSplitView.FocusOn(0, 0);
         }
 
-        public void FourViewFocusTopRight() {
+        public void FourViewFocusTopRight()
+        {
             TableSplitView.FocusOn(0, 1);
         }
 
-        public void FourViewFocusBottomLeft() {
+        public void FourViewFocusBottomLeft()
+        {
             TableSplitView.FocusOn(1, 0);
         }
 
-        public void FourViewFocusBottomRight() {
+        public void FourViewFocusBottomRight()
+        {
             TableSplitView.FocusOn(1, 1);
         }
 
-        public void FourViewFocusCurrent() {
-            if (TableSplitView.IsFocusing()) {
+        public void FourViewFocusCurrent()
+        {
+            if (TableSplitView.IsFocusing())
+            {
                 TableSplitView.Unfocus();
-            } else {
-                var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
-                if (focused != null) {
+            }
+            else
+            {
+                ViewportBase focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+                if (focused != null)
+                {
                     TableSplitView.FocusOn(focused);
                 }
             }
         }
 
-        public void ScreenshotViewport(object parameter) {
+        public void ScreenshotViewport(object parameter)
+        {
             ViewportBase focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
             if (focused == null) return;
 
@@ -594,7 +708,8 @@ namespace CBRE.Editor {
                 .NumericUpDown("Width", 640, 5000, 0, area.Width)
                 .NumericUpDown("Height", 480, 5000, 0, area.Height)
                 .CheckBox("Copy to Clipboard", false)
-                .OkCancel()) {
+                .OkCancel())
+            {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
                 Image shot = ViewportManager.CreateScreenshot(focused, (int)qf.Decimal("Width"), (int)qf.Decimal("Height"));
@@ -602,27 +717,36 @@ namespace CBRE.Editor {
 
                 string ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
 
-                using (var sfd = new SaveFileDialog()) {
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
                     sfd.FileName = $"{titleStart} - "
                                    + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
                                    + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ext;
                     sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
 
-                    if (sfd.ShowDialog() == DialogResult.OK) {
-                        if (sfd.FileName.EndsWith("jpg")) {
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        if (sfd.FileName.EndsWith("jpg"))
+                        {
                             ImageCodecInfo encoder = GetJpegEncoder();
-                            if (encoder != null) {
+                            if (encoder != null)
+                            {
                                 EncoderParameter p = new EncoderParameter(Encoder.Quality, 100L);
                                 EncoderParameters ep = new EncoderParameters(1);
                                 ep.Param[0] = p;
                                 shot.Save(sfd.FileName, encoder, ep);
-                            } else {
+                            }
+                            else
+                            {
                                 shot.Save(sfd.FileName);
                             }
-                        } else {
+                        }
+                        else
+                        {
                             shot.Save(sfd.FileName);
                         }
-                        if (qf.Bool("Copy to Clipboard")) {
+                        if (qf.Bool("Copy to Clipboard"))
+                        {
                             System.Windows.Forms.Clipboard.SetFileDropList(new StringCollection { sfd.FileName });
                         }
                     }
@@ -631,34 +755,41 @@ namespace CBRE.Editor {
             }
         }
 
-        private ImageCodecInfo GetJpegEncoder() {
+        private ImageCodecInfo GetJpegEncoder()
+        {
             return ImageCodecInfo.GetImageEncoders().FirstOrDefault(x => x.FormatID == ImageFormat.Jpeg.Guid);
         }
 
-        protected override bool ProcessDialogKey(Keys keyData) {
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
             // Suppress presses of the alt key if required
-            if (CaptureAltPresses && (keyData & Keys.Alt) == Keys.Alt) {
+            if (CaptureAltPresses && (keyData & Keys.Alt) == Keys.Alt)
+            {
                 return true;
             }
 
             return base.ProcessDialogKey(keyData);
         }
 
-        public void Notify(string message, object data) {
+        public void Notify(string message, object data)
+        {
             Mediator.ExecuteDefault(this, message, data);
         }
 
         #endregion
 
-        private void RecentFile(string path) {
-            if (TaskbarManager.IsPlatformSupported) {
+        private void RecentFile(string path)
+        {
+            if (TaskbarManager.IsPlatformSupported)
+            {
                 //Elevation.RegisterFileType(System.IO.Path.GetExtension(path));
                 JumpList.AddToRecent(path);
                 _jumpList.Refresh();
             }
-            var recents = SettingsManager.RecentFiles.OrderBy(x => x.Order).Where(x => x.Location != path).Take(9).ToList();
+            List<RecentFile> recents = SettingsManager.RecentFiles.OrderBy(x => x.Order).Where(x => x.Location != path).Take(9).ToList();
             recents.Insert(0, new RecentFile { Location = path });
-            for (var i = 0; i < recents.Count; i++) {
+            for (int i = 0; i < recents.Count; i++)
+            {
                 recents[i].Order = i;
             }
             SettingsManager.RecentFiles.Clear();
@@ -667,26 +798,31 @@ namespace CBRE.Editor {
             UpdateRecentFiles();
         }
 
-        private void UpdateRecentFiles() {
-            var recents = SettingsManager.RecentFiles;
+        private void UpdateRecentFiles()
+        {
+            List<RecentFile> recents = SettingsManager.RecentFiles;
             MenuManager.RecentFiles.Clear();
             MenuManager.RecentFiles.AddRange(recents);
             MenuManager.UpdateRecentFilesMenu();
         }
 
-        private void TextureReplaceButtonClicked(object sender, EventArgs e) {
+        private void TextureReplaceButtonClicked(object sender, EventArgs e)
+        {
             Mediator.Publish(HotkeysMediator.ReplaceTextures);
         }
 
-        private void MoveToWorldClicked(object sender, EventArgs e) {
+        private void MoveToWorldClicked(object sender, EventArgs e)
+        {
             Mediator.Publish(HotkeysMediator.TieToWorld);
         }
 
-        private void MoveToEntityClicked(object sender, EventArgs e) {
+        private void MoveToEntityClicked(object sender, EventArgs e)
+        {
             Mediator.Publish(HotkeysMediator.TieToEntity);
         }
 
-        private void EditorShown(object sender, EventArgs e) {
+        private void EditorShown(object sender, EventArgs e)
+        {
 
         }
     }

@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 
-namespace CBRE.DataStructures.GameData {
-    public class GameData {
+namespace CBRE.DataStructures.GameData
+{
+    public class GameData
+    {
         public int MapSizeLow { get; set; }
         public int MapSizeHigh { get; set; }
         public List<GameDataObject> Classes { get; private set; }
@@ -13,22 +15,26 @@ namespace CBRE.DataStructures.GameData {
         public List<string> MaterialExclusions { get; private set; }
         public List<AutoVisgroupSection> AutoVisgroups { get; private set; }
 
-        public GameData() {
+        public GameData()
+        {
             MapSizeHigh = 16384;
             MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
 
             IEnumerable<string> jsonFiles = Directory.EnumerateFiles("Entities", "*.json");
-            foreach (string jsonFile in jsonFiles) {
+            foreach (string jsonFile in jsonFiles)
+            {
                 string jsonContent = File.ReadAllText(jsonFile);
                 JsonGameDataObj gDataObj = JsonConvert.DeserializeObject<JsonGameDataObj>(jsonContent);
 
-                var gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, ClassType.Point, true);
+                GameDataObject gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, ClassType.Point, true);
 
-                foreach (JsonGDProperty property in gDataObj.Properties) {
+                foreach (JsonGDProperty property in gDataObj.Properties)
+                {
                     if (!Enum.TryParse(property.Type, out VariableType varType)) continue;
 
-                    Property actualProperty = new Property(property.Name, varType) {
+                    Property actualProperty = new Property(property.Name, varType)
+                    {
                         ShortDescription = property.ShortDescription,
                         DefaultValue = property.DefaultValue
                     };
@@ -39,7 +45,7 @@ namespace CBRE.DataStructures.GameData {
                 Classes.Add(gameDataObj);
             }
 
-            var lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
+            GameDataObject lightDataObj = new GameDataObject("light", "Point light source.", ClassType.Point);
             lightDataObj.Properties.Add(new Property("color", VariableType.Color255) { ShortDescription = "Color", DefaultValue = "255 255 255" });
             lightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { ShortDescription = "Intensity", DefaultValue = "1.0" });
             lightDataObj.Properties.Add(new Property("range", VariableType.Float) { ShortDescription = "Range", DefaultValue = "1.0" });
@@ -47,7 +53,7 @@ namespace CBRE.DataStructures.GameData {
             lightDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/lightbulb"));
             Classes.Add(lightDataObj);
 
-            var spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
+            GameDataObject spotlightDataObj = new GameDataObject("spotlight", "Self-explanatory.", ClassType.Point);
             spotlightDataObj.Properties.Add(new Property("color", VariableType.Color255) { ShortDescription = "Color", DefaultValue = "255 255 255" });
             spotlightDataObj.Properties.Add(new Property("intensity", VariableType.Float) { ShortDescription = "Intensity", DefaultValue = "1.0" });
             spotlightDataObj.Properties.Add(new Property("range", VariableType.Float) { ShortDescription = "Range", DefaultValue = "1.0" });
@@ -57,32 +63,34 @@ namespace CBRE.DataStructures.GameData {
             spotlightDataObj.Properties.Add(new Property("angles", VariableType.Vector) { ShortDescription = "Rotation", DefaultValue = "0 0 0" });
             Classes.Add(spotlightDataObj);
 
-            var waypointDataObj = new GameDataObject("waypoint", "AI waypoint.", ClassType.Point);
+            GameDataObject waypointDataObj = new GameDataObject("waypoint", "AI waypoint.", ClassType.Point);
             waypointDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/waypoint"));
             Classes.Add(waypointDataObj);
 
-            var soundEmitterDataObj = new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point);
+            GameDataObject soundEmitterDataObj = new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point);
             soundEmitterDataObj.Properties.Add(new Property("sound", VariableType.Integer) { ShortDescription = "Ambience index", DefaultValue = "1" });
             soundEmitterDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/speaker"));
             Classes.Add(soundEmitterDataObj);
 
-            var modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
+            GameDataObject modelDataObj = new GameDataObject("model", "Self-explanatory.", ClassType.Point);
             modelDataObj.Properties.Add(new Property("file", VariableType.String) { ShortDescription = "File", DefaultValue = "" });
             modelDataObj.Properties.Add(new Property("angles", VariableType.Vector) { ShortDescription = "Rotation", DefaultValue = "0 0 0" });
             modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { ShortDescription = "Scale", DefaultValue = "1 1 1" });
             Classes.Add(modelDataObj);
 
-            var screenDataObj = new GameDataObject("screen", "Savescreen.", ClassType.Point);
+            GameDataObject screenDataObj = new GameDataObject("screen", "Savescreen.", ClassType.Point);
             screenDataObj.Properties.Add(new Property("imgpath", VariableType.String) { ShortDescription = "Image Path", DefaultValue = "" });
             screenDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/screen"));
             Classes.Add(screenDataObj);
 
-            var noShadowObj = new GameDataObject("noshadow", "Disables shadow casting for this brush.", ClassType.Solid);
+            GameDataObject noShadowObj = new GameDataObject("noshadow", "Disables shadow casting for this brush.", ClassType.Solid);
             Classes.Add(noShadowObj);
 
             Property p = new Property("position", VariableType.Vector) { ShortDescription = "Position", DefaultValue = "0 0 0" };
-            foreach (GameDataObject gdo in Classes) {
-                if (gdo.ClassType != ClassType.Solid) {
+            foreach (GameDataObject gdo in Classes)
+            {
+                if (gdo.ClassType != ClassType.Solid)
+                {
                     gdo.Properties.Add(p);
                 }
             }
@@ -92,11 +100,13 @@ namespace CBRE.DataStructures.GameData {
             AutoVisgroups = new List<AutoVisgroupSection>();
         }
 
-        public void CreateDependencies() {
-            var resolved = new List<string>();
-            var unresolved = new List<GameDataObject>(Classes);
-            while (unresolved.Any()) {
-                var resolve = unresolved.Where(x => x.BaseClasses.All(resolved.Contains)).ToList();
+        public void CreateDependencies()
+        {
+            List<string> resolved = new List<string>();
+            List<GameDataObject> unresolved = new List<GameDataObject>(Classes);
+            while (unresolved.Any())
+            {
+                List<GameDataObject> resolve = unresolved.Where(x => x.BaseClasses.All(resolved.Contains)).ToList();
                 if (!resolve.Any()) throw new Exception("Circular dependencies: " + String.Join(", ", unresolved.Select(x => x.Name)));
                 resolve.ForEach(x => x.Inherit(Classes.Where(y => x.BaseClasses.Contains(y.Name))));
                 unresolved.RemoveAll(resolve.Contains);
@@ -104,9 +114,11 @@ namespace CBRE.DataStructures.GameData {
             }
         }
 
-        public void RemoveDuplicates() {
-            foreach (var g in Classes.Where(x => x.ClassType != ClassType.Base).GroupBy(x => x.Name.ToLowerInvariant()).Where(g => g.Count() > 1).ToList()) {
-                foreach (var obj in g.Skip(1)) Classes.Remove(obj);
+        public void RemoveDuplicates()
+        {
+            foreach (IGrouping<string, GameDataObject> g in Classes.Where(x => x.ClassType != ClassType.Base).GroupBy(x => x.Name.ToLowerInvariant()).Where(g => g.Count() > 1).ToList())
+            {
+                foreach (GameDataObject obj in g.Skip(1)) Classes.Remove(obj);
             }
         }
     }

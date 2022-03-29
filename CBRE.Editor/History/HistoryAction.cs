@@ -1,34 +1,41 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Editor.Actions;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CBRE.Editor.History {
-    public class HistoryAction : IHistoryItem {
+namespace CBRE.Editor.History
+{
+    public class HistoryAction : IHistoryItem
+    {
         private readonly List<IAction> _actions;
 
         public string Name { get; private set; }
         public bool SkipInStack { get; private set; }
         public bool ModifiesState { get; private set; }
 
-        public HistoryAction(string name, params IAction[] actions) {
+        public HistoryAction(string name, params IAction[] actions)
+        {
             Name = name;
             _actions = actions.ToList();
             SkipInStack = actions.All(x => x.SkipInStack);
             ModifiesState = actions.Any(x => x.ModifiesState);
         }
 
-        public void Undo(Document document) {
-            for (var i = _actions.Count - 1; i >= 0; i--) {
+        public void Undo(Document document)
+        {
+            for (int i = _actions.Count - 1; i >= 0; i--)
+            {
                 _actions[i].Reverse(document);
             }
         }
 
-        public void Redo(Document document) {
+        public void Redo(Document document)
+        {
             _actions.ForEach(x => x.Perform(document));
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _actions.ForEach(x => x.Dispose());
             _actions.Clear();
         }

@@ -1,8 +1,11 @@
-namespace CBRE.UI {
-    public class FrameInfo {
+namespace CBRE.UI
+{
+    public class FrameInfo
+    {
         public long Milliseconds { get; private set; }
 
-        public FrameInfo(long milliseconds) {
+        public FrameInfo(long milliseconds)
+        {
             Milliseconds = milliseconds;
         }
     }

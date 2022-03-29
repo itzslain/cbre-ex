@@ -1,25 +1,30 @@
-﻿using System;
-using System.Runtime.Serialization;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Extensions;
+using System;
+using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Transformations {
+namespace CBRE.DataStructures.Transformations
+{
     [Serializable]
-    public class UnitRotate : IUnitTransformation {
+    public class UnitRotate : IUnitTransformation
+    {
         public decimal Rotation { get; set; }
         public Line Axis { get; set; }
 
-        public UnitRotate(decimal scalar, Line axis) {
+        public UnitRotate(decimal scalar, Line axis)
+        {
             Rotation = scalar;
             Axis = axis;
         }
 
-        protected UnitRotate(SerializationInfo info, StreamingContext context) {
+        protected UnitRotate(SerializationInfo info, StreamingContext context)
+        {
             Rotation = info.GetInt32("Rotation");
             Axis = (Line)info.GetValue("Axis", typeof(Line));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context) {
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
             info.AddValue("Rotation", Rotation);
             info.AddValue("Axis", Axis);
         }
@@ -27,12 +32,13 @@ namespace CBRE.DataStructures.Transformations {
         /**
          * http://paulbourke.net/geometry/rotate/
          */
-        public Coordinate Transform(Coordinate c) {
-            var p = c - Axis.Start;
-            var r = (Axis.End - Axis.Start).Normalise();
+        public Coordinate Transform(Coordinate c)
+        {
+            Coordinate p = c - Axis.Start;
+            Coordinate r = (Axis.End - Axis.Start).Normalise();
 
-            var costheta = DMath.Cos(Rotation);
-            var sintheta = DMath.Sin(Rotation);
+            decimal costheta = DMath.Cos(Rotation);
+            decimal sintheta = DMath.Sin(Rotation);
 
             decimal x = 0, y = 0, z = 0;
 
@@ -51,12 +57,13 @@ namespace CBRE.DataStructures.Transformations {
             return new Coordinate(x, y, z) + Axis.Start;
         }
 
-        public CoordinateF Transform(CoordinateF c) {
-            var p = c - new CoordinateF(Axis.Start);
-            var r = new CoordinateF((Axis.End - Axis.Start).Normalise());
+        public CoordinateF Transform(CoordinateF c)
+        {
+            CoordinateF p = c - new CoordinateF(Axis.Start);
+            CoordinateF r = new CoordinateF((Axis.End - Axis.Start).Normalise());
 
-            var costheta = (float)Math.Cos((float)Rotation);
-            var sintheta = (float)Math.Sin((float)Rotation);
+            float costheta = (float)Math.Cos((float)Rotation);
+            float sintheta = (float)Math.Sin((float)Rotation);
 
             float x = 0, y = 0, z = 0;
 

@@ -1,13 +1,16 @@
-﻿using System;
+﻿using CBRE.Common;
+using CBRE.Graphics.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CBRE.Common;
-using CBRE.Graphics.Helpers;
 
-namespace CBRE.Providers.Texture {
-    public class TextureCollection {
-        public IEnumerable<TexturePackage> Packages {
+namespace CBRE.Providers.Texture
+{
+    public class TextureCollection
+    {
+        public IEnumerable<TexturePackage> Packages
+        {
             get { return _packages; }
         }
 
@@ -22,8 +25,10 @@ namespace CBRE.Providers.Texture {
 
         private static ulong LastTextureCollectionID = 0;
 
-        public void UpdateLightmapTexture() {
-            lock (Lightmaps) {
+        public void UpdateLightmapTexture()
+        {
+            lock (Lightmaps)
+            {
                 string texName = LightmapTexture.Name;
                 LightmapTexture.Dispose();
                 LightmapTexture = TextureHelper.Create(texName, Lightmaps[3], Lightmaps[3].Width, Lightmaps[3].Height, TextureFlags.None);
@@ -31,11 +36,14 @@ namespace CBRE.Providers.Texture {
             }
         }
 
-        public TextureItem SelectedTexture {
+        public TextureItem SelectedTexture
+        {
             get { return _selectedTexture; }
-            set {
+            set
+            {
                 _selectedTexture = value;
-                if (_selectedTexture != null) {
+                if (_selectedTexture != null)
+                {
                     _recentTextures.RemoveAll(x => String.Equals(x.Name, _selectedTexture.Name, StringComparison.OrdinalIgnoreCase));
                     _recentTextures.Insert(0, _selectedTexture);
                     while (_recentTextures.Count > 25) _recentTextures.RemoveAt(_recentTextures.Count - 1);
@@ -43,19 +51,23 @@ namespace CBRE.Providers.Texture {
             }
         }
 
-        public TextureCollection(List<TexturePackage> packages) {
+        public TextureCollection(List<TexturePackage> packages)
+        {
             _packages = packages;
             _items = new Dictionary<string, TextureItem>();
-            foreach (var item in packages.SelectMany(x => x.Items)) {
-                var k = item.Key.ToLowerInvariant();
+            foreach (KeyValuePair<string, TextureItem> item in packages.SelectMany(x => x.Items))
+            {
+                string k = item.Key.ToLowerInvariant();
                 if (!_items.ContainsKey(k)) _items.Add(k, item.Value);
             }
             _recentTextures = new List<TextureItem>();
             SelectedTexture = GetDefaultSelection();
 
             Bitmap bmp = new Bitmap(64, 64);
-            for (int i = 0; i < 64; i++) {
-                for (int j = 0; j < 64; j++) {
+            for (int i = 0; i < 64; i++)
+            {
+                for (int j = 0; j < 64; j++)
+                {
                     bmp.SetPixel(i, j, Color.White);
                 }
             }
@@ -64,30 +76,36 @@ namespace CBRE.Providers.Texture {
             bmp.Dispose();
         }
 
-        ~TextureCollection() {
+        ~TextureCollection()
+        {
             TextureHelper.EnqueueDisposal(LightmapTexture);
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
+            {
                 Lightmaps[i]?.Dispose();
             }
         }
 
-        private TextureItem GetDefaultSelection() {
-            var ignored = "{#!~+-0123456789".ToCharArray();
+        private TextureItem GetDefaultSelection()
+        {
+            char[] ignored = "{#!~+-0123456789".ToCharArray();
             return GetAllBrowsableItems()
                 .OrderBy(x => new string(x.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
                 .FirstOrDefault();
         }
 
-        public IEnumerable<TextureItem> GetRecentTextures() {
+        public IEnumerable<TextureItem> GetRecentTextures()
+        {
             return _recentTextures;
         }
 
-        public ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight) {
+        public ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight)
+        {
             return GetStreamSource(maxWidth, maxHeight, _packages);
         }
 
-        public ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages) {
-            var streams = packages.Where(x => x != null && x.Provider != null)
+        public ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
+        {
+            List<ITextureStreamSource> streams = packages.Where(x => x != null && x.Provider != null)
                 .GroupBy(x => x.Provider)
                 .Select(x => x.Key.GetStreamSource(maxWidth, maxHeight, x))
                 .ToList();
@@ -95,19 +113,23 @@ namespace CBRE.Providers.Texture {
             return new MultiTextureStreamSource(streams);
         }
 
-        public IEnumerable<TextureItem> GetAllItems() {
+        public IEnumerable<TextureItem> GetAllItems()
+        {
             return _items.Values;
         }
 
-        public IEnumerable<TextureItem> GetAllBrowsableItems() {
+        public IEnumerable<TextureItem> GetAllBrowsableItems()
+        {
             return _items.Values.Where(x => x.Package.IsBrowsable);
         }
 
-        public IEnumerable<TextureItem> GetItems(IEnumerable<string> names) {
+        public IEnumerable<TextureItem> GetItems(IEnumerable<string> names)
+        {
             return names.Select(x => x.ToLowerInvariant()).Where(x => _items.ContainsKey(x)).Select(x => _items[x]);
         }
 
-        public TextureItem GetItem(string textureName) {
+        public TextureItem GetItem(string textureName)
+        {
             textureName = textureName.ToLowerInvariant();
             return _items.ContainsKey(textureName) ? _items[textureName] : null;
         }

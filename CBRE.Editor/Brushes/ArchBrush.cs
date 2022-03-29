@@ -1,14 +1,16 @@
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Brushes.Controls;
 using CBRE.Extensions;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
-namespace CBRE.Editor.Brushes {
-    public class ArchBrush : IBrush {
+namespace CBRE.Editor.Brushes
+{
+    public class ArchBrush : IBrush
+    {
         private readonly NumericControl _numSides;
         private readonly NumericControl _wallWidth;
         private readonly NumericControl _arc;
@@ -20,7 +22,8 @@ namespace CBRE.Editor.Brushes {
 
         private const decimal Atan2 = 63.4m;
 
-        public ArchBrush() {
+        public ArchBrush()
+        {
             _numSides = new NumericControl(this) { LabelText = "Number of sides" };
             _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
             _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
@@ -33,13 +36,15 @@ namespace CBRE.Editor.Brushes {
             _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _tiltInterp.Enabled = _curvedRamp.GetValue();
         }
 
-        public string Name {
+        public string Name
+        {
             get { return "Arch"; }
         }
 
         public bool CanRound { get { return true; } }
 
-        public IEnumerable<BrushControl> GetControls() {
+        public IEnumerable<BrushControl> GetControls()
+        {
             yield return _numSides;
             yield return _wallWidth;
             yield return _arc;
@@ -50,10 +55,13 @@ namespace CBRE.Editor.Brushes {
             yield return _tiltInterp;
         }
 
-        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col) {
-            var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
-            foreach (var arr in faces) {
-                var face = new Face(generator.GetNextFaceID()) {
+        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
+        {
+            Solid solid = new Solid(generator.GetNextObjectID()) { Colour = col };
+            foreach (Coordinate[] arr in faces)
+            {
+                Face face = new Face(generator.GetNextFaceID())
+                {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,
@@ -68,47 +76,49 @@ namespace CBRE.Editor.Brushes {
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals) {
-            var numSides = (int)_numSides.GetValue();
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
+        {
+            int numSides = (int)_numSides.GetValue();
             if (numSides < 3) yield break;
-            var wallWidth = _wallWidth.GetValue();
+            decimal wallWidth = _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
-            var arc = _arc.GetValue();
+            decimal arc = _arc.GetValue();
             if (arc < 1) yield break;
-            var startAngle = _startAngle.GetValue();
+            decimal startAngle = _startAngle.GetValue();
             if (startAngle < 0 || startAngle > 359) yield break;
-            var addHeight = _addHeight.GetValue();
-            var curvedRamp = _curvedRamp.GetValue();
-            var tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
+            decimal addHeight = _addHeight.GetValue();
+            bool curvedRamp = _curvedRamp.GetValue();
+            decimal tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
             if (DMath.Abs(tiltAngle % 180) == 90) yield break;
-            var tiltInterp = curvedRamp && _tiltInterp.GetValue();
+            bool tiltInterp = curvedRamp && _tiltInterp.GetValue();
 
             // Very similar to the pipe brush, except with options for start angle, arc, height and tilt
-            var width = box.Width;
-            var length = box.Length;
-            var height = box.Height;
+            decimal width = box.Width;
+            decimal length = box.Length;
+            decimal height = box.Height;
 
-            var majorOut = width / 2;
-            var majorIn = majorOut - wallWidth;
-            var minorOut = length / 2;
-            var minorIn = minorOut - wallWidth;
+            decimal majorOut = width / 2;
+            decimal majorIn = majorOut - wallWidth;
+            decimal minorOut = length / 2;
+            decimal minorIn = minorOut - wallWidth;
 
-            var start = DMath.DegreesToRadians(startAngle);
-            var tilt = DMath.DegreesToRadians(tiltAngle);
-            var angle = DMath.DegreesToRadians(arc) / numSides;
+            decimal start = DMath.DegreesToRadians(startAngle);
+            decimal tilt = DMath.DegreesToRadians(tiltAngle);
+            decimal angle = DMath.DegreesToRadians(arc) / numSides;
 
             // Calculate the coordinates of the inner and outer ellipses' points
-            var outer = new Coordinate[numSides + 1];
-            var inner = new Coordinate[numSides + 1];
-            for (var i = 0; i < numSides + 1; i++) {
-                var a = start + i * angle;
-                var h = i * addHeight;
-                var interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2M)) : 1;
-                var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
+            Coordinate[] outer = new Coordinate[numSides + 1];
+            Coordinate[] inner = new Coordinate[numSides + 1];
+            for (int i = 0; i < numSides + 1; i++)
+            {
+                decimal a = start + i * angle;
+                decimal h = i * addHeight;
+                decimal interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2M)) : 1;
+                decimal tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
 
-                var xval = box.Center.X + majorOut * DMath.Cos(a);
-                var yval = box.Center.Y + minorOut * DMath.Sin(a);
-                var zval = box.Start.Z + (curvedRamp ? h + tiltHeight : 0);
+                decimal xval = box.Center.X + majorOut * DMath.Cos(a);
+                decimal yval = box.Center.Y + minorOut * DMath.Sin(a);
+                decimal zval = box.Start.Z + (curvedRamp ? h + tiltHeight : 0);
                 outer[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
 
                 xval = box.Center.X + majorIn * DMath.Cos(a);
@@ -118,21 +128,26 @@ namespace CBRE.Editor.Brushes {
             }
 
             // Create the solids
-            var colour = Colour.GetRandomBrushColour();
-            var z = new Coordinate(0, 0, height).Round(roundDecimals);
-            for (var i = 0; i < numSides; i++) {
-                var faces = new List<Coordinate[]>();
+            Color colour = Colour.GetRandomBrushColour();
+            Coordinate z = new Coordinate(0, 0, height).Round(roundDecimals);
+            for (int i = 0; i < numSides; i++)
+            {
+                List<Coordinate[]> faces = new List<Coordinate[]>();
 
                 // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
-                if (curvedRamp) {
+                if (curvedRamp)
+                {
                     // The splitting orientation depends on the curving direction of the arch
-                    if (addHeight >= 0) {
+                    if (addHeight >= 0)
+                    {
                         faces.Add(new[] { outer[i], outer[i] + z, outer[i + 1] + z, outer[i + 1] });
                         faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i] + z, inner[i] });
                         faces.Add(new[] { inner[i], inner[i] + z, outer[i] + z, outer[i] });
                         faces.Add(new[] { outer[i] + z, inner[i] + z, outer[i + 1] + z });
                         faces.Add(new[] { outer[i + 1], inner[i], outer[i] });
-                    } else {
+                    }
+                    else
+                    {
                         faces.Add(new[] { inner[i + 1], inner[i + 1] + z, inner[i] + z, inner[i] });
                         faces.Add(new[] { outer[i], outer[i] + z, inner[i + 1] + z, inner[i + 1] });
                         faces.Add(new[] { inner[i], inner[i] + z, outer[i] + z, outer[i] });
@@ -143,13 +158,16 @@ namespace CBRE.Editor.Brushes {
 
                     faces.Clear();
 
-                    if (addHeight >= 0) {
+                    if (addHeight >= 0)
+                    {
                         faces.Add(new[] { inner[i + 1], inner[i + 1] + z, inner[i] + z, inner[i] });
                         faces.Add(new[] { inner[i], inner[i] + z, outer[i + 1] + z, outer[i + 1] });
                         faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i + 1] + z, inner[i + 1] });
                         faces.Add(new[] { inner[i + 1] + z, outer[i + 1] + z, inner[i] + z });
                         faces.Add(new[] { inner[i], outer[i + 1], inner[i + 1] });
-                    } else {
+                    }
+                    else
+                    {
                         faces.Add(new[] { outer[i], outer[i] + z, outer[i + 1] + z, outer[i + 1] });
                         faces.Add(new[] { inner[i + 1], inner[i + 1] + z, outer[i] + z, outer[i] });
                         faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i + 1] + z, inner[i + 1] });
@@ -157,8 +175,10 @@ namespace CBRE.Editor.Brushes {
                         faces.Add(new[] { outer[i + 1], inner[i + 1], outer[i] });
                     }
                     yield return MakeSolid(generator, faces, texture, colour);
-                } else {
-                    var h = i * addHeight * Coordinate.UnitZ;
+                }
+                else
+                {
+                    Coordinate h = i * addHeight * Coordinate.UnitZ;
                     faces.Add(new[] { outer[i], outer[i] + z, outer[i + 1] + z, outer[i + 1] }.Select(x => x + h).ToArray());
                     faces.Add(new[] { inner[i + 1], inner[i + 1] + z, inner[i] + z, inner[i] }.Select(x => x + h).ToArray());
                     faces.Add(new[] { outer[i + 1], outer[i + 1] + z, inner[i + 1] + z, inner[i + 1] }.Select(x => x + h).ToArray());

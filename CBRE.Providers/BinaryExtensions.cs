@@ -1,35 +1,43 @@
-﻿using System.Drawing;
+﻿using CBRE.DataStructures.Geometric;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CBRE.DataStructures.Geometric;
 
-namespace CBRE.Providers {
-    public static class BinaryExtensions {
-        public static string ReadFixedLengthString(this BinaryReader br, Encoding encoding, int length) {
-            var bstr = br.ReadBytes(length).TakeWhile(b => b != 0).ToArray();
+namespace CBRE.Providers
+{
+    public static class BinaryExtensions
+    {
+        public static string ReadFixedLengthString(this BinaryReader br, Encoding encoding, int length)
+        {
+            byte[] bstr = br.ReadBytes(length).TakeWhile(b => b != 0).ToArray();
             return encoding.GetString(bstr);
         }
 
-        public static void WriteFixedLengthString(this BinaryWriter bw, Encoding encoding, int length, string str) {
-            var arr = new byte[length];
+        public static void WriteFixedLengthString(this BinaryWriter bw, Encoding encoding, int length, string str)
+        {
+            byte[] arr = new byte[length];
             encoding.GetBytes(str, 0, str.Length, arr, 0);
             bw.Write(arr, 0, length);
         }
 
-        public static string ReadNullTerminatedString(this BinaryReader br) {
-            var str = "";
+        public static string ReadNullTerminatedString(this BinaryReader br)
+        {
+            string str = "";
             char c;
-            while ((c = br.ReadChar()) != 0) {
+            while ((c = br.ReadChar()) != 0)
+            {
                 str += c;
             }
             return str;
         }
 
-        public static string ReadLine(this BinaryReader br) {
-            var str = "";
+        public static string ReadLine(this BinaryReader br)
+        {
+            string str = "";
             char c;
-            while ((c = br.ReadChar()) != 10 && c != 13) {
+            while ((c = br.ReadChar()) != 10 && c != 13)
+            {
                 str += c;
             }
             while ((c = br.ReadChar()) == 10 || c == 13) { }
@@ -37,64 +45,74 @@ namespace CBRE.Providers {
             return str;
         }
 
-        public static void WriteNullTerminatedString(this BinaryWriter bw, string str) {
+        public static void WriteNullTerminatedString(this BinaryWriter bw, string str)
+        {
             bw.Write(str.ToCharArray());
             bw.Write((char)0);
         }
 
-        public static byte[] ReadByteArray(this BinaryReader br, int num) {
-            var arr = new byte[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadByte();
+        public static byte[] ReadByteArray(this BinaryReader br, int num)
+        {
+            byte[] arr = new byte[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadByte();
             return arr;
         }
 
-        public static short[] ReadShortArray(this BinaryReader br, int num) {
-            var arr = new short[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadInt16();
+        public static short[] ReadShortArray(this BinaryReader br, int num)
+        {
+            short[] arr = new short[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadInt16();
             return arr;
         }
 
-        public static int[] ReadIntArray(this BinaryReader br, int num) {
-            var arr = new int[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadInt32();
+        public static int[] ReadIntArray(this BinaryReader br, int num)
+        {
+            int[] arr = new int[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadInt32();
             return arr;
         }
 
-        public static decimal[] ReadSingleArrayAsDecimal(this BinaryReader br, int num) {
-            var arr = new decimal[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadSingleAsDecimal();
+        public static decimal[] ReadSingleArrayAsDecimal(this BinaryReader br, int num)
+        {
+            decimal[] arr = new decimal[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadSingleAsDecimal();
             return arr;
         }
 
-        public static float[] ReadSingleArray(this BinaryReader br, int num) {
-            var arr = new float[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadSingle();
+        public static float[] ReadSingleArray(this BinaryReader br, int num)
+        {
+            float[] arr = new float[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadSingle();
             return arr;
         }
 
-        public static Coordinate[] ReadCoordinateArray(this BinaryReader br, int num) {
-            var arr = new Coordinate[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadCoordinate();
+        public static Coordinate[] ReadCoordinateArray(this BinaryReader br, int num)
+        {
+            Coordinate[] arr = new Coordinate[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadCoordinate();
             return arr;
         }
 
-        public static CoordinateF[] ReadCoordinateFArray(this BinaryReader br, int num) {
-            var arr = new CoordinateF[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadCoordinateF();
+        public static CoordinateF[] ReadCoordinateFArray(this BinaryReader br, int num)
+        {
+            CoordinateF[] arr = new CoordinateF[num];
+            for (int i = 0; i < num; i++) arr[i] = br.ReadCoordinateF();
             return arr;
         }
 
-        public static string ReadCString(this BinaryReader br) {
+        public static string ReadCString(this BinaryReader br)
+        {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
             // Read the byte length and then read that number of characters.
-            var len = br.ReadByte();
-            var chars = br.ReadChars(len);
+            byte len = br.ReadByte();
+            char[] chars = br.ReadChars(len);
             return new string(chars).Trim('\0');
         }
 
         const int MaxVariableStringLength = 127;
 
-        public static void WriteCString(this BinaryWriter bw, string str) {
+        public static void WriteCString(this BinaryWriter bw, string str)
+        {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
             // Write the byte length (+1) and then write that number of characters plus the null terminator.
             // Hammer doesn't like RMF strings longer than 128 bytes...
@@ -106,41 +124,48 @@ namespace CBRE.Providers {
         }
 
 
-        public static decimal ReadSingleAsDecimal(this BinaryReader br) {
+        public static decimal ReadSingleAsDecimal(this BinaryReader br)
+        {
             return (decimal)br.ReadSingle();
         }
 
-        public static void WriteDecimalAsSingle(this BinaryWriter bw, decimal dec) {
+        public static void WriteDecimalAsSingle(this BinaryWriter bw, decimal dec)
+        {
             bw.Write((float)dec);
         }
 
-        public static Coordinate ReadCoordinate(this BinaryReader br) {
+        public static Coordinate ReadCoordinate(this BinaryReader br)
+        {
             decimal x = br.ReadSingleAsDecimal();
             decimal z = br.ReadSingleAsDecimal();
             decimal y = br.ReadSingleAsDecimal();
             return new Coordinate(x, y, z);
         }
 
-        public static CoordinateF ReadCoordinateF(this BinaryReader br) {
+        public static CoordinateF ReadCoordinateF(this BinaryReader br)
+        {
             float x = br.ReadSingle();
             float z = br.ReadSingle();
             float y = br.ReadSingle();
             return new CoordinateF(x, y, z);
         }
 
-        public static void WriteCoordinate(this BinaryWriter bw, Coordinate c) {
+        public static void WriteCoordinate(this BinaryWriter bw, Coordinate c)
+        {
             bw.WriteDecimalAsSingle(c.X);
             bw.WriteDecimalAsSingle(c.Z);
             bw.WriteDecimalAsSingle(c.Y);
         }
 
-        public static void WriteCoordinateF(this BinaryWriter bw, CoordinateF c) {
+        public static void WriteCoordinateF(this BinaryWriter bw, CoordinateF c)
+        {
             bw.Write(c.X);
             bw.Write(c.Z);
             bw.Write(c.Y);
         }
 
-        public static Plane ReadPlane(this BinaryReader br) {
+        public static Plane ReadPlane(this BinaryReader br)
+        {
             return new Plane(
                 ReadCoordinate(br),
                 ReadCoordinate(br),
@@ -148,31 +173,36 @@ namespace CBRE.Providers {
                 );
         }
 
-        public static void WritePlane(this BinaryWriter bw, Coordinate[] coords) {
+        public static void WritePlane(this BinaryWriter bw, Coordinate[] coords)
+        {
             WriteCoordinate(bw, coords[0]);
             WriteCoordinate(bw, coords[1]);
             WriteCoordinate(bw, coords[2]);
         }
 
-        public static Color ReadRGBColour(this BinaryReader br) {
+        public static Color ReadRGBColour(this BinaryReader br)
+        {
             return Color.FromArgb(255, br.ReadByte(), br.ReadByte(), br.ReadByte());
         }
 
-        public static void WriteRGBColour(this BinaryWriter bw, Color c) {
+        public static void WriteRGBColour(this BinaryWriter bw, Color c)
+        {
             bw.Write(c.R);
             bw.Write(c.G);
             bw.Write(c.B);
         }
 
-        public static Color ReadRGBAColour(this BinaryReader br) {
-            var r = br.ReadByte();
-            var g = br.ReadByte();
-            var b = br.ReadByte();
-            var a = br.ReadByte();
+        public static Color ReadRGBAColour(this BinaryReader br)
+        {
+            byte r = br.ReadByte();
+            byte g = br.ReadByte();
+            byte b = br.ReadByte();
+            byte a = br.ReadByte();
             return Color.FromArgb(a, r, g, b);
         }
 
-        public static void WriteRGBAColour(this BinaryWriter bw, Color c) {
+        public static void WriteRGBAColour(this BinaryWriter bw, Color c)
+        {
             bw.Write(c.R);
             bw.Write(c.G);
             bw.Write(c.B);

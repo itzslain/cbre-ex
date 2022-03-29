@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.Geometric;
@@ -31,20 +26,29 @@ using CBRE.QuickForms;
 using CBRE.QuickForms.Items;
 using CBRE.Settings;
 using CBRE.UI;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
-namespace CBRE.Editor.Documents {
+namespace CBRE.Editor.Documents
+{
     /// <summary>
     /// A simple container to separate out the document mediator listeners from the document itself.
     /// </summary>
-    public class DocumentSubscriptions : IMediatorListener {
+    public class DocumentSubscriptions : IMediatorListener
+    {
         private readonly Document _document;
 
-        public DocumentSubscriptions(Document document) {
+        public DocumentSubscriptions(Document document)
+        {
             _document = document;
         }
 
-        public void Subscribe() {
+        public void Subscribe()
+        {
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeSelectedObjectsChanged, this);
@@ -143,20 +147,25 @@ namespace CBRE.Editor.Documents {
             Mediator.Subscribe(EditorMediator.ViewportCreated, this);
         }
 
-        public void Unsubscribe() {
+        public void Unsubscribe()
+        {
             Mediator.UnsubscribeAll(this);
         }
 
-        public void Notify(string message, object data) {
+        public void Notify(string message, object data)
+        {
             HotkeysMediator val;
-            if (ToolManager.ActiveTool != null && Enum.TryParse(message, true, out val)) {
-                var result = ToolManager.ActiveTool.InterceptHotkey(val, data);
+            if (ToolManager.ActiveTool != null && Enum.TryParse(message, true, out val))
+            {
+                HotkeyInterceptResult result = ToolManager.ActiveTool.InterceptHotkey(val, data);
                 if (result == HotkeyInterceptResult.Abort) return;
-                if (result == HotkeyInterceptResult.SwitchToSelectTool) {
+                if (result == HotkeyInterceptResult.SwitchToSelectTool)
+                {
                     ToolManager.Activate(typeof(SelectTool));
                 }
             }
-            if (!Mediator.ExecuteDefault(this, message, data)) {
+            if (!Mediator.ExecuteDefault(this, message, data))
+            {
                 throw new Exception("Invalid document message: " + message + ", with data: " + data);
             }
         }
@@ -164,112 +173,133 @@ namespace CBRE.Editor.Documents {
         // ReSharper disable UnusedMember.Global
         // ReSharper disable MemberCanBePrivate.Global
 
-        private void DocumentTreeStructureChanged() {
+        private void DocumentTreeStructureChanged()
+        {
             _document.RenderAll();
         }
 
-        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects) {
+        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
+        {
             _document.RenderObjects(objects);
         }
 
-        private void DocumentTreeSelectedObjectsChanged(IEnumerable<MapObject> objects) {
+        private void DocumentTreeSelectedObjectsChanged(IEnumerable<MapObject> objects)
+        {
             _document.RenderSelection(objects);
         }
 
-        private void DocumentTreeFacesChanged(IEnumerable<Face> faces) {
+        private void DocumentTreeFacesChanged(IEnumerable<Face> faces)
+        {
             _document.RenderFaces(faces);
         }
 
-        private void DocumentTreeSelectedFacesChanged(IEnumerable<Face> faces) {
+        private void DocumentTreeSelectedFacesChanged(IEnumerable<Face> faces)
+        {
             _document.RenderSelection(faces.Select(x => x.Parent).Distinct());
         }
 
-        public void SettingsChanged() {
+        public void SettingsChanged()
+        {
             _document.HelperManager.UpdateCache();
             RebuildGrid();
             _document.RenderAll();
         }
 
-        public void HistoryUndo() {
+        public void HistoryUndo()
+        {
             _document.History.Undo();
         }
 
-        public void HistoryRedo() {
+        public void HistoryRedo()
+        {
             _document.History.Redo();
         }
 
-        public void FileClose() {
-            if (_document.History.TotalActionsSinceLastSave > 0) {
-                var result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+        public void FileClose()
+        {
+            if (_document.History.TotalActionsSinceLastSave > 0)
+            {
+                DialogResult result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Cancel) return;
                 if (result == DialogResult.Yes) FileSave();
             }
             DocumentManager.Remove(_document);
         }
 
-        public void FileSave() {
+        public void FileSave()
+        {
             _document.SaveFile();
         }
 
-        public void FileSaveAs() {
+        public void FileSaveAs()
+        {
             _document.SaveFile(null, true);
         }
 
-        public void FileCompile() {
+        public void FileCompile()
+        {
             ExportForm form = new ExportForm();
             form.Document = _document;
             form.ShowDialog();
         }
 
-        public void OperationsCopy() {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
+        public void OperationsCopy()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
                 ClipboardManager.Push(_document.Selection.GetSelectedObjects());
             }
         }
 
-        public void OperationsCut() {
+        public void OperationsCut()
+        {
             OperationsCopy();
             OperationsDelete();
         }
 
-        public void OperationsPaste() {
+        public void OperationsPaste()
+        {
             if (!ClipboardManager.CanPaste()) return;
 
-            var content = ClipboardManager.GetPastedContent(_document);
+            IEnumerable<MapObject> content = ClipboardManager.GetPastedContent(_document);
             if (content == null) return;
 
-            var list = content.ToList();
+            List<MapObject> list = content.ToList();
             if (!list.Any()) return;
 
             list.SelectMany(x => x.FindAll()).ToList().ForEach(x => x.IsSelected = true);
             _document.Selection.SwitchToObjectSelection();
 
-            var name = "Pasted " + list.Count + " item" + (list.Count == 1 ? "" : "s");
-            var selected = _document.Selection.GetSelectedObjects().ToList();
+            string name = "Pasted " + list.Count + " item" + (list.Count == 1 ? "" : "s");
+            List<MapObject> selected = _document.Selection.GetSelectedObjects().ToList();
             _document.PerformAction(name, new ActionCollection(
                                               new Deselect(selected), // Deselect the current objects
                                               new Create(_document.Map.WorldSpawn.ID, list))); // Add and select the new objects
         }
 
-        public void OperationsPasteSpecial() {
+        public void OperationsPasteSpecial()
+        {
             if (!ClipboardManager.CanPaste()) return;
 
-            var content = ClipboardManager.GetPastedContent(_document);
+            IEnumerable<MapObject> content = ClipboardManager.GetPastedContent(_document);
             if (content == null) return;
 
-            var list = content.ToList();
+            List<MapObject> list = content.ToList();
             if (!list.Any()) return;
 
-            foreach (var face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces))) {
+            foreach (Face face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
+            {
                 face.Texture.Texture = _document.GetTexture(face.Texture.Name);
             }
 
-            var box = new Box(list.Select(x => x.BoundingBox));
+            Box box = new Box(list.Select(x => x.BoundingBox));
 
-            using (var psd = new PasteSpecialDialog(box)) {
-                if (psd.ShowDialog() == DialogResult.OK) {
-                    var name = "Paste special (" + psd.NumberOfCopies + (psd.NumberOfCopies == 1 ? " copy)" : " copies)");
-                    var action = new PasteSpecial(list, psd.NumberOfCopies, psd.StartPoint, psd.Grouping,
+            using (PasteSpecialDialog psd = new PasteSpecialDialog(box))
+            {
+                if (psd.ShowDialog() == DialogResult.OK)
+                {
+                    string name = "Paste special (" + psd.NumberOfCopies + (psd.NumberOfCopies == 1 ? " copy)" : " copies)");
+                    PasteSpecial action = new PasteSpecial(list, psd.NumberOfCopies, psd.StartPoint, psd.Grouping,
                                                   psd.AccumulativeOffset, psd.AccumulativeRotation,
                                                   psd.MakeEntitiesUnique, psd.PrefixEntityNames, psd.EntityNamePrefix);
                     _document.PerformAction(name, action);
@@ -277,110 +307,127 @@ namespace CBRE.Editor.Documents {
             }
         }
 
-        public void OperationsDelete() {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
-                var sel = _document.Selection.GetSelectedParents().Select(x => x.ID).ToList();
-                var name = "Removed " + sel.Count + " item" + (sel.Count == 1 ? "" : "s");
+        public void OperationsDelete()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
+                List<long> sel = _document.Selection.GetSelectedParents().Select(x => x.ID).ToList();
+                string name = "Removed " + sel.Count + " item" + (sel.Count == 1 ? "" : "s");
                 _document.PerformAction(name, new Delete(sel));
             }
         }
 
-        public void SelectionClear() {
-            var selected = _document.Selection.GetSelectedObjects().ToList();
+        public void SelectionClear()
+        {
+            List<MapObject> selected = _document.Selection.GetSelectedObjects().ToList();
             _document.PerformAction("Clear selection", new Deselect(selected));
         }
 
-        public void SelectAll() {
-            var all = _document.Map.WorldSpawn.Find(x => !(x is World));
+        public void SelectAll()
+        {
+            List<MapObject> all = _document.Map.WorldSpawn.Find(x => !(x is World));
             _document.PerformAction("Select all", new Actions.MapObjects.Selection.Select(all));
         }
 
-        public void ObjectProperties() {
-            var pd = new ObjectPropertiesDialog(_document);
+        public void ObjectProperties()
+        {
+            ObjectPropertiesDialog pd = new ObjectPropertiesDialog(_document);
             pd.Show(Editor.Instance);
         }
 
-        public void SwitchTool(HotkeyTool tool) {
+        public void SwitchTool(HotkeyTool tool)
+        {
             if (ToolManager.ActiveTool != null && ToolManager.ActiveTool.GetHotkeyToolType() == tool) tool = HotkeyTool.Selection;
             ToolManager.Activate(tool);
         }
 
-        public void ApplyCurrentTextureToSelection() {
+        public void ApplyCurrentTextureToSelection()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
-            var texture = _document.TextureCollection.SelectedTexture;
+            TextureItem texture = _document.TextureCollection.SelectedTexture;
             if (texture == null) return;
-            var ti = texture.GetTexture();
+            ITexture ti = texture.GetTexture();
             if (ti == null) return;
-            Action<Document, Face> action = (document, face) => {
+            Action<Document, Face> action = (document, face) =>
+            {
                 face.Texture.Name = texture.Name;
                 face.Texture.Texture = ti;
                 face.CalculateTextureCoordinates(true);
             };
-            var faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);
+            IEnumerable<Face> faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);
             _document.PerformAction("Apply current texture", new EditFace(faces, action, true));
         }
 
-        public void QuickHideSelected() {
+        public void QuickHideSelected()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
+            Visgroup autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
             if (autohide == null) return;
 
-            var objects = _document.Selection.GetSelectedObjects();
+            IEnumerable<MapObject> objects = _document.Selection.GetSelectedObjects();
             _document.PerformAction("Hide objects", new QuickHideObjects(objects));
         }
 
-        public void QuickHideUnselected() {
+        public void QuickHideUnselected()
+        {
             if (_document.Selection.InFaceSelection) return;
 
-            var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
+            Visgroup autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
             if (autohide == null) return;
 
-            var objects = _document.Map.WorldSpawn.FindAll().Except(_document.Selection.GetSelectedObjects()).Where(x => !(x is World) && !(x is Group));
+            IEnumerable<MapObject> objects = _document.Map.WorldSpawn.FindAll().Except(_document.Selection.GetSelectedObjects()).Where(x => !(x is World) && !(x is Group));
             _document.PerformAction("Hide objects", new QuickHideObjects(objects));
         }
 
-        public void QuickHideShowAll() {
-            var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
+        public void QuickHideShowAll()
+        {
+            Visgroup autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
             if (autohide == null) return;
 
-            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(autohide.ID, true));
+            List<MapObject> objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(autohide.ID, true));
             _document.PerformAction("Show hidden objects", new QuickShowObjects(objects));
         }
 
-        public void WorldspawnProperties() {
-            var pd = new ObjectPropertiesDialog(_document) { FollowSelection = false, AllowClassChange = false };
+        public void WorldspawnProperties()
+        {
+            ObjectPropertiesDialog pd = new ObjectPropertiesDialog(_document) { FollowSelection = false, AllowClassChange = false };
             pd.SetObjects(new[] { _document.Map.WorldSpawn });
             pd.Show(Editor.Instance);
         }
 
-        public void Carve() {
+        public void Carve()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var carver = _document.Selection.GetSelectedObjects().OfType<Solid>().FirstOrDefault();
+            Solid carver = _document.Selection.GetSelectedObjects().OfType<Solid>().FirstOrDefault();
             if (carver == null) return;
 
-            var carvees = _document.Map.WorldSpawn.Find(x => x is Solid && x.BoundingBox.IntersectsWith(carver.BoundingBox)).OfType<Solid>();
+            IEnumerable<Solid> carvees = _document.Map.WorldSpawn.Find(x => x is Solid && x.BoundingBox.IntersectsWith(carver.BoundingBox)).OfType<Solid>();
 
             _document.PerformAction("Carve objects", new Carve(carvees, carver));
         }
 
-        public void MakeHollow() {
+        public void MakeHollow()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var solids = _document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            List<Solid> solids = _document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             if (!solids.Any()) return;
 
-            if (solids.Count > 1) {
-                if (MessageBox.Show("This will hollow out every selected solid, are you sure?", "Multiple solids selected", MessageBoxButtons.YesNo) != DialogResult.Yes) {
+            if (solids.Count > 1)
+            {
+                if (MessageBox.Show("This will hollow out every selected solid, are you sure?", "Multiple solids selected", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                {
                     return;
                 }
             }
 
-            var qf = new QuickForm("Select wall width") { UseShortcutKeys = true }.NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
+            QuickForm qf = new QuickForm("Select wall width") { UseShortcutKeys = true }.NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
 
             decimal width;
-            do {
+            do
+            {
                 if (qf.ShowDialog() == DialogResult.Cancel) return;
                 width = qf.Decimal("Wall width (negative to hollow outwards)");
                 if (width == 0) MessageBox.Show("Please select a non-zero value.");
@@ -389,36 +436,44 @@ namespace CBRE.Editor.Documents {
             _document.PerformAction("Make objects hollow", new MakeHollow(solids, width));
         }
 
-        public void GroupingGroup() {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
+        public void GroupingGroup()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
                 _document.PerformAction("Grouped objects", new GroupAction(_document.Selection.GetSelectedParents()));
             }
         }
 
-        public void GroupingUngroup() {
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection) {
+        public void GroupingUngroup()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
                 _document.PerformAction("Ungrouped objects", new UngroupAction(_document.Selection.GetSelectedParents()));
             }
         }
 
-        private class EntityContainer {
+        private class EntityContainer
+        {
             public Entity Entity { get; set; }
-            public override string ToString() {
-                var name = Entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
+            public override string ToString()
+            {
+                DataStructures.MapObjects.Property name = Entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
                 if (name != null) return name.Value + " (" + Entity.EntityData.Name + ")";
                 return Entity.EntityData.Name;
             }
         }
 
-        public void TieToEntity() {
+        public void TieToEntity()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
+            List<Entity> entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
 
             Entity existing = null;
 
-            if (entities.Count == 1) {
-                var result = new QuickForms.QuickForm("Existing Entity in Selection") { Width = 400 }
+            if (entities.Count == 1)
+            {
+                DialogResult result = new QuickForms.QuickForm("Existing Entity in Selection") { Width = 400 }
                     .Label(String.Format("You have selected an existing entity (a '{0}'), how would you like to proceed?", entities[0].ClassName))
                     .Label(" - Keep the existing entity and add the selected items to the entity")
                     .Label(" - Create a new entity and add the selected items to the new entity")
@@ -427,88 +482,103 @@ namespace CBRE.Editor.Documents {
                               .Button("Create New", DialogResult.No)
                               .Button("Cancel", DialogResult.Cancel))
                     .ShowDialog();
-                if (result == DialogResult.Yes) {
+                if (result == DialogResult.Yes)
+                {
                     existing = entities[0];
                 }
-            } else if (entities.Count > 1) {
-                var qf = new QuickForms.QuickForm("Multiple Entities Selected") { Width = 400 }
+            }
+            else if (entities.Count > 1)
+            {
+                QuickForm qf = new QuickForms.QuickForm("Multiple Entities Selected") { Width = 400 }
                     .Label("You have selected multiple entities, which one would you like to keep?")
                     .ComboBox("Entity", entities.Select(x => new EntityContainer { Entity = x }))
                     .OkCancel();
-                var result = qf.ShowDialog();
-                if (result == DialogResult.OK) {
-                    var cont = qf.Object("Entity") as EntityContainer;
+                DialogResult result = qf.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    EntityContainer cont = qf.Object("Entity") as EntityContainer;
                     if (cont != null) existing = cont.Entity;
                 }
             }
 
-            var ac = new ActionCollection();
+            ActionCollection ac = new ActionCollection();
 
-            if (existing == null) {
-                var def = _document.Game.DefaultBrushEntity;
-                var entity = _document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == def.ToLower())
+            if (existing == null)
+            {
+                string def = _document.Game.DefaultBrushEntity;
+                GameDataObject entity = _document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == def.ToLower())
                              ?? _document.GameData.Classes.Where(x => x.ClassType == ClassType.Solid)
                                  .OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1)
                                  .FirstOrDefault();
-                if (entity == null) {
+                if (entity == null)
+                {
                     MessageBox.Show("No solid entities found. Please make sure your FGDs are configured correctly.", "No entities found!");
                     return;
                 }
-                existing = new Entity(_document.Map.IDGenerator.GetNextObjectID()) {
+                existing = new Entity(_document.Map.IDGenerator.GetNextObjectID())
+                {
                     EntityData = new EntityData(entity),
                     ClassName = entity.Name,
                     Colour = Colour.GetDefaultEntityColour()
                 };
                 ac.Add(new Create(_document.Map.WorldSpawn.ID, existing));
-            } else {
+            }
+            else
+            {
                 // Move the new parent to the root, in case it is a descendant of a selected parent...
                 ac.Add(new Reparent(_document.Map.WorldSpawn.ID, new[] { existing }));
 
                 // todo: get rid of all the other entities...
             }
 
-            var reparent = _document.Selection.GetSelectedParents().Where(x => x != existing).ToList();
+            List<MapObject> reparent = _document.Selection.GetSelectedParents().Where(x => x != existing).ToList();
             ac.Add(new Reparent(existing.ID, reparent));
             ac.Add(new Actions.MapObjects.Selection.Select(existing));
 
             _document.PerformAction("Tie to Entity", ac);
 
-            if (CBRE.Settings.Select.OpenObjectPropertiesWhenCreatingEntity && !ObjectPropertiesDialog.IsShowing) {
+            if (CBRE.Settings.Select.OpenObjectPropertiesWhenCreatingEntity && !ObjectPropertiesDialog.IsShowing)
+            {
                 Mediator.Publish(HotkeysMediator.ObjectProperties);
             }
         }
 
-        public void TieToWorld() {
+        public void TieToWorld()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
-            var children = entities.SelectMany(x => x.GetChildren()).ToList();
+            List<Entity> entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
+            List<MapObject> children = entities.SelectMany(x => x.GetChildren()).ToList();
 
-            var ac = new ActionCollection();
+            ActionCollection ac = new ActionCollection();
             ac.Add(new Reparent(_document.Map.WorldSpawn.ID, children));
             ac.Add(new Delete(entities.Select(x => x.ID)));
 
             _document.PerformAction("Tie to World", ac);
         }
 
-        private IUnitTransformation GetSnapTransform(Box box) {
-            var offset = box.Start.Snap(_document.Map.GridSpacing) - box.Start;
+        private IUnitTransformation GetSnapTransform(Box box)
+        {
+            Coordinate offset = box.Start.Snap(_document.Map.GridSpacing) - box.Start;
             return new UnitTranslate(offset);
         }
 
-        public void Transform() {
+        public void Transform()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-            var box = _document.Selection.GetSelectionBoundingBox();
-            using (var td = new TransformDialog(box)) {
+            Box box = _document.Selection.GetSelectionBoundingBox();
+            using (TransformDialog td = new TransformDialog(box))
+            {
                 if (td.ShowDialog() != DialogResult.OK) return;
 
-                var value = td.TransformValue;
+                Coordinate value = td.TransformValue;
                 IUnitTransformation transform = null;
-                switch (td.TransformType) {
+                switch (td.TransformType)
+                {
                     case TransformType.Rotate:
-                        var mov = Matrix.Translation(-box.Center); // Move to zero
-                        var rot = Matrix.Rotation(Quaternion.EulerAngles(value * DMath.PI / 180)); // Do rotation
-                        var fin = Matrix.Translation(box.Center); // Move to final origin
+                        Matrix mov = Matrix.Translation(-box.Center); // Move to zero
+                        Matrix rot = Matrix.Rotation(Quaternion.EulerAngles(value * DMath.PI / 180)); // Do rotation
+                        Matrix fin = Matrix.Translation(box.Center); // Move to final origin
                         transform = new UnitMatrixMult(fin * rot * mov);
                         break;
                     case TransformType.Translate:
@@ -521,165 +591,194 @@ namespace CBRE.Editor.Documents {
 
                 if (transform == null) return;
 
-                var selected = _document.Selection.GetSelectedParents();
+                IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
                 _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
             }
         }
 
-        public void RotateClockwise() {
+        public void RotateClockwise()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-            var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
+            Viewport2D focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
             if (focused == null) return;
-            var center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
-            var axis = focused.GetUnusedCoordinate(Coordinate.One);
-            var transform = new UnitRotate(DMath.DegreesToRadians(90), new Line(center, center + axis));
-            var selected = _document.Selection.GetSelectedParents();
+            Coordinate center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
+            Coordinate axis = focused.GetUnusedCoordinate(Coordinate.One);
+            UnitRotate transform = new UnitRotate(DMath.DegreesToRadians(90), new Line(center, center + axis));
+            IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void RotateCounterClockwise() {
+        public void RotateCounterClockwise()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-            var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
+            Viewport2D focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
             if (focused == null) return;
-            var center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
-            var axis = focused.GetUnusedCoordinate(Coordinate.One);
-            var transform = new UnitRotate(DMath.DegreesToRadians(-90), new Line(center, center + axis));
-            var selected = _document.Selection.GetSelectedParents();
+            Coordinate center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
+            Coordinate axis = focused.GetUnusedCoordinate(Coordinate.One);
+            UnitRotate transform = new UnitRotate(DMath.DegreesToRadians(-90), new Line(center, center + axis));
+            IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void ReplaceTextures() {
-            using (var trd = new TextureReplaceDialog(_document)) {
-                if (trd.ShowDialog() == DialogResult.OK) {
-                    var action = trd.GetAction();
+        public void ReplaceTextures()
+        {
+            using (TextureReplaceDialog trd = new TextureReplaceDialog(_document))
+            {
+                if (trd.ShowDialog() == DialogResult.OK)
+                {
+                    IAction action = trd.GetAction();
                     _document.PerformAction("Replace textures", action);
                 }
             }
         }
 
-        public void SnapSelectionToGrid() {
+        public void SnapSelectionToGrid()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var selected = _document.Selection.GetSelectedParents();
+            IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
 
-            var box = _document.Selection.GetSelectionBoundingBox();
-            var transform = GetSnapTransform(box);
+            Box box = _document.Selection.GetSelectionBoundingBox();
+            IUnitTransformation transform = GetSnapTransform(box);
 
             _document.PerformAction("Snap to grid", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void SnapSelectionToGridIndividually() {
+        public void SnapSelectionToGridIndividually()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var selected = _document.Selection.GetSelectedParents();
+            IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
 
             _document.PerformAction("Snap to grid individually", new Edit(selected, new SnapToGridEditOperation(_document.Map.GridSpacing, _document.Map.GetTransformFlags())));
         }
 
-        private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction) {
+        private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction)
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var selected = _document.Selection.GetSelectedParents();
-            var box = _document.Selection.GetSelectionBoundingBox();
+            IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
+            Box box = _document.Selection.GetSelectionBoundingBox();
 
             _document.PerformAction("Align Objects", new Edit(selected, new AlignObjectsEditOperation(box, axis, direction, _document.Map.GetTransformFlags())));
         }
 
-        public void AlignXMax() {
+        public void AlignXMax()
+        {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
-        public void AlignXMin() {
+        public void AlignXMin()
+        {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
-        public void AlignYMax() {
+        public void AlignYMax()
+        {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
-        public void AlignYMin() {
+        public void AlignYMin()
+        {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
-        public void AlignZMax() {
+        public void AlignZMax()
+        {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
-        public void AlignZMin() {
+        public void AlignZMin()
+        {
             AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
-        private void FlipObjects(Coordinate scale) {
+        private void FlipObjects(Coordinate scale)
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var selected = _document.Selection.GetSelectedParents();
-            var box = _document.Selection.GetSelectionBoundingBox();
+            IEnumerable<MapObject> selected = _document.Selection.GetSelectedParents();
+            Box box = _document.Selection.GetSelectionBoundingBox();
 
-            var transform = new UnitScale(scale, box.Center);
+            UnitScale transform = new UnitScale(scale, box.Center);
             _document.PerformAction("Flip Objects", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void FlipX() {
+        public void FlipX()
+        {
             FlipObjects(new Coordinate(-1, 1, 1));
         }
 
-        public void FlipY() {
+        public void FlipY()
+        {
             FlipObjects(new Coordinate(1, -1, 1));
         }
 
-        public void FlipZ() {
+        public void FlipZ()
+        {
             FlipObjects(new Coordinate(1, 1, -1));
         }
 
-        public void GridIncrease() {
-            var curr = _document.Map.GridSpacing;
+        public void GridIncrease()
+        {
+            decimal curr = _document.Map.GridSpacing;
             if (curr >= 1024) return;
             _document.Map.GridSpacing *= 2;
             RebuildGrid();
         }
 
-        public void GridDecrease() {
-            var curr = _document.Map.GridSpacing;
+        public void GridDecrease()
+        {
+            decimal curr = _document.Map.GridSpacing;
             if (curr <= 1) return;
             _document.Map.GridSpacing /= 2;
             RebuildGrid();
         }
 
-        public void RebuildGrid() {
+        public void RebuildGrid()
+        {
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, true);
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
-        public void CenterAllViewsOnSelection() {
-            var box = _document.Selection.GetSelectionBoundingBox()
+        public void CenterAllViewsOnSelection()
+        {
+            Box box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports) {
+            foreach (ViewportBase vp in ViewportManager.Viewports)
+            {
                 vp.FocusOn(box);
             }
         }
 
-        public void Center2DViewsOnSelection() {
-            var box = _document.Selection.GetSelectionBoundingBox()
+        public void Center2DViewsOnSelection()
+        {
+            Box box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>()) {
+            foreach (Viewport2D vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            {
                 vp.FocusOn(box);
             }
         }
 
-        public void Center3DViewsOnSelection() {
-            var box = _document.Selection.GetSelectionBoundingBox()
+        public void Center3DViewsOnSelection()
+        {
+            Box box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport3D>()) {
+            foreach (Viewport3D vp in ViewportManager.Viewports.OfType<Viewport3D>())
+            {
                 vp.FocusOn(box);
             }
         }
 
-        public void GoToCoordinates() {
-            using (var qf = new QuickForm("Enter Coordinates") { LabelWidth = 50, UseShortcutKeys = true }
+        public void GoToCoordinates()
+        {
+            using (QuickForm qf = new QuickForm("Enter Coordinates") { LabelWidth = 50, UseShortcutKeys = true }
                 .TextBox("X", "0")
                 .TextBox("Y", "0")
                 .TextBox("Z", "0")
-                .OkCancel()) {
+                .OkCancel())
+            {
                 qf.ClientSize = new Size(180, qf.ClientSize.Height);
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
@@ -688,16 +787,18 @@ namespace CBRE.Editor.Documents {
                 if (!Decimal.TryParse(qf.String("Y"), out y)) return;
                 if (!Decimal.TryParse(qf.String("Z"), out z)) return;
 
-                var coordinate = new Coordinate(x, y, z);
+                Coordinate coordinate = new Coordinate(x, y, z);
 
                 ViewportManager.Viewports.ForEach(vp => vp.FocusOn(coordinate));
             }
         }
 
-        public void GoToBrushID() {
-            using (var qf = new QuickForm("Enter Brush ID") { LabelWidth = 100, UseShortcutKeys = true }
+        public void GoToBrushID()
+        {
+            using (QuickForm qf = new QuickForm("Enter Brush ID") { LabelWidth = 100, UseShortcutKeys = true }
                 .TextBox("Brush ID")
-                .OkCancel()) {
+                .OkCancel())
+            {
                 qf.ClientSize = new Size(230, qf.ClientSize.Height);
 
                 if (qf.ShowDialog() != DialogResult.OK) return;
@@ -705,7 +806,7 @@ namespace CBRE.Editor.Documents {
                 long id;
                 if (!long.TryParse(qf.String("Brush ID"), out id)) return;
 
-                var obj = _document.Map.WorldSpawn.FindByID(id);
+                MapObject obj = _document.Map.WorldSpawn.FindByID(id);
                 if (obj == null) return;
 
                 // Select and go to the brush
@@ -714,106 +815,126 @@ namespace CBRE.Editor.Documents {
             }
         }
 
-        public void ToggleSnapToGrid() {
+        public void ToggleSnapToGrid()
+        {
             _document.Map.SnapToGrid = !_document.Map.SnapToGrid;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleShow2DGrid() {
+        public void ToggleShow2DGrid()
+        {
             _document.Map.Show2DGrid = !_document.Map.Show2DGrid;
             RebuildGrid();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleShow3DGrid() {
+        public void ToggleShow3DGrid()
+        {
             _document.Map.Show3DGrid = !_document.Map.Show3DGrid;
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleIgnoreGrouping() {
+        public void ToggleIgnoreGrouping()
+        {
             _document.Map.IgnoreGrouping = !_document.Map.IgnoreGrouping;
             Mediator.Publish(EditorMediator.IgnoreGroupingChanged);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleTextureLock() {
+        public void ToggleTextureLock()
+        {
             _document.Map.TextureLock = !_document.Map.TextureLock;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleTextureScalingLock() {
+        public void ToggleTextureScalingLock()
+        {
             _document.Map.TextureScalingLock = !_document.Map.TextureScalingLock;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleCordon() {
+        public void ToggleCordon()
+        {
             _document.Map.Cordon = !_document.Map.Cordon;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideFaceMask() {
+        public void ToggleHideFaceMask()
+        {
             _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
             _document.Renderer.UpdateDocumentToggles();
         }
 
-        public void ToggleHideDisplacementSolids() {
+        public void ToggleHideDisplacementSolids()
+        {
             _document.Map.HideDisplacementSolids = !_document.Map.HideDisplacementSolids;
             // todo hide displacement solids
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideToolTextures() {
+        public void ToggleHideToolTextures()
+        {
             _document.Map.HideToolTextures = !_document.Map.HideToolTextures;
             _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideEntitySprites() {
+        public void ToggleHideEntitySprites()
+        {
             _document.Map.HideEntitySprites = !_document.Map.HideEntitySprites;
             _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ToggleHideMapOrigin() {
+        public void ToggleHideMapOrigin()
+        {
             _document.Map.HideMapOrigin = !_document.Map.HideMapOrigin;
             _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
-        public void ShowSelectedBrushID() {
+        public void ShowSelectedBrushID()
+        {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
-            var selectedIds = _document.Selection.GetSelectedObjects().Select(x => x.ID);
-            var idString = String.Join(", ", selectedIds);
+            IEnumerable<long> selectedIds = _document.Selection.GetSelectedObjects().Select(x => x.ID);
+            string idString = String.Join(", ", selectedIds);
 
             MessageBox.Show("Selected Object IDs: " + idString);
         }
 
-        public void ShowMapInformation() {
-            using (var mid = new MapInformationDialog(_document)) {
+        public void ShowMapInformation()
+        {
+            using (MapInformationDialog mid = new MapInformationDialog(_document))
+            {
                 mid.ShowDialog();
             }
         }
 
-        public void ShowLogicalTree() {
-            var mtw = new MapTreeWindow(_document);
+        public void ShowLogicalTree()
+        {
+            MapTreeWindow mtw = new MapTreeWindow(_document);
             mtw.Show(Editor.Instance);
         }
 
-        public void ShowEntityReport() {
-            var erd = new EntityReportDialog();
+        public void ShowEntityReport()
+        {
+            EntityReportDialog erd = new EntityReportDialog();
             erd.Show(Editor.Instance);
         }
 
-        public void ViewportRightClick(Viewport2D vp, ViewportEvent e) {
+        public void ViewportRightClick(Viewport2D vp, ViewportEvent e)
+        {
             ViewportContextMenu.Instance.AddNonSelectionItems(_document, vp);
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool) {
-                var selectionBoundingBox = _document.Selection.GetSelectionBoundingBox();
-                var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
-                var start = vp.Flatten(selectionBoundingBox.Start);
-                var end = vp.Flatten(selectionBoundingBox.End);
-                if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y) {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)
+            {
+                Box selectionBoundingBox = _document.Selection.GetSelectionBoundingBox();
+                Coordinate point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
+                Coordinate start = vp.Flatten(selectionBoundingBox.Start);
+                Coordinate end = vp.Flatten(selectionBoundingBox.End);
+                if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y)
+                {
                     // Clicked inside the selection bounds
                     ViewportContextMenu.Instance.AddSelectionItems(_document, vp);
                 }
@@ -822,72 +943,87 @@ namespace CBRE.Editor.Documents {
             if (ViewportContextMenu.Instance.Items.Count > 0) ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
         }
 
-        public void VisgroupSelect(int visgroupId) {
+        public void VisgroupSelect(int visgroupId)
+        {
             if (_document.Selection.InFaceSelection) return;
-            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId, true), true).Where(x => !x.IsVisgroupHidden);
+            IEnumerable<MapObject> objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId, true), true).Where(x => !x.IsVisgroupHidden);
             _document.PerformAction("Select visgroup", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
         }
 
-        public void VisgroupShowEditor() {
-            using (var vef = new VisgroupEditForm(_document)) {
-                if (vef.ShowDialog() == DialogResult.OK) {
-                    var nv = new List<Visgroup>();
-                    var cv = new List<Visgroup>();
-                    var dv = new List<Visgroup>();
+        public void VisgroupShowEditor()
+        {
+            using (VisgroupEditForm vef = new VisgroupEditForm(_document))
+            {
+                if (vef.ShowDialog() == DialogResult.OK)
+                {
+                    List<Visgroup> nv = new List<Visgroup>();
+                    List<Visgroup> cv = new List<Visgroup>();
+                    List<Visgroup> dv = new List<Visgroup>();
                     vef.PopulateChangeLists(_document, nv, cv, dv);
-                    if (nv.Any() || cv.Any() || dv.Any()) {
+                    if (nv.Any() || cv.Any() || dv.Any())
+                    {
                         _document.PerformAction("Edit visgroups", new CreateEditDeleteVisgroups(nv, cv, dv));
                     }
                 }
             }
         }
 
-        public void VisgroupShowAll() {
+        public void VisgroupShowAll()
+        {
             _document.PerformAction("Show all visgroups", new ShowAllVisgroups());
         }
 
-        public void VisgroupToggled(int visgroupId, CheckState state) {
+        public void VisgroupToggled(int visgroupId, CheckState state)
+        {
             if (state == CheckState.Indeterminate) return;
-            var visible = state == CheckState.Checked;
+            bool visible = state == CheckState.Checked;
             _document.PerformAction((visible ? "Show" : "Hide") + " visgroup", new ToggleVisgroup(visgroupId, visible));
         }
 
-        public void VisgroupCreateNew() {
-            using (var qf = new QuickForm("Create New Visgroup") { UseShortcutKeys = true }.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel()) {
+        public void VisgroupCreateNew()
+        {
+            using (QuickForm qf = new QuickForm("Create New Visgroup") { UseShortcutKeys = true }.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel())
+            {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
-                var ids = _document.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.ID).ToList();
-                var id = Math.Max(1, ids.Any() ? ids.Max() + 1 : 1);
+                List<int> ids = _document.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.ID).ToList();
+                int id = Math.Max(1, ids.Any() ? ids.Max() + 1 : 1);
 
-                var name = qf.String("Name");
+                string name = qf.String("Name");
                 if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString();
 
-                var vg = new Visgroup {
+                Visgroup vg = new Visgroup
+                {
                     ID = id,
                     Colour = Colour.GetRandomLightColour(),
                     Name = name,
                     Visible = true
                 };
                 IAction action = new CreateEditDeleteVisgroups(new[] { vg }, new Visgroup[0], new Visgroup[0]);
-                if (qf.Bool("Add selection to visgroup") && !_document.Selection.IsEmpty()) {
+                if (qf.Bool("Add selection to visgroup") && !_document.Selection.IsEmpty())
+                {
                     action = new ActionCollection(action, new EditObjectVisgroups(_document.Selection.GetSelectedObjects(), new[] { id }, new int[0]));
                 }
                 _document.PerformAction("Create visgroup", action);
             }
         }
 
-        public void SetZoomValue(decimal value) {
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>()) {
+        public void SetZoomValue(decimal value)
+        {
+            foreach (Viewport2D vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            {
                 vp.Zoom = value;
             }
             Mediator.Publish(EditorMediator.ViewZoomChanged, value);
         }
 
-        public void TextureSelected(TextureItem selection) {
+        public void TextureSelected(TextureItem selection)
+        {
             _document.TextureCollection.SelectedTexture = selection;
         }
 
-        public void ViewportCreated(ViewportBase viewport) {
+        public void ViewportCreated(ViewportBase viewport)
+        {
             if (viewport is Viewport3D) viewport.RenderContext.Add(new WidgetLinesRenderable());
             _document.Renderer.Register(new[] { viewport });
             viewport.RenderContext.Add(new ToolRenderable());
@@ -895,18 +1031,22 @@ namespace CBRE.Editor.Documents {
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
         }
 
-        public void SelectMatchingTextures(IEnumerable<string> textureList) {
-            var list = textureList.ToList();
-            var allFaces = _document.Map.WorldSpawn.Find(x => x is Solid && !x.IsCodeHidden && !x.IsVisgroupHidden).OfType<Solid>().SelectMany(x => x.Faces).ToList();
-            var matchingFaces = allFaces.Where(x => list.Contains(x.Texture.Name, StringComparer.CurrentCultureIgnoreCase)).ToList();
-            var fc = matchingFaces.Count;
-            if (_document.Selection.InFaceSelection) {
+        public void SelectMatchingTextures(IEnumerable<string> textureList)
+        {
+            List<string> list = textureList.ToList();
+            List<Face> allFaces = _document.Map.WorldSpawn.Find(x => x is Solid && !x.IsCodeHidden && !x.IsVisgroupHidden).OfType<Solid>().SelectMany(x => x.Faces).ToList();
+            List<Face> matchingFaces = allFaces.Where(x => list.Contains(x.Texture.Name, StringComparer.CurrentCultureIgnoreCase)).ToList();
+            int fc = matchingFaces.Count;
+            if (_document.Selection.InFaceSelection)
+            {
                 _document.PerformAction("Select Faces by Texture", new ChangeFaceSelection(matchingFaces, _document.Selection.GetSelectedFaces()));
                 MessageBox.Show(fc + " face" + (fc == 1 ? "" : "s") + " selected.");
-            } else {
-                var objects = matchingFaces.Select(x => x.Parent).Distinct().ToList();
+            }
+            else
+            {
+                List<Solid> objects = matchingFaces.Select(x => x.Parent).Distinct().ToList();
                 _document.PerformAction("Select Objects by Texture", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
-                var oc = objects.Count;
+                int oc = objects.Count;
                 MessageBox.Show(fc + " face" + (fc == 1 ? "" : "s") + " found, " + oc + " object" + (oc == 1 ? "" : "s") + " selected.");
             }
         }

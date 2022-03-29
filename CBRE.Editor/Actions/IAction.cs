@@ -1,8 +1,10 @@
-﻿using System;
-using CBRE.Editor.Documents;
+﻿using CBRE.Editor.Documents;
+using System;
 
-namespace CBRE.Editor.Actions {
-    public interface IAction : IDisposable {
+namespace CBRE.Editor.Actions
+{
+    public interface IAction : IDisposable
+    {
         bool SkipInStack { get; }
         bool ModifiesState { get; }
         void Reverse(Document document);

@@ -1,5 +1,7 @@
-﻿namespace CBRE.Settings {
-    public class LightmapConfig {
+﻿namespace CBRE.Settings
+{
+    public class LightmapConfig
+    {
         public static float DownscaleFactor { get; set; }
         public static int PlaneMargin { get; set; }
         public static int TextureDims { get; set; }
@@ -13,7 +15,8 @@
         public static float AmbientNormalY { get; set; }
         public static float AmbientNormalZ { get; set; }
 
-        static LightmapConfig() {
+        static LightmapConfig()
+        {
             DownscaleFactor = 15;
             PlaneMargin = 1;
             TextureDims = 512;

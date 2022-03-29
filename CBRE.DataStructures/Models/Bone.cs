@@ -1,7 +1,9 @@
 using CBRE.DataStructures.Geometric;
 
-namespace CBRE.DataStructures.Models {
-    public class Bone {
+namespace CBRE.DataStructures.Models
+{
+    public class Bone
+    {
         public int BoneIndex { get; private set; }
         public int ParentIndex { get; private set; }
         public Bone Parent { get; private set; }
@@ -14,7 +16,8 @@ namespace CBRE.DataStructures.Models {
 
         public Bone(int boneIndex, int parentIndex, Bone parent, string name,
                     CoordinateF defaultPosition, CoordinateF defaultAngles,
-                    CoordinateF defaultPositionScale, CoordinateF defaultAnglesScale) {
+                    CoordinateF defaultPositionScale, CoordinateF defaultAnglesScale)
+        {
             BoneIndex = boneIndex;
             ParentIndex = parentIndex;
             Parent = parent;

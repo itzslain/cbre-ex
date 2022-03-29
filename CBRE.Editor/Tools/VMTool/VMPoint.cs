@@ -1,11 +1,13 @@
+using CBRE.DataStructures.Geometric;
+using CBRE.DataStructures.MapObjects;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CBRE.DataStructures.Geometric;
-using CBRE.DataStructures.MapObjects;
 
-namespace CBRE.Editor.Tools.VMTool {
-    public class VMPoint {
+namespace CBRE.Editor.Tools.VMTool
+{
+    public class VMPoint
+    {
         public Coordinate Coordinate { get; set; }
         public Solid Solid { get; set; }
         public List<Vertex> Vertices { get; set; }
@@ -18,28 +20,34 @@ namespace CBRE.Editor.Tools.VMTool {
         public VMPoint MidpointEnd { get; set; }
         public bool IsSelected { get; set; }
 
-        public void Move(Coordinate delta) {
+        public void Move(Coordinate delta)
+        {
             Coordinate += delta;
-            if (!IsMidPoint) {
+            if (!IsMidPoint)
+            {
                 Vertices.ForEach(x => x.Location += delta);
             }
         }
 
-        public Color GetColour() {
+        public Color GetColour()
+        {
             // Midpoints are selected = Pink, deselected = orange
             // Vertex points are selected = red, deselected = white
             if (IsMidPoint) return IsSelected ? Color.DeepPink : Color.Orange;
             return IsSelected ? Color.Red : Color.White;
         }
 
-        public bool IsMidPointFor(VMPoint start, VMPoint end) {
+        public bool IsMidPointFor(VMPoint start, VMPoint end)
+        {
             return IsMidPoint
                    && ((start == MidpointStart && end == MidpointEnd)
                        || (end == MidpointStart && start == MidpointEnd));
         }
 
-        public IEnumerable<Face> GetAdjacentFaces() {
-            if (IsMidPoint) {
+        public IEnumerable<Face> GetAdjacentFaces()
+        {
+            if (IsMidPoint)
+            {
                 return MidpointStart.GetAdjacentFaces()
                     .Intersect(MidpointEnd.GetAdjacentFaces());
             }

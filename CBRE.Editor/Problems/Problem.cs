@@ -1,11 +1,13 @@
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Actions;
 
-namespace CBRE.Editor.Problems {
-    public class Problem {
+namespace CBRE.Editor.Problems
+{
+    public class Problem
+    {
         public Type Type { get; set; }
         public Map Map { get; set; }
         public List<MapObject> Objects { get; set; }
@@ -14,7 +16,8 @@ namespace CBRE.Editor.Problems {
         public string Message { get; set; }
         public string Description { get; set; }
 
-        public Problem(Type type, Map map, Func<Problem, IAction> fix, string message, string description) {
+        public Problem(Type type, Map map, Func<Problem, IAction> fix, string message, string description)
+        {
             Type = type;
             Map = map;
             Faces = new List<Face>();
@@ -24,7 +27,8 @@ namespace CBRE.Editor.Problems {
             Description = description;
         }
 
-        public Problem(Type type, Map map, IEnumerable<MapObject> objects, Func<Problem, IAction> fix, string message, string description) {
+        public Problem(Type type, Map map, IEnumerable<MapObject> objects, Func<Problem, IAction> fix, string message, string description)
+        {
             Type = type;
             Map = map;
             Faces = new List<Face>();
@@ -34,7 +38,8 @@ namespace CBRE.Editor.Problems {
             Description = description;
         }
 
-        public Problem(Type type, Map map, IEnumerable<Face> faces, Func<Problem, IAction> fix, string message, string description) {
+        public Problem(Type type, Map map, IEnumerable<Face> faces, Func<Problem, IAction> fix, string message, string description)
+        {
             Type = type;
             Map = map;
             Objects = new List<MapObject>();
@@ -44,7 +49,8 @@ namespace CBRE.Editor.Problems {
             Description = description;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return Message;
         }
     }

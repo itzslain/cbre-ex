@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items {
+namespace CBRE.QuickForms.Items
+{
     /// <summary>
     /// A control that shows OK and Cancel buttons.
     /// </summary>
-    public class QuickFormOkCancel : QuickFormItem {
+    public class QuickFormOkCancel : QuickFormItem
+    {
         private readonly Action<QuickForm> _okevent;
         private readonly Action<QuickForm> _cancelevent;
 
-        public QuickFormOkCancel(Action<QuickForm> ok, Action<QuickForm> cancel) {
+        public QuickFormOkCancel(Action<QuickForm> ok, Action<QuickForm> cancel)
+        {
             _okevent = ok;
             _cancelevent = cancel;
         }
 
-        public override List<Control> GetControls(QuickForm qf) {
-            var controls = new List<Control>();
+        public override List<Control> GetControls(QuickForm qf)
+        {
+            List<Control> controls = new List<Control>();
 
-            var b1 = new Button();
+            Button b1 = new Button();
             if (_okevent != null) b1.Click += (sender, e) => _okevent(((Control)sender).Parent as QuickForm);
             b1.Click += (s, e) => qf.DialogResult = DialogResult.OK;
             b1.Click += qf.Close;
@@ -31,7 +35,7 @@ namespace CBRE.QuickForms.Items {
             b1.Location = new Point(qf.ClientSize.Width - (QuickForm.ItemPadding + b1.Width) * 2, b1.Location.Y);
             controls.Add(b1);
 
-            var b2 = new Button();
+            Button b2 = new Button();
             if (_cancelevent != null) b2.Click += (sender, e) => _cancelevent(((Control)sender).Parent as QuickForm);
             b2.Click += (s, e) => qf.DialogResult = DialogResult.Cancel;
             b2.Click += qf.Close;

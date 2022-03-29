@@ -1,12 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace CBRE.Settings {
-    public class MenuLocationAttribute : Attribute {
+namespace CBRE.Settings
+{
+    public class MenuLocationAttribute : Attribute
+    {
 
     }
 
-    public enum HotkeysMediator {
+    public enum HotkeysMediator
+    {
 
         [Description("New")]
         FileNew,

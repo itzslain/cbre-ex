@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+﻿using CBRE.Common.Mediator;
+using System.Diagnostics;
 using System.Windows.Forms;
-using CBRE.Common.Mediator;
 
-namespace CBRE.Editor.UI {
-    public partial class AboutDialog : Form {
-        public AboutDialog() {
+namespace CBRE.Editor.UI
+{
+    public partial class AboutDialog : Form
+    {
+        public AboutDialog()
+        {
             InitializeComponent();
 
             VersionLabel.Text = "v" + FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location).FileVersion;

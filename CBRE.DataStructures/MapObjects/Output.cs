@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.MapObjects {
+namespace CBRE.DataStructures.MapObjects
+{
     [Serializable]
-    public class Output : ISerializable {
+    public class Output : ISerializable
+    {
         public string Name { get; set; }
         public string Target { get; set; }
         public string Input { get; set; }
@@ -11,10 +13,12 @@ namespace CBRE.DataStructures.MapObjects {
         public decimal Delay { get; set; }
         public bool OnceOnly { get; set; }
 
-        public Output() {
+        public Output()
+        {
         }
 
-        protected Output(SerializationInfo info, StreamingContext context) {
+        protected Output(SerializationInfo info, StreamingContext context)
+        {
             Name = info.GetString("Name");
             Target = info.GetString("Target");
             Input = info.GetString("Input");
@@ -23,7 +27,8 @@ namespace CBRE.DataStructures.MapObjects {
             OnceOnly = info.GetBoolean("OnceOnly");
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context) {
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
             info.AddValue("Name", Name);
             info.AddValue("Target", Target);
             info.AddValue("Input", Input);
@@ -32,8 +37,10 @@ namespace CBRE.DataStructures.MapObjects {
             info.AddValue("OnceOnly", OnceOnly);
         }
 
-        public Output Clone() {
-            return new Output {
+        public Output Clone()
+        {
+            return new Output
+            {
                 Name = Name,
                 Target = Target,
                 Input = Input,

@@ -1,46 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Providers.Texture;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CBRE.Editor.Extensions {
-    public static class SpriteExtensions {
+namespace CBRE.Editor.Extensions
+{
+    public static class SpriteExtensions
+    {
         private const string SpriteMetaKey = "Model";
         private const string SpriteBoundingBoxMetaKey = "BoundingBox";
 
-        public static bool UpdateSprites(this Map map, Document document) {
+        public static bool UpdateSprites(this Map map, Document document)
+        {
             if (CBRE.Settings.View.DisableSpriteRendering) return false;
             return UpdateSprites(document, map.WorldSpawn);
         }
 
-        public static bool UpdateSprites(this Map map, Document document, IEnumerable<MapObject> objects) {
+        public static bool UpdateSprites(this Map map, Document document, IEnumerable<MapObject> objects)
+        {
             if (CBRE.Settings.View.DisableSpriteRendering) return false;
 
-            var updated = false;
-            foreach (var mo in objects) updated |= UpdateSprites(document, mo);
+            bool updated = false;
+            foreach (MapObject mo in objects) updated |= UpdateSprites(document, mo);
             return updated;
         }
 
-        private static bool UpdateSprites(Document document, MapObject mo) {
-            var updatedChildren = false;
-            foreach (var child in mo.GetChildren()) updatedChildren |= UpdateSprites(document, child);
+        private static bool UpdateSprites(Document document, MapObject mo)
+        {
+            bool updatedChildren = false;
+            foreach (MapObject child in mo.GetChildren()) updatedChildren |= UpdateSprites(document, child);
 
-            var e = mo as Entity;
-            if (e == null || !ShouldHaveSprite(e)) {
-                var has = e != null && HasSprite(e);
+            Entity e = mo as Entity;
+            if (e == null || !ShouldHaveSprite(e))
+            {
+                bool has = e != null && HasSprite(e);
                 if (has) UnsetSprite(e);
                 return updatedChildren || has;
             }
 
-            var sprite = GetSpriteName(e);
-            var existingSprite = e.MetaData.Get<string>(SpriteMetaKey);
+            string sprite = GetSpriteName(e);
+            string existingSprite = e.MetaData.Get<string>(SpriteMetaKey);
             if (String.Equals(sprite, existingSprite, StringComparison.OrdinalIgnoreCase)) return updatedChildren; // Already set; No need to continue
 
-            var tex = document.TextureCollection.GetItem(sprite);
-            if (tex == null) {
+            TextureItem tex = document.TextureCollection.GetItem(sprite);
+            if (tex == null)
+            {
                 UnsetSprite(e);
                 return true;
             }
@@ -48,54 +55,63 @@ namespace CBRE.Editor.Extensions {
             return true;
         }
 
-        private static bool ShouldHaveSprite(Entity entity) {
+        private static bool ShouldHaveSprite(Entity entity)
+        {
             return GetSpriteName(entity) != null;
         }
 
-        private static string GetSpriteName(Entity entity) {
+        private static string GetSpriteName(Entity entity)
+        {
             if (entity.GameData == null) return null;
-            var spr = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.OrdinalIgnoreCase))
+            DataStructures.GameData.Behaviour spr = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.OrdinalIgnoreCase))
                 ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "iconsprite", StringComparison.OrdinalIgnoreCase));
             if (spr == null) return null;
 
             // First see if the studio behaviour forces a model...
-            if (spr.Values.Count == 1 && !String.IsNullOrWhiteSpace(spr.Values[0])) {
+            if (spr.Values.Count == 1 && !String.IsNullOrWhiteSpace(spr.Values[0]))
+            {
                 return spr.Values[0].Trim();
             }
 
             return null;
         }
 
-        private static void SetSprite(Entity entity, TextureItem tex) {
+        private static void SetSprite(Entity entity, TextureItem tex)
+        {
             entity.MetaData.Set(SpriteMetaKey, tex.Name);
-            var scale = 1m;
-            if (entity.GameData != null && entity.GameData.Properties.Any(x => String.Equals(x.Name, "scale", StringComparison.CurrentCultureIgnoreCase))) {
-                var scaleStr = entity.GetEntityData().GetPropertyValue("scale");
+            decimal scale = 1m;
+            if (entity.GameData != null && entity.GameData.Properties.Any(x => String.Equals(x.Name, "scale", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                string scaleStr = entity.GetEntityData().GetPropertyValue("scale");
                 if (!Decimal.TryParse(scaleStr, out scale)) scale = 1;
                 if (scale <= 0.1m) scale = 1;
             }
-            var bb = new Coordinate(tex.Width, tex.Width, tex.Height) * scale;
+            Coordinate bb = new Coordinate(tex.Width, tex.Width, tex.Height) * scale;
 
             // Don't set the bounding box if the sprite comes from the iconsprite gamedata
-            if (entity.GameData == null || !entity.GameData.Behaviours.Any(x => String.Equals(x.Name, "iconsprite", StringComparison.CurrentCultureIgnoreCase))) {
+            if (entity.GameData == null || !entity.GameData.Behaviours.Any(x => String.Equals(x.Name, "iconsprite", StringComparison.CurrentCultureIgnoreCase)))
+            {
                 entity.MetaData.Set(SpriteBoundingBoxMetaKey, new Box(-bb / 2, bb / 2));
                 entity.MetaData.Set("RotateBoundingBox", false); // todo rotations
                 entity.UpdateBoundingBox();
             }
         }
 
-        private static void UnsetSprite(Entity entity) {
+        private static void UnsetSprite(Entity entity)
+        {
             entity.MetaData.Unset(SpriteMetaKey);
             entity.MetaData.Unset(SpriteBoundingBoxMetaKey);
             entity.MetaData.Unset("RotateBoundingBox");
             entity.UpdateBoundingBox();
         }
 
-        public static string GetSprite(this Entity entity) {
+        public static string GetSprite(this Entity entity)
+        {
             return entity.MetaData.Get<string>(SpriteMetaKey);
         }
 
-        public static bool HasSprite(this Entity entity) {
+        public static bool HasSprite(this Entity entity)
+        {
             return entity.MetaData.Has<string>(SpriteMetaKey);
         }
     }

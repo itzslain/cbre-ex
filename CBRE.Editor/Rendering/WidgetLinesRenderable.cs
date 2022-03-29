@@ -1,12 +1,15 @@
-﻿using System.Drawing;
-using CBRE.Editor.Documents;
+﻿using CBRE.Editor.Documents;
 using CBRE.Graphics.Helpers;
 using CBRE.Graphics.Renderables;
 using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
-namespace CBRE.Editor.Rendering {
-    public class WidgetLinesRenderable : IRenderable {
-        public void Render(object sender) {
+namespace CBRE.Editor.Rendering
+{
+    public class WidgetLinesRenderable : IRenderable
+    {
+        public void Render(object sender)
+        {
             if (DocumentManager.CurrentDocument.Map.HideMapOrigin) return;
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);

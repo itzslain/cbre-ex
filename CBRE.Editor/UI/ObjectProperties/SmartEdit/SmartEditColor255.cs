@@ -1,33 +1,40 @@
+using CBRE.DataStructures.GameData;
+using CBRE.Editor.Properties;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CBRE.DataStructures.GameData;
-using CBRE.Editor.Properties;
 
-namespace CBRE.Editor.UI.ObjectProperties.SmartEdit {
+namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
+{
     [SmartEdit(VariableType.Color255)]
-    internal class SmartEditColor255 : SmartEditControl {
+    internal class SmartEditColor255 : SmartEditControl
+    {
         private readonly TextBox _textBox;
-        public SmartEditColor255() {
+        public SmartEditColor255()
+        {
             _textBox = new TextBox { Width = 200 };
             _textBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_textBox);
 
-            var btn = new Button { Image = Resources.Button_ColourPicker, Text = "", Margin = new Padding(1), Width = 24, Height = 24 };
+            Button btn = new Button { Image = Resources.Button_ColourPicker, Text = "", Margin = new Padding(1), Width = 24, Height = 24 };
             btn.Click += OpenColorPicker;
             Controls.Add(btn);
         }
 
-        private void OpenColorPicker(object sender, EventArgs e) {
-            var spl = _textBox.Text.Split(' ');
+        private void OpenColorPicker(object sender, EventArgs e)
+        {
+            string[] spl = _textBox.Text.Split(' ');
             int r = 0, g = 0, b = 0;
-            if (spl.Length >= 3) {
+            if (spl.Length >= 3)
+            {
                 int.TryParse(spl[0], out r);
                 int.TryParse(spl[1], out g);
                 int.TryParse(spl[2], out b);
             }
-            using (var cd = new ColorDialog { Color = Color.FromArgb(r, g, b) }) {
-                if (cd.ShowDialog() == DialogResult.OK) {
+            using (ColorDialog cd = new ColorDialog { Color = Color.FromArgb(r, g, b) })
+            {
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
                     r = cd.Color.R;
                     g = cd.Color.G;
                     b = cd.Color.B;
@@ -40,15 +47,18 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit {
             }
         }
 
-        protected override string GetName() {
+        protected override string GetName()
+        {
             return OriginalName;
         }
 
-        protected override string GetValue() {
+        protected override string GetValue()
+        {
             return _textBox.Text;
         }
 
-        protected override void OnSetProperty() {
+        protected override void OnSetProperty()
+        {
             _textBox.Text = PropertyValue;
         }
     }

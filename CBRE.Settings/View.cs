@@ -1,7 +1,9 @@
 ﻿using System.Drawing;
 
-namespace CBRE.Settings {
-    public class View {
+namespace CBRE.Settings
+{
+    public class View
+    {
         public static bool SingleInstance { get; set; }
 
         public static bool CrosshairCursorIn2DViews { get; set; }
@@ -43,7 +45,8 @@ namespace CBRE.Settings {
         public static bool DisableModelRendering { get; set; }
         public static bool DisableSpriteRendering { get; set; }
 
-        static View() {
+        static View()
+        {
             SingleInstance = true;
 
             CrosshairCursorIn2DViews = false;

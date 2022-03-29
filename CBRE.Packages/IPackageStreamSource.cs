@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace CBRE.Packages {
-    public interface IPackageStreamSource : IDisposable {
+namespace CBRE.Packages
+{
+    public interface IPackageStreamSource : IDisposable
+    {
         bool HasDirectory(string path);
         bool HasFile(string path);
         IEnumerable<string> GetDirectories();

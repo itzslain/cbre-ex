@@ -1,18 +1,23 @@
 ﻿using System.Collections.Generic;
 
-namespace CBRE.FileSystem {
-    public class FileSource {
+namespace CBRE.FileSystem
+{
+    public class FileSource
+    {
         private readonly List<IFile> _roots;
 
-        public FileSource() {
+        public FileSource()
+        {
             _roots = new List<IFile>();
         }
 
-        public void AddRoot(IFile source) {
+        public void AddRoot(IFile source)
+        {
             _roots.Add(source);
         }
 
-        public IFile GetRoot() {
+        public IFile GetRoot()
+        {
             return new CompositeFile(null, _roots);
         }
     }

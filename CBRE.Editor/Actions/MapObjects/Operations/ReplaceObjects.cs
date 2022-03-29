@@ -1,40 +1,46 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CBRE.Editor.Actions.MapObjects.Operations {
-    public class ReplaceObjects : IAction {
+namespace CBRE.Editor.Actions.MapObjects.Operations
+{
+    public class ReplaceObjects : IAction
+    {
         public bool SkipInStack { get { return false; } }
         public bool ModifiesState { get { return true; } }
 
         private readonly Dictionary<long, MapObject> _perform;
         private readonly Dictionary<long, MapObject> _reverse;
 
-        public ReplaceObjects(IEnumerable<MapObject> before, IEnumerable<MapObject> after) {
+        public ReplaceObjects(IEnumerable<MapObject> before, IEnumerable<MapObject> after)
+        {
             _perform = before.ToDictionary(x => x.ID, x => after.FirstOrDefault(y => y.ID == x.ID));
             _reverse = new Dictionary<long, MapObject>();
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _perform.Clear();
             _reverse.Clear();
         }
 
-        public void Reverse(Document document) {
-            var root = document.Map.WorldSpawn;
-            foreach (var kv in _reverse) {
-                var obj = root.FindByID(kv.Key);
+        public void Reverse(Document document)
+        {
+            World root = document.Map.WorldSpawn;
+            foreach (KeyValuePair<long, MapObject> kv in _reverse)
+            {
+                MapObject obj = root.FindByID(kv.Key);
                 if (obj == null) return;
 
                 // Unclone will reset children, need to reselect them if needed
-                var deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
+                List<MapObject> deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
                 document.Selection.Deselect(deselect);
 
                 obj.Unclone(kv.Value);
 
-                var select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
+                IEnumerable<MapObject> select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
                 document.Selection.Select(select);
 
                 document.Map.UpdateAutoVisgroups(obj, true);
@@ -47,22 +53,24 @@ namespace CBRE.Editor.Actions.MapObjects.Operations {
             _reverse.Clear();
         }
 
-        public void Perform(Document document) {
-            var root = document.Map.WorldSpawn;
+        public void Perform(Document document)
+        {
+            World root = document.Map.WorldSpawn;
             _reverse.Clear();
-            foreach (var kv in _perform) {
-                var obj = root.FindByID(kv.Key);
+            foreach (KeyValuePair<long, MapObject> kv in _perform)
+            {
+                MapObject obj = root.FindByID(kv.Key);
                 if (obj == null) return;
 
                 _reverse.Add(kv.Key, obj.Clone());
 
                 // Unclone will reset children, need to reselect them if needed
-                var deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
+                List<MapObject> deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
                 document.Selection.Deselect(deselect);
 
                 obj.Unclone(kv.Value);
 
-                var select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
+                IEnumerable<MapObject> select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
                 document.Selection.Select(select);
 
                 document.Map.UpdateAutoVisgroups(obj, true);

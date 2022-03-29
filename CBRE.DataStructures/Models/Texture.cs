@@ -1,7 +1,9 @@
 using CBRE.Common;
 
-namespace CBRE.DataStructures.Models {
-    public class Texture {
+namespace CBRE.DataStructures.Models
+{
+    public class Texture
+    {
         public int Index { get; set; }
         public string Name { get; set; }
         public ITexture TextureObject { get; set; }

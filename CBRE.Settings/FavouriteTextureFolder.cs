@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 
-namespace CBRE.Settings {
-    public class FavouriteTextureFolder {
+namespace CBRE.Settings
+{
+    public class FavouriteTextureFolder
+    {
         public string Name { get; set; }
         public List<FavouriteTextureFolder> Children { get; set; }
         public List<string> Items { get; set; }
 
-        public FavouriteTextureFolder() {
+        public FavouriteTextureFolder()
+        {
             Name = "";
             Children = new List<FavouriteTextureFolder>();
             Items = new List<string>();

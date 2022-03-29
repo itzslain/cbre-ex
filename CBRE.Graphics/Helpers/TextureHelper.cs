@@ -1,24 +1,27 @@
-﻿using System;
+﻿using CBRE.Common;
+using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using CBRE.Common;
-using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
-namespace CBRE.Graphics.Helpers {
+namespace CBRE.Graphics.Helpers
+{
     /// <summary>
     /// Texture utilities. Borrows large amounts of code from
     /// the Texture Utility Library project for OpenTK:
     /// http://www.opentk.com/project/TexLib
     /// </summary>
-    public static class TextureHelper {
+    public static class TextureHelper
+    {
         public static readonly Dictionary<string, GLTexture> Textures;
 
         private static PixelInternalFormat PixelInternalFormat { get; set; }
 
-        public static bool EnableTransparency {
+        public static bool EnableTransparency
+        {
             get { return PixelInternalFormat == PixelInternalFormat.Rgba; }
             set { PixelInternalFormat = value ? PixelInternalFormat.Rgba : PixelInternalFormat.Rgb; }
         }
@@ -27,21 +30,25 @@ namespace CBRE.Graphics.Helpers {
 
         public static bool DisableTextureFiltering { get; set; }
 
-        static TextureHelper() {
+        static TextureHelper()
+        {
             Textures = new Dictionary<string, GLTexture>();
             PixelInternalFormat = PixelInternalFormat.Rgba;
         }
 
-        public static void ClearLoadedTextures() {
+        public static void ClearLoadedTextures()
+        {
             Textures.Values.ToList().ForEach(x => x.Dispose());
             Textures.Clear();
         }
 
         private static bool? _supportsNpot;
 
-        public static bool SupportsNonPowerOfTwo() {
-            if (!_supportsNpot.HasValue) {
-                var extensions = GL.GetString(StringName.Extensions);
+        public static bool SupportsNonPowerOfTwo()
+        {
+            if (!_supportsNpot.HasValue)
+            {
+                string extensions = GL.GetString(StringName.Extensions);
                 _supportsNpot = extensions.Contains("GL_ARB_texture_non_power_of_two");
             }
             return _supportsNpot.Value;
@@ -50,14 +57,16 @@ namespace CBRE.Graphics.Helpers {
 
         #region Enable/Disable
 
-        public static void EnableTexturing() {
+        public static void EnableTexturing()
+        {
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
         }
 
-        public static void DisableTexturing() {
+        public static void DisableTexturing()
+        {
             GL.Disable(EnableCap.Texture2D);
         }
 
@@ -67,8 +76,9 @@ namespace CBRE.Graphics.Helpers {
 
         // http://stackoverflow.com/questions/5525122/c-sharp-math-question-smallest-power-of-2-bigger-than-x
         // http://aggregate.org/MAGIC/#Next%20Largest%20Power%20of%202
-        private static int NextPowerOfTwo(int num) {
-            var x = (uint)num;
+        private static int NextPowerOfTwo(int num)
+        {
+            uint x = (uint)num;
             x--;
             x |= (x >> 1);
             x |= (x >> 2);
@@ -80,37 +90,44 @@ namespace CBRE.Graphics.Helpers {
 
         private static List<ITexture> texturesToDispose = new List<ITexture>();
 
-        public static void EnqueueDisposal(ITexture tex) {
-            lock (texturesToDispose) {
+        public static void EnqueueDisposal(ITexture tex)
+        {
+            lock (texturesToDispose)
+            {
                 texturesToDispose.Add(tex);
             }
         }
 
-        public static void DisposeQueuedTextures() {
-            lock (texturesToDispose) {
+        public static void DisposeQueuedTextures()
+        {
+            lock (texturesToDispose)
+            {
                 texturesToDispose.ForEach(t => t.Dispose());
                 texturesToDispose.Clear();
             }
         }
 
-        public static GLTexture Create(string name, Bitmap bitmap, int width, int height, TextureFlags flags) {
+        public static GLTexture Create(string name, Bitmap bitmap, int width, int height, TextureFlags flags)
+        {
             DisposeQueuedTextures();
 
-            if (Exists(name)) {
+            if (Exists(name))
+            {
                 Delete(name);
             }
-            var actualBitmap = bitmap;
-            if (ForceNonPowerOfTwoResize || !SupportsNonPowerOfTwo()) {
-                var w = NextPowerOfTwo(bitmap.Width);
-                var h = NextPowerOfTwo(bitmap.Height);
+            Bitmap actualBitmap = bitmap;
+            if (ForceNonPowerOfTwoResize || !SupportsNonPowerOfTwo())
+            {
+                int w = NextPowerOfTwo(bitmap.Width);
+                int h = NextPowerOfTwo(bitmap.Height);
                 if (w != bitmap.Width || h != bitmap.Height) actualBitmap = new Bitmap(bitmap, w, h);
             }
-            var data = actualBitmap.LockBits(
+            BitmapData data = actualBitmap.LockBits(
                 new Rectangle(0, 0, actualBitmap.Width, actualBitmap.Height),
                 ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppArgb
                 );
-            var tex = CreateAndBindTexture();
+            int tex = CreateAndBindTexture();
             SetTextureParameters();
             GL.TexImage2D(
                 TextureTarget.Texture2D,
@@ -125,21 +142,23 @@ namespace CBRE.Graphics.Helpers {
                 );
 
             actualBitmap.UnlockBits(data);
-            if (actualBitmap != bitmap) {
+            if (actualBitmap != bitmap)
+            {
                 actualBitmap.Dispose();
             }
-            var texobj = new GLTexture(tex, name, flags, 0) { Width = width, Height = height };
+            GLTexture texobj = new GLTexture(tex, name, flags, 0) { Width = width, Height = height };
             Textures.Add(name, texobj);
             return texobj;
         }
 
         private static int LastRenderTargetID = 0;
-        public static GLTexture CreateRenderTarget(int width, int height) {
+        public static GLTexture CreateRenderTarget(int width, int height)
+        {
             TextureFlags flags = TextureFlags.None;
 
             byte[] tempBuffer = new byte[width * height * Bitmap.GetPixelFormatSize(System.Drawing.Imaging.PixelFormat.Format32bppArgb)];
 
-            var tex = CreateAndBindTexture();
+            int tex = CreateAndBindTexture();
             SetTextureParameters();
             GL.TexImage2D(
                 TextureTarget.Texture2D,
@@ -152,24 +171,27 @@ namespace CBRE.Graphics.Helpers {
                 PixelType.UnsignedByte,
                 tempBuffer
                 );
-            var fbo = CreateFrameBuffer();
-            var texobj = new GLTexture(tex, "RENDERTARGET" + LastRenderTargetID.ToString(), flags, fbo) { Width = width, Height = height };
+            int fbo = CreateFrameBuffer();
+            GLTexture texobj = new GLTexture(tex, "RENDERTARGET" + LastRenderTargetID.ToString(), flags, fbo) { Width = width, Height = height };
             Textures.Add("RENDERTARGET" + LastRenderTargetID.ToString(), texobj); LastRenderTargetID++;
             return texobj;
         }
 
-        private static int CreateAndBindTexture() {
-            var tex = GL.GenTexture();
+        private static int CreateAndBindTexture()
+        {
+            int tex = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, tex);
             return tex;
         }
 
-        private static int CreateFrameBuffer() {
-            var fbo = GL.GenFramebuffer();
+        private static int CreateFrameBuffer()
+        {
+            int fbo = GL.GenFramebuffer();
             return fbo;
         }
 
-        private static void SetTextureParameters() {
+        private static void SetTextureParameters()
+        {
             GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)(DisableTextureFiltering ? TextureMinFilter.Linear : TextureMinFilter.LinearMipmapLinear));
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
@@ -182,18 +204,22 @@ namespace CBRE.Graphics.Helpers {
 
         #region Bind
 
-        public static void Bind(string name) {
-            if (!Exists(name)) {
+        public static void Bind(string name)
+        {
+            if (!Exists(name))
+            {
                 throw new Exception("Texture " + name + " doesn't exist");
             }
             Bind(Get(name).Reference);
         }
 
-        public static void Bind(int reference) {
+        public static void Bind(int reference)
+        {
             GL.BindTexture(TextureTarget.Texture2D, reference);
         }
 
-        public static void Unbind() {
+        public static void Unbind()
+        {
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.ActiveTexture(TextureUnit.Texture1);
@@ -201,12 +227,14 @@ namespace CBRE.Graphics.Helpers {
             GL.ActiveTexture(TextureUnit.Texture0);
         }
 
-        public static void SetRenderTarget(GLTexture target) {
+        public static void SetRenderTarget(GLTexture target)
+        {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, target.FrameBufferObject);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, target.Reference, 0);
         }
 
-        public static void ResetRenderTarget() {
+        public static void ResetRenderTarget()
+        {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
@@ -214,11 +242,13 @@ namespace CBRE.Graphics.Helpers {
 
         #region Get
 
-        public static bool Exists(string name) {
+        public static bool Exists(string name)
+        {
             return Textures.ContainsKey(name);
         }
 
-        public static GLTexture Get(string name) {
+        public static GLTexture Get(string name)
+        {
             return Exists(name) ? Textures[name] : null;
         }
 
@@ -226,21 +256,26 @@ namespace CBRE.Graphics.Helpers {
 
         #region Delete
 
-        public static void Delete(string name) {
-            if (Textures.ContainsKey(name)) {
+        public static void Delete(string name)
+        {
+            if (Textures.ContainsKey(name))
+            {
                 DeleteTexture(Get(name).Reference);
                 Textures.Remove(name);
             }
         }
 
-        public static void DeleteAll() {
-            foreach (var e in Textures) {
+        public static void DeleteAll()
+        {
+            foreach (KeyValuePair<string, GLTexture> e in Textures)
+            {
                 DeleteTexture(e.Value.Reference);
             }
             Textures.Clear();
         }
 
-        public static void DeleteTexture(int num) {
+        public static void DeleteTexture(int num)
+        {
             GL.DeleteTexture(num);
         }
 

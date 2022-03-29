@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Transformations;
@@ -11,31 +6,44 @@ using CBRE.Extensions;
 using CBRE.FileSystem;
 using CBRE.Providers.Model;
 using CBRE.Providers.Texture;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 
-namespace CBRE.Providers.Map {
-    public class MSL2Provider : MapProvider {
-        protected override bool IsValidForFileName(string filename) {
+namespace CBRE.Providers.Map
+{
+    public class MSL2Provider : MapProvider
+    {
+        protected override bool IsValidForFileName(string filename)
+        {
             return filename.EndsWith(".msl", StringComparison.OrdinalIgnoreCase);
         }
 
-        class NormalEq : EqualityComparer<CoordinateF> {
-            public override bool Equals(CoordinateF x, CoordinateF y) {
+        class NormalEq : EqualityComparer<CoordinateF>
+        {
+            public override bool Equals(CoordinateF x, CoordinateF y)
+            {
                 return x.Dot(y) >= 0.999f;
             }
 
-            public override int GetHashCode(CoordinateF obj) {
+            public override int GetHashCode(CoordinateF obj)
+            {
                 return obj.GetHashCode();
             }
         }
 
-        protected void SkipMemblock(BinaryReader br) {
+        protected void SkipMemblock(BinaryReader br)
+        {
             UInt32 memblockSize = br.ReadUInt32();
             long startPos = br.BaseStream.Position;
 
             br.BaseStream.Position = startPos + (long)memblockSize;
         }
 
-        protected void ReadMemblockMesh(BinaryReader br, DataStructures.MapObjects.Map map, List<Face> faces = null) {
+        protected void ReadMemblockMesh(BinaryReader br, DataStructures.MapObjects.Map map, List<Face> faces = null)
+        {
             UInt32 memblockSize = br.ReadUInt32();
             long startPos = br.BaseStream.Position;
 
@@ -45,7 +53,8 @@ namespace CBRE.Providers.Map {
 
             List<CoordinateF> vertexPositions = new List<CoordinateF>();
             List<CoordinateF> vertexNormals = new List<CoordinateF>();
-            for (int i = 0; i < dwVertMax; i++) {
+            for (int i = 0; i < dwVertMax; i++)
+            {
                 float x = br.ReadSingle();
                 float z = br.ReadSingle();
                 float y = br.ReadSingle();
@@ -54,16 +63,20 @@ namespace CBRE.Providers.Map {
                 float nz = br.ReadSingle();
                 float ny = br.ReadSingle();
                 vertexNormals.Add(new CoordinateF(nx, ny, nz).Normalise());
-                for (int j = 24; j < dwFVFSize; j += 4) {
+                for (int j = 24; j < dwFVFSize; j += 4)
+                {
                     br.BaseStream.Position += 4;
                 }
             }
 
-            if (faces != null) {
-                foreach (var normal in vertexNormals.Distinct(new NormalEq())) {
+            if (faces != null)
+            {
+                foreach (CoordinateF normal in vertexNormals.Distinct(new NormalEq()))
+                {
                     if (normal.LengthSquared() < 0.01f) { continue; }
                     Face newFace = new Face(map.IDGenerator.GetNextFaceID());
-                    for (int i = 0; i < vertexPositions.Count; i++) {
+                    for (int i = 0; i < vertexPositions.Count; i++)
+                    {
                         if (vertexNormals[i].Dot(normal) < 0.999f) { continue; }
                         if (newFace.Vertices.Any(v => (new CoordinateF(v.Location) - vertexPositions[i]).LengthSquared() < 0.001f)) { continue; }
                         newFace.Vertices.Add(new Vertex(new Coordinate(vertexPositions[i]), newFace));
@@ -74,7 +87,8 @@ namespace CBRE.Providers.Map {
                     Vertex center = newFace.Vertices[0];
                     newFace.Vertices.RemoveAt(0);
 
-                    newFace.Vertices.Sort((v1, v2) => {
+                    newFace.Vertices.Sort((v1, v2) =>
+                    {
                         float dot = normal.Dot(new CoordinateF((v1.Location - center.Location).Cross(v2.Location - center.Location)));
                         if (dot < 0.0f) { return -1; } else if (dot > 0.0f) { return 1; }
                         return 0;
@@ -91,26 +105,34 @@ namespace CBRE.Providers.Map {
             br.BaseStream.Position = startPos + (long)memblockSize;
         }
 
-        protected List<ModelReference> LoadAllModels(IEnumerable<string> modelDirs) {
+        protected List<ModelReference> LoadAllModels(IEnumerable<string> modelDirs)
+        {
             List<ModelReference> models = new List<ModelReference>();
-            foreach (string dir in modelDirs) {
+            foreach (string dir in modelDirs)
+            {
                 string[] files = Directory.GetFiles(dir);
-                foreach (string modelPath in files) {
+                foreach (string modelPath in files)
+                {
                     NativeFile file = null;
-                    if (!string.IsNullOrEmpty(modelPath)) {
+                    if (!string.IsNullOrEmpty(modelPath))
+                    {
                         file = new NativeFile(modelPath);
                     }
-                    if (file == null || !ModelProvider.CanLoad(file)) {
+                    if (file == null || !ModelProvider.CanLoad(file))
+                    {
                         continue;
                     }
 
 #if !DEBUG
-                    try {
+                    try
+                    {
 #endif
-                        var mr = ModelProvider.CreateModelReference(file);
+                        ModelReference mr = ModelProvider.CreateModelReference(file);
                         models.Add(mr);
 #if !DEBUG
-                    } catch (Exception) {
+                    }
+                    catch (Exception)
+                    {
                         // Couldn't load
                         continue;
                     }
@@ -120,7 +142,8 @@ namespace CBRE.Providers.Map {
             return models;
         }
 
-        protected struct SubmeshTextureInfo {
+        protected struct SubmeshTextureInfo
+        {
             public string TextureName;
             public float ScaleU;
             public float ScaleV;
@@ -129,19 +152,22 @@ namespace CBRE.Providers.Map {
             public float Rotation;
         }
 
-        protected class Pair<T1, T2> {
+        protected class Pair<T1, T2>
+        {
             public T1 Item1 { get; set; }
             public T2 Item2 { get; set; }
 
-            public Pair(T1 item1, T2 item2) {
+            public Pair(T1 item1, T2 item2)
+            {
                 Item1 = item1;
                 Item2 = item2;
             }
         }
 
-        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> modelDirs, out Image[] lightmaps) {
+        protected override DataStructures.MapObjects.Map GetFromStream(Stream stream, IEnumerable<string> modelDirs, out Image[] lightmaps)
+        {
             lightmaps = null;
-            var map = new DataStructures.MapObjects.Map();
+            DataStructures.MapObjects.Map map = new DataStructures.MapObjects.Map();
             map.CordonBounds = new Box(Coordinate.One * -16384, Coordinate.One * 16384);
             BinaryReader br = new BinaryReader(stream);
 
@@ -149,32 +175,38 @@ namespace CBRE.Providers.Map {
 
             //header
             bool hasLightmap = Math.Abs(br.ReadSingle()) > 0.01f;
-            if (hasLightmap) {
+            if (hasLightmap)
+            {
                 UInt32 lightmapSize = br.ReadUInt32();
                 stream.Position += lightmapSize;
             }
             int entityCount = (int)br.ReadSingle() - 2;
-            for (int i = 0; i < entityCount; i++) {
+            for (int i = 0; i < entityCount; i++)
+            {
                 int meshCount = (int)br.ReadSingle();
                 List<long> memblockLocations = new List<long>();
-                for (int j = 0; j < meshCount; j++) {
+                for (int j = 0; j < meshCount; j++)
+                {
                     stream.Position += 4;
                     memblockLocations.Add(stream.Position);
                     SkipMemblock(br);
                 }
 
                 bool isBrush = Math.Abs(br.ReadSingle()) > 0.01f;
-                if (isBrush) {
+                if (isBrush)
+                {
                     Dictionary<int, List<Face>> faces = new Dictionary<int, List<Face>>();
                     long returnPosition = stream.Position;
-                    for (int j = 0; j < meshCount; j++) {
+                    for (int j = 0; j < meshCount; j++)
+                    {
                         stream.Position = memblockLocations[j];
                         faces.Add(j, new List<Face>());
                         ReadMemblockMesh(br, map, faces[j]);
                     }
                     stream.Position = returnPosition;
                     SkipMemblock(br);
-                    for (int j = 0; j < 2; j++) {
+                    for (int j = 0; j < 2; j++)
+                    {
                         stream.Position += 4;
                     }
 
@@ -186,21 +218,25 @@ namespace CBRE.Providers.Map {
                     float zScale = br.ReadSingle();
                     float yScale = br.ReadSingle();
 
-                    for (int j = 8; j < 25; j++) {
+                    for (int j = 8; j < 25; j++)
+                    {
                         stream.Position += 4;
                     }
                     List<SubmeshTextureInfo> textures = new List<SubmeshTextureInfo>();
-                    for (int j = 0; j < meshCount; j++) {
+                    for (int j = 0; j < meshCount; j++)
+                    {
                         SubmeshTextureInfo submeshTextureInfo = new SubmeshTextureInfo();
 
                         submeshTextureInfo.TextureName = System.IO.Path.GetFileNameWithoutExtension(br.ReadLine());
                         float flags = br.ReadSingle();
                         bool faceIsHidden = Math.Abs(flags - 1) < 0.01f;
                         bool faceIsLit = Math.Abs(flags - 800) < 0.01f;
-                        if (faceIsLit) {
+                        if (faceIsLit)
+                        {
                             br.ReadSingle();
                         }
-                        for (int k = 0; k < 4; k++) {
+                        for (int k = 0; k < 4; k++)
+                        {
                             stream.Position += 4;
                         }
 
@@ -210,16 +246,20 @@ namespace CBRE.Providers.Map {
                         submeshTextureInfo.ShiftV = br.ReadSingle();
                         submeshTextureInfo.Rotation = br.ReadSingle();
 
-                        if (faceIsHidden) {
+                        if (faceIsHidden)
+                        {
                             submeshTextureInfo.TextureName = "tooltextures/remove_face";
                         }
                         textures.Add(submeshTextureInfo);
                     }
 
-                    if (faces.Any()) {
+                    if (faces.Any())
+                    {
                         Solid newSolid = new Solid(map.IDGenerator.GetNextObjectID());
-                        foreach (int key in faces.Keys) {
-                            foreach (Face face in faces[key]) {
+                        foreach (int key in faces.Keys)
+                        {
+                            foreach (Face face in faces[key])
+                            {
                                 face.Parent = newSolid;
                                 newSolid.Faces.Add(face);
                             }
@@ -243,8 +283,10 @@ namespace CBRE.Providers.Map {
                             (decimal)zTranslate)), TransformFlags.None);
                         newSolid.UpdateBoundingBox();
 
-                        foreach (int key in faces.Keys) {
-                            foreach (Face face in faces[key]) {
+                        foreach (int key in faces.Keys)
+                        {
+                            foreach (Face face in faces[key])
+                            {
                                 face.Texture.Name = textures[key].TextureName;
                                 face.AlignTextureToWorld();
                                 face.Texture.XScale = (decimal)textures[key].ScaleU * 0.25m;
@@ -255,10 +297,13 @@ namespace CBRE.Providers.Map {
                             }
                         }
                     }
-                } else {
+                }
+                else
+                {
                     int entitySubType = (int)br.ReadSingle();
 
-                    for (int j = 1; j < 2; j++) {
+                    for (int j = 1; j < 2; j++)
+                    {
                         stream.Position += 4;
                     }
                     float xTranslate = br.ReadSingle();
@@ -267,15 +312,18 @@ namespace CBRE.Providers.Map {
                     float xScale = br.ReadSingle();
                     float zScale = br.ReadSingle();
                     float yScale = br.ReadSingle();
-                    if (Math.Abs(entitySubType - 3.0f) < 0.01f) {
-                        for (int j = 8; j < 35; j++) {
+                    if (Math.Abs(entitySubType - 3.0f) < 0.01f)
+                    {
+                        for (int j = 8; j < 35; j++)
+                        {
                             stream.Position += 4;
                         }
                         string entityName = br.ReadLine();
                         string entityIcon = br.ReadLine();
                         int propertyCount = (int)br.ReadSingle() + 1;
                         Dictionary<string, string> properties = new Dictionary<string, string>();
-                        for (int j = 0; j < propertyCount; j++) {
+                        for (int j = 0; j < propertyCount; j++)
+                        {
                             string propertyName = br.ReadLine().ToLowerInvariant();
                             string propertyValue = br.ReadLine();
                             properties.Add(propertyName, propertyValue);
@@ -284,7 +332,8 @@ namespace CBRE.Providers.Map {
                         Entity entity = new Entity(map.IDGenerator.GetNextObjectID());
                         entity.Colour = Colour.GetDefaultEntityColour();
                         Property newProperty = null;
-                        switch (entityName.ToLowerInvariant()) {
+                        switch (entityName.ToLowerInvariant())
+                        {
                             case "pointlight":
                                 entity.ClassName = "light";
                                 entity.EntityData.Name = "light";
@@ -316,7 +365,8 @@ namespace CBRE.Providers.Map {
                                 newProperty = new Property();
                                 newProperty.Key = "innerconeangle";
                                 newProperty.Value = "45";
-                                if (decimal.TryParse(properties["innerang"], out decimal innerAngle)) {
+                                if (decimal.TryParse(properties["innerang"], out decimal innerAngle))
+                                {
                                     newProperty.Value = (innerAngle * 0.5m).ToString();
                                 }
                                 entity.EntityData.Properties.Add(newProperty);
@@ -324,7 +374,8 @@ namespace CBRE.Providers.Map {
                                 newProperty = new Property();
                                 newProperty.Key = "outerconeangle";
                                 newProperty.Value = "90";
-                                if (decimal.TryParse(properties["outerang"], out decimal outerAngle)) {
+                                if (decimal.TryParse(properties["outerang"], out decimal outerAngle))
+                                {
                                     newProperty.Value = (outerAngle * 0.5m).ToString();
                                 }
                                 entity.EntityData.Properties.Add(newProperty);
@@ -335,12 +386,14 @@ namespace CBRE.Providers.Map {
                                 string[] dirParts = properties["direction"].Split(',');
                                 if (decimal.TryParse(dirParts[0], out decimal dirX) &&
                                     decimal.TryParse(dirParts[1], out decimal dirY) &&
-                                    decimal.TryParse(dirParts[2], out decimal dirZ)) {
+                                    decimal.TryParse(dirParts[2], out decimal dirZ))
+                                {
                                     Coordinate dir = new Coordinate(dirX, dirY, dirZ).Normalise();
                                     decimal pitch = DMath.RadiansToDegrees(DMath.Asin(-dir.Y));
                                     dir.Y = 0;
                                     decimal yaw = 0m;
-                                    if (dir.LengthSquared() > 0.01m) {
+                                    if (dir.LengthSquared() > 0.01m)
+                                    {
                                         dir = dir.Normalise();
                                         yaw = DMath.RadiansToDegrees(DMath.Atan2(-dir.X, dir.Z));
                                     }
@@ -353,7 +406,8 @@ namespace CBRE.Providers.Map {
                                 entity.ClassName = entityName;
                                 entity.EntityData.Name = entityName;
 
-                                foreach (var key in properties.Keys) {
+                                foreach (string key in properties.Keys)
+                                {
                                     newProperty = new Property();
                                     newProperty.Key = key;
                                     newProperty.Value = properties[key];
@@ -364,15 +418,19 @@ namespace CBRE.Providers.Map {
 
                         entity.Origin = new Coordinate((decimal)xTranslate, (decimal)yTranslate, (decimal)zTranslate);
                         entity.SetParent(map.WorldSpawn);
-                    } else if (Math.Abs(entitySubType - 2.0f) < 0.01f) {
-                        if (models == null) {
+                    }
+                    else if (Math.Abs(entitySubType - 2.0f) < 0.01f)
+                    {
+                        if (models == null)
+                        {
                             models = LoadAllModels(modelDirs);
                         }
                         ModelReference model = null;
                         Coordinate angles = null;
                         Coordinate scale = null;
                         long returnPosition = stream.Position;
-                        for (int j = 0; j < meshCount; j++) {
+                        for (int j = 0; j < meshCount; j++)
+                        {
                             stream.Position = memblockLocations[j];
 
                             UInt32 memblockSize = br.ReadUInt32();
@@ -380,15 +438,18 @@ namespace CBRE.Providers.Map {
                             UInt32 dwFVFSize = br.ReadUInt32();
                             UInt32 dwVertMax = br.ReadUInt32();
 
-                            for (int k = 0; k < models.Count; k++) {
+                            for (int k = 0; k < models.Count; k++)
+                            {
                                 DataStructures.Models.Mesh currMesh = models[k].Model.BodyParts[0].Meshes.Values.First()[0];
 
-                                if (dwVertMax == currMesh.Vertices.Count) {
+                                if (dwVertMax == currMesh.Vertices.Count)
+                                {
                                     List<Pair<Coordinate, Coordinate>> points = new List<Pair<Coordinate, Coordinate>>();
                                     List<Coordinate> loadedPoints = new List<Coordinate>();
                                     Coordinate loadedCenter = new Coordinate(0, 0, 0);
                                     Coordinate knownCenter = new Coordinate(0, 0, 0);
-                                    for (int l = 0; l < dwVertMax; l++) {
+                                    for (int l = 0; l < dwVertMax; l++)
+                                    {
                                         float x = br.ReadSingle();
                                         float z = br.ReadSingle();
                                         float y = br.ReadSingle();
@@ -396,14 +457,17 @@ namespace CBRE.Providers.Map {
                                         loadedPoints.Add(point);
                                         loadedCenter += point;
                                         knownCenter += new Coordinate(currMesh.Vertices[l].Location);
-                                        for (int m = 12; m < dwFVFSize; m += 4) {
+                                        for (int m = 12; m < dwFVFSize; m += 4)
+                                        {
                                             stream.Position += 4;
                                         }
 
-                                        if (points.Count < 3) {
+                                        if (points.Count < 3)
+                                        {
                                             int nativeIndex = (l / 3) * 3 + ((l % 3) + 1) % 3;
                                             Coordinate vertexLoc = new Coordinate(currMesh.Vertices[nativeIndex].Location);
-                                            if (!points.Any(p => Math.Abs(p.Item1.Normalise().Dot(vertexLoc.Normalise())) > 0.95m)) {
+                                            if (!points.Any(p => Math.Abs(p.Item1.Normalise().Dot(vertexLoc.Normalise())) > 0.95m))
+                                            {
                                                 points.Add(new Pair<Coordinate, Coordinate>(vertexLoc, point));
                                             }
                                         }
@@ -412,10 +476,12 @@ namespace CBRE.Providers.Map {
                                     loadedCenter /= dwVertMax;
                                     knownCenter /= dwVertMax;
 
-                                    if (points.Count >= 3) {
+                                    if (points.Count >= 3)
+                                    {
                                         model = models[k];
 
-                                        for (int l = 0; l < 3; l++) {
+                                        for (int l = 0; l < 3; l++)
+                                        {
                                             points[l].Item1 -= knownCenter; points[l].Item1 = points[l].Item1.Normalise();
                                             points[l].Item2 -= loadedCenter; points[l].Item2 = points[l].Item2.Normalise();
                                         }
@@ -453,7 +519,8 @@ namespace CBRE.Providers.Map {
                                             loadedPoints.Select(p => p.Y).Max(),
                                             loadedPoints.Select(p => p.Z).Max()) - unTransformedMin;
 
-                                        Coordinate propScale(Coordinate p) {
+                                        Coordinate propScale(Coordinate p)
+                                        {
                                             Coordinate retVal = p.Clone();
                                             retVal.X *= (decimal)xScale / unTransformedBounds.X;
                                             retVal.Y *= (decimal)yScale / unTransformedBounds.Y;
@@ -487,13 +554,16 @@ namespace CBRE.Providers.Map {
                             }
                         }
                         stream.Position = returnPosition;
-                        for (int j = 8; j < 24; j++) {
+                        for (int j = 8; j < 24; j++)
+                        {
                             stream.Position += 4;
                         }
                         int materialCount = (int)br.ReadSingle() + 1;
-                        for (int j = 0; j < materialCount; j++) {
+                        for (int j = 0; j < materialCount; j++)
+                        {
                             string materialName = br.ReadLine();
-                            for (int k = 0; k < 10; k++) {
+                            for (int k = 0; k < 10; k++)
+                            {
                                 stream.Position += 4;
                             }
                         }
@@ -505,20 +575,23 @@ namespace CBRE.Providers.Map {
 
                         Property newProperty;
 
-                        if (model != null) {
+                        if (model != null)
+                        {
                             newProperty = new Property();
                             newProperty.Key = "file";
                             newProperty.Value = System.IO.Path.GetFileNameWithoutExtension(model.Path);
                             entity.EntityData.Properties.Add(newProperty);
 
-                            if (angles != null) {
+                            if (angles != null)
+                            {
                                 newProperty = new Property();
                                 newProperty.Key = "angles";
                                 newProperty.Value = angles.ToDataString();
                                 entity.EntityData.Properties.Add(newProperty);
                             }
 
-                            if (scale != null) {
+                            if (scale != null)
+                            {
                                 newProperty = new Property();
                                 newProperty.Key = "scale";
                                 newProperty.Value = scale.ToDataString();
@@ -532,18 +605,21 @@ namespace CBRE.Providers.Map {
                 }
             }
 
-            if (models != null) {
+            if (models != null)
+            {
                 models.ForEach(m => ModelProvider.DeleteModelReference(m));
             }
 
             return map;
         }
 
-        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData, TextureCollection textureCollection) {
+        protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map, DataStructures.GameData.GameData gameData, TextureCollection textureCollection)
+        {
             throw new NotImplementedException("don't save to msl, ew");
         }
 
-        protected override IEnumerable<MapFeature> GetFormatFeatures() {
+        protected override IEnumerable<MapFeature> GetFormatFeatures()
+        {
             return new[]
             {
                 MapFeature.Worldspawn,

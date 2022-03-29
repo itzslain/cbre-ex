@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CBRE.Common.Extensions {
-    public static class StringExtensions {
+namespace CBRE.Common.Extensions
+{
+    public static class StringExtensions
+    {
         /// <summary>
         /// Split a string, but don't split within quoted values.
         /// </summary>
@@ -10,19 +12,26 @@ namespace CBRE.Common.Extensions {
         /// <param name="splitTest">Optional split test. Defaults to whitespace test.</param>
         /// <param name="quoteChar">Optional quote character. Defaults to double quote.</param>
         /// <returns>An array of split values</returns>
-        public static string[] SplitWithQuotes(this string line, Func<char, bool> splitTest = null, char quoteChar = '"') {
+        public static string[] SplitWithQuotes(this string line, Func<char, bool> splitTest = null, char quoteChar = '"')
+        {
             if (splitTest == null) splitTest = Char.IsWhiteSpace;
-            var result = new List<string>();
-            var index = 0;
-            var inQuote = false;
-            for (var i = 0; i < line.Length; i++) {
-                var c = line[i];
-                var isSplitter = splitTest(c);
-                if (isSplitter && index == i) {
+            List<string> result = new List<string>();
+            int index = 0;
+            bool inQuote = false;
+            for (int i = 0; i < line.Length; i++)
+            {
+                char c = line[i];
+                bool isSplitter = splitTest(c);
+                if (isSplitter && index == i)
+                {
                     index = i + 1;
-                } else if (c == quoteChar) {
+                }
+                else if (c == quoteChar)
+                {
                     inQuote = !inQuote;
-                } else if (isSplitter && !inQuote) {
+                }
+                else if (isSplitter && !inQuote)
+                {
                     result.Add(line.Substring(index, i - index).Trim(quoteChar));
                     index = i + 1;
                 }

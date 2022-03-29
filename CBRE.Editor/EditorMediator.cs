@@ -1,5 +1,7 @@
-﻿namespace CBRE.Editor {
-    public enum EditorMediator {
+﻿namespace CBRE.Editor
+{
+    public enum EditorMediator
+    {
         // Settings messages
         SettingsChanged,
         OpenSettings,

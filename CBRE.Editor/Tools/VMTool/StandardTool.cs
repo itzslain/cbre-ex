@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using CBRE.Common.Mediator;
+﻿using CBRE.Common.Mediator;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Settings;
 using CBRE.UI;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
-namespace CBRE.Editor.Tools.VMTool {
-    public class StandardTool : VMSubTool {
-        private enum VMState {
+namespace CBRE.Editor.Tools.VMTool
+{
+    public class StandardTool : VMSubTool
+    {
+        private enum VMState
+        {
             None,
             Down,
             Moving
@@ -17,41 +20,46 @@ namespace CBRE.Editor.Tools.VMTool {
 
         private VMState _state;
 
-        public StandardTool(VMTool mainTool) : base(mainTool) {
-            var sc = new StandardControl();
+        public StandardTool(VMTool mainTool) : base(mainTool)
+        {
+            StandardControl sc = new StandardControl();
             sc.Merge += Merge;
             sc.Split += Split;
             Control = sc;
         }
 
-        private bool AutomaticallyMerge() {
+        private bool AutomaticallyMerge()
+        {
             return ((StandardControl)Control).AutomaticallyMerge;
         }
 
-        private void UpdateSplitEnabled() {
+        private void UpdateSplitEnabled()
+        {
             ((StandardControl)Control).SplitEnabled = CanSplit();
         }
 
-        private bool CanSplit() {
+        private bool CanSplit()
+        {
             return GetSplitFace() != null;
         }
 
-        private Face GetSplitFace() {
+        private Face GetSplitFace()
+        {
             if (MainTool.Points == null) return null;
 
-            var selected = MainTool.Points.Where(x => x.IsSelected).ToList();
+            List<VMPoint> selected = MainTool.Points.Where(x => x.IsSelected).ToList();
 
             // Must have two points selected
             if (selected.Count != 2) return null;
 
             // Selection must share a face
-            var commonFace = selected[0].GetAdjacentFaces().Intersect(selected[1].GetAdjacentFaces()).ToList();
+            List<Face> commonFace = selected[0].GetAdjacentFaces().Intersect(selected[1].GetAdjacentFaces()).ToList();
             if (commonFace.Count != 1) return null;
 
-            var face = commonFace[0];
-            var s = selected[0].Coordinate;
-            var e = selected[1].Coordinate;
-            var edges = face.GetEdges();
+            Face face = commonFace[0];
+            Coordinate s = selected[0].Coordinate;
+            Coordinate e = selected[1].Coordinate;
+            IEnumerable<Line> edges = face.GetEdges();
 
             // The points cannot be adjacent
             return edges.Any(x => (x.Start == s && x.End == e) || (x.Start == e && x.End == s))
@@ -59,25 +67,27 @@ namespace CBRE.Editor.Tools.VMTool {
                        : face;
         }
 
-        private void Merge(object sender) {
+        private void Merge(object sender)
+        {
             CheckMergedVertices();
         }
 
-        private void Split(object sender) {
-            var face = GetSplitFace();
+        private void Split(object sender)
+        {
+            Face face = GetSplitFace();
             if (face == null) return;
 
-            var solid = face.Parent;
+            Solid solid = face.Parent;
 
-            var sel = MainTool.Points.Where(x => x.IsSelected).ToList();
-            var p1 = sel[0];
-            var p2 = sel[1];
+            List<VMPoint> sel = MainTool.Points.Where(x => x.IsSelected).ToList();
+            VMPoint p1 = sel[0];
+            VMPoint p2 = sel[1];
 
             if (p1.IsMidPoint) AddAdjacentPoint(face, p1);
             if (p2.IsMidPoint) AddAdjacentPoint(face, p2);
 
-            var polygon = new Polygon(face.Vertices.Select(x => x.Location));
-            var clip = new Plane(p1.Coordinate, p2.Coordinate, p1.Coordinate + face.Plane.Normal * 10);
+            Polygon polygon = new Polygon(face.Vertices.Select(x => x.Location));
+            Plane clip = new Plane(p1.Coordinate, p2.Coordinate, p1.Coordinate + face.Plane.Normal * 10);
             Polygon back, front;
             polygon.Split(clip, out back, out front);
             if (back == null || front == null) return;
@@ -93,15 +103,19 @@ namespace CBRE.Editor.Tools.VMTool {
             MainTool.SetDirty(true, true);
         }
 
-        private void VMSplitFace() {
-            if (CanSplit()) {
+        private void VMSplitFace()
+        {
+            if (CanSplit())
+            {
                 Split(null);
             }
         }
 
-        private void CreateFace(Polygon polygon, Solid parent, Face original) {
-            var verts = polygon.Vertices;
-            var f = new Face(Document.Map.IDGenerator.GetNextFaceID()) {
+        private void CreateFace(Polygon polygon, Solid parent, Face original)
+        {
+            List<Coordinate> verts = polygon.Vertices;
+            Face f = new Face(Document.Map.IDGenerator.GetNextFaceID())
+            {
                 Parent = parent,
                 Plane = new Plane(verts[0], verts[1], verts[2]),
                 Colour = parent.Colour,
@@ -113,20 +127,25 @@ namespace CBRE.Editor.Tools.VMTool {
             parent.Faces.Add(f);
         }
 
-        private void AddAdjacentPoint(Face face, VMPoint point) {
-            var solid = face.Parent;
-            var s = point.MidpointStart.Coordinate;
-            var e = point.MidpointEnd.Coordinate;
+        private void AddAdjacentPoint(Face face, VMPoint point)
+        {
+            Solid solid = face.Parent;
+            Coordinate s = point.MidpointStart.Coordinate;
+            Coordinate e = point.MidpointEnd.Coordinate;
 
-            foreach (var f in solid.Faces.Where(x => x != face)) {
-                foreach (var edge in f.GetEdges()) {
-                    if (edge.Start == s && edge.End == e) {
-                        var idx = f.Vertices.FindIndex(x => x.Location == e);
+            foreach (Face f in solid.Faces.Where(x => x != face))
+            {
+                foreach (Line edge in f.GetEdges())
+                {
+                    if (edge.Start == s && edge.End == e)
+                    {
+                        int idx = f.Vertices.FindIndex(x => x.Location == e);
                         f.Vertices.Insert(idx, new Vertex(point.Coordinate, f));
                         return;
                     }
-                    if (edge.Start == e && edge.End == s) {
-                        var idx = f.Vertices.FindIndex(x => x.Location == s);
+                    if (edge.Start == e && edge.End == s)
+                    {
+                        int idx = f.Vertices.FindIndex(x => x.Location == s);
                         f.Vertices.Insert(idx, new Vertex(point.Coordinate, f));
                         return;
                     }
@@ -134,11 +153,13 @@ namespace CBRE.Editor.Tools.VMTool {
             }
         }
 
-        public override string GetName() {
+        public override string GetName()
+        {
             return "Standard";
         }
 
-        public override string GetContextualHelp() {
+        public override string GetContextualHelp()
+        {
             return
 @"*Click* a vertex to select all points under the cursor.
  - Hold *control* to select multiple points.
@@ -148,42 +169,51 @@ Drag vertices to move them around.
 Select two (non-adjacent) points on a face to enable splitting.";
         }
 
-        public override void ToolSelected(bool preventHistory) {
+        public override void ToolSelected(bool preventHistory)
+        {
             _state = VMState.None;
             UpdateSplitEnabled();
             Mediator.Subscribe(HotkeysMediator.VMSplitFace, this);
         }
 
-        public override void ToolDeselected(bool preventHistory) {
+        public override void ToolDeselected(bool preventHistory)
+        {
             _state = VMState.None;
             Mediator.UnsubscribeAll(this);
         }
 
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport) {
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
+        {
             return MainTool.GetVerticesAtPoint(x, y, viewport);
         }
 
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport) {
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
+        {
             return MainTool.GetVerticesAtPoint(x, y, viewport);
         }
 
-        public override void DragStart(List<VMPoint> clickedPoints) {
+        public override void DragStart(List<VMPoint> clickedPoints)
+        {
             _state = VMState.Down;
             Editor.Instance.CaptureAltPresses = true;
         }
 
-        public override void DragMove(Coordinate distance) {
+        public override void DragMove(Coordinate distance)
+        {
             _state = VMState.Moving;
             // Move each selected point by the delta value
-            foreach (var p in MainTool.GetSelectedPoints()) {
+            foreach (VMPoint p in MainTool.GetSelectedPoints())
+            {
                 p.Move(distance);
             }
 
             //MainTool.SetDirty(false, false);
         }
 
-        public override void DragEnd() {
-            if (_state == VMState.Moving) {
+        public override void DragEnd()
+        {
+            if (_state == VMState.Moving)
+            {
                 if (AutomaticallyMerge()) CheckMergedVertices();
                 else if (CanMerge() && ConfirmMerge()) CheckMergedVertices();
                 else MainTool.SetDirty(true, true);
@@ -192,21 +222,27 @@ Select two (non-adjacent) points on a face to enable splitting.";
             Editor.Instance.CaptureAltPresses = false;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
             // Not used
         }
 
-        private bool CanMerge() {
-            foreach (var solid in MainTool.GetCopies()) {
-                foreach (var face in solid.Faces) {
-                    for (var i = 0; i < face.Vertices.Count; i++) {
-                        var j = (i + 1) % face.Vertices.Count;
-                        var v1 = face.Vertices[i];
-                        var v2 = face.Vertices[j];
+        private bool CanMerge()
+        {
+            foreach (Solid solid in MainTool.GetCopies())
+            {
+                foreach (Face face in solid.Faces)
+                {
+                    for (int i = 0; i < face.Vertices.Count; i++)
+                    {
+                        int j = (i + 1) % face.Vertices.Count;
+                        Vertex v1 = face.Vertices[i];
+                        Vertex v2 = face.Vertices[j];
 
                         if (!v1.Location.EquivalentTo(v2.Location, 0.01m)) continue;
                         return true;
@@ -216,21 +252,26 @@ Select two (non-adjacent) points on a face to enable splitting.";
             return false;
         }
 
-        private bool ConfirmMerge() {
+        private bool ConfirmMerge()
+        {
             return MessageBox.Show("Merge vertices?", "Overlapping vertices detected", MessageBoxButtons.YesNo) == DialogResult.Yes;
         }
 
-        private void CheckMergedVertices() {
-            var mergedVertices = 0;
-            var removedFaces = 0;
-            foreach (var solid in MainTool.GetCopies()) {
-                foreach (var face in solid.Faces) {
+        private void CheckMergedVertices()
+        {
+            int mergedVertices = 0;
+            int removedFaces = 0;
+            foreach (Solid solid in MainTool.GetCopies())
+            {
+                foreach (Face face in solid.Faces)
+                {
                     // Remove adjacent duplicates
-                    for (var i = 0; i < face.Vertices.Count; i++) {
+                    for (int i = 0; i < face.Vertices.Count; i++)
+                    {
                         // Loop through to the start to cater for when the first & last vertices are equal
-                        var j = (i + 1) % face.Vertices.Count;
-                        var v1 = face.Vertices[i];
-                        var v2 = face.Vertices[j];
+                        int j = (i + 1) % face.Vertices.Count;
+                        Vertex v1 = face.Vertices[i];
+                        Vertex v2 = face.Vertices[j];
 
                         if (!v1.Location.EquivalentTo(v2.Location, 0.01m)) continue;
 
@@ -251,84 +292,104 @@ Select two (non-adjacent) points on a face to enable splitting.";
             MainTool.SetDirty(true, true);
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e) {
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e) {
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e) {
-            var nudge = GetNudgeValue(e.KeyCode);
-            var vp = viewport as Viewport2D;
-            var sel = MainTool.GetSelectedPoints();
-            if (nudge != null && vp != null && _state == VMState.None && sel.Any()) {
-                var translate = vp.Expand(nudge);
-                foreach (var p in sel) {
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        {
+            Coordinate nudge = GetNudgeValue(e.KeyCode);
+            Viewport2D vp = viewport as Viewport2D;
+            List<VMPoint> sel = MainTool.GetSelectedPoints();
+            if (nudge != null && vp != null && _state == VMState.None && sel.Any())
+            {
+                Coordinate translate = vp.Expand(nudge);
+                foreach (VMPoint p in sel)
+                {
                     p.Move(translate);
                 }
                 CheckMergedVertices();
             }
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e) {
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        {
 
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) {
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        {
 
         }
 
-        public override void Render(ViewportBase viewport) {
+        public override void Render(ViewportBase viewport)
+        {
 
         }
 
-        public override void Render2D(Viewport2D viewport) {
+        public override void Render2D(Viewport2D viewport)
+        {
 
         }
 
-        public override void Render3D(Viewport3D viewport) {
+        public override void Render3D(Viewport3D viewport)
+        {
 
         }
 
-        public override void SelectionChanged() {
+        public override void SelectionChanged()
+        {
             UpdateSplitEnabled();
         }
 
-        public override bool ShouldDeselect(List<VMPoint> vtxs) {
+        public override bool ShouldDeselect(List<VMPoint> vtxs)
+        {
             return true;
         }
 
-        public override bool NoSelection() {
+        public override bool NoSelection()
+        {
             return false;
         }
 
-        public override bool No3DSelection() {
+        public override bool No3DSelection()
+        {
             return false;
         }
 
-        public override bool DrawVertices() {
+        public override bool DrawVertices()
+        {
             return true;
         }
     }

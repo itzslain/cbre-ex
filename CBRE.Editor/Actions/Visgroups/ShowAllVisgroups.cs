@@ -1,23 +1,27 @@
-using System.Collections.Generic;
-using System.Linq;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CBRE.Editor.Actions.Visgroups {
-    public class ShowAllVisgroups : IAction {
+namespace CBRE.Editor.Actions.Visgroups
+{
+    public class ShowAllVisgroups : IAction
+    {
         public bool SkipInStack { get { return CBRE.Settings.Select.SkipVisibilityInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
         private List<MapObject> _shown;
         private List<int> _hiddenGroups;
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _shown = null;
             _hiddenGroups = null;
         }
 
-        public void Reverse(Document document) {
+        public void Reverse(Document document)
+        {
             _shown.ForEach(x => x.IsVisgroupHidden = true);
             _hiddenGroups.Select(x => document.Map.Visgroups.FirstOrDefault(v => v.ID == x))
                 .Where(x => x != null).ToList()
@@ -29,7 +33,8 @@ namespace CBRE.Editor.Actions.Visgroups {
             _shown = null;
         }
 
-        public void Perform(Document document) {
+        public void Perform(Document document)
+        {
             _hiddenGroups = document.Map.Visgroups.Where(x => !x.Visible).Select(x => x.ID).ToList();
             _shown = document.Map.WorldSpawn.FindAll()
                 .Where(x => x.IsVisgroupHidden).ToList();

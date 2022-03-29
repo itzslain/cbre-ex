@@ -1,9 +1,11 @@
-﻿using System;
+﻿using CBRE.Providers;
+using System;
 using System.Collections.Generic;
-using CBRE.Providers;
 
-namespace CBRE.Settings.Models {
-    public class Build {
+namespace CBRE.Settings.Models
+{
+    public class Build
+    {
         public int ID { get; set; }
         public string Name { get; set; }
         public Engine Engine { get; set; }
@@ -30,11 +32,13 @@ namespace CBRE.Settings.Models {
         public bool CopyLog { get; set; }
         public bool CopyErr { get; set; }
 
-        public Build() {
+        public Build()
+        {
             Profiles = new List<BuildProfile>();
         }
 
-        public void Read(GenericStructure gs) {
+        public void Read(GenericStructure gs)
+        {
             ID = gs.PropertyInteger("ID");
             Name = gs["Name"];
             Specification = gs["Specification"];
@@ -60,14 +64,16 @@ namespace CBRE.Settings.Models {
             CopyLog = gs.PropertyBoolean("CopyLog");
             CopyErr = gs.PropertyBoolean("CopyErr");
 
-            foreach (var prof in gs.GetChildren("Profile")) {
-                var bp = new BuildProfile();
+            foreach (GenericStructure prof in gs.GetChildren("Profile"))
+            {
+                BuildProfile bp = new BuildProfile();
                 bp.Read(prof);
                 Profiles.Add(bp);
             }
         }
 
-        public void Write(GenericStructure gs) {
+        public void Write(GenericStructure gs)
+        {
             gs["ID"] = ID.ToString();
             gs["Name"] = Name;
             gs["Specification"] = Specification;
@@ -93,8 +99,9 @@ namespace CBRE.Settings.Models {
             gs["CopyLog"] = CopyLog.ToString();
             gs["CopyErr"] = CopyErr.ToString();
 
-            foreach (var bp in Profiles) {
-                var prof = new GenericStructure("Profile");
+            foreach (BuildProfile bp in Profiles)
+            {
+                GenericStructure prof = new GenericStructure("Profile");
                 bp.Write(prof);
                 gs.Children.Add(prof);
             }

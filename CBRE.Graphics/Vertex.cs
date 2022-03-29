@@ -1,8 +1,10 @@
-﻿using System.Drawing;
-using OpenTK;
+﻿using OpenTK;
+using System.Drawing;
 
-namespace CBRE.Graphics {
-    public struct Vertex {
+namespace CBRE.Graphics
+{
+    public struct Vertex
+    {
         public Color Color;
         public Vector2d TexCoord;
         public Vector2d LightmapCoord;

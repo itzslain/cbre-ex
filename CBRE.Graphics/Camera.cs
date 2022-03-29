@@ -1,116 +1,132 @@
-﻿using System;
-using CBRE.Graphics.Helpers;
+﻿using CBRE.Graphics.Helpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using System;
 
-namespace CBRE.Graphics {
-    public class Camera {
+namespace CBRE.Graphics
+{
+    public class Camera
+    {
         public Vector3 LookAt { get; set; }
         public Vector3 Location { get; set; }
         public int FOV { get; set; }
         public int ClipDistance { get; set; }
 
-        public Camera() {
+        public Camera()
+        {
             LookAt = new Vector3(1, 0, 0);
             Location = new Vector3(0, 0, 0);
             FOV = 60;
             ClipDistance = 4000;
         }
 
-        public void Position() {
-            var mode = Matrix.CurrentMode;
+        public void Position()
+        {
+            MatrixMode mode = Matrix.CurrentMode;
             Matrix.Set(MatrixMode.Modelview);
             Matrix4 modelview = Matrix4.LookAt(Location, LookAt, Vector3.UnitZ);
             GL.LoadMatrix(ref modelview);
             Matrix.Set(mode);
         }
 
-        public decimal GetRotation() {
-            var temp = (LookAt - Location);
+        public decimal GetRotation()
+        {
+            Vector3 temp = (LookAt - Location);
             temp.Normalize();
-            var rot = Math.Atan2(temp.Y, temp.X);
+            double rot = Math.Atan2(temp.Y, temp.X);
             if (rot < 0) rot += 2 * Math.PI;
             if (rot > 2 * Math.PI) rot = rot % (2 * Math.PI);
             return (decimal)rot;
         }
 
-        public void SetRotation(decimal rotation) {
-            var temp = (LookAt - Location);
+        public void SetRotation(decimal rotation)
+        {
+            Vector3 temp = (LookAt - Location);
             temp.Normalize();
-            var e = GetElevation();
-            var x = Math.Cos((double)rotation) * Math.Sin((double)e);
-            var y = Math.Sin((double)rotation) * Math.Sin((double)e);
+            decimal e = GetElevation();
+            double x = Math.Cos((double)rotation) * Math.Sin((double)e);
+            double y = Math.Sin((double)rotation) * Math.Sin((double)e);
             LookAt = new Vector3((float)x + Location.X, (float)y + Location.Y, temp.Z + Location.Z);
         }
 
-        public decimal GetElevation() {
-            var temp = (LookAt - Location);
+        public decimal GetElevation()
+        {
+            Vector3 temp = (LookAt - Location);
             temp.Normalize();
-            var elev = Math.Acos(temp.Z);
+            double elev = Math.Acos(temp.Z);
             return (decimal)elev;
         }
 
-        public void SetElevation(decimal elevation) {
+        public void SetElevation(decimal elevation)
+        {
             if (elevation > ((decimal)Math.PI * 0.99m)) elevation = (decimal)Math.PI * 0.99m;
             if (elevation < ((decimal)Math.PI * 0.01m)) elevation = (decimal)Math.PI * 0.01m;
-            var rotation = GetRotation();
-            var x = Math.Cos((double)rotation) * Math.Sin((double)elevation);
-            var y = Math.Sin((double)rotation) * Math.Sin((double)elevation);
-            var z = Math.Cos((double)elevation);
+            decimal rotation = GetRotation();
+            double x = Math.Cos((double)rotation) * Math.Sin((double)elevation);
+            double y = Math.Sin((double)rotation) * Math.Sin((double)elevation);
+            double z = Math.Cos((double)elevation);
             LookAt = new Vector3((float)x + Location.X, (float)y + Location.Y, (float)z + Location.Z);
         }
 
-        public void Pan(decimal degrees) {
-            var rad = degrees * ((decimal)Math.PI / 180);
-            var rot = GetRotation();
+        public void Pan(decimal degrees)
+        {
+            decimal rad = degrees * ((decimal)Math.PI / 180);
+            decimal rot = GetRotation();
             SetRotation(rot + rad);
         }
 
-        public void Tilt(decimal degrees) {
+        public void Tilt(decimal degrees)
+        {
             SetElevation(GetElevation() + (degrees * ((decimal)Math.PI / 180)));
         }
 
-        public void Advance(decimal units) {
-            var temp = LookAt - Location;
+        public void Advance(decimal units)
+        {
+            Vector3 temp = LookAt - Location;
             temp.Normalize();
-            var add = temp * (float)units;
+            Vector3 add = temp * (float)units;
             LookAt += add;
             Location += add;
         }
 
-        public void Strafe(decimal units) {
-            var right = GetRight();
-            var add = right * (float)units;
+        public void Strafe(decimal units)
+        {
+            Vector3 right = GetRight();
+            Vector3 add = right * (float)units;
             LookAt += add;
             Location += add;
         }
 
-        public void Ascend(decimal units) {
-            var up = GetUp();
-            var add = up * (float)units;
+        public void Ascend(decimal units)
+        {
+            Vector3 up = GetUp();
+            Vector3 add = up * (float)units;
             LookAt += add;
             Location += add;
         }
 
-        public void AscendAbsolute(decimal units) {
-            var up = new Vector3(0, 0, (float)units);
+        public void AscendAbsolute(decimal units)
+        {
+            Vector3 up = new Vector3(0, 0, (float)units);
             LookAt += up;
             Location += up;
         }
 
-        public Vector3 GetUp() {
-            var temp = LookAt - Location;
+        public Vector3 GetUp()
+        {
+            Vector3 temp = LookAt - Location;
             temp.Normalize();
-            var normal = Vector3.Cross(GetRight(), temp);
+            Vector3 normal = Vector3.Cross(GetRight(), temp);
             normal.Normalize();
             return normal;
         }
 
-        public Vector3 GetRight() {
-            var temp = LookAt - Location;
+        public Vector3 GetRight()
+        {
+            Vector3 temp = LookAt - Location;
             temp.Z = 0;
             temp.Normalize();
-            var normal = Vector3.Cross(temp, Vector3.UnitZ);
+            Vector3 normal = Vector3.Cross(temp, Vector3.UnitZ);
             normal.Normalize();
             return normal;
         }

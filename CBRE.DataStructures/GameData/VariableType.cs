@@ -1,5 +1,7 @@
-﻿namespace CBRE.DataStructures.GameData {
-    public enum VariableType {
+﻿namespace CBRE.DataStructures.GameData
+{
+    public enum VariableType
+    {
         Bool = 1,
         Color255 = 2,
         Float = 3,

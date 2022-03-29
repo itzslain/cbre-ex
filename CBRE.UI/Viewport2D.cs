@@ -1,16 +1,19 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.Extensions;
 using CBRE.Graphics;
 using CBRE.Graphics.Helpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Drawing;
+using System.Linq;
 
-namespace CBRE.UI {
-    public class Viewport2D : ViewportBase {
-        public enum ViewDirection {
+namespace CBRE.UI
+{
+    public class Viewport2D : ViewportBase
+    {
+        public enum ViewDirection
+        {
             /// <summary>
             /// The XY view
             /// </summary>
@@ -31,8 +34,10 @@ namespace CBRE.UI {
         private static readonly Matrix4 FrontMatrix = new Matrix4(Vector4.UnitZ, Vector4.UnitX, Vector4.UnitY, Vector4.UnitW);
         private static readonly Matrix4 SideMatrix = new Matrix4(Vector4.UnitX, Vector4.UnitZ, Vector4.UnitY, Vector4.UnitW);
 
-        private static Matrix4 GetMatrixFor(ViewDirection dir) {
-            switch (dir) {
+        private static Matrix4 GetMatrixFor(ViewDirection dir)
+        {
+            switch (dir)
+            {
                 case ViewDirection.Top:
                     return TopMatrix;
                 case ViewDirection.Front:
@@ -44,8 +49,10 @@ namespace CBRE.UI {
             }
         }
 
-        private static Coordinate Flatten(Coordinate c, ViewDirection direction) {
-            switch (direction) {
+        private static Coordinate Flatten(Coordinate c, ViewDirection direction)
+        {
+            switch (direction)
+            {
                 case ViewDirection.Top:
                     return new Coordinate(c.X, c.Y, 0);
                 case ViewDirection.Front:
@@ -57,8 +64,10 @@ namespace CBRE.UI {
             }
         }
 
-        private static Coordinate Expand(Coordinate c, ViewDirection direction) {
-            switch (direction) {
+        private static Coordinate Expand(Coordinate c, ViewDirection direction)
+        {
+            switch (direction)
+            {
                 case ViewDirection.Top:
                     return new Coordinate(c.X, c.Y, 0);
                 case ViewDirection.Front:
@@ -70,8 +79,10 @@ namespace CBRE.UI {
             }
         }
 
-        private static Coordinate GetUnusedCoordinate(Coordinate c, ViewDirection direction) {
-            switch (direction) {
+        private static Coordinate GetUnusedCoordinate(Coordinate c, ViewDirection direction)
+        {
+            switch (direction)
+            {
                 case ViewDirection.Top:
                     return new Coordinate(0, 0, c.Z);
                 case ViewDirection.Front:
@@ -83,8 +94,10 @@ namespace CBRE.UI {
             }
         }
 
-        private static Coordinate ZeroUnusedCoordinate(Coordinate c, ViewDirection direction) {
-            switch (direction) {
+        private static Coordinate ZeroUnusedCoordinate(Coordinate c, ViewDirection direction)
+        {
+            switch (direction)
+            {
                 case ViewDirection.Top:
                     return new Coordinate(c.X, c.Y, 0);
                 case ViewDirection.Front:
@@ -99,10 +112,12 @@ namespace CBRE.UI {
         public ViewDirection Direction { get; set; }
 
         private Coordinate _position;
-        public Coordinate Position {
+        public Coordinate Position
+        {
             get { return _position; }
-            set {
-                var old = _position;
+            set
+            {
+                Coordinate old = _position;
                 _position = value;
                 Listeners.OfType<IViewport2DEventListener>()
                     .ToList().ForEach(l => l.PositionChanged(old, _position));
@@ -110,10 +125,12 @@ namespace CBRE.UI {
         }
 
         private decimal _zoom;
-        public decimal Zoom {
+        public decimal Zoom
+        {
             get { return _zoom; }
-            set {
-                var old = _zoom;
+            set
+            {
+                decimal old = _zoom;
                 _zoom = DMath.Clamp(value, 0.001m, 10000m);
                 Listeners.OfType<IViewport2DEventListener>()
                     .ToList().ForEach(l => l.ZoomChanged(old, _zoom));
@@ -122,97 +139,117 @@ namespace CBRE.UI {
 
         private Coordinate CenterScreen { get; set; }
 
-        public Viewport2D(ViewDirection direction) {
+        public Viewport2D(ViewDirection direction)
+        {
             Zoom = 1;
             Position = new Coordinate(0, 0, 0);
             Direction = direction;
             CenterScreen = new Coordinate(Width / 2m, Height / 2m, 0);
         }
 
-        public Viewport2D(ViewDirection direction, RenderContext context) : base(context) {
+        public Viewport2D(ViewDirection direction, RenderContext context) : base(context)
+        {
             Zoom = 1;
             Position = new Coordinate(0, 0, 0);
             Direction = direction;
             CenterScreen = new Coordinate(Width / 2m, Height / 2m, 0);
         }
 
-        public override void FocusOn(Coordinate coordinate) {
+        public override void FocusOn(Coordinate coordinate)
+        {
             Position = Flatten(coordinate);
         }
 
-        public Coordinate Flatten(Coordinate c) {
+        public Coordinate Flatten(Coordinate c)
+        {
             return Flatten(c, Direction);
         }
 
-        public Coordinate Expand(Coordinate c) {
+        public Coordinate Expand(Coordinate c)
+        {
             return Expand(c, Direction);
         }
 
-        public Coordinate GetUnusedCoordinate(Coordinate c) {
+        public Coordinate GetUnusedCoordinate(Coordinate c)
+        {
             return GetUnusedCoordinate(c, Direction);
         }
 
-        public Coordinate ZeroUnusedCoordinate(Coordinate c) {
+        public Coordinate ZeroUnusedCoordinate(Coordinate c)
+        {
             return ZeroUnusedCoordinate(c, Direction);
         }
 
-        public override void SetViewport() {
+        public override void SetViewport()
+        {
             base.SetViewport();
             Viewport.Orthographic(0, 0, Width, Height, -50000, 50000);
         }
 
-        public override Matrix4 GetViewportMatrix() {
+        public override Matrix4 GetViewportMatrix()
+        {
             const float near = -1000000;
             const float far = 1000000;
             return Matrix4.CreateOrthographic(Width, Height, near, far);
         }
 
-        public override Matrix4 GetCameraMatrix() {
-            var translate = Matrix4.CreateTranslation((float)-Position.X, (float)-Position.Y, 0);
-            var scale = Matrix4.CreateScale(new Vector3((float)Zoom, (float)Zoom, 0));
+        public override Matrix4 GetCameraMatrix()
+        {
+            Matrix4 translate = Matrix4.CreateTranslation((float)-Position.X, (float)-Position.Y, 0);
+            Matrix4 scale = Matrix4.CreateScale(new Vector3((float)Zoom, (float)Zoom, 0));
             return translate * scale;
         }
 
-        public override Matrix4 GetModelViewMatrix() {
+        public override Matrix4 GetModelViewMatrix()
+        {
             return GetMatrixFor(Direction);
         }
 
-        protected override void OnResize(EventArgs e) {
+        protected override void OnResize(EventArgs e)
+        {
             CenterScreen = new Coordinate(Width / 2m, Height / 2m, 0);
             base.OnResize(e);
         }
 
-        public Coordinate ScreenToWorld(Point location) {
+        public Coordinate ScreenToWorld(Point location)
+        {
             return ScreenToWorld(location.X, location.Y);
         }
 
-        public Coordinate ScreenToWorld(decimal x, decimal y) {
+        public Coordinate ScreenToWorld(decimal x, decimal y)
+        {
             return ScreenToWorld(new Coordinate(x, y, 0));
         }
 
-        public Coordinate ScreenToWorld(Coordinate location) {
+        public Coordinate ScreenToWorld(Coordinate location)
+        {
             return Position + ((location - CenterScreen) / Zoom);
         }
 
-        public Coordinate WorldToScreen(Coordinate location) {
+        public Coordinate WorldToScreen(Coordinate location)
+        {
             return CenterScreen + ((location - Position) * Zoom);
         }
 
-        public decimal UnitsToPixels(decimal units) {
+        public decimal UnitsToPixels(decimal units)
+        {
             return units * Zoom;
         }
 
-        public decimal PixelsToUnits(decimal pixels) {
+        public decimal PixelsToUnits(decimal pixels)
+        {
             return pixels / Zoom;
         }
 
-        protected override void UpdateBeforeRender() {
+        protected override void UpdateBeforeRender()
+        {
             GL.Scale(new Vector3((float)Zoom, (float)Zoom, 0));
             GL.Translate((float)-Position.X, (float)-Position.Y, 0);
             base.UpdateBeforeRender();
         }
 
-        protected override void UpdateAfterRender() {
+        protected override void UpdateAfterRender()
+        {
             Listeners.ForEach(x => x.Render2D());
             base.UpdateAfterRender();
         }

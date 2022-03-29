@@ -1,7 +1,9 @@
 using System.IO;
 
-namespace CBRE.Packages.Pak {
-    public class PakEntry : IPackageEntry {
+namespace CBRE.Packages.Pak
+{
+    public class PakEntry : IPackageEntry
+    {
         public PakPackage Package { get; private set; }
 
         public string Path { get; private set; }
@@ -11,25 +13,29 @@ namespace CBRE.Packages.Pak {
         public string ParentPath { get { return GetParent(); } }
         public long Length { get; private set; }
 
-        public PakEntry(PakPackage package, string path, int offset, int length) {
+        public PakEntry(PakPackage package, string path, int offset, int length)
+        {
             Package = package;
             Path = path;
             Offset = offset;
             Length = length;
         }
 
-        public Stream Open() {
+        public Stream Open()
+        {
             return Package.OpenStream(this);
         }
 
-        private string GetName() {
-            var idx = Path.LastIndexOf('/');
+        private string GetName()
+        {
+            int idx = Path.LastIndexOf('/');
             if (idx < 0) return Path;
             return Path.Substring(idx + 1);
         }
 
-        private string GetParent() {
-            var idx = Path.LastIndexOf('/');
+        private string GetParent()
+        {
+            int idx = Path.LastIndexOf('/');
             if (idx < 0) return "";
             return Path.Substring(0, idx);
         }

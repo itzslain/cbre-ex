@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.Geometric {
+namespace CBRE.DataStructures.Geometric
+{
     /// <summary>
     /// A cloud is a wrapper around a collection of points, allowing
     /// various useful operations to be performed on them.
     /// </summary>
     [Serializable]
-    public class Cloud : ISerializable {
+    public class Cloud : ISerializable
+    {
         public List<Coordinate> Points { get; private set; }
         public Box BoundingBox { get; private set; }
 
@@ -19,11 +21,13 @@ namespace CBRE.DataStructures.Geometric {
         public Coordinate MaxY { get; private set; }
         public Coordinate MaxZ { get; private set; }
 
-        public Cloud(IEnumerable<Coordinate> points) {
+        public Cloud(IEnumerable<Coordinate> points)
+        {
             Points = new List<Coordinate>(points);
             BoundingBox = new Box(points);
             MinX = MinY = MinZ = MaxX = MaxY = MaxZ = null;
-            foreach (var p in points) {
+            foreach (Coordinate p in points)
+            {
                 if (MinX == null || p.X < MinX.X) MinX = p;
                 if (MinY == null || p.Y < MinY.Y) MinY = p;
                 if (MinZ == null || p.Z < MinZ.Z) MinZ = p;
@@ -33,11 +37,13 @@ namespace CBRE.DataStructures.Geometric {
             }
         }
 
-        protected Cloud(SerializationInfo info, StreamingContext context) : this((Coordinate[])info.GetValue("Points", typeof(Coordinate[]))) {
+        protected Cloud(SerializationInfo info, StreamingContext context) : this((Coordinate[])info.GetValue("Points", typeof(Coordinate[])))
+        {
 
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context) {
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
             info.AddValue("Points", Points.ToArray());
         }
 
@@ -45,7 +51,8 @@ namespace CBRE.DataStructures.Geometric {
         /// Get a list of the 6 points that define the outermost extents of this cloud.
         /// </summary>
         /// <returns>A list of the 6 (Min|Max)(X|Y|Z) values of this cloud.</returns>
-        public IEnumerable<Coordinate> GetExtents() {
+        public IEnumerable<Coordinate> GetExtents()
+        {
             return new[]
                        {
                            MinX, MinY, MinZ,

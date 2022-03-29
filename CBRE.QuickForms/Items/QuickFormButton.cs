@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items {
+namespace CBRE.QuickForms.Items
+{
     /// <summary>
     /// A control that shows a button.
     /// </summary>
-    public class QuickFormButton : QuickFormItem {
+    public class QuickFormButton : QuickFormItem
+    {
         private readonly Action _clickevent;
 
-        public QuickFormButton(string text, Action click) {
+        public QuickFormButton(string text, Action click)
+        {
             Name = text;
             _clickevent = click;
         }
 
-        public override List<Control> GetControls(QuickForm qf) {
-            var controls = new List<Control>();
+        public override List<Control> GetControls(QuickForm qf)
+        {
+            List<Control> controls = new List<Control>();
 
-            var b = new Button();
+            Button b = new Button();
             b.Click += (sender, e) => _clickevent();
             b.Width = 120;
             b.Text = Name;

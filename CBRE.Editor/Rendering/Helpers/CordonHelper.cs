@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Tools;
@@ -8,36 +5,45 @@ using CBRE.Graphics.Helpers;
 using CBRE.Settings;
 using CBRE.UI;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
-namespace CBRE.Editor.Rendering.Helpers {
-    public class CordonHelper : IHelper {
+namespace CBRE.Editor.Rendering.Helpers
+{
+    public class CordonHelper : IHelper
+    {
         public Document Document { get; set; }
         public bool Is2DHelper { get { return false; } }
         public bool Is3DHelper { get { return false; } }
         public bool IsDocumentHelper { get { return true; } }
         public HelperType HelperType { get { return HelperType.None; } }
 
-        public void AfterRender3D(Viewport3D viewport) {
+        public void AfterRender3D(Viewport3D viewport)
+        {
             throw new NotImplementedException();
         }
 
-        public void RenderDocument(ViewportBase viewport, Document document) {
+        public void RenderDocument(ViewportBase viewport, Document document)
+        {
             if (!document.Map.Cordon || document.Map.CordonBounds.IsEmpty()) return;
             if (ToolManager.ActiveTool != null && ToolManager.ActiveTool.GetHotkeyToolType() == HotkeyTool.Cordon) return;
             if (viewport is Viewport2D) Render2D((Viewport2D)viewport, document);
             if (viewport is Viewport3D) Render3D((Viewport3D)viewport, document);
         }
 
-        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects) {
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
+        {
             return mapObjects;
         }
 
-        private void Render2D(Viewport2D viewport, Document document) {
-            var start = viewport.Flatten(document.Map.CordonBounds.Start);
-            var end = viewport.Flatten(document.Map.CordonBounds.End);
+        private void Render2D(Viewport2D viewport, Document document)
+        {
+            DataStructures.Geometric.Coordinate start = viewport.Flatten(document.Map.CordonBounds.Start);
+            DataStructures.Geometric.Coordinate end = viewport.Flatten(document.Map.CordonBounds.End);
 
-            var min = viewport.ScreenToWorld(0, 0);
-            var max = viewport.ScreenToWorld(viewport.Width, viewport.Height);
+            DataStructures.Geometric.Coordinate min = viewport.ScreenToWorld(0, 0);
+            DataStructures.Geometric.Coordinate max = viewport.ScreenToWorld(viewport.Width, viewport.Height);
 
             GL.Color4(Color.FromArgb(128, Color.Purple));
             GL.Begin(PrimitiveType.Quads);
@@ -76,39 +82,47 @@ namespace CBRE.Editor.Rendering.Helpers {
             GL.LineWidth(1);
         }
 
-        private void Render3D(Viewport3D viewport, Document document) {
-            var box = document.Map.CordonBounds;
+        private void Render3D(Viewport3D viewport, Document document)
+        {
+            DataStructures.Geometric.Box box = document.Map.CordonBounds;
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
             GL.Color4(Color.Red);
-            foreach (var line in box.GetBoxLines()) {
+            foreach (DataStructures.Geometric.Line line in box.GetBoxLines())
+            {
                 GL.Vertex3(line.Start.DX, line.Start.DY, line.Start.DZ);
                 GL.Vertex3(line.End.DX, line.End.DY, line.End.DZ);
             }
             GL.End();
         }
 
-        public bool IsValidFor(MapObject o) {
+        public bool IsValidFor(MapObject o)
+        {
             return false;
         }
 
-        public void BeforeRender2D(Viewport2D viewport) {
+        public void BeforeRender2D(Viewport2D viewport)
+        {
             throw new NotImplementedException();
         }
 
-        public void Render2D(Viewport2D viewport, MapObject o) {
+        public void Render2D(Viewport2D viewport, MapObject o)
+        {
             throw new NotImplementedException();
         }
 
-        public void AfterRender2D(Viewport2D viewport) {
+        public void AfterRender2D(Viewport2D viewport)
+        {
             throw new NotImplementedException();
         }
 
-        public void BeforeRender3D(Viewport3D viewport) {
+        public void BeforeRender3D(Viewport3D viewport)
+        {
             throw new NotImplementedException();
         }
 
-        public void Render3D(Viewport3D viewport, MapObject o) {
+        public void Render3D(Viewport3D viewport, MapObject o)
+        {
             throw new NotImplementedException();
         }
     }

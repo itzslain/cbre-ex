@@ -1,13 +1,15 @@
+using CBRE.Common.Mediator;
+using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Documents;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CBRE.Common.Mediator;
-using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Documents;
 
-namespace CBRE.Editor.Actions.Visgroups {
-    public class CreateEditDeleteVisgroups : IAction {
+namespace CBRE.Editor.Actions.Visgroups
+{
+    public class CreateEditDeleteVisgroups : IAction
+    {
         public bool SkipInStack { get { return false; } }
         public bool ModifiesState { get { return true; } }
 
@@ -18,20 +20,24 @@ namespace CBRE.Editor.Actions.Visgroups {
         private Dictionary<int, List<MapObject>> _removedObjects;
         private List<MapObject> _madeVisible;
 
-        public CreateEditDeleteVisgroups(IEnumerable<Visgroup> newVisgroups, IEnumerable<Visgroup> changedVisgroups, IEnumerable<Visgroup> deletedVisgroups) {
+        public CreateEditDeleteVisgroups(IEnumerable<Visgroup> newVisgroups, IEnumerable<Visgroup> changedVisgroups, IEnumerable<Visgroup> deletedVisgroups)
+        {
             _newVisgroups = newVisgroups.ToList();
             _afterchanges = changedVisgroups.Select(x => Tuple.Create(x.ID, x.Name, x.Colour)).ToList();
             _deletedVisgroups = deletedVisgroups.ToList();
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _newVisgroups = _deletedVisgroups = null;
             _beforeChanges = _afterchanges = null;
         }
 
-        public void Reverse(Document document) {
+        public void Reverse(Document document)
+        {
             // Deleted
-            foreach (var del in _deletedVisgroups) {
+            foreach (Visgroup del in _deletedVisgroups)
+            {
                 document.Map.Visgroups.Add(del);
                 _removedObjects[del.ID].ForEach(x => x.Visgroups.Add(del.ID));
             }
@@ -41,8 +47,9 @@ namespace CBRE.Editor.Actions.Visgroups {
 
             // Changed
             _afterchanges = new List<Tuple<int, string, Color>>();
-            foreach (var bc in _beforeChanges) {
-                var vis = document.Map.Visgroups.First(x => x.ID == bc.Item1);
+            foreach (Tuple<int, string, Color> bc in _beforeChanges)
+            {
+                Visgroup vis = document.Map.Visgroups.First(x => x.ID == bc.Item1);
                 _afterchanges.Add(Tuple.Create(vis.ID, vis.Name, vis.Colour));
                 vis.Name = bc.Item2;
                 vis.Colour = bc.Item3;
@@ -56,14 +63,16 @@ namespace CBRE.Editor.Actions.Visgroups {
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
-        public void Perform(Document document) {
+        public void Perform(Document document)
+        {
             // New
             document.Map.Visgroups.AddRange(_newVisgroups);
 
             // Changed
             _beforeChanges = new List<Tuple<int, string, Color>>();
-            foreach (var ac in _afterchanges) {
-                var vis = document.Map.Visgroups.First(x => x.ID == ac.Item1);
+            foreach (Tuple<int, string, Color> ac in _afterchanges)
+            {
+                Visgroup vis = document.Map.Visgroups.First(x => x.ID == ac.Item1);
                 _beforeChanges.Add(Tuple.Create(vis.ID, vis.Name, vis.Colour));
                 vis.Name = ac.Item2;
                 vis.Colour = ac.Item3;
@@ -73,13 +82,15 @@ namespace CBRE.Editor.Actions.Visgroups {
             // Deleted
             _madeVisible = new List<MapObject>();
             _removedObjects = new Dictionary<int, List<MapObject>>();
-            var all = document.Map.WorldSpawn.Find(x => x.Visgroups.Any());
-            foreach (var del in _deletedVisgroups) {
-                var id = del.ID;
+            List<MapObject> all = document.Map.WorldSpawn.Find(x => x.Visgroups.Any());
+            foreach (Visgroup del in _deletedVisgroups)
+            {
+                int id = del.ID;
                 document.Map.Visgroups.RemoveAll(x => x.ID == id);
-                var rem = all.Where(x => x.IsInVisgroup(id, false)).ToList();
+                List<MapObject> rem = all.Where(x => x.IsInVisgroup(id, false)).ToList();
                 _removedObjects.Add(id, rem);
-                foreach (var mo in rem) {
+                foreach (MapObject mo in rem)
+                {
                     mo.Visgroups.Remove(id);
                     if (!mo.IsVisgroupHidden || mo.Visgroups.Any()) continue;
 

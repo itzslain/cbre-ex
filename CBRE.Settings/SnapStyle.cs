@@ -1,5 +1,7 @@
-namespace CBRE.Settings {
-    public enum SnapStyle {
+namespace CBRE.Settings
+{
+    public enum SnapStyle
+    {
         SnapOffAlt,
         SnapOnAlt
     }

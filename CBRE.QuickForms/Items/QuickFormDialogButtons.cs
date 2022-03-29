@@ -3,39 +3,45 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace CBRE.QuickForms.Items {
+namespace CBRE.QuickForms.Items
+{
     /// <summary>
     /// A control that shows any number of buttons.
     /// </summary>
-    public class QuickFormDialogButtons : QuickFormItem {
+    public class QuickFormDialogButtons : QuickFormItem
+    {
         private readonly List<Action<QuickForm>> _actions;
         private readonly List<string> _labels;
         private readonly List<DialogResult> _results;
 
-        public QuickFormDialogButtons() {
+        public QuickFormDialogButtons()
+        {
             _actions = new List<Action<QuickForm>>();
             _labels = new List<string>();
             _results = new List<DialogResult>();
         }
 
-        public QuickFormDialogButtons Button(string label, DialogResult result, Action<QuickForm> action = null) {
+        public QuickFormDialogButtons Button(string label, DialogResult result, Action<QuickForm> action = null)
+        {
             _labels.Add(label);
             _actions.Add(action);
             _results.Add(result);
             return this;
         }
 
-        public override List<Control> GetControls(QuickForm qf) {
-            var controls = new List<Control>();
+        public override List<Control> GetControls(QuickForm qf)
+        {
+            List<Control> controls = new List<Control>();
 
-            var length = _actions.Count;
+            int length = _actions.Count;
 
-            for (var i = 0; i < _labels.Count; i++) {
-                var action = _actions[i];
-                var label = _labels[i];
-                var result = _results[i];
+            for (int i = 0; i < _labels.Count; i++)
+            {
+                Action<QuickForm> action = _actions[i];
+                string label = _labels[i];
+                DialogResult result = _results[i];
 
-                var button = new Button();
+                Button button = new Button();
                 if (action != null) button.Click += (sender, e) => action(((Control)sender).Parent as QuickForm);
                 button.Click += (s, e) => qf.DialogResult = result;
                 button.Click += qf.Close;

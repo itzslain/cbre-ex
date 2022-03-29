@@ -1,7 +1,9 @@
 ﻿using OpenTK;
 
-namespace CBRE.Editor.Rendering {
-    public class Viewport3DRenderOptions : Viewport2DRenderOptions {
+namespace CBRE.Editor.Rendering
+{
+    public class Viewport3DRenderOptions : Viewport2DRenderOptions
+    {
         public bool Wireframe { get; set; }
         public bool Textured { get; set; }
         public bool Shaded { get; set; }
@@ -13,7 +15,8 @@ namespace CBRE.Editor.Rendering {
         public decimal GridSpacing { get; set; }
     }
 
-    public class Viewport2DRenderOptions {
+    public class Viewport2DRenderOptions
+    {
         public Matrix4 Viewport { get; set; }
         public Matrix4 Camera { get; set; }
         public Matrix4 ModelView { get; set; }

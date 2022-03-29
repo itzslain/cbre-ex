@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CBRE.DataStructures.GameData;
+using System;
 using System.Linq;
-using CBRE.DataStructures.GameData;
 
-namespace CBRE.DataStructures.MapObjects.VisgroupFilters {
+namespace CBRE.DataStructures.MapObjects.VisgroupFilters
+{
 
     /*
      * These are all the auto visgroups I could find in Hammer 4, plus a bit more:
@@ -72,120 +73,149 @@ namespace CBRE.DataStructures.MapObjects.VisgroupFilters {
      *   
      */
 
-    public interface IVisgroupFilter {
+    public interface IVisgroupFilter
+    {
         string Group { get; }
         string Name { get; }
         bool IsMatch(MapObject mapObject);
     }
 
-    public class BrushEntitiesVisgroupFilter : IVisgroupFilter {
+    public class BrushEntitiesVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Entities"; } }
         public string Name { get { return "Brush Entities"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Entity && ((Entity)x).GameData != null && ((Entity)x).GameData.ClassType == ClassType.Solid;
         }
     }
 
-    public class PointEntitiesVisgroupFilter : IVisgroupFilter {
+    public class PointEntitiesVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Entities"; } }
         public string Name { get { return "Point Entities"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Entity && ((Entity)x).GameData != null && ((Entity)x).GameData.ClassType != ClassType.Solid;
         }
     }
 
-    public class TriggersVisgroupFilter : IVisgroupFilter {
+    public class TriggersVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Entities"; } }
         public string Name { get { return "Triggers"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Entity && x.GetEntityData().Name.StartsWith("trigger_");
         }
     }
 
-    public class LightsVisgroupFilter : IVisgroupFilter {
+    public class LightsVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Entities"; } }
         public string Name { get { return "Lights"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Entity && x.GetEntityData().Name.StartsWith("light");
         }
     }
 
-    public class NodesVisgroupFilter : IVisgroupFilter {
+    public class NodesVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Entities"; } }
         public string Name { get { return "Nodes"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Entity && x.GetEntityData().Name.Contains("_node");
         }
     }
 
-    public class HintVisgroupFilter : IVisgroupFilter {
+    public class HintVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Tool Brushes"; } }
         public string Name { get { return "Hint"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "hint", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class OriginVisgroupFilter : IVisgroupFilter {
+    public class OriginVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Tool Brushes"; } }
         public string Name { get { return "Origin"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "origin", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class SkipVisgroupFilter : IVisgroupFilter {
+    public class SkipVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Tool Brushes"; } }
         public string Name { get { return "Skip"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "skip", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class TriggerVisgroupFilter : IVisgroupFilter {
+    public class TriggerVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Tool Brushes"; } }
         public string Name { get { return "Trigger"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "aaatrigger", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class BevelVisgroupFilter : IVisgroupFilter {
+    public class BevelVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "Tool Brushes"; } }
         public string Name { get { return "Bevel"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "bevel", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class BrushesVisgroupFilter : IVisgroupFilter {
+    public class BrushesVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "World Geometry"; } }
         public string Name { get { return "Brushes"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && x.FindClosestParent(y => y is Entity) == null;
         }
     }
 
-    public class NullVisgroupFilter : IVisgroupFilter {
+    public class NullVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "World Geometry"; } }
         public string Name { get { return "Null"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "null", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class SkyVisgroupFilter : IVisgroupFilter {
+    public class SkyVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "World Geometry"; } }
         public string Name { get { return "Sky"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "sky", StringComparison.OrdinalIgnoreCase));
         }
     }
 
-    public class WaterVisgroupFilter : IVisgroupFilter {
+    public class WaterVisgroupFilter : IVisgroupFilter
+    {
         public string Group { get { return "World Geometry"; } }
         public string Name { get { return "Water"; } }
-        public bool IsMatch(MapObject x) {
+        public bool IsMatch(MapObject x)
+        {
             return x is Solid && x.FindClosestParent(y => y is Entity) == null && ((Solid)x).Faces.Any(y => y.Texture.Name.StartsWith("!"));
         }
     }

@@ -4,9 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace CBRE.DataStructures.MapObjects {
+namespace CBRE.DataStructures.MapObjects
+{
     [Serializable]
-    public class Visgroup : ISerializable {
+    public class Visgroup : ISerializable
+    {
         public int ID { get; set; }
         public string Name { get; set; }
         public bool Visible { get; set; }
@@ -16,11 +18,13 @@ namespace CBRE.DataStructures.MapObjects {
 
         public virtual bool IsAutomatic { get { return false; } }
 
-        public Visgroup() {
+        public Visgroup()
+        {
             Children = new List<Visgroup>();
         }
 
-        protected Visgroup(SerializationInfo info, StreamingContext context) {
+        protected Visgroup(SerializationInfo info, StreamingContext context)
+        {
             ID = info.GetInt32("ID");
             Name = info.GetString("Name");
             Visible = info.GetBoolean("Visible");
@@ -29,7 +33,8 @@ namespace CBRE.DataStructures.MapObjects {
             Children.ForEach(x => x.Parent = this);
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context) {
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
             info.AddValue("ID", ID);
             info.AddValue("Name", Name);
             info.AddValue("Visible", Visible);
@@ -37,8 +42,10 @@ namespace CBRE.DataStructures.MapObjects {
             info.AddValue("Children", Children.ToArray());
         }
 
-        public virtual Visgroup Clone() {
-            return new Visgroup {
+        public virtual Visgroup Clone()
+        {
+            return new Visgroup
+            {
                 ID = ID,
                 Name = Name,
                 Visible = Visible,

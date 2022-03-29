@@ -5,8 +5,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CBRE.Editor.Menu {
-    public class GroupedMenuBuilder : IMenuBuilder, IEnumerable<IMenuBuilder> {
+namespace CBRE.Editor.Menu
+{
+    public class GroupedMenuBuilder : IMenuBuilder, IEnumerable<IMenuBuilder>
+    {
         public string Name { get; set; }
         public Func<bool> IsVisible { get; set; }
         public List<IMenuBuilder> SubMenus { get; set; }
@@ -15,31 +17,37 @@ namespace CBRE.Editor.Menu {
         public bool ShowInMenu { get { return true; } }
         public bool ShowInToolStrip { get { return false; } }
 
-        public GroupedMenuBuilder(string name, params IMenuBuilder[] subMenus) {
+        public GroupedMenuBuilder(string name, params IMenuBuilder[] subMenus)
+        {
             Name = name;
             SubMenus = subMenus.ToList();
         }
 
-        public void Add(IMenuBuilder builder) {
+        public void Add(IMenuBuilder builder)
+        {
             SubMenus.Add(builder);
         }
 
-        public IEnumerable<ToolStripItem> Build() {
+        public IEnumerable<ToolStripItem> Build()
+        {
             //if (IsVisible != null && !IsVisible()) yield break;
-            var mi = new ToolStripMenuItem(Name) { Image = Image };
+            ToolStripMenuItem mi = new ToolStripMenuItem(Name) { Image = Image };
             mi.DropDownItems.AddRange(SubMenus.SelectMany(x => x.Build()).ToArray());
             yield return mi;
         }
 
-        public IEnumerable<ToolStripItem> BuildToolStrip() {
+        public IEnumerable<ToolStripItem> BuildToolStrip()
+        {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<IMenuBuilder> GetEnumerator() {
+        public IEnumerator<IMenuBuilder> GetEnumerator()
+        {
             return SubMenus.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
+        IEnumerator IEnumerable.GetEnumerator()
+        {
             return GetEnumerator();
         }
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CBRE.DataStructures.Geometric;
+﻿using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.DataStructures.Models;
 using CBRE.DataStructures.Transformations;
@@ -13,11 +10,16 @@ using CBRE.Editor.UI;
 using CBRE.Extensions;
 using CBRE.UI;
 using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Matrix = CBRE.DataStructures.Geometric.Matrix;
 using Quaternion = CBRE.DataStructures.Geometric.Quaternion;
 
-namespace CBRE.Editor.Rendering.Renderers {
-    public class ModernRenderer : IRenderer {
+namespace CBRE.Editor.Rendering.Renderers
+{
+    public class ModernRenderer : IRenderer
+    {
         public string Name { get { return "OpenGL 2.1 Renderer"; } }
         public Document Document { get { return _document; } set { _document = value; } }
 
@@ -35,7 +37,8 @@ namespace CBRE.Editor.Rendering.Renderers {
         private Matrix _selectionTransformMat;
         private Matrix4 _selectionTransform;
 
-        public ModernRenderer(Document document) {
+        public ModernRenderer(Document document)
+        {
             _document = document;
 
             _array = new MapObjectArray(GetAllVisible(document.Map.WorldSpawn));
@@ -53,34 +56,42 @@ namespace CBRE.Editor.Rendering.Renderers {
             _mapObject3DShader = new MapObject3DShader();
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _array.Dispose();
             _decalArray.Dispose();
-            foreach (var ma in _modelArrays) ma.Value.Dispose();
+            foreach (KeyValuePair<Model, ModelArray> ma in _modelArrays) ma.Value.Dispose();
             _mapObject2DShader.Dispose();
             _mapObject3DShader.Dispose();
         }
 
-        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force) {
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>().Where(x => !GridArrays.ContainsKey(x))) {
+        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force)
+        {
+            foreach (Viewport2D vp in ViewportManager.Viewports.OfType<Viewport2D>().Where(x => !GridArrays.ContainsKey(x)))
+            {
                 GridArrays.Add(vp, new GridArray());
             }
-            foreach (var vp in GridArrays.Keys.Where(x => !ViewportManager.Viewports.Contains(x)).ToList()) {
+            foreach (Viewport2D vp in GridArrays.Keys.Where(x => !ViewportManager.Viewports.Contains(x)).ToList())
+            {
                 GridArrays[vp].Dispose();
                 GridArrays.Remove(vp);
             }
-            foreach (var kv in GridArrays) {
+            foreach (KeyValuePair<Viewport2D, GridArray> kv in GridArrays)
+            {
                 kv.Value.Update(Document.GameData.MapSizeLow, Document.GameData.MapSizeHigh, gridSpacing, kv.Key.Zoom, force);
             }
         }
 
-        public void SetSelectionTransform(Matrix4 selectionTransform) {
+        public void SetSelectionTransform(Matrix4 selectionTransform)
+        {
             _selectionTransform = selectionTransform;
             _selectionTransformMat = Matrix.FromOpenTKMatrix4(selectionTransform);
         }
 
-        public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView) {
-            var opts = new Viewport2DRenderOptions {
+        public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
+        {
+            Viewport2DRenderOptions opts = new Viewport2DRenderOptions
+            {
                 Viewport = viewport,
                 Camera = camera,
                 ModelView = Matrix4.Identity // modelView
@@ -92,9 +103,10 @@ namespace CBRE.Editor.Rendering.Renderers {
             _mapObject2DShader.SelectedOnly = false;
             _mapObject2DShader.SelectedColour = new Vector4(0.5f, 0, 0, 1);
 
-            if (Document.Map.Show2DGrid) {
+            if (Document.Map.Show2DGrid)
+            {
                 // Render grid
-                var vp2 = (Viewport2D)context;
+                Viewport2D vp2 = (Viewport2D)context;
                 if (GridArrays.ContainsKey(vp2)) GridArrays[vp2].Render(context.Context);
             }
 
@@ -103,9 +115,11 @@ namespace CBRE.Editor.Rendering.Renderers {
             _array.RenderWireframe(context.Context);
             _decalArray.RenderWireframe(context.Context);
 
-            if (CBRE.Settings.View.Draw2DVertices) {
-                if (CBRE.Settings.View.OverrideVertexColour) {
-                    var c = CBRE.Settings.View.VertexOverrideColour;
+            if (CBRE.Settings.View.Draw2DVertices)
+            {
+                if (CBRE.Settings.View.OverrideVertexColour)
+                {
+                    System.Drawing.Color c = CBRE.Settings.View.VertexOverrideColour;
                     _mapObject2DShader.OverrideColour = new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1);
                 }
                 _array.RenderVertices(context.Context, CBRE.Settings.View.VertexPointSize);
@@ -119,9 +133,11 @@ namespace CBRE.Editor.Rendering.Renderers {
             _array.RenderWireframe(context.Context);
             _decalArray.RenderWireframe(context.Context);
 
-            if (CBRE.Settings.View.Draw2DVertices) {
-                if (CBRE.Settings.View.OverrideVertexColour) {
-                    var c = CBRE.Settings.View.VertexOverrideColour;
+            if (CBRE.Settings.View.Draw2DVertices)
+            {
+                if (CBRE.Settings.View.OverrideVertexColour)
+                {
+                    System.Drawing.Color c = CBRE.Settings.View.VertexOverrideColour;
                     _mapObject2DShader.OverrideColour = new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1);
                 }
                 _array.RenderVertices(context.Context, CBRE.Settings.View.VertexPointSize);
@@ -131,20 +147,25 @@ namespace CBRE.Editor.Rendering.Renderers {
             _mapObject2DShader.Unbind();
         }
 
-        public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView) {
-            if (_document.TextureCollection.LightmapTextureOutdated) {
+        public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
+        {
+            if (_document.TextureCollection.LightmapTextureOutdated)
+            {
                 _document.TextureCollection.UpdateLightmapTexture();
                 List<Face> faces = new List<Face>();
-                foreach (Solid solid in _document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()) {
-                    foreach (Face tface in solid.Faces) {
+                foreach (Solid solid in _document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+                {
+                    foreach (Face tface in solid.Faces)
+                    {
                         faces.Add(tface);
                     }
                 }
                 UpdatePartial(faces);
             }
 
-            var type = ((Viewport3D)context).Type;
-            var opts = new Viewport3DRenderOptions {
+            Viewport3D.ViewType type = ((Viewport3D)context).Type;
+            Viewport3DRenderOptions opts = new Viewport3DRenderOptions
+            {
                 Viewport = viewport,
                 Camera = camera,
                 ModelView = modelView,
@@ -157,11 +178,12 @@ namespace CBRE.Editor.Rendering.Renderers {
                 LightmapEnabled = type == Viewport3D.ViewType.Lightmapped
             };
 
-            var cam = ((Viewport3D)context).Camera;
-            var location = new Coordinate((decimal)cam.Location.X, (decimal)cam.Location.Y, (decimal)cam.Location.Z);
-            var lookAt = new Coordinate((decimal)cam.LookAt.X, (decimal)cam.LookAt.Y, (decimal)cam.LookAt.Z);
+            Graphics.Camera cam = ((Viewport3D)context).Camera;
+            Coordinate location = new Coordinate((decimal)cam.Location.X, (decimal)cam.Location.Y, (decimal)cam.Location.Z);
+            Coordinate lookAt = new Coordinate((decimal)cam.LookAt.X, (decimal)cam.LookAt.Y, (decimal)cam.LookAt.Z);
 
-            if (!opts.Wireframe) {
+            if (!opts.Wireframe)
+            {
                 _mapObject3DShader.Bind(opts);
                 _mapObject3DShader.SelectionTransform = _selectionTransform;
                 _mapObject3DShader.SelectionColourMultiplier = Document.Map.HideFaceMask &&
@@ -173,16 +195,19 @@ namespace CBRE.Editor.Rendering.Renderers {
                 _array.RenderTextured(context.Context, _document.TextureCollection.LightmapTexture);
 
                 // Render textured models
-                if (!CBRE.Settings.View.DisableModelRendering) {
-                    foreach (var tuple in _models) {
-                        var arr = _modelArrays[tuple.Item2];
-                        var origin = tuple.Item1.Origin;
+                if (!CBRE.Settings.View.DisableModelRendering)
+                {
+                    foreach (Tuple<Entity, Model> tuple in _models)
+                    {
+                        ModelArray arr = _modelArrays[tuple.Item2];
+                        Coordinate origin = tuple.Item1.Origin;
                         if (tuple.Item1.HideDistance() <= (location - origin).VectorMagnitude()) continue;
 
-                        var scale = tuple.Item1.EntityData.GetPropertyCoordinate("scale", Coordinate.One);
+                        Coordinate scale = tuple.Item1.EntityData.GetPropertyCoordinate("scale", Coordinate.One);
                         scale = new Coordinate(scale.X, scale.Z, scale.Y);
-                        var angles = tuple.Item1.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
-                        if (tuple.Item1.IsSelected) {
+                        Coordinate angles = tuple.Item1.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                        if (tuple.Item1.IsSelected)
+                        {
                             origin *= _selectionTransformMat;
 
                             angles = Entity.TransformToEuler(new UnitMatrixMult(_selectionTransformMat.Inverse()), angles);
@@ -190,7 +215,7 @@ namespace CBRE.Editor.Rendering.Renderers {
                         Matrix pitch = Matrix.Rotation(Quaternion.EulerAngles(DMath.DegreesToRadians(angles.X), 0, 0));
                         Matrix yaw = Matrix.Rotation(Quaternion.EulerAngles(0, 0, -DMath.DegreesToRadians(angles.Y)));
                         Matrix roll = Matrix.Rotation(Quaternion.EulerAngles(0, DMath.DegreesToRadians(angles.Z), 0));
-                        var tform = (yaw * pitch * roll * Matrix.Scale(scale)).Translate(origin);
+                        Matrix tform = (yaw * pitch * roll * Matrix.Scale(scale)).Translate(origin);
                         _mapObject3DShader.Transformation = tform.ToGLSLMatrix4();
                         arr.RenderTextured(context.Context);
                     }
@@ -210,14 +235,16 @@ namespace CBRE.Editor.Rendering.Renderers {
             _mapObject2DShader.Bind(opts);
             _mapObject2DShader.SelectedColour = new Vector4(1, 1, 0, 1);
 
-            if (opts.Wireframe) {
+            if (opts.Wireframe)
+            {
                 _mapObject2DShader.SelectedOnly = false;
                 _mapObject2DShader.SelectionTransform = _selectionTransform;
                 _array.RenderWireframe(context.Context);
                 _decalArray.RenderWireframe(context.Context);
             }
 
-            if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask) {
+            if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask)
+            {
                 _mapObject2DShader.SelectedOnly = true;
                 _mapObject2DShader.SelectionTransform = Matrix4.Identity;
                 _array.RenderWireframe(context.Context);
@@ -226,11 +253,13 @@ namespace CBRE.Editor.Rendering.Renderers {
 
             _mapObject2DShader.Unbind();
 
-            if (!opts.Wireframe) {
+            if (!opts.Wireframe)
+            {
                 // Render transparent
                 _mapObject3DShader.Bind(opts);
                 _decalArray.RenderTransparent(context.Context, location);
-                _array.RenderTransparent(context.Context, x => {
+                _array.RenderTransparent(context.Context, x =>
+                {
                     _mapObject3DShader.IsTextured = x.Texture != null && opts.Textured;
                     _mapObject3DShader.SqrtAlpha = !x.IsToolTexture;
                 }, location, lookAt);
@@ -238,72 +267,86 @@ namespace CBRE.Editor.Rendering.Renderers {
             }
         }
 
-        public void Update() {
+        public void Update()
+        {
             _array.Update(GetAllVisible(Document.Map.WorldSpawn));
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
             UpdateModels();
         }
 
-        public void UpdatePartial(IEnumerable<MapObject> objects) {
+        public void UpdatePartial(IEnumerable<MapObject> objects)
+        {
             _array.UpdatePartial(objects);
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
             UpdateModels();
         }
 
-        public void UpdatePartial(IEnumerable<Face> faces) {
+        public void UpdatePartial(IEnumerable<Face> faces)
+        {
             _array.UpdatePartial(faces);
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
             UpdateModels();
         }
 
-        public void UpdateSelection(IEnumerable<MapObject> objects) {
+        public void UpdateSelection(IEnumerable<MapObject> objects)
+        {
             _array.UpdatePartial(objects);
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn, false));
         }
 
-        private void UpdateModels() {
+        private void UpdateModels()
+        {
             _models.Clear();
-            foreach (var entity in GetModels(Document.Map.WorldSpawn)) {
-                var model = entity.GetModel();
+            foreach (Entity entity in GetModels(Document.Map.WorldSpawn))
+            {
+                Providers.Model.ModelReference model = entity.GetModel();
                 _models.Add(Tuple.Create(entity, model.Model));
-                if (!_modelArrays.ContainsKey(model.Model)) {
+                if (!_modelArrays.ContainsKey(model.Model))
+                {
                     _modelArrays.Add(model.Model, new ModelArray(model.Model));
                 }
             }
-            foreach (var kv in _modelArrays.Where(x => _models.All(y => y.Item2 != x.Key)).ToList()) {
+            foreach (KeyValuePair<Model, ModelArray> kv in _modelArrays.Where(x => _models.All(y => y.Item2 != x.Key)).ToList())
+            {
                 kv.Value.Dispose();
                 _modelArrays.Remove(kv.Key);
             }
         }
 
-        public void UpdateDocumentToggles() {
+        public void UpdateDocumentToggles()
+        {
             // Not needed
         }
 
-        private static IEnumerable<Entity> GetModels(MapObject root) {
-            var list = new List<MapObject>();
+        private static IEnumerable<Entity> GetModels(MapObject root)
+        {
+            List<MapObject> list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
             return list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasModel());
         }
 
-        private static IEnumerable<Entity> GetDecals(MapObject root, bool update = true) {
-            var list = new List<MapObject>();
+        private static IEnumerable<Entity> GetDecals(MapObject root, bool update = true)
+        {
+            List<MapObject> list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
-            var results = list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasDecal()).ToList();
+            List<Entity> results = list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasDecal()).ToList();
             if (update) results.ForEach(x => x.UpdateDecalGeometry()); // TODO This is a big performance hit, can it be moved elsewhere?
             return results;
         }
 
-        private static IEnumerable<MapObject> GetAllVisible(MapObject root) {
-            var list = new List<MapObject>();
+        private static IEnumerable<MapObject> GetAllVisible(MapObject root)
+        {
+            List<MapObject> list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
             return list.Where(x => !x.IsCodeHidden).ToList();
         }
 
-        private static void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher) {
+        private static void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher)
+        {
             if (!matcher(root)) return;
             items.Add(root);
-            foreach (var mo in root.GetChildren()) {
+            foreach (MapObject mo in root.GetChildren())
+            {
                 FindRecursive(items, mo, matcher);
             }
         }

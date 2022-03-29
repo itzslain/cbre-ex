@@ -1,54 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using CBRE.Common;
+﻿using CBRE.Common;
 using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Graphics.Helpers;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
-namespace CBRE.Editor.Rendering.Immediate {
-    public static class MapObjectRenderer {
-        public static Color Tint(Coordinate sun, Coordinate normal, Color c) {
-            var tintvar = (double)sun.Normalise().Dot(normal.Normalise());
+namespace CBRE.Editor.Rendering.Immediate
+{
+    public static class MapObjectRenderer
+    {
+        public static Color Tint(Coordinate sun, Coordinate normal, Color c)
+        {
+            double tintvar = (double)sun.Normalise().Dot(normal.Normalise());
             // tint variation = 128
-            var diff = (int)(64 * (tintvar + 1));
+            int diff = (int)(64 * (tintvar + 1));
 
             return Color.FromArgb(c.A, Math.Max(0, c.R - diff), Math.Max(0, c.G - diff), Math.Max(0, c.B - diff));
         }
 
-        private static void GLCoordinateTriangle(Vertex v1, Vertex v2, Vertex v3) {
-            var p1 = v1.Location.ToCoordinateF();
-            var p2 = v2.Location.ToCoordinateF();
-            var p3 = v3.Location.ToCoordinateF();
-            var normal = (p3 - p1).Cross(p2 - p1).Normalise();
+        private static void GLCoordinateTriangle(Vertex v1, Vertex v2, Vertex v3)
+        {
+            CoordinateF p1 = v1.Location.ToCoordinateF();
+            CoordinateF p2 = v2.Location.ToCoordinateF();
+            CoordinateF p3 = v3.Location.ToCoordinateF();
+            CoordinateF normal = (p3 - p1).Cross(p2 - p1).Normalise();
             GLCoordinate(v1, normal);
             GLCoordinate(v2, normal);
             GLCoordinate(v3, normal);
         }
 
-        private static void GLCoordinate(Vertex v, CoordinateF normal) {
+        private static void GLCoordinate(Vertex v, CoordinateF normal)
+        {
             GL.TexCoord2(v.DTextureU, v.DTextureV);
             GL.Normal3(normal.X, normal.Y, normal.Z);
             GLCoordinate(v.Location);
         }
 
-        private static void GLCoordinate(Vertex v, Coordinate normal) {
+        private static void GLCoordinate(Vertex v, Coordinate normal)
+        {
             GL.TexCoord2(v.DTextureU, v.DTextureV);
             GL.Normal3(normal.DX, normal.DY, normal.DZ);
             GLCoordinate(v.Location);
         }
 
-        private static void GLCoordinate(Coordinate c) {
+        private static void GLCoordinate(Coordinate c)
+        {
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        private static float GetOpacity(ITexture texture, Face face) {
+        private static float GetOpacity(ITexture texture, Face face)
+        {
             return face.Opacity;
         }
 
-        public static void DrawFilled(IEnumerable<Face> faces, Color color, bool textured, bool blend = true) {
+        public static void DrawFilled(IEnumerable<Face> faces, Color color, bool textured, bool blend = true)
+        {
             if (color.IsEmpty) color = Color.White;
             faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden || x.Parent.IsRenderHidden3D));
 
@@ -56,34 +65,44 @@ namespace CBRE.Editor.Rendering.Immediate {
             GL.Color4(color);
 
             var texgroups = from f in faces
-                            group f by new {
+                            group f by new
+                            {
                                 f.Texture.Texture,
                                 Opacity = GetOpacity(f.Texture.Texture, f),
                                 Transparent = GetOpacity(f.Texture.Texture, f) < 0.9 || (f.Texture.Texture != null && f.Texture.Texture.HasTransparency())
                             }
                                 into g
                             select g;
-            foreach (var g in texgroups.OrderBy(x => x.Key.Transparent ? 1 : 0)) {
-                var texture = false;
-                var alpha = g.Key.Opacity * 255;
-                var blendAlpha = (byte)((color.A) / 255f * (alpha / 255f) * 255);
+            foreach (var g in texgroups.OrderBy(x => x.Key.Transparent ? 1 : 0))
+            {
+                bool texture = false;
+                float alpha = g.Key.Opacity * 255;
+                byte blendAlpha = (byte)((color.A) / 255f * (alpha / 255f) * 255);
                 GL.End();
                 GL.DepthMask(!g.Key.Transparent);
-                if (g.Key.Texture != null && textured) {
+                if (g.Key.Texture != null && textured)
+                {
                     texture = true;
                     GL.Color4(Color.FromArgb(blendAlpha, color));
                     g.Key.Texture.Bind();
-                } else {
+                }
+                else
+                {
                     TextureHelper.Unbind();
                 }
                 GL.Begin(PrimitiveType.Triangles);
-                foreach (var f in g) {
-                    var disp = f is Displacement;
+                foreach (Face f in g)
+                {
+                    bool disp = f is Displacement;
                     GL.Color4(Color.FromArgb(blendAlpha, texture ? color : (blend ? f.Colour.Blend(color) : color)));
-                    foreach (var tri in f.GetTriangles()) {
-                        if (disp) {
+                    foreach (Vertex[] tri in f.GetTriangles())
+                    {
+                        if (disp)
+                        {
                             GLCoordinateTriangle(tri[0], tri[1], tri[2]);
-                        } else {
+                        }
+                        else
+                        {
                             GLCoordinate(tri[0], f.Plane.Normal);
                             GLCoordinate(tri[1], f.Plane.Normal);
                             GLCoordinate(tri[2], f.Plane.Normal);
@@ -98,15 +117,18 @@ namespace CBRE.Editor.Rendering.Immediate {
             GL.DepthMask(true);
         }
 
-        public static void DrawWireframe(IEnumerable<Face> faces, bool overrideColor, bool drawVertices) {
+        public static void DrawWireframe(IEnumerable<Face> faces, bool overrideColor, bool drawVertices)
+        {
             faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden || x.Parent.IsRenderHidden2D)).ToList();
 
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
 
-            foreach (var f in faces) {
+            foreach (Face f in faces)
+            {
                 if (!overrideColor) GL.Color4(f.Colour);
-                foreach (var line in f.GetLines()) {
+                foreach (Line line in f.GetLines())
+                {
                     GLCoordinate(line.Start);
                     GLCoordinate(line.End);
                 }
@@ -119,9 +141,11 @@ namespace CBRE.Editor.Rendering.Immediate {
             GL.PointSize(CBRE.Settings.View.VertexPointSize);
             GL.Begin(PrimitiveType.Points);
             GL.Color4(CBRE.Settings.View.VertexOverrideColour);
-            foreach (var f in faces) {
+            foreach (Face f in faces)
+            {
                 if (!CBRE.Settings.View.OverrideVertexColour) GL.Color4(f.Colour);
-                foreach (var line in f.GetLines()) {
+                foreach (Line line in f.GetLines())
+                {
                     GLCoordinate(line.Start);
                     GLCoordinate(line.End);
                 }
@@ -129,7 +153,8 @@ namespace CBRE.Editor.Rendering.Immediate {
             GL.End();
         }
 
-        public static void EnableLighting() {
+        public static void EnableLighting()
+        {
             GL.Light(LightName.Light0, LightParameter.Position, new float[] { -10000, -20000, -30000, 1 });
             GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { 0.0f, 0.0f, 0.0f, 1 });
             GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { 0.2f, 0.2f, 0.2f, 1.0f });
@@ -147,7 +172,8 @@ namespace CBRE.Editor.Rendering.Immediate {
             GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
         }
 
-        public static void DisableLighting() {
+        public static void DisableLighting()
+        {
             GL.Disable(EnableCap.Light1);
             GL.Disable(EnableCap.Light0);
             GL.Disable(EnableCap.Lighting);
