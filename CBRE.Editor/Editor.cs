@@ -44,8 +44,15 @@ namespace CBRE.Editor
 
         private class UpdaterResponse
         {
+            public class Asset
+            {
+                public string browser_download_url { get; set; }
+            }
+
             public string html_url { get; set; }
             public string tag_name { get; set; }
+            public string body { get; set; }
+            public List<Asset> assets { get; set; }
         }
 
         public bool CaptureAltPresses { get; set; }
@@ -210,7 +217,7 @@ namespace CBRE.Editor
                     Version parsedVersion;
 
                     webClient.Headers.Add("Accept", "application/vnd.github.v3+json");
-                    webClient.Headers.Add("User-Agent", "cbre-ex");
+                    webClient.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
 
                     JsonSerializerSettings settings = new JsonSerializerSettings
                     {
@@ -220,14 +227,18 @@ namespace CBRE.Editor
                     UpdaterResponse apiResponse = JsonConvert.DeserializeObject<UpdaterResponse>(webClient.DownloadString(RELEASES_URL), settings);
 
                     if (!Version.TryParse(apiResponse.tag_name, out parsedVersion)) return;
+                    if (apiResponse.assets.Count < 2) return;
+
+                    string updatePackageUrl = apiResponse.assets.First().browser_download_url;
+                    string checksumUrl = apiResponse.assets.Skip(1).First().browser_download_url;
+
+                    if (!updatePackageUrl.EndsWith(".zip")) return;
+                    if (!checksumUrl.EndsWith("CHECKSUM.txt")) return;
 
                     if (parsedVersion > GetCurrentVersion())
                     {
-                        if (MessageBox.Show($"A new version of CBRE-EX (v{parsedVersion}) is available on GitHub.\n" +
-                            "Would you like to download this update?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                        {
-                            OpenWebsite(apiResponse.html_url);
-                        }
+                        UpdaterForm form = new UpdaterForm(parsedVersion, apiResponse.body, updatePackageUrl, checksumUrl);
+                        form.Show();
                     }
                 }
                 catch (Exception)

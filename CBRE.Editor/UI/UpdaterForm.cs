@@ -1,85 +1,118 @@
-﻿using CBRE.Common.Mediator;
-using System;
+﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
     public partial class UpdaterForm : Form
     {
-        private readonly UpdateReleaseDetails _details;
-        private readonly string _filename;
-        public bool Completed { get; private set; }
+        private string DownloadUri;
+        private string ChecksumUri;
+        private string VersionString;
 
-        public UpdaterForm(UpdateReleaseDetails details, string filename)
+        public UpdaterForm(Version version, string changelog, string url, string checksumUrl)
         {
-            _details = details;
-            _filename = filename;
-            Completed = false;
-
             InitializeComponent();
+            DownloadUri = url;
+            ChecksumUri = checksumUrl;
+            VersionString = version.ToString();
 
-            Text = "Update Available! Current version: " + FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location).FileVersion;
+            SHSTOCKICONINFO stockIconInfo = new SHSTOCKICONINFO();
+            stockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
+            SHGetStockIconInfo(SHSTOCKICONID.SIID_INFO, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SHELLICONSIZE, ref stockIconInfo);
 
-            StatusLabel.Text = "A new version of CBRE is available!\nWould you like to download it now?";
-            ReleaseDetails.Text = _details.Name + "\r\n\r\n" + _details.Changelog.Replace("\r", "").Replace("\n", "\r\n");
+            systemBitmap.Image = Icon.FromHandle(stockIconInfo.hIcon).ToBitmap();
+
+            headerLabel.Text = headerLabel.Text.Replace("(version)", VersionString);
+
+            changelogBox.Text = changelog;
+            changelogBox.BackColor = SystemColors.Window;
+            changelogBox.GotFocus += ChangelogGotFocus;
         }
 
-        private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-
-        private void UpdaterFormFormClosing(object sender, FormClosingEventArgs e)
+        private void ChangelogGotFocus(object sender, EventArgs e)
         {
-            _tokenSource.Cancel();
+            HideCaret(changelogBox.Handle);
         }
 
-        private void DownloadButtonClicked(object sender, EventArgs e)
+        private void noButton_Click(object sender, EventArgs e)
         {
-            DownloadUpdate(_details.DownloadUrl, _filename, _tokenSource.Token);
+            this.Close();
         }
 
-        private Task DownloadUpdate(string url, string file, CancellationToken token)
+        private async void yesButton_Click(object sender, EventArgs e)
         {
-            StartButton.Enabled = false;
+            string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
 
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            WebClient wc = new WebClient();
+            this.ControlBox = false;
+            this.noButton.Enabled = false;
+            this.yesButton.Enabled = false;
 
-            wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/sledge");
-            wc.Headers.Remove(HttpRequestHeader.Accept);
-            wc.Headers.Add(HttpRequestHeader.Accept, "application/octet-stream");
-
-            wc.DownloadFileCompleted += (obj, args) =>
+            try
             {
-                tcs.SetResult(true);
-                Completed = true;
-                if (InvokeRequired) BeginInvoke(new Action(Close));
-                else Close();
-            };
-            wc.DownloadProgressChanged += UpdateProgress;
-            token.Register(wc.CancelAsync);
-            wc.DownloadFileAsync(new Uri(url), file);
-            return tcs.Task;
+                using (WebClient webClient = new WebClient())
+                {
+                    string downloadedChecksum = string.Empty;
+
+                    webClient.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
+
+                    webClient.DownloadFile(new Uri(ChecksumUri), "CHECKSUM.txt");
+                    downloadedChecksum = File.ReadAllText("CHECKSUM.txt");
+                    if (string.IsNullOrEmpty(downloadedChecksum)) throw new Exception("The checksum file was empty.");
+
+                    webClient.DownloadProgressChanged += (senderObj, eventArg) =>
+                    {
+                        downloadProgress.Value = eventArg.ProgressPercentage;
+                        statusLabel.Text = $"Status: Downloading {eventArg.ProgressPercentage}%";
+                    };
+
+                    await webClient.DownloadFileTaskAsync(new Uri(DownloadUri), "Update.zip");
+
+                    statusLabel.Text = "Status: Verifying...";
+
+                    using (MD5 md5 = MD5.Create())
+                    {
+                        using (FileStream stream = File.OpenRead("Update.zip"))
+                        {
+                            string convertedChecksum;
+
+                            byte[] hash = md5.ComputeHash(stream);
+                            convertedChecksum = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+
+                            if (downloadedChecksum != convertedChecksum) throw new Exception("Verification failed. Update package is probably corrupted.");
+                        }
+                    }
+
+                    ProcessStartInfo updaterProcess = new ProcessStartInfo("CBRE.Updater.exe");
+                    updaterProcess.Arguments = $"{VersionString} {FixSpaces(CurrentFilename)}";
+                    updaterProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                    updaterProcess.UseShellExecute = true;
+                    Process.Start(updaterProcess);
+
+                    Application.Exit();
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ControlBox = true;
+                this.noButton.Enabled = true;
+                this.yesButton.Enabled = true;
+                statusLabel.Text = "Status: Idle";
+
+                MessageBox.Show("An error has ocurred while downloading and verifying the update package.\n" +
+                               $"{ex.Message}", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void UpdateProgress(object sender, DownloadProgressChangedEventArgs e)
+        private string FixSpaces(string text)
         {
-            ProgressBar.Value = e.ProgressPercentage;
-            if (!ProgressBar.Visible) ProgressBar.Visible = true;
-            StatusLabel.Text = "Downloading " + (Path.GetFileNameWithoutExtension(_filename) ?? "") + "... " + e.ProgressPercentage.ToString("0") + "%";
-        }
-
-        private void CancelButtonClicked(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void ReleaseNotesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/LogicAndTrick/sledge/releases");
+            if (text.Contains(" ")) return $"\"{text}\"";
+            else return text;
         }
     }
 }
