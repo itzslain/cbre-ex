@@ -49,6 +49,7 @@ namespace CBRE.Editor.UI
         {
             string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
 
+            this.changelogBox.Select(0, 0);
             this.ControlBox = false;
             this.noButton.Enabled = false;
             this.yesButton.Enabled = false;
@@ -102,6 +103,7 @@ namespace CBRE.Editor.UI
                 this.ControlBox = true;
                 this.noButton.Enabled = true;
                 this.yesButton.Enabled = true;
+                this.downloadProgress.Value = 0;
                 statusLabel.Text = "Status: Idle";
 
                 MessageBox.Show("An error has ocurred while downloading and verifying the update package.\n" +

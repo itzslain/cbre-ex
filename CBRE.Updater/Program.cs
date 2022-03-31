@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 
 namespace CBRE.Updater
 {
@@ -20,10 +21,20 @@ namespace CBRE.Updater
         {
             string TargetDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
+            string friendlyCbreProcess = args[1].Replace(".exe", "");
 
             Console.Title = "CBRE-EX Updater";
-
             if (Environment.OSVersion.Version.Major < 10) ConsoleExtensions.Disable();
+
+            Log($"Waiting until {"CBRE-EX".Pastel(Color.LimeGreen)} shuts down...", LogSeverity.MESSAGE);
+
+            while(true)
+            {
+                Process[] cbre = Process.GetProcessesByName(friendlyCbreProcess);
+
+                if (cbre.Length > 0) Thread.Sleep(100);
+                else break;
+            }
 
             Log($"Installing {"CBRE-EX".Pastel(Color.LimeGreen)} {$"v{args[0]}".Pastel(Color.Lime)}", LogSeverity.MESSAGE);
 
@@ -34,6 +45,7 @@ namespace CBRE.Updater
                 Directory.CreateDirectory("Temp");
 
                 Log($"Extracting {"Update.zip".Pastel(Color.LimeGreen)} to Temp directory...", LogSeverity.MESSAGE);
+                if(Directory.Exists("Temp")) Directory.Delete("Temp", true);
                 ZipFile.ExtractToDirectory("Update.zip", "Temp");
 
                 DirectoryInfo tempDir = new DirectoryInfo("Temp");
@@ -50,7 +62,7 @@ namespace CBRE.Updater
                 FileInfo[] tempDirFiles = tempDir.GetFiles();
                 foreach (FileInfo file in tempDirFiles)
                 {
-                    if (file.Name == "Settings.vdf" || file.Name == CurrentFilename) continue;
+                    if (file.Name == "Settings.vdf" || file.Name == CurrentFilename || file.Name == "Pastel.dll") continue;
 
                     Log($"Copying updated file \"{file.Name.Pastel(Color.Lime)}\" to existing install...", LogSeverity.MESSAGE);
                     file.CopyTo(Path.Combine(TargetDirectory, file.Name), true);
@@ -74,6 +86,8 @@ namespace CBRE.Updater
             catch (Exception ex)
             {
                 Log($"Error! {ex.Message.Pastel(Color.IndianRed)}", LogSeverity.ERROR);
+
+                Thread.Sleep(Timeout.Infinite);
             }
         }
 
