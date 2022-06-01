@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -21,7 +22,7 @@ namespace CBRE.QuickForms.Items
         {
             List<Control> controls = new List<Control>();
 
-            Label l = new Label { Text = Name };
+            Label l = new Label { Text = Name, Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
             Location(l, qf, true);
             Size(l, qf.LabelWidth);
             TextAlign(l);
@@ -31,7 +32,9 @@ namespace CBRE.QuickForms.Items
             {
                 Name = Name,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+				Font = SystemFonts.MessageBoxFont,
+				FlatStyle = FlatStyle.System
             };
             cb.Items.AddRange(_items.ToArray());
             cb.SelectedIndex = 0;

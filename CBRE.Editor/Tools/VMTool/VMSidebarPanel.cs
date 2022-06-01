@@ -1,6 +1,7 @@
 ﻿using CBRE.Common.Mediator;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -55,12 +56,14 @@ namespace CBRE.Editor.Tools.VMTool
 
         public void AddTool(VMSubTool tool)
         {
-            RadioButton rdo = new RadioButton
-            {
-                Name = tool.GetName(),
-                Text = tool.GetName(),
-                //Appearance = Appearance.Button,
-                AutoSize = true,
+			RadioButton rdo = new RadioButton
+			{
+				Name = tool.GetName(),
+				Text = tool.GetName(),
+				//Appearance = Appearance.Button,
+				AutoSize = true,
+				FlatStyle = FlatStyle.System,
+				Font = SystemFonts.MessageBoxFont
                 //Size = new Size(110, 17)
             };
             rdo.Click += (sender, e) => SelectTool(tool);

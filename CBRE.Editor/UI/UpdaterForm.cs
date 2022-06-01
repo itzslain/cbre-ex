@@ -20,7 +20,7 @@ namespace CBRE.Editor.UI
             InitializeComponent();
             DownloadUri = url;
             ChecksumUri = checksumUrl;
-            VersionString = version.ToString();
+            VersionString = version.ToString(2);
 
             SHSTOCKICONINFO stockIconInfo = new SHSTOCKICONINFO();
             stockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));

@@ -20,7 +20,7 @@ namespace CBRE.QuickForms.Items
         public override List<Control> GetControls(QuickForm qf)
         {
             List<Control> controls = new List<Control>();
-            CheckBox c = new CheckBox { Text = Name, Name = Name, Checked = _value };
+            CheckBox c = new CheckBox { Text = Name, Name = Name, Checked = _value, Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
             Size(c, qf, 0);
             c.TextAlign = ContentAlignment.MiddleLeft;
             Location(c, qf, true);

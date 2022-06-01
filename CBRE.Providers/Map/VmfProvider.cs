@@ -653,7 +653,7 @@ namespace CBRE.Providers.Map
 
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(typeof(VmfProvider).Assembly.Location);
             GenericStructure versioninfo = new GenericStructure("versioninfo");
-            versioninfo.AddProperty("editorname", "CBRE");
+            versioninfo.AddProperty("editorname", "CBRE-EX");
             versioninfo.AddProperty("editorversion", fvi.ProductMajorPart.ToString() + "." + fvi.ProductMinorPart.ToString());
             versioninfo.AddProperty("editorbuild", fvi.ProductBuildPart.ToString());
             versioninfo.AddProperty("mapversion", map.Version.ToString());

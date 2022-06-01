@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace CBRE.QuickForms.Items
@@ -21,7 +22,7 @@ namespace CBRE.QuickForms.Items
         {
             List<Control> controls = new List<Control>();
 
-            Button b = new Button();
+			Button b = new Button() { Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
             b.Click += (sender, e) => _clickevent();
             b.Width = 120;
             b.Text = Name;

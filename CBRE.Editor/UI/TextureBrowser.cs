@@ -54,19 +54,19 @@ namespace CBRE.Editor.UI
             List<TextureItem> list = selection.ToList();
             if (!list.Any())
             {
-                TextureNameLabel.Text = "";
-                TextureSizeLabel.Text = "";
+                TextureNameLabel.Text = "Name: None";
+                TextureSizeLabel.Text = "Size: None";
             }
             else if (list.Count == 1)
             {
                 TextureItem t = list[0];
-                TextureNameLabel.Text = t.Name;
-                TextureSizeLabel.Text = t.Width + " x " + t.Height;
+                TextureNameLabel.Text = "Name: " + t.Name;
+                TextureSizeLabel.Text = "Size: " + t.Width + " x " + t.Height;
             }
             else
             {
-                TextureNameLabel.Text = list.Count + " textures selected";
-                TextureSizeLabel.Text = "";
+                TextureNameLabel.Text = list.Count + " textures selected.";
+                TextureSizeLabel.Text = "Size: Unable to display.";
             }
         }
 

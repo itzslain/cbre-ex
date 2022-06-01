@@ -1,5 +1,6 @@
 ﻿using CBRE.Common.Mediator;
 using CBRE.Editor.Tools;
+using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -21,9 +22,10 @@ namespace CBRE.Editor.UI.Sidebar
             string help = "";
             if (ToolManager.ActiveTool != null) help = ToolManager.ActiveTool.GetContextualHelp();
             HelpTextBox.ResetFont();
+			HelpTextBox.Font = SystemFonts.MessageBoxFont;
             string rtf = ConvertSimpleMarkdownToRtf(help);
             HelpTextBox.Rtf = rtf;
-            System.Drawing.Size size = TextRenderer.MeasureText(HelpTextBox.Text, HelpTextBox.Font, HelpTextBox.Size, TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
+            Size size = TextRenderer.MeasureText(HelpTextBox.Text, HelpTextBox.Font, HelpTextBox.Size, TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
             Height = size.Height + HelpTextBox.Margin.Vertical + HelpTextBox.Lines.Length * 5;
         }
 

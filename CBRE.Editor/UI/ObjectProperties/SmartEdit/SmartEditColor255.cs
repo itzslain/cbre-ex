@@ -16,7 +16,7 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
             _textBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_textBox);
 
-            Button btn = new Button { Image = Resources.Button_ColourPicker, Text = "", Margin = new Padding(1), Width = 24, Height = 24 };
+            Button btn = new Button { Image = Resources.Button_ColourPicker, Text = "", Margin = new Padding(1), Width = 26, Height = 26 };
             btn.Click += OpenColorPicker;
             Controls.Add(btn);
         }

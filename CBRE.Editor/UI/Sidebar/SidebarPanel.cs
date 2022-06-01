@@ -81,7 +81,8 @@ namespace CBRE.Editor.UI.Sidebar
         {
             DoubleBuffered = true;
             _expanded = false;
-            Height = Font.Height + 12;
+			Font = SystemFonts.MessageBoxFont;
+			Height = Font.Height + 12;
             AutoSize = false;
             Padding = new Padding(16, 5, 3, 1);
             SetStyle(ControlStyles.StandardDoubleClick, false);
@@ -94,16 +95,18 @@ namespace CBRE.Editor.UI.Sidebar
             e.Graphics.DrawLine(SystemPens.ControlLightLight, 0, 1, Width, 1);
             if (_mouseIn)
             {
-                using (SolidBrush brush = new SolidBrush(BackColor.Darken()))
+                using (SolidBrush brush = new SolidBrush(BackColor.Darken(30)))
                 {
                     e.Graphics.FillRectangle(brush, new Rectangle(0, 3, Width, Height - Padding.Vertical));
                 }
             }
             else
             {
-                using (SolidBrush brush = new SolidBrush(BackColor.Darken(10)))
+				using (SolidBrush brush = new SolidBrush(BackColor.Darken(15)))
                 {
-                    e.Graphics.FillRectangle(brush, new Rectangle(0, Height - Padding.Vertical + 2, Width, 1));
+					e.Graphics.FillRectangle(brush, new Rectangle(0, 3, Width, Height - Padding.Vertical));
+					brush.Color = BackColor.Darken(40);
+					e.Graphics.FillRectangle(brush, new Rectangle(0, Height - Padding.Vertical + 2, Width, 1));
                 }
             }
             using (SolidBrush brush = new SolidBrush(ForeColor))
@@ -141,7 +144,7 @@ namespace CBRE.Editor.UI.Sidebar
                     new Point(left, top),
                     new Point(left + 8, top),
                     new Point(left + 4, top + 4),
-                    new Point(left + 3, top + 4)
+                    new Point(left, top)
                 };
             }
             else

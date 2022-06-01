@@ -106,7 +106,6 @@ namespace CBRE.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Show Logical Tree", HotkeysMediator.ShowLogicalTree) { Image = Resources.Menu_ShowLogicalTree, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { Image = Resources.Menu_MapProperties, IsVisible = mapOpen });
-            Add("Map", new MenuSplitter { IsVisible = mapOpen });
 
             Add("View", new SimpleMenuBuilder("Autosize All Views", HotkeysMediator.ViewportAutosize) { Image = Resources.Menu_AutosizeViews, IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Center All Views on Selection", HotkeysMediator.CenterAllViewsOnSelection) { Image = Resources.Menu_CenterSelectionAll, IsVisible = mapOpen, IsActive = itemsSelected });
@@ -152,10 +151,10 @@ namespace CBRE.Editor.Menu
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings) { Image = Resources.Menu_Options, ShowInToolStrip = true });
 
-            Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) { Image = Resources.Menu_NewWindow });
-            Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) { Image = Resources.Menu_WindowSettings });
+            //Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) { Image = Resources.Menu_NewWindow });
+            //Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) { Image = Resources.Menu_WindowSettings });
 
-            Add("Help", new SimpleMenuBuilder("About...", EditorMediator.About));
+            Add("Help", new SimpleMenuBuilder("About CBRE-EX", EditorMediator.About));
         }
 
         public static void UpdateRecentFilesMenu()

@@ -201,6 +201,7 @@ namespace CBRE.Editor
             CheckForUpdates();
         }
 
+
         #region Updates
         private Version GetCurrentVersion()
         {
@@ -253,7 +254,8 @@ namespace CBRE.Editor
         {
             if (doc.History.TotalActionsSinceLastSave > 0)
             {
-                DialogResult result = MessageBox.Show("Would you like to save your changes to " + doc.MapFileName + "?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+                DialogResult result = MessageBox.Show("Would you like to save your changes to " + doc.MapFileName + "?", "Changes Detected",
+					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 if (result == DialogResult.Cancel)
                 {
                     return false;
@@ -548,7 +550,7 @@ namespace CBRE.Editor
         private static readonly Version Version = Assembly.GetEntryAssembly().GetName().Version;
 
         private string titleStart
-            => $"CBRE-EX v{Version}";
+            => $"CBRE-EX v{Version.ToString(2)}";
 
         private void UpdateTitle()
         {
@@ -603,7 +605,7 @@ namespace CBRE.Editor
             int count = sel.Count;
             if (count == 0)
             {
-                StatusSelectionLabel.Text = "No objects selected";
+                StatusSelectionLabel.Text = "No Objects Selected";
             }
             else if (count == 1)
             {
@@ -621,7 +623,7 @@ namespace CBRE.Editor
             }
             else
             {
-                StatusSelectionLabel.Text = count.ToString() + " objects selected";
+                StatusSelectionLabel.Text = count.ToString() + " Objects Selected";
             }
         }
 
@@ -715,7 +717,7 @@ namespace CBRE.Editor
             Screen screen = Screen.FromControl(this);
             Rectangle area = screen.Bounds;
 
-            using (QuickForm qf = new QuickForm("Select screenshot size") { UseShortcutKeys = true }
+            using (QuickForm qf = new QuickForm("Select Screenshot Size") { UseShortcutKeys = true }
                 .NumericUpDown("Width", 640, 5000, 0, area.Width)
                 .NumericUpDown("Height", 480, 5000, 0, area.Height)
                 .CheckBox("Copy to Clipboard", false)

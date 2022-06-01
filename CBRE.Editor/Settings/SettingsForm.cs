@@ -64,7 +64,7 @@ namespace CBRE.Editor.Settings
         {
             new ColourPreset
             {
-                Name = "CBRE Default",
+                Name = "CBRE-EX Default",
                 Background = Color.Black,
                 Grid = Color.FromArgb(75, 75, 75),
                 ZeroAxes = Color.FromArgb(0, 100, 100),

@@ -16,9 +16,9 @@ namespace CBRE.Editor.UI.ObjectProperties.SmartEdit
             _keyBox.TextChanged += (sender, e) => OnNameChanged();
             _textBox.TextChanged += (sender, e) => OnValueChanged();
 
-            Controls.Add(new Label { Text = "Key", AutoSize = false, Height = 18, Width = 50, TextAlign = ContentAlignment.BottomRight });
+            Controls.Add(new Label { Text = "Key", AutoSize = false, Height = 20, Width = 50, TextAlign = ContentAlignment.BottomRight });
             Controls.Add(_keyBox);
-            Controls.Add(new Label { Text = "Value", AutoSize = false, Height = 18, Width = 50, TextAlign = ContentAlignment.BottomRight });
+            Controls.Add(new Label { Text = "Value", AutoSize = false, Height = 20, Width = 50, TextAlign = ContentAlignment.BottomRight });
             Controls.Add(_textBox);
         }
 

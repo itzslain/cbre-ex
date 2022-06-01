@@ -173,8 +173,8 @@ namespace CBRE.Editor.Tools
             Usage = ToolUsage.Both;
             State = new BoxState();
 
-            _printer = new TextPrinter(TextQuality.Low);
-            _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
+            _printer = new TextPrinter(TextQuality.High);
+            _printerFont = new Font(SystemFonts.MessageBoxFont.FontFamily, 16, GraphicsUnit.Pixel);
         }
 
         protected virtual void OnBoxChanged()

@@ -21,13 +21,13 @@ namespace CBRE.QuickForms.Items
         {
             List<Control> controls = new List<Control>();
 
-            Label l = new Label { Text = Name };
+            Label l = new Label { Text = Name, Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
             Location(l, qf, true);
             Size(l, qf.LabelWidth);
             TextAlign(l);
             controls.Add(l);
 
-            TextBox t = new TextBox { Name = Name };
+            TextBox t = new TextBox { Name = Name, Font = SystemFonts.MessageBoxFont };
             Anchor(t);
             Location(t, qf, false);
             int textBoxWidth = qf.ClientSize.Width - (QuickForm.ItemPadding * 2);
@@ -38,7 +38,7 @@ namespace CBRE.QuickForms.Items
             t.Size = new Size(textBoxWidth, h);
             controls.Add(t);
 
-            Button b = new Button { Text = "Browse", Width = 60, Anchor = AnchorStyles.Top | AnchorStyles.Right };
+            Button b = new Button { Text = "Browse", Width = 60, Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System, Anchor = AnchorStyles.Top | AnchorStyles.Right };
             Location(b, qf, false);
             b.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - b.Width, b.Location.Y);
             b.Click += (s, e) => ShowBrowseDialog(t);

@@ -423,13 +423,13 @@ namespace CBRE.Editor.Documents
                 }
             }
 
-            QuickForm qf = new QuickForm("Select wall width") { UseShortcutKeys = true }.NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
+            QuickForm qf = new QuickForm("Select Wall Width") { UseShortcutKeys = true }.NumericUpDown("Wall Width", -1024, 1024, 0, 32).OkCancel();
 
             decimal width;
             do
             {
                 if (qf.ShowDialog() == DialogResult.Cancel) return;
-                width = qf.Decimal("Wall width (negative to hollow outwards)");
+                width = qf.Decimal("Wall Width");
                 if (width == 0) MessageBox.Show("Please select a non-zero value.");
             } while (width == 0);
 

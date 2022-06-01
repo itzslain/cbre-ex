@@ -34,7 +34,7 @@ namespace CBRE.Editor.UI
         private bool _draggedinside;
         private string _anglestring;
 
-        public int Degrees
+		public int Degrees
         {
             get { return (int)(_angle * 180 / Math.PI); }
         }
@@ -158,14 +158,16 @@ namespace CBRE.Editor.UI
             System.Drawing.Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             Brush fill = Enabled ? System.Drawing.Brushes.Black : System.Drawing.Brushes.LightGray;
-            Pen top = new Pen(Color.FromArgb(167, 166, 170), 4);
-            Pen bottom = new Pen(Color.White, 4);
 
-            int x = Width - 38;
-            g.DrawArc(bottom, x, 2, 36, 36, 315, 180);
-            g.DrawArc(top, x, 2, 36, 36, 135, 180);
-            g.FillEllipse(fill, x, 2, 36, 36);
-            UpdateAngle(g);
+			using (Pen bottomPen = new Pen(Color.LightGray))
+			using (Pen topPen = new Pen(Color.Gray, 4))
+			{
+				int x = Width - 38;
+				g.DrawArc(bottomPen, x, 2, 36, 36, 315, 180);
+				g.DrawArc(topPen, x, 2, 36, 36, 135, 180);
+				g.FillEllipse(fill, x, 2, 36, 36);
+				UpdateAngle(g);
+			}
         }
 
         private void UpdateAngle()
@@ -182,24 +184,27 @@ namespace CBRE.Editor.UI
         {
             int x = Width - 40;
             Brush fill = Enabled ? System.Drawing.Brushes.Black : System.Drawing.Brushes.LightGray;
-            Pen line = Enabled ? Pens.White : Pens.LightGray;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
-            g.FillEllipse(fill, x + 4, 4, 32, 32);
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            if (_elevation > 0)
-            {
-                // Draw a single pixel in the center - a bit of a pain to do
-                Bitmap pt = new Bitmap(1, 1);
-                pt.SetPixel(0, 0, Color.White);
-                g.DrawImageUnscaled(pt, 20, 20);
-                pt.Dispose();
-            }
-            else
-            {
-                int xcoord = x + (int)Math.Round(Math.Cos(_angle) * 15, 0) + 20;
-                int ycoord = -(int)Math.Round(Math.Sin(_angle) * 15, 0) + 20;
-                g.DrawLine(line, x + 20, 20, xcoord, ycoord);
-            }
+            
+			using(Pen line = Enabled ? new Pen(Color.White, 2) : new Pen(Color.LightGray, 2))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+				g.FillEllipse(fill, x + 4, 4, 32, 32);
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				if (_elevation > 0)
+				{
+					// Draw a single pixel in the center - a bit of a pain to do
+					Bitmap pt = new Bitmap(1, 1);
+					pt.SetPixel(0, 0, Color.White);
+					g.DrawImageUnscaled(pt, 20, 20);
+					pt.Dispose();
+				}
+				else
+				{
+					int xcoord = x + (int)Math.Round(Math.Cos(_angle) * 15, 0) + 20;
+					int ycoord = -(int)Math.Round(Math.Sin(_angle) * 15, 0) + 20;
+					g.DrawLine(line, x + 20, 20, xcoord, ycoord);
+				}
+			}
         }
 
         private void AngleControlMouseMove(object sender, MouseEventArgs e)

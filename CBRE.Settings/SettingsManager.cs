@@ -45,7 +45,7 @@ namespace CBRE.Settings
             FavouriteTextureFolders = new List<FavouriteTextureFolder>();
 
             string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string sledge = Path.Combine(appdata, "CBRE");
+            string sledge = Path.Combine(appdata, "CBRE-EX");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             SettingsFile = Path.Combine(sledge, "Settings.vdf");
         }
@@ -53,7 +53,7 @@ namespace CBRE.Settings
         public static string GetTextureCachePath()
         {
             string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string sledge = Path.Combine(appdata, "CBRE");
+            string sledge = Path.Combine(appdata, "CBRE-EX");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             string cache = Path.Combine(sledge, "TextureCache");
             if (!Directory.Exists(cache)) Directory.CreateDirectory(cache);
@@ -179,7 +179,7 @@ namespace CBRE.Settings
             Settings.Clear();
             Settings.AddRange(newSettings);
 
-            GenericStructure root = new GenericStructure("CBRE");
+            GenericStructure root = new GenericStructure("CBRE-EX");
 
             // Settings
             GenericStructure settings = new GenericStructure("Settings");
@@ -234,7 +234,7 @@ namespace CBRE.Settings
         private static string GetSessionFile()
         {
             string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string sledge = Path.Combine(appdata, "CBRE");
+            string sledge = Path.Combine(appdata, "CBRE-EX");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             return Path.Combine(sledge, "session");
         }

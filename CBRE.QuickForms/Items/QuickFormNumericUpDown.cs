@@ -26,7 +26,7 @@ namespace CBRE.QuickForms.Items
         public override List<Control> GetControls(QuickForm qf)
         {
             List<Control> controls = new List<Control>();
-            Label l = new Label { Text = Name };
+            Label l = new Label { Text = Name, Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
             Location(l, qf, true);
             Size(l, qf.LabelWidth);
             TextAlign(l);
@@ -40,7 +40,8 @@ namespace CBRE.QuickForms.Items
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 Increment = (_decimals > 0) ? (1m / (_decimals * 10m)) : (1),
                 Width = 80,
-                Value = _defaultValue
+                Value = _defaultValue,
+				Font = SystemFonts.MessageBoxFont
             };
             Location(n, qf, false);
             n.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - n.Width, n.Location.Y);

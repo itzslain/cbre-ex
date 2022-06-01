@@ -40,7 +40,7 @@ namespace CBRE.Editor.Logging
                                      "-----------------------------------------------------------\n" +
                                      $".NET Version: {info.RuntimeVersion}\n" +
                                      $"Operating System: {info.OperatingSystem}\n" +
-                                     $"CBRE Version: {info.ApplicationVersion}\n" +
+                                     $"CBRE-EX Version: {info.ApplicationVersion}\n" +
                                      "-----------------------ERROR MESSAGE-----------------------\n" +
                                      info.FullStackTrace;
                     sw.Write(content);

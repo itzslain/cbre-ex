@@ -28,32 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.HelpTextBox = new System.Windows.Forms.RichTextBox();
-            this.SuspendLayout();
-            // 
-            // HelpTextBox
-            // 
-            this.HelpTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.HelpTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.HelpTextBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.HelpTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.HelpTextBox.Location = new System.Drawing.Point(0, 0);
-            this.HelpTextBox.Name = "HelpTextBox";
-            this.HelpTextBox.ReadOnly = true;
-            this.HelpTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.HelpTextBox.Size = new System.Drawing.Size(200, 80);
-            this.HelpTextBox.TabIndex = 0;
-            this.HelpTextBox.Text = "";
-            // 
-            // HelpSidebarPanel
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.HelpTextBox);
-            this.MinimumSize = new System.Drawing.Size(200, 50);
-            this.Name = "HelpSidebarPanel";
-            this.Size = new System.Drawing.Size(200, 80);
-            this.ResumeLayout(false);
+			this.HelpTextBox = new System.Windows.Forms.RichTextBox();
+			this.SuspendLayout();
+			// 
+			// HelpTextBox
+			// 
+			this.HelpTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.HelpTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.HelpTextBox.Cursor = System.Windows.Forms.Cursors.Default;
+			this.HelpTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HelpTextBox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.HelpTextBox.Location = new System.Drawing.Point(0, 0);
+			this.HelpTextBox.Name = "HelpTextBox";
+			this.HelpTextBox.ReadOnly = true;
+			this.HelpTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+			this.HelpTextBox.Size = new System.Drawing.Size(200, 80);
+			this.HelpTextBox.TabIndex = 0;
+			this.HelpTextBox.Text = "";
+			// 
+			// HelpSidebarPanel
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.HelpTextBox);
+			this.MinimumSize = new System.Drawing.Size(200, 50);
+			this.Name = "HelpSidebarPanel";
+			this.Size = new System.Drawing.Size(200, 80);
+			this.ResumeLayout(false);
 
         }
 

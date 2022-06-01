@@ -41,7 +41,7 @@ namespace CBRE.QuickForms.Items
                 string label = _labels[i];
                 DialogResult result = _results[i];
 
-                Button button = new Button();
+                Button button = new Button() { Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
                 if (action != null) button.Click += (sender, e) => action(((Control)sender).Parent as QuickForm);
                 button.Click += (s, e) => qf.DialogResult = result;
                 button.Click += qf.Close;

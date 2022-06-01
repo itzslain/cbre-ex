@@ -27,7 +27,7 @@ namespace CBRE.Editor.Rendering
         public ViewportLabelListener(ViewportBase viewport)
         {
             Viewport = viewport;
-            _printer = new TextPrinter(TextQuality.Low);
+            _printer = new TextPrinter(TextQuality.High);
             Rebuild();
         }
 

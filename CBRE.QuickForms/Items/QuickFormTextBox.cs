@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace CBRE.QuickForms.Items
@@ -19,12 +20,12 @@ namespace CBRE.QuickForms.Items
         public override List<Control> GetControls(QuickForm qf)
         {
             List<Control> controls = new List<Control>();
-            Label l = new Label { Text = Name };
+            Label l = new Label { Text = Name, Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
             Location(l, qf, true);
             Size(l, qf.LabelWidth);
             TextAlign(l);
             controls.Add(l);
-            TextBox t = new TextBox { Name = Name, Text = _defaultValue };
+            TextBox t = new TextBox { Name = Name, Text = _defaultValue, Font = SystemFonts.MessageBoxFont};
             Anchor(t);
             Location(t, qf, false);
             Size(t, qf, qf.LabelWidth);

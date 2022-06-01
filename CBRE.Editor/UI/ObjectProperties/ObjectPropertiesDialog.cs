@@ -29,7 +29,7 @@ namespace CBRE.Editor.UI.ObjectProperties
         private Documents.Document Document { get; set; }
         public bool FollowSelection { get; set; }
 
-        public bool AllowClassChange
+		public bool AllowClassChange
         {
             set
             {
@@ -80,7 +80,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             }
         }
 
-        private void Apply()
+		private void Apply()
         {
             string actionText = null;
             ActionCollection ac = new ActionCollection();
