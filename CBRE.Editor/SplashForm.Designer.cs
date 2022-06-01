@@ -74,6 +74,7 @@
 			// 
 			// splitContainer1.Panel2
 			// 
+			this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.splitContainer1.Panel2.Controls.Add(this.BottomPanelLabel);
 			this.splitContainer1.Size = new System.Drawing.Size(567, 266);
 			this.splitContainer1.SplitterDistance = 232;
@@ -115,8 +116,8 @@
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(322, 109);
 			this.label2.TabIndex = 2;
-			this.label2.Text = "\"omgggg it doesnt have model baking it sucks as much as the original cbre :(((((\"" +
-    "";
+			this.label2.Text = "Containment Breach Room Editor - Extended\r\n\"omgggg it doesnt have model baking it" +
+    " sucks as much as the original cbre :(((((\"";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// pictureBox1
