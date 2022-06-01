@@ -136,7 +136,7 @@
 			this.Controls.Add(this.noButton);
 			this.Controls.Add(this.headerLabel);
 			this.Controls.Add(this.systemBitmap);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;

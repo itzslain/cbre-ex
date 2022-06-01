@@ -54,7 +54,7 @@
 			this.FrameworkVersion.Location = new System.Drawing.Point(135, 33);
 			this.FrameworkVersion.Name = "FrameworkVersion";
 			this.FrameworkVersion.ReadOnly = true;
-			this.FrameworkVersion.Size = new System.Drawing.Size(675, 23);
+			this.FrameworkVersion.Size = new System.Drawing.Size(677, 23);
 			this.FrameworkVersion.TabIndex = 3;
 			// 
 			// label5
@@ -74,7 +74,7 @@
 			this.OperatingSystem.Location = new System.Drawing.Point(135, 62);
 			this.OperatingSystem.Name = "OperatingSystem";
 			this.OperatingSystem.ReadOnly = true;
-			this.OperatingSystem.Size = new System.Drawing.Size(675, 23);
+			this.OperatingSystem.Size = new System.Drawing.Size(677, 23);
 			this.OperatingSystem.TabIndex = 3;
 			// 
 			// label6
@@ -94,7 +94,7 @@
 			this.CBREVersion.Location = new System.Drawing.Point(135, 91);
 			this.CBREVersion.Name = "CBREVersion";
 			this.CBREVersion.ReadOnly = true;
-			this.CBREVersion.Size = new System.Drawing.Size(675, 23);
+			this.CBREVersion.Size = new System.Drawing.Size(677, 23);
 			this.CBREVersion.TabIndex = 3;
 			// 
 			// label7
@@ -117,7 +117,7 @@
 			this.FullError.Name = "FullError";
 			this.FullError.ReadOnly = true;
 			this.FullError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.FullError.Size = new System.Drawing.Size(675, 347);
+			this.FullError.Size = new System.Drawing.Size(677, 329);
 			this.FullError.TabIndex = 3;
 			// 
 			// cancelButton
@@ -125,7 +125,7 @@
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cancelButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.cancelButton.Location = new System.Drawing.Point(8, 444);
+			this.cancelButton.Location = new System.Drawing.Point(8, 426);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(121, 23);
 			this.cancelButton.TabIndex = 4;
@@ -138,7 +138,7 @@
 			this.copyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.copyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.copyButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.copyButton.Location = new System.Drawing.Point(8, 415);
+			this.copyButton.Location = new System.Drawing.Point(8, 397);
 			this.copyButton.Name = "copyButton";
 			this.copyButton.Size = new System.Drawing.Size(121, 23);
 			this.copyButton.TabIndex = 5;
@@ -162,7 +162,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(822, 479);
+			this.ClientSize = new System.Drawing.Size(824, 461);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.copyButton);
 			this.Controls.Add(this.cancelButton);
@@ -176,7 +176,7 @@
 			this.Controls.Add(this.label4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(500, 486);
+			this.MinimumSize = new System.Drawing.Size(640, 480);
 			this.Name = "ExceptionWindow";
 			this.ShowIcon = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

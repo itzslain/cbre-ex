@@ -302,10 +302,11 @@
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "TextureReplaceDialog";
+			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Replace Textures";
 			this.groupBox1.ResumeLayout(false);

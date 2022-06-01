@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -41,6 +40,7 @@
 			this.NumSolidEntities = new System.Windows.Forms.Label();
 			this.NumUniqueTextures = new System.Windows.Forms.Label();
 			this.TextureMemory = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.TexturePackages = new System.Windows.Forms.ListBox();
 			this.CloseButton = new System.Windows.Forms.Button();
@@ -54,7 +54,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel1.ColumnCount = 2;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 169F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 174F));
 			this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
@@ -78,16 +78,6 @@
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(282, 120);
 			this.tableLayoutPanel1.TabIndex = 0;
-			// 
-			// label1
-			// 
-			this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.Location = new System.Drawing.Point(3, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(102, 20);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Solids:";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label2
 			// 
@@ -198,6 +188,16 @@
 			this.TextureMemory.Text = "12345";
 			this.TextureMemory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// label1
+			// 
+			this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Location = new System.Drawing.Point(3, 0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(102, 20);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Solids:";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// label7
 			// 
 			this.label7.AutoSize = true;
@@ -252,10 +252,11 @@
 			this.Controls.Add(this.TexturePackages);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.tableLayoutPanel1);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "MapInformationDialog";
+			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Map Information";

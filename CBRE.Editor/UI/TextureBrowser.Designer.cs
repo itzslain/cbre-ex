@@ -80,9 +80,9 @@
 			this.panel1.Controls.Add(this.FilterTextbox);
 			this.panel1.Controls.Add(this.label1);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel1.Location = new System.Drawing.Point(0, 495);
+			this.panel1.Location = new System.Drawing.Point(0, 531);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(940, 70);
+			this.panel1.Size = new System.Drawing.Size(944, 70);
 			this.panel1.TabIndex = 2;
 			// 
 			// SortDescendingCheckbox
@@ -90,7 +90,7 @@
 			this.SortDescendingCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.SortDescendingCheckbox.AutoSize = true;
 			this.SortDescendingCheckbox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SortDescendingCheckbox.Location = new System.Drawing.Point(817, 38);
+			this.SortDescendingCheckbox.Location = new System.Drawing.Point(821, 38);
 			this.SortDescendingCheckbox.Name = "SortDescendingCheckbox";
 			this.SortDescendingCheckbox.Size = new System.Drawing.Size(111, 19);
 			this.SortDescendingCheckbox.TabIndex = 10;
@@ -104,7 +104,7 @@
 			this.SortOrderCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.SortOrderCombo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.SortOrderCombo.FormattingEnabled = true;
-			this.SortOrderCombo.Location = new System.Drawing.Point(817, 9);
+			this.SortOrderCombo.Location = new System.Drawing.Point(821, 9);
 			this.SortOrderCombo.Name = "SortOrderCombo";
 			this.SortOrderCombo.Size = new System.Drawing.Size(111, 23);
 			this.SortOrderCombo.TabIndex = 9;
@@ -115,7 +115,7 @@
 			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.label3.AutoSize = true;
 			this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label3.Location = new System.Drawing.Point(767, 13);
+			this.label3.Location = new System.Drawing.Point(771, 13);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(44, 15);
 			this.label3.TabIndex = 8;
@@ -233,7 +233,7 @@
 			this.FavouritesTree.HideSelection = false;
 			this.FavouritesTree.Location = new System.Drawing.Point(3, 419);
 			this.FavouritesTree.Name = "FavouritesTree";
-			this.FavouritesTree.Size = new System.Drawing.Size(217, 21);
+			this.FavouritesTree.Size = new System.Drawing.Size(217, 57);
 			this.FavouritesTree.TabIndex = 1;
 			this.FavouritesTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectedFavouriteChanged);
 			this.FavouritesTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.FavouritesTreeDragDrop);
@@ -252,7 +252,7 @@
 			this.LeftbarPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.LeftbarPanel.Location = new System.Drawing.Point(0, 0);
 			this.LeftbarPanel.Name = "LeftbarPanel";
-			this.LeftbarPanel.Size = new System.Drawing.Size(226, 495);
+			this.LeftbarPanel.Size = new System.Drawing.Size(226, 531);
 			this.LeftbarPanel.TabIndex = 3;
 			// 
 			// DeleteFavouriteFolderButton
@@ -261,7 +261,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeleteFavouriteFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.DeleteFavouriteFolderButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.DeleteFavouriteFolderButton.Location = new System.Drawing.Point(117, 446);
+			this.DeleteFavouriteFolderButton.Location = new System.Drawing.Point(117, 482);
 			this.DeleteFavouriteFolderButton.Name = "DeleteFavouriteFolderButton";
 			this.DeleteFavouriteFolderButton.Size = new System.Drawing.Size(103, 23);
 			this.DeleteFavouriteFolderButton.TabIndex = 3;
@@ -275,7 +275,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.RemoveFavouriteItemButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.RemoveFavouriteItemButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.RemoveFavouriteItemButton.Location = new System.Drawing.Point(3, 469);
+			this.RemoveFavouriteItemButton.Location = new System.Drawing.Point(3, 505);
 			this.RemoveFavouriteItemButton.Name = "RemoveFavouriteItemButton";
 			this.RemoveFavouriteItemButton.Size = new System.Drawing.Size(217, 23);
 			this.RemoveFavouriteItemButton.TabIndex = 3;
@@ -289,7 +289,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.AddFavouriteFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.AddFavouriteFolderButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 446);
+			this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 482);
 			this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
 			this.AddFavouriteFolderButton.Size = new System.Drawing.Size(108, 23);
 			this.AddFavouriteFolderButton.TabIndex = 3;
@@ -319,7 +319,7 @@
 			this.TextureList.ImageSize = 128;
 			this.TextureList.Location = new System.Drawing.Point(226, 0);
 			this.TextureList.Name = "TextureList";
-			this.TextureList.Size = new System.Drawing.Size(714, 495);
+			this.TextureList.Size = new System.Drawing.Size(718, 531);
 			this.TextureList.SortDescending = false;
 			this.TextureList.SortOrder = CBRE.Editor.UI.TextureListPanel.TextureSortOrder.Name;
 			this.TextureList.TabIndex = 0;
@@ -328,13 +328,14 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(940, 565);
+			this.ClientSize = new System.Drawing.Size(944, 601);
 			this.Controls.Add(this.TextureList);
 			this.Controls.Add(this.LeftbarPanel);
 			this.Controls.Add(this.panel1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(960, 640);
 			this.Name = "TextureBrowser";
 			this.Text = "Texture Browser";
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;

@@ -276,10 +276,11 @@
 			this.Controls.Add(this.scale);
 			this.Controls.Add(this.Translate);
 			this.Controls.Add(this.Rotate);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "TransformDialog";
+			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Transform";
 			((System.ComponentModel.ISupportInitialize)(this.ValueY)).EndInit();

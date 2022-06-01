@@ -43,7 +43,7 @@
 			this.MapTree.HideSelection = false;
 			this.MapTree.Location = new System.Drawing.Point(0, 0);
 			this.MapTree.Name = "MapTree";
-			this.MapTree.Size = new System.Drawing.Size(272, 425);
+			this.MapTree.Size = new System.Drawing.Size(313, 441);
 			this.MapTree.TabIndex = 4;
 			this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeSelectionChanged);
 			// 
@@ -56,9 +56,9 @@
             this.ValueColumn});
 			this.Properties.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Properties.HideSelection = false;
-			this.Properties.Location = new System.Drawing.Point(278, 0);
+			this.Properties.Location = new System.Drawing.Point(319, 0);
 			this.Properties.Name = "Properties";
-			this.Properties.Size = new System.Drawing.Size(305, 425);
+			this.Properties.Size = new System.Drawing.Size(305, 441);
 			this.Properties.TabIndex = 5;
 			this.Properties.UseCompatibleStateImageBehavior = false;
 			this.Properties.View = System.Windows.Forms.View.Details;
@@ -66,21 +66,23 @@
 			// KeyColumn
 			// 
 			this.KeyColumn.Text = "Key";
+			this.KeyColumn.Width = 105;
 			// 
 			// ValueColumn
 			// 
 			this.ValueColumn.Text = "Value";
+			this.ValueColumn.Width = 177;
 			// 
 			// MapTreeWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(583, 425);
+			this.ClientSize = new System.Drawing.Size(624, 441);
 			this.Controls.Add(this.Properties);
 			this.Controls.Add(this.MapTree);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(640, 480);
 			this.Name = "MapTreeWindow";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
