@@ -116,48 +116,20 @@ namespace CBRE.Editor.UI
 
 			Point[] points = new[]
 			{
-				//new Point(rect.Left, rect.Bottom),
-				//new Point(rect.Left, rect.Top + 3),
-				//new Point(rect.Left + 3, rect.Top),
-				//new Point(rect.Right - 3, rect.Top),
-				//new Point(rect.Right, rect.Top + 3),
-				//new Point(rect.Right, rect.Bottom),
-				//new Point(rect.Left, rect.Bottom)
-
 				new Point(rect.Left, rect.Bottom),
 				new Point(rect.Left, rect.Top),
 				new Point(rect.Right, rect.Top),
 				new Point(rect.Right, rect.Bottom),
 				new Point(rect.Left, rect.Bottom)
-
-				//new Point(rect.Left, rect.Bottom),
-				//new Point(rect.Left + 25, rect.Top),
-				//new Point(rect.Right, rect.Top),
-				//new Point(rect.Right, rect.Bottom),
-				//new Point(rect.Left, rect.Bottom)
 			};
 
 			Point[] pointsUnselected = new[]
 			{
-				//new Point(rect.Left, rect.Bottom),
-				//new Point(rect.Left, rect.Top + 5),
-				//new Point(rect.Left + 3, rect.Top + 2),
-				//new Point(rect.Right - 3, rect.Top + 2),
-				//new Point(rect.Right, rect.Top + 5),
-				//new Point(rect.Right, rect.Bottom),
-				//new Point(rect.Left, rect.Bottom)
-
 				new Point(rect.Left, rect.Bottom),
 				new Point(rect.Left, rect.Top + 2),
 				new Point(rect.Right, rect.Top + 2),
 				new Point(rect.Right, rect.Bottom),
 				new Point(rect.Left, rect.Bottom)
-
-				//new Point(rect.Left, rect.Bottom),
-				//new Point(rect.Left + 25, rect.Top + 2),
-				//new Point(rect.Right, rect.Top + 2),
-				//new Point(rect.Right, rect.Bottom),
-				//new Point(rect.Left, rect.Bottom)
 			};
 
 			// Background
