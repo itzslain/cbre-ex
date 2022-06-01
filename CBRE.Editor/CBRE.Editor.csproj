@@ -787,6 +787,7 @@
     <None Include="Resources\Menu_HideMapOrigin.png" />
     <None Include="Resources\Settings.ico" />
     <None Include="Resources\Options.ico" />
+    <None Include="Resources\Lightmapper.ico" />
     <Content Include="Sprites\screen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
