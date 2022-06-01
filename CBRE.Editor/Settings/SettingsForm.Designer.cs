@@ -411,7 +411,9 @@ namespace CBRE.Editor.Settings
 			// btnCancelSettings
 			// 
 			this.btnCancelSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnCancelSettings.Location = new System.Drawing.Point(681, 412);
+			this.btnCancelSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.btnCancelSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnCancelSettings.Location = new System.Drawing.Point(792, 412);
 			this.btnCancelSettings.Name = "btnCancelSettings";
 			this.btnCancelSettings.Size = new System.Drawing.Size(75, 23);
 			this.btnCancelSettings.TabIndex = 1;
@@ -422,9 +424,11 @@ namespace CBRE.Editor.Settings
 			// btnApplyAndCloseSettings
 			// 
 			this.btnApplyAndCloseSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnApplyAndCloseSettings.Location = new System.Drawing.Point(584, 412);
+			this.btnApplyAndCloseSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.btnApplyAndCloseSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnApplyAndCloseSettings.Location = new System.Drawing.Point(682, 412);
 			this.btnApplyAndCloseSettings.Name = "btnApplyAndCloseSettings";
-			this.btnApplyAndCloseSettings.Size = new System.Drawing.Size(91, 23);
+			this.btnApplyAndCloseSettings.Size = new System.Drawing.Size(104, 23);
 			this.btnApplyAndCloseSettings.TabIndex = 1;
 			this.btnApplyAndCloseSettings.Text = "Apply and Close";
 			this.btnApplyAndCloseSettings.UseVisualStyleBackColor = true;
@@ -433,7 +437,9 @@ namespace CBRE.Editor.Settings
 			// btnApplySettings
 			// 
 			this.btnApplySettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnApplySettings.Location = new System.Drawing.Point(503, 412);
+			this.btnApplySettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.btnApplySettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnApplySettings.Location = new System.Drawing.Point(601, 412);
 			this.btnApplySettings.Name = "btnApplySettings";
 			this.btnApplySettings.Size = new System.Drawing.Size(75, 23);
 			this.btnApplySettings.TabIndex = 1;
@@ -458,10 +464,10 @@ namespace CBRE.Editor.Settings
 			this.tabHotkeys.Controls.Add(this.HotkeyReassignButton);
 			this.tabHotkeys.Controls.Add(this.HotkeyRemoveButton);
 			this.tabHotkeys.Controls.Add(this.HotkeyList);
-			this.tabHotkeys.Location = new System.Drawing.Point(4, 22);
+			this.tabHotkeys.Location = new System.Drawing.Point(4, 24);
 			this.tabHotkeys.Name = "tabHotkeys";
 			this.tabHotkeys.Padding = new System.Windows.Forms.Padding(3);
-			this.tabHotkeys.Size = new System.Drawing.Size(736, 511);
+			this.tabHotkeys.Size = new System.Drawing.Size(847, 366);
 			this.tabHotkeys.TabIndex = 6;
 			this.tabHotkeys.Text = "Hotkeys";
 			this.tabHotkeys.UseVisualStyleBackColor = true;
@@ -469,7 +475,7 @@ namespace CBRE.Editor.Settings
 			// HotkeyResetButton
 			// 
 			this.HotkeyResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.HotkeyResetButton.Location = new System.Drawing.Point(537, 482);
+			this.HotkeyResetButton.Location = new System.Drawing.Point(648, 480);
 			this.HotkeyResetButton.Name = "HotkeyResetButton";
 			this.HotkeyResetButton.Size = new System.Drawing.Size(118, 23);
 			this.HotkeyResetButton.TabIndex = 5;
@@ -485,7 +491,7 @@ namespace CBRE.Editor.Settings
 			this.groupBox22.Controls.Add(this.label25);
 			this.groupBox22.Controls.Add(this.label23);
 			this.groupBox22.Controls.Add(this.HotkeyCombination);
-			this.groupBox22.Location = new System.Drawing.Point(6, 455);
+			this.groupBox22.Location = new System.Drawing.Point(6, 453);
 			this.groupBox22.Name = "groupBox22";
 			this.groupBox22.Size = new System.Drawing.Size(437, 50);
 			this.groupBox22.TabIndex = 4;
@@ -498,7 +504,7 @@ namespace CBRE.Editor.Settings
 			this.HotkeyActionList.FormattingEnabled = true;
 			this.HotkeyActionList.Location = new System.Drawing.Point(49, 18);
 			this.HotkeyActionList.Name = "HotkeyActionList";
-			this.HotkeyActionList.Size = new System.Drawing.Size(150, 21);
+			this.HotkeyActionList.Size = new System.Drawing.Size(150, 23);
 			this.HotkeyActionList.TabIndex = 3;
 			// 
 			// HotkeyAddButton
@@ -516,7 +522,7 @@ namespace CBRE.Editor.Settings
 			this.label25.AutoSize = true;
 			this.label25.Location = new System.Drawing.Point(6, 22);
 			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(37, 13);
+			this.label25.Size = new System.Drawing.Size(42, 15);
 			this.label25.TabIndex = 2;
 			this.label25.Text = "Action";
 			// 
@@ -525,7 +531,7 @@ namespace CBRE.Editor.Settings
 			this.label23.AutoSize = true;
 			this.label23.Location = new System.Drawing.Point(205, 22);
 			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(41, 13);
+			this.label23.Size = new System.Drawing.Size(45, 15);
 			this.label23.TabIndex = 2;
 			this.label23.Text = "Hotkey";
 			// 
@@ -533,14 +539,14 @@ namespace CBRE.Editor.Settings
 			// 
 			this.HotkeyCombination.Location = new System.Drawing.Point(252, 19);
 			this.HotkeyCombination.Name = "HotkeyCombination";
-			this.HotkeyCombination.Size = new System.Drawing.Size(100, 20);
+			this.HotkeyCombination.Size = new System.Drawing.Size(100, 23);
 			this.HotkeyCombination.TabIndex = 1;
 			this.HotkeyCombination.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HotkeyCombinationKeyDown);
 			// 
 			// HotkeyReassignButton
 			// 
 			this.HotkeyReassignButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.HotkeyReassignButton.Location = new System.Drawing.Point(661, 455);
+			this.HotkeyReassignButton.Location = new System.Drawing.Point(772, 453);
 			this.HotkeyReassignButton.Name = "HotkeyReassignButton";
 			this.HotkeyReassignButton.Size = new System.Drawing.Size(69, 23);
 			this.HotkeyReassignButton.TabIndex = 3;
@@ -551,7 +557,7 @@ namespace CBRE.Editor.Settings
 			// HotkeyRemoveButton
 			// 
 			this.HotkeyRemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.HotkeyRemoveButton.Location = new System.Drawing.Point(661, 482);
+			this.HotkeyRemoveButton.Location = new System.Drawing.Point(772, 480);
 			this.HotkeyRemoveButton.Name = "HotkeyRemoveButton";
 			this.HotkeyRemoveButton.Size = new System.Drawing.Size(69, 23);
 			this.HotkeyRemoveButton.TabIndex = 3;
@@ -573,7 +579,7 @@ namespace CBRE.Editor.Settings
 			this.HotkeyList.Location = new System.Drawing.Point(6, 6);
 			this.HotkeyList.MultiSelect = false;
 			this.HotkeyList.Name = "HotkeyList";
-			this.HotkeyList.Size = new System.Drawing.Size(724, 443);
+			this.HotkeyList.Size = new System.Drawing.Size(835, 441);
 			this.HotkeyList.TabIndex = 0;
 			this.HotkeyList.UseCompatibleStateImageBehavior = false;
 			this.HotkeyList.View = System.Windows.Forms.View.Details;
@@ -594,13 +600,14 @@ namespace CBRE.Editor.Settings
 			// 
 			// tab3DViews
 			// 
+			this.tab3DViews.AutoScroll = true;
 			this.tab3DViews.Controls.Add(this.groupBox12);
 			this.tab3DViews.Controls.Add(this.groupBox13);
 			this.tab3DViews.Controls.Add(this.groupBox14);
-			this.tab3DViews.Location = new System.Drawing.Point(4, 22);
+			this.tab3DViews.Location = new System.Drawing.Point(4, 24);
 			this.tab3DViews.Name = "tab3DViews";
 			this.tab3DViews.Padding = new System.Windows.Forms.Padding(3);
-			this.tab3DViews.Size = new System.Drawing.Size(736, 511);
+			this.tab3DViews.Size = new System.Drawing.Size(847, 366);
 			this.tab3DViews.TabIndex = 4;
 			this.tab3DViews.Text = "3D Views";
 			this.tab3DViews.UseVisualStyleBackColor = true;
@@ -649,7 +656,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.CameraFOV.Name = "CameraFOV";
-			this.CameraFOV.Size = new System.Drawing.Size(50, 20);
+			this.CameraFOV.Size = new System.Drawing.Size(50, 23);
 			this.CameraFOV.TabIndex = 1;
 			this.CameraFOV.Value = new decimal(new int[] {
             60,
@@ -662,7 +669,7 @@ namespace CBRE.Editor.Settings
 			this.label29.AutoSize = true;
 			this.label29.Location = new System.Drawing.Point(12, 22);
 			this.label29.Name = "label29";
-			this.label29.Size = new System.Drawing.Size(70, 13);
+			this.label29.Size = new System.Drawing.Size(76, 15);
 			this.label29.TabIndex = 0;
 			this.label29.Text = "Camera FOV:";
 			// 
@@ -692,16 +699,16 @@ namespace CBRE.Editor.Settings
 			this.label32.AutoSize = true;
 			this.label32.Location = new System.Drawing.Point(400, 104);
 			this.label32.Name = "label32";
-			this.label32.Size = new System.Drawing.Size(47, 13);
+			this.label32.Size = new System.Drawing.Size(50, 15);
 			this.label32.TabIndex = 7;
 			this.label32.Text = "seconds";
 			this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label43
 			// 
-			this.label43.Location = new System.Drawing.Point(253, 148);
+			this.label43.Location = new System.Drawing.Point(240, 150);
 			this.label43.Name = "label43";
-			this.label43.Size = new System.Drawing.Size(148, 20);
+			this.label43.Size = new System.Drawing.Size(161, 20);
 			this.label43.TabIndex = 6;
 			this.label43.Text = "Mouse wheel move distance";
 			this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -711,7 +718,7 @@ namespace CBRE.Editor.Settings
 			this.label31.AutoSize = true;
 			this.label31.Location = new System.Drawing.Point(399, 56);
 			this.label31.Name = "label31";
-			this.label31.Size = new System.Drawing.Size(51, 13);
+			this.label31.Size = new System.Drawing.Size(55, 15);
 			this.label31.TabIndex = 7;
 			this.label31.Text = "units/sec";
 			this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -731,7 +738,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.TimeToTopSpeedUpDown.Name = "TimeToTopSpeedUpDown";
-			this.TimeToTopSpeedUpDown.Size = new System.Drawing.Size(65, 20);
+			this.TimeToTopSpeedUpDown.Size = new System.Drawing.Size(65, 23);
 			this.TimeToTopSpeedUpDown.TabIndex = 5;
 			this.TimeToTopSpeedUpDown.Value = new decimal(new int[] {
             5,
@@ -759,7 +766,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.ForwardSpeedUpDown.Name = "ForwardSpeedUpDown";
-			this.ForwardSpeedUpDown.Size = new System.Drawing.Size(65, 20);
+			this.ForwardSpeedUpDown.Size = new System.Drawing.Size(65, 23);
 			this.ForwardSpeedUpDown.TabIndex = 5;
 			this.ForwardSpeedUpDown.Value = new decimal(new int[] {
             500,
@@ -777,7 +784,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.MouseWheelMoveDistance.Name = "MouseWheelMoveDistance";
-			this.MouseWheelMoveDistance.Size = new System.Drawing.Size(50, 20);
+			this.MouseWheelMoveDistance.Size = new System.Drawing.Size(50, 23);
 			this.MouseWheelMoveDistance.TabIndex = 5;
 			this.MouseWheelMoveDistance.Value = new decimal(new int[] {
             500,
@@ -789,7 +796,7 @@ namespace CBRE.Editor.Settings
 			// 
 			this.InvertMouseX.Location = new System.Drawing.Point(12, 148);
 			this.InvertMouseX.Name = "InvertMouseX";
-			this.InvertMouseX.Size = new System.Drawing.Size(149, 24);
+			this.InvertMouseX.Size = new System.Drawing.Size(170, 24);
 			this.InvertMouseX.TabIndex = 0;
 			this.InvertMouseX.Text = "Invert Mouselook X Axis";
 			this.InvertMouseX.UseVisualStyleBackColor = true;
@@ -798,7 +805,7 @@ namespace CBRE.Editor.Settings
 			// 
 			this.InvertMouseY.Location = new System.Drawing.Point(12, 118);
 			this.InvertMouseY.Name = "InvertMouseY";
-			this.InvertMouseY.Size = new System.Drawing.Size(149, 24);
+			this.InvertMouseY.Size = new System.Drawing.Size(170, 24);
 			this.InvertMouseY.TabIndex = 0;
 			this.InvertMouseY.Text = "Invert Mouselook Y Axis";
 			this.InvertMouseY.UseVisualStyleBackColor = true;
@@ -822,7 +829,7 @@ namespace CBRE.Editor.Settings
 			this.label28.AutoSize = true;
 			this.label28.Location = new System.Drawing.Point(9, 83);
 			this.label28.Name = "label28";
-			this.label28.Size = new System.Drawing.Size(92, 13);
+			this.label28.Size = new System.Drawing.Size(102, 15);
 			this.label28.TabIndex = 4;
 			this.label28.Text = "Time to top speed";
 			// 
@@ -831,7 +838,7 @@ namespace CBRE.Editor.Settings
 			this.label27.AutoSize = true;
 			this.label27.Location = new System.Drawing.Point(9, 35);
 			this.label27.Name = "label27";
-			this.label27.Size = new System.Drawing.Size(77, 13);
+			this.label27.Size = new System.Drawing.Size(84, 15);
 			this.label27.TabIndex = 4;
 			this.label27.Text = "Forward speed";
 			// 
@@ -873,7 +880,7 @@ namespace CBRE.Editor.Settings
 			this.label26.AutoSize = true;
 			this.label26.Location = new System.Drawing.Point(7, 136);
 			this.label26.Name = "label26";
-			this.label26.Size = new System.Drawing.Size(110, 13);
+			this.label26.Size = new System.Drawing.Size(121, 15);
 			this.label26.TabIndex = 4;
 			this.label26.Text = "Detail render distance";
 			// 
@@ -896,7 +903,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.DetailRenderDistanceUpDown.Name = "DetailRenderDistanceUpDown";
-			this.DetailRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
+			this.DetailRenderDistanceUpDown.Size = new System.Drawing.Size(65, 23);
 			this.DetailRenderDistanceUpDown.TabIndex = 5;
 			this.DetailRenderDistanceUpDown.Value = new decimal(new int[] {
             500,
@@ -924,7 +931,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.ModelRenderDistanceUpDown.Name = "ModelRenderDistanceUpDown";
-			this.ModelRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
+			this.ModelRenderDistanceUpDown.Size = new System.Drawing.Size(65, 23);
 			this.ModelRenderDistanceUpDown.TabIndex = 5;
 			this.ModelRenderDistanceUpDown.Value = new decimal(new int[] {
             500,
@@ -952,7 +959,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.BackClippingPlaneUpDown.Name = "BackClippingPlaneUpDown";
-			this.BackClippingPlaneUpDown.Size = new System.Drawing.Size(65, 20);
+			this.BackClippingPlaneUpDown.Size = new System.Drawing.Size(65, 23);
 			this.BackClippingPlaneUpDown.TabIndex = 5;
 			this.BackClippingPlaneUpDown.Value = new decimal(new int[] {
             2000,
@@ -966,7 +973,7 @@ namespace CBRE.Editor.Settings
 			this.label24.AutoSize = true;
 			this.label24.Location = new System.Drawing.Point(7, 81);
 			this.label24.Name = "label24";
-			this.label24.Size = new System.Drawing.Size(112, 13);
+			this.label24.Size = new System.Drawing.Size(125, 15);
 			this.label24.TabIndex = 4;
 			this.label24.Text = "Model render distance";
 			// 
@@ -975,7 +982,7 @@ namespace CBRE.Editor.Settings
 			this.label22.AutoSize = true;
 			this.label22.Location = new System.Drawing.Point(6, 34);
 			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(100, 13);
+			this.label22.Size = new System.Drawing.Size(110, 15);
 			this.label22.TabIndex = 4;
 			this.label22.Text = "Back clipping plane";
 			// 
@@ -983,11 +990,11 @@ namespace CBRE.Editor.Settings
 			// 
 			this.DetailRenderDistance.AutoSize = false;
 			this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
-			this.DetailRenderDistance.Location = new System.Drawing.Point(125, 122);
+			this.DetailRenderDistance.Location = new System.Drawing.Point(138, 122);
 			this.DetailRenderDistance.Maximum = 30000;
 			this.DetailRenderDistance.Minimum = 200;
 			this.DetailRenderDistance.Name = "DetailRenderDistance";
-			this.DetailRenderDistance.Size = new System.Drawing.Size(262, 41);
+			this.DetailRenderDistance.Size = new System.Drawing.Size(249, 41);
 			this.DetailRenderDistance.TabIndex = 0;
 			this.DetailRenderDistance.TickFrequency = 10000;
 			this.DetailRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -998,11 +1005,11 @@ namespace CBRE.Editor.Settings
 			// 
 			this.ModelRenderDistance.AutoSize = false;
 			this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
-			this.ModelRenderDistance.Location = new System.Drawing.Point(125, 67);
+			this.ModelRenderDistance.Location = new System.Drawing.Point(138, 67);
 			this.ModelRenderDistance.Maximum = 30000;
 			this.ModelRenderDistance.Minimum = 200;
 			this.ModelRenderDistance.Name = "ModelRenderDistance";
-			this.ModelRenderDistance.Size = new System.Drawing.Size(262, 41);
+			this.ModelRenderDistance.Size = new System.Drawing.Size(249, 41);
 			this.ModelRenderDistance.TabIndex = 0;
 			this.ModelRenderDistance.TickFrequency = 10000;
 			this.ModelRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -1013,11 +1020,11 @@ namespace CBRE.Editor.Settings
 			// 
 			this.BackClippingPane.AutoSize = false;
 			this.BackClippingPane.BackColor = System.Drawing.SystemColors.Window;
-			this.BackClippingPane.Location = new System.Drawing.Point(124, 20);
+			this.BackClippingPane.Location = new System.Drawing.Point(138, 20);
 			this.BackClippingPane.Maximum = 30000;
 			this.BackClippingPane.Minimum = 2000;
 			this.BackClippingPane.Name = "BackClippingPane";
-			this.BackClippingPane.Size = new System.Drawing.Size(262, 41);
+			this.BackClippingPane.Size = new System.Drawing.Size(248, 41);
 			this.BackClippingPane.TabIndex = 0;
 			this.BackClippingPane.TickFrequency = 10000;
 			this.BackClippingPane.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -1026,16 +1033,17 @@ namespace CBRE.Editor.Settings
 			// 
 			// tab2DViews
 			// 
+			this.tab2DViews.AutoScroll = true;
 			this.tab2DViews.Controls.Add(this.groupBox6);
 			this.tab2DViews.Controls.Add(this.groupBox3);
 			this.tab2DViews.Controls.Add(this.groupBox17);
 			this.tab2DViews.Controls.Add(this.groupBox16);
 			this.tab2DViews.Controls.Add(this.groupBox4);
 			this.tab2DViews.Controls.Add(this.groupBox5);
-			this.tab2DViews.Location = new System.Drawing.Point(4, 22);
+			this.tab2DViews.Location = new System.Drawing.Point(4, 24);
 			this.tab2DViews.Name = "tab2DViews";
 			this.tab2DViews.Padding = new System.Windows.Forms.Padding(3);
-			this.tab2DViews.Size = new System.Drawing.Size(736, 511);
+			this.tab2DViews.Size = new System.Drawing.Size(847, 366);
 			this.tab2DViews.TabIndex = 1;
 			this.tab2DViews.Text = "2D Views";
 			this.tab2DViews.UseVisualStyleBackColor = true;
@@ -1047,16 +1055,16 @@ namespace CBRE.Editor.Settings
 			this.groupBox6.Controls.Add(this.RotationStyle_SnapOffShift);
 			this.groupBox6.Location = new System.Drawing.Point(6, 6);
 			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(239, 114);
+			this.groupBox6.Size = new System.Drawing.Size(265, 114);
 			this.groupBox6.TabIndex = 0;
 			this.groupBox6.TabStop = false;
 			this.groupBox6.Text = "Rotation Style";
 			// 
 			// RotationStyle_SnapNever
 			// 
-			this.RotationStyle_SnapNever.Location = new System.Drawing.Point(11, 79);
+			this.RotationStyle_SnapNever.Location = new System.Drawing.Point(6, 82);
 			this.RotationStyle_SnapNever.Name = "RotationStyle_SnapNever";
-			this.RotationStyle_SnapNever.Size = new System.Drawing.Size(137, 24);
+			this.RotationStyle_SnapNever.Size = new System.Drawing.Size(241, 24);
 			this.RotationStyle_SnapNever.TabIndex = 2;
 			this.RotationStyle_SnapNever.Text = "No rotational snapping";
 			this.RotationStyle_SnapNever.UseVisualStyleBackColor = true;
@@ -1064,9 +1072,9 @@ namespace CBRE.Editor.Settings
 			// RotationStyle_SnapOnShift
 			// 
 			this.RotationStyle_SnapOnShift.Checked = true;
-			this.RotationStyle_SnapOnShift.Location = new System.Drawing.Point(11, 19);
+			this.RotationStyle_SnapOnShift.Location = new System.Drawing.Point(6, 22);
 			this.RotationStyle_SnapOnShift.Name = "RotationStyle_SnapOnShift";
-			this.RotationStyle_SnapOnShift.Size = new System.Drawing.Size(182, 24);
+			this.RotationStyle_SnapOnShift.Size = new System.Drawing.Size(241, 24);
 			this.RotationStyle_SnapOnShift.TabIndex = 2;
 			this.RotationStyle_SnapOnShift.TabStop = true;
 			this.RotationStyle_SnapOnShift.Text = "Press shift to snap to 15 degrees";
@@ -1074,9 +1082,9 @@ namespace CBRE.Editor.Settings
 			// 
 			// RotationStyle_SnapOffShift
 			// 
-			this.RotationStyle_SnapOffShift.Location = new System.Drawing.Point(11, 49);
+			this.RotationStyle_SnapOffShift.Location = new System.Drawing.Point(6, 52);
 			this.RotationStyle_SnapOffShift.Name = "RotationStyle_SnapOffShift";
-			this.RotationStyle_SnapOffShift.Size = new System.Drawing.Size(230, 24);
+			this.RotationStyle_SnapOffShift.Size = new System.Drawing.Size(246, 24);
 			this.RotationStyle_SnapOffShift.TabIndex = 2;
 			this.RotationStyle_SnapOffShift.Text = "Snap to 15 degrees unless shift is pressed";
 			this.RotationStyle_SnapOffShift.UseVisualStyleBackColor = true;
@@ -1185,9 +1193,9 @@ namespace CBRE.Editor.Settings
 			this.GridHighlight2UnitNum.Items.Add("128");
 			this.GridHighlight2UnitNum.Items.Add("64");
 			this.GridHighlight2UnitNum.Items.Add("32");
-			this.GridHighlight2UnitNum.Location = new System.Drawing.Point(249, 137);
+			this.GridHighlight2UnitNum.Location = new System.Drawing.Point(265, 135);
 			this.GridHighlight2UnitNum.Name = "GridHighlight2UnitNum";
-			this.GridHighlight2UnitNum.Size = new System.Drawing.Size(50, 20);
+			this.GridHighlight2UnitNum.Size = new System.Drawing.Size(50, 23);
 			this.GridHighlight2UnitNum.TabIndex = 0;
 			this.GridHighlight2UnitNum.Text = "1024";
 			// 
@@ -1221,9 +1229,9 @@ namespace CBRE.Editor.Settings
 			// 
 			this.GridHighlight1On.Checked = true;
 			this.GridHighlight1On.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.GridHighlight1On.Location = new System.Drawing.Point(149, 117);
+			this.GridHighlight1On.Location = new System.Drawing.Point(151, 114);
 			this.GridHighlight1On.Name = "GridHighlight1On";
-			this.GridHighlight1On.Size = new System.Drawing.Size(98, 17);
+			this.GridHighlight1On.Size = new System.Drawing.Size(108, 20);
 			this.GridHighlight1On.TabIndex = 0;
 			this.GridHighlight1On.Text = "Highlight every";
 			this.GridHighlight1On.UseVisualStyleBackColor = true;
@@ -1240,16 +1248,16 @@ namespace CBRE.Editor.Settings
 			// 
 			this.GridHighlight2On.Checked = true;
 			this.GridHighlight2On.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.GridHighlight2On.Location = new System.Drawing.Point(149, 139);
+			this.GridHighlight2On.Location = new System.Drawing.Point(151, 137);
 			this.GridHighlight2On.Name = "GridHighlight2On";
-			this.GridHighlight2On.Size = new System.Drawing.Size(98, 17);
+			this.GridHighlight2On.Size = new System.Drawing.Size(108, 20);
 			this.GridHighlight2On.TabIndex = 0;
 			this.GridHighlight2On.Text = "Highlight every";
 			this.GridHighlight2On.UseVisualStyleBackColor = true;
 			// 
 			// label21
 			// 
-			this.label21.Location = new System.Drawing.Point(305, 140);
+			this.label21.Location = new System.Drawing.Point(321, 139);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(53, 17);
 			this.label21.TabIndex = 3;
@@ -1257,7 +1265,7 @@ namespace CBRE.Editor.Settings
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(304, 118);
+			this.label11.Location = new System.Drawing.Point(321, 114);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(53, 17);
 			this.label11.TabIndex = 3;
@@ -1291,7 +1299,7 @@ namespace CBRE.Editor.Settings
 			// 
 			// GridHighlight1Distance
 			// 
-			this.GridHighlight1Distance.Location = new System.Drawing.Point(249, 116);
+			this.GridHighlight1Distance.Location = new System.Drawing.Point(265, 112);
 			this.GridHighlight1Distance.Maximum = new decimal(new int[] {
             32,
             0,
@@ -1303,7 +1311,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.GridHighlight1Distance.Name = "GridHighlight1Distance";
-			this.GridHighlight1Distance.Size = new System.Drawing.Size(50, 20);
+			this.GridHighlight1Distance.Size = new System.Drawing.Size(50, 23);
 			this.GridHighlight1Distance.TabIndex = 2;
 			this.GridHighlight1Distance.Value = new decimal(new int[] {
             8,
@@ -1326,7 +1334,7 @@ namespace CBRE.Editor.Settings
 			this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
 			this.groupBox17.Location = new System.Drawing.Point(421, 126);
 			this.groupBox17.Name = "groupBox17";
-			this.groupBox17.Size = new System.Drawing.Size(304, 113);
+			this.groupBox17.Size = new System.Drawing.Size(403, 113);
 			this.groupBox17.TabIndex = 0;
 			this.groupBox17.TabStop = false;
 			this.groupBox17.Text = "Options";
@@ -1368,9 +1376,9 @@ namespace CBRE.Editor.Settings
 			this.groupBox16.Controls.Add(this.NudgeStyle_GridOffCtrl);
 			this.groupBox16.Controls.Add(this.label2);
 			this.groupBox16.Controls.Add(this.NudgeUnits);
-			this.groupBox16.Location = new System.Drawing.Point(469, 6);
+			this.groupBox16.Location = new System.Drawing.Point(526, 6);
 			this.groupBox16.Name = "groupBox16";
-			this.groupBox16.Size = new System.Drawing.Size(256, 114);
+			this.groupBox16.Size = new System.Drawing.Size(298, 114);
 			this.groupBox16.TabIndex = 0;
 			this.groupBox16.TabStop = false;
 			this.groupBox16.Text = "Nudge Grid";
@@ -1379,9 +1387,9 @@ namespace CBRE.Editor.Settings
 			// 
 			this.ArrowKeysNudgeSelection.Checked = true;
 			this.ArrowKeysNudgeSelection.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.ArrowKeysNudgeSelection.Location = new System.Drawing.Point(12, 19);
+			this.ArrowKeysNudgeSelection.Location = new System.Drawing.Point(10, 22);
 			this.ArrowKeysNudgeSelection.Name = "ArrowKeysNudgeSelection";
-			this.ArrowKeysNudgeSelection.Size = new System.Drawing.Size(126, 24);
+			this.ArrowKeysNudgeSelection.Size = new System.Drawing.Size(142, 24);
 			this.ArrowKeysNudgeSelection.TabIndex = 0;
 			this.ArrowKeysNudgeSelection.Text = "Arrow keys nudge by";
 			this.ArrowKeysNudgeSelection.UseVisualStyleBackColor = true;
@@ -1389,9 +1397,9 @@ namespace CBRE.Editor.Settings
 			// NudgeStyle_GridOnCtrl
 			// 
 			this.NudgeStyle_GridOnCtrl.Checked = true;
-			this.NudgeStyle_GridOnCtrl.Location = new System.Drawing.Point(12, 49);
+			this.NudgeStyle_GridOnCtrl.Location = new System.Drawing.Point(10, 52);
 			this.NudgeStyle_GridOnCtrl.Name = "NudgeStyle_GridOnCtrl";
-			this.NudgeStyle_GridOnCtrl.Size = new System.Drawing.Size(236, 24);
+			this.NudgeStyle_GridOnCtrl.Size = new System.Drawing.Size(264, 24);
 			this.NudgeStyle_GridOnCtrl.TabIndex = 2;
 			this.NudgeStyle_GridOnCtrl.TabStop = true;
 			this.NudgeStyle_GridOnCtrl.Text = "Press control to nudge by grid width";
@@ -1399,16 +1407,16 @@ namespace CBRE.Editor.Settings
 			// 
 			// NudgeStyle_GridOffCtrl
 			// 
-			this.NudgeStyle_GridOffCtrl.Location = new System.Drawing.Point(12, 79);
+			this.NudgeStyle_GridOffCtrl.Location = new System.Drawing.Point(10, 82);
 			this.NudgeStyle_GridOffCtrl.Name = "NudgeStyle_GridOffCtrl";
-			this.NudgeStyle_GridOffCtrl.Size = new System.Drawing.Size(238, 24);
+			this.NudgeStyle_GridOffCtrl.Size = new System.Drawing.Size(270, 24);
 			this.NudgeStyle_GridOffCtrl.TabIndex = 2;
 			this.NudgeStyle_GridOffCtrl.Text = "Nudge by grid width unless control is pressed";
 			this.NudgeStyle_GridOffCtrl.UseVisualStyleBackColor = true;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(195, 22);
+			this.label2.Location = new System.Drawing.Point(217, 22);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(45, 18);
 			this.label2.TabIndex = 3;
@@ -1417,7 +1425,7 @@ namespace CBRE.Editor.Settings
 			// NudgeUnits
 			// 
 			this.NudgeUnits.DecimalPlaces = 2;
-			this.NudgeUnits.Location = new System.Drawing.Point(138, 20);
+			this.NudgeUnits.Location = new System.Drawing.Point(160, 20);
 			this.NudgeUnits.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1429,7 +1437,7 @@ namespace CBRE.Editor.Settings
             0,
             65536});
 			this.NudgeUnits.Name = "NudgeUnits";
-			this.NudgeUnits.Size = new System.Drawing.Size(51, 20);
+			this.NudgeUnits.Size = new System.Drawing.Size(51, 23);
 			this.NudgeUnits.TabIndex = 2;
 			this.NudgeUnits.Value = new decimal(new int[] {
             1,
@@ -1441,9 +1449,9 @@ namespace CBRE.Editor.Settings
 			// 
 			this.groupBox4.Controls.Add(this.SnapStyle_SnapOffAlt);
 			this.groupBox4.Controls.Add(this.SnapStyle_SnapOnAlt);
-			this.groupBox4.Location = new System.Drawing.Point(251, 6);
+			this.groupBox4.Location = new System.Drawing.Point(277, 6);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(212, 114);
+			this.groupBox4.Size = new System.Drawing.Size(243, 114);
 			this.groupBox4.TabIndex = 0;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Snap to Grid";
@@ -1453,7 +1461,7 @@ namespace CBRE.Editor.Settings
 			this.SnapStyle_SnapOffAlt.Checked = true;
 			this.SnapStyle_SnapOffAlt.Location = new System.Drawing.Point(10, 19);
 			this.SnapStyle_SnapOffAlt.Name = "SnapStyle_SnapOffAlt";
-			this.SnapStyle_SnapOffAlt.Size = new System.Drawing.Size(182, 24);
+			this.SnapStyle_SnapOffAlt.Size = new System.Drawing.Size(243, 24);
 			this.SnapStyle_SnapOffAlt.TabIndex = 2;
 			this.SnapStyle_SnapOffAlt.TabStop = true;
 			this.SnapStyle_SnapOffAlt.Text = "Hold alt to ignore snapping";
@@ -1463,7 +1471,7 @@ namespace CBRE.Editor.Settings
 			// 
 			this.SnapStyle_SnapOnAlt.Location = new System.Drawing.Point(10, 49);
 			this.SnapStyle_SnapOnAlt.Name = "SnapStyle_SnapOnAlt";
-			this.SnapStyle_SnapOnAlt.Size = new System.Drawing.Size(213, 24);
+			this.SnapStyle_SnapOnAlt.Size = new System.Drawing.Size(243, 24);
 			this.SnapStyle_SnapOnAlt.TabIndex = 2;
 			this.SnapStyle_SnapOnAlt.Text = "Ignore snapping unless alt is pressed";
 			this.SnapStyle_SnapOnAlt.UseVisualStyleBackColor = true;
@@ -1487,25 +1495,25 @@ namespace CBRE.Editor.Settings
 			// 
 			this.HideGridOn.Checked = true;
 			this.HideGridOn.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.HideGridOn.Location = new System.Drawing.Point(17, 52);
+			this.HideGridOn.Location = new System.Drawing.Point(6, 49);
 			this.HideGridOn.Name = "HideGridOn";
-			this.HideGridOn.Size = new System.Drawing.Size(127, 24);
+			this.HideGridOn.Size = new System.Drawing.Size(145, 23);
 			this.HideGridOn.TabIndex = 5;
 			this.HideGridOn.Text = "Hide grid smaller than";
 			this.HideGridOn.UseVisualStyleBackColor = true;
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(14, 25);
+			this.label3.Location = new System.Drawing.Point(6, 19);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(85, 20);
+			this.label3.Size = new System.Drawing.Size(94, 20);
 			this.label3.TabIndex = 4;
 			this.label3.Text = "Default grid size:";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// HideGridLimit
 			// 
-			this.HideGridLimit.Location = new System.Drawing.Point(145, 54);
+			this.HideGridLimit.Location = new System.Drawing.Point(157, 49);
 			this.HideGridLimit.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1517,7 +1525,7 @@ namespace CBRE.Editor.Settings
             0,
             0});
 			this.HideGridLimit.Name = "HideGridLimit";
-			this.HideGridLimit.Size = new System.Drawing.Size(34, 20);
+			this.HideGridLimit.Size = new System.Drawing.Size(34, 23);
 			this.HideGridLimit.TabIndex = 2;
 			this.HideGridLimit.Value = new decimal(new int[] {
             1,
@@ -1527,12 +1535,12 @@ namespace CBRE.Editor.Settings
 			// 
 			// label13
 			// 
-			this.label13.Location = new System.Drawing.Point(185, 54);
+			this.label13.Location = new System.Drawing.Point(197, 49);
 			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(110, 20);
+			this.label13.Size = new System.Drawing.Size(122, 23);
 			this.label13.TabIndex = 3;
 			this.label13.Text = "pixel(s), by a factor of";
-			this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// HideGridFactor
 			// 
@@ -1542,9 +1550,9 @@ namespace CBRE.Editor.Settings
 			this.HideGridFactor.Items.Add("8");
 			this.HideGridFactor.Items.Add("4");
 			this.HideGridFactor.Items.Add("2");
-			this.HideGridFactor.Location = new System.Drawing.Point(295, 54);
+			this.HideGridFactor.Location = new System.Drawing.Point(325, 49);
 			this.HideGridFactor.Name = "HideGridFactor";
-			this.HideGridFactor.Size = new System.Drawing.Size(38, 20);
+			this.HideGridFactor.Size = new System.Drawing.Size(38, 23);
 			this.HideGridFactor.TabIndex = 0;
 			this.HideGridFactor.Text = "8";
 			// 
@@ -1561,20 +1569,20 @@ namespace CBRE.Editor.Settings
 			this.DefaultGridSize.Items.Add("4");
 			this.DefaultGridSize.Items.Add("2");
 			this.DefaultGridSize.Items.Add("1");
-			this.DefaultGridSize.Location = new System.Drawing.Point(105, 25);
+			this.DefaultGridSize.Location = new System.Drawing.Point(106, 20);
 			this.DefaultGridSize.Name = "DefaultGridSize";
 			this.DefaultGridSize.SelectedIndex = 4;
-			this.DefaultGridSize.Size = new System.Drawing.Size(49, 20);
+			this.DefaultGridSize.Size = new System.Drawing.Size(49, 23);
 			this.DefaultGridSize.TabIndex = 0;
 			this.DefaultGridSize.Text = "64";
 			// 
 			// tabGeneral
 			// 
 			this.tabGeneral.Controls.Add(this.flowLayoutPanel1);
-			this.tabGeneral.Location = new System.Drawing.Point(4, 22);
+			this.tabGeneral.Location = new System.Drawing.Point(4, 24);
 			this.tabGeneral.Name = "tabGeneral";
 			this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-			this.tabGeneral.Size = new System.Drawing.Size(736, 368);
+			this.tabGeneral.Size = new System.Drawing.Size(847, 366);
 			this.tabGeneral.TabIndex = 0;
 			this.tabGeneral.Text = "General";
 			this.tabGeneral.UseVisualStyleBackColor = true;
@@ -1586,7 +1594,7 @@ namespace CBRE.Editor.Settings
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 362);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(841, 360);
 			this.flowLayoutPanel1.TabIndex = 6;
 			this.flowLayoutPanel1.WrapContents = false;
 			// 
@@ -1600,19 +1608,20 @@ namespace CBRE.Editor.Settings
 			this.tbcSettings.Controls.Add(this.tab3DViews);
 			this.tbcSettings.Controls.Add(this.tabHotkeys);
 			this.tbcSettings.Controls.Add(this.tabDirectories);
+			this.tbcSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tbcSettings.Location = new System.Drawing.Point(12, 12);
 			this.tbcSettings.Name = "tbcSettings";
 			this.tbcSettings.SelectedIndex = 0;
-			this.tbcSettings.Size = new System.Drawing.Size(744, 394);
+			this.tbcSettings.Size = new System.Drawing.Size(855, 394);
 			this.tbcSettings.TabIndex = 0;
 			this.tbcSettings.SelectedIndexChanged += new System.EventHandler(this.TabChanged);
 			// 
 			// tabDirectories
 			// 
 			this.tabDirectories.Controls.Add(this.tableLayoutPanel1);
-			this.tabDirectories.Location = new System.Drawing.Point(4, 22);
+			this.tabDirectories.Location = new System.Drawing.Point(4, 24);
 			this.tabDirectories.Name = "tabDirectories";
-			this.tabDirectories.Size = new System.Drawing.Size(736, 511);
+			this.tabDirectories.Size = new System.Drawing.Size(847, 366);
 			this.tabDirectories.TabIndex = 7;
 			this.tabDirectories.Text = "Directories";
 			this.tabDirectories.UseVisualStyleBackColor = true;
@@ -1631,7 +1640,7 @@ namespace CBRE.Editor.Settings
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(729, 504);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(840, 359);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// textureDirsDataGrid
@@ -1652,7 +1661,7 @@ namespace CBRE.Editor.Settings
 			this.textureDirsDataGrid.Location = new System.Drawing.Point(3, 3);
 			this.textureDirsDataGrid.Name = "textureDirsDataGrid";
 			this.textureDirsDataGrid.RowHeadersVisible = false;
-			this.textureDirsDataGrid.Size = new System.Drawing.Size(723, 246);
+			this.textureDirsDataGrid.Size = new System.Drawing.Size(834, 173);
 			this.textureDirsDataGrid.TabIndex = 0;
 			// 
 			// deleteButtons
@@ -1695,10 +1704,10 @@ namespace CBRE.Editor.Settings
             this.dataGridViewTextBoxColumn1,
             this.dataGridViewButtonColumn2});
 			this.modelDirsDataGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-			this.modelDirsDataGrid.Location = new System.Drawing.Point(3, 255);
+			this.modelDirsDataGrid.Location = new System.Drawing.Point(3, 182);
 			this.modelDirsDataGrid.Name = "modelDirsDataGrid";
 			this.modelDirsDataGrid.RowHeadersVisible = false;
-			this.modelDirsDataGrid.Size = new System.Drawing.Size(723, 246);
+			this.modelDirsDataGrid.Size = new System.Drawing.Size(834, 174);
 			this.modelDirsDataGrid.TabIndex = 1;
 			// 
 			// dataGridViewButtonColumn1
@@ -1730,11 +1739,12 @@ namespace CBRE.Editor.Settings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(768, 447);
+			this.ClientSize = new System.Drawing.Size(879, 447);
 			this.Controls.Add(this.btnApplySettings);
 			this.Controls.Add(this.btnApplyAndCloseSettings);
 			this.Controls.Add(this.btnCancelSettings);
 			this.Controls.Add(this.tbcSettings);
+			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(780, 480);
 			this.Name = "SettingsForm";

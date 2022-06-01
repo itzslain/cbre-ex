@@ -333,7 +333,7 @@ namespace CBRE.Editor.Settings
         {
             Label label = new Label
             {
-                Font = new Font(Font, FontStyle.Bold),
+                Font = new Font(tbcSettings.Font, FontStyle.Bold),
                 Text = text,
                 AutoSize = true,
                 Padding = new Padding(0, 5, 0, 5)
