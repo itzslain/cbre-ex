@@ -19,11 +19,13 @@ namespace CBRE.Editor.Visgroups
             InitializeComponent();
             _visgroups = new List<Visgroup>(doc.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.Clone()));
             _deleted = new List<Visgroup>();
-            InitVisgroupPanel();
+            //InitVisgroupPanel();
             UpdateVisgroups();
-        }
 
-        public void InitVisgroupPanel()
+			VisgroupPanel.VisgroupSelected += new VisgroupPanel.VisgroupSelectedEventHandler(SelectionChanged);
+		}
+
+        /*public void InitVisgroupPanel()
         {
             VisgroupPanel = new VisgroupPanel();
             VisgroupPanel.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
@@ -40,7 +42,7 @@ namespace CBRE.Editor.Visgroups
             VisgroupPanel.TabIndex = 0;
             VisgroupPanel.VisgroupSelected += new VisgroupPanel.VisgroupSelectedEventHandler(SelectionChanged);
             Controls.Add(VisgroupPanel);
-        }
+        }*/
 
         public void PopulateChangeLists(Document doc, List<Visgroup> newVisgroups, List<Visgroup> changedVisgroups, List<Visgroup> deletedVisgroups)
         {
@@ -55,7 +57,7 @@ namespace CBRE.Editor.Visgroups
 
         private void UpdateVisgroups()
         {
-            VisgroupPanel.Update(_visgroups);
+			VisgroupPanel.Update(_visgroups);
         }
 
         private void SelectionChanged(object sender, int? visgroupId)
@@ -91,7 +93,7 @@ namespace CBRE.Editor.Visgroups
             };
             _visgroups.Add(newGroup);
             UpdateVisgroups();
-            VisgroupPanel.SetSelectedVisgroup(newGroup.ID);
+			VisgroupPanel.SetSelectedVisgroup(newGroup.ID);
             GroupName.SelectAll();
             GroupName.Focus();
         }
@@ -113,7 +115,7 @@ namespace CBRE.Editor.Visgroups
             Visgroup vg = _visgroups.First(x => x.ID == id.Value);
             if (vg.Name == GroupName.Text) return;
             vg.Name = GroupName.Text;
-            VisgroupPanel.UpdateVisgroupName(id.Value, GroupName.Text);
+			VisgroupPanel.UpdateVisgroupName(id.Value, GroupName.Text);
         }
 
         private void ColourClicked(object sender, EventArgs e)
@@ -126,7 +128,7 @@ namespace CBRE.Editor.Visgroups
                 if (cp.ShowDialog() == DialogResult.OK)
                 {
                     vg.Colour = cp.Color;
-                    VisgroupPanel.UpdateVisgroupColour(id.Value, cp.Color);
+					VisgroupPanel.UpdateVisgroupColour(id.Value, cp.Color);
                 }
             }
         }
