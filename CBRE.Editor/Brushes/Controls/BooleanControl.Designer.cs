@@ -23,29 +23,30 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.Checkbox = new System.Windows.Forms.CheckBox();
-            this.SuspendLayout();
-            // 
-            // Checkbox
-            // 
-            this.Checkbox.AutoSize = true;
-            this.Checkbox.Location = new System.Drawing.Point(3, 3);
-            this.Checkbox.Name = "Checkbox";
-            this.Checkbox.Size = new System.Drawing.Size(73, 17);
-            this.Checkbox.TabIndex = 0;
-            this.Checkbox.Text = "LabelText";
-            this.Checkbox.UseVisualStyleBackColor = true;
-            this.Checkbox.CheckedChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // NumericControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.Checkbox);
-            this.Name = "NumericControl";
-            this.Size = new System.Drawing.Size(124, 23);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			this.Checkbox = new System.Windows.Forms.CheckBox();
+			this.SuspendLayout();
+			// 
+			// Checkbox
+			// 
+			this.Checkbox.AutoSize = true;
+			this.Checkbox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Checkbox.Location = new System.Drawing.Point(3, 3);
+			this.Checkbox.Name = "Checkbox";
+			this.Checkbox.Size = new System.Drawing.Size(75, 19);
+			this.Checkbox.TabIndex = 0;
+			this.Checkbox.Text = "LabelText";
+			this.Checkbox.UseVisualStyleBackColor = true;
+			this.Checkbox.CheckedChanged += new System.EventHandler(this.ValueChanged);
+			// 
+			// BooleanControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.Checkbox);
+			this.Name = "BooleanControl";
+			this.Size = new System.Drawing.Size(124, 25);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
