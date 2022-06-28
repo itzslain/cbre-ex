@@ -24,7 +24,7 @@ namespace CBRE.QuickForms.Items
             List<Control> controls = new List<Control>();
 
             Button b1 = new Button() { Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
-			if (_okevent != null) b1.Click += (sender, e) => _okevent(((Control)sender).Parent as QuickForm);
+            if (_okevent != null) b1.Click += (sender, e) => _okevent(((Control)sender).Parent as QuickForm);
             b1.Click += (s, e) => qf.DialogResult = DialogResult.OK;
             b1.Click += qf.Close;
             b1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -36,7 +36,7 @@ namespace CBRE.QuickForms.Items
             controls.Add(b1);
 
             Button b2 = new Button() { Font = SystemFonts.MessageBoxFont, FlatStyle = FlatStyle.System };
-			if (_cancelevent != null) b2.Click += (sender, e) => _cancelevent(((Control)sender).Parent as QuickForm);
+            if (_cancelevent != null) b2.Click += (sender, e) => _cancelevent(((Control)sender).Parent as QuickForm);
             b2.Click += (s, e) => qf.DialogResult = DialogResult.Cancel;
             b2.Click += qf.Close;
             b2.Anchor = AnchorStyles.Top | AnchorStyles.Right;

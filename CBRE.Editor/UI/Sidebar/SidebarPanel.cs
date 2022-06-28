@@ -81,8 +81,8 @@ namespace CBRE.Editor.UI.Sidebar
         {
             DoubleBuffered = true;
             _expanded = false;
-			Font = SystemFonts.MessageBoxFont;
-			Height = Font.Height + 12;
+            Font = SystemFonts.MessageBoxFont;
+            Height = Font.Height + 12;
             AutoSize = false;
             Padding = new Padding(16, 5, 3, 1);
             SetStyle(ControlStyles.StandardDoubleClick, false);
@@ -102,11 +102,11 @@ namespace CBRE.Editor.UI.Sidebar
             }
             else
             {
-				using (SolidBrush brush = new SolidBrush(BackColor.Darken(15)))
+                using (SolidBrush brush = new SolidBrush(BackColor.Darken(15)))
                 {
-					e.Graphics.FillRectangle(brush, new Rectangle(0, 3, Width, Height - Padding.Vertical));
-					brush.Color = BackColor.Darken(40);
-					e.Graphics.FillRectangle(brush, new Rectangle(0, Height - Padding.Vertical + 2, Width, 1));
+                    e.Graphics.FillRectangle(brush, new Rectangle(0, 3, Width, Height - Padding.Vertical));
+                    brush.Color = BackColor.Darken(40);
+                    e.Graphics.FillRectangle(brush, new Rectangle(0, Height - Padding.Vertical + 2, Width, 1));
                 }
             }
             using (SolidBrush brush = new SolidBrush(ForeColor))

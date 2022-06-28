@@ -29,7 +29,7 @@ namespace CBRE.Editor.UI.ObjectProperties
         private Documents.Document Document { get; set; }
         public bool FollowSelection { get; set; }
 
-		public bool AllowClassChange
+        public bool AllowClassChange
         {
             set
             {
@@ -80,7 +80,7 @@ namespace CBRE.Editor.UI.ObjectProperties
             }
         }
 
-		private void Apply()
+        private void Apply()
         {
             string actionText = null;
             ActionCollection ac = new ActionCollection();
@@ -177,7 +177,7 @@ namespace CBRE.Editor.UI.ObjectProperties
                         int val = int.Parse(opts[i].Key);
                         if (flags[i] == CheckState.Unchecked) entityData.Flags &= ~val; // Switch the flag off if unchecked
                         else if (flags[i] == CheckState.Checked) entityData.Flags |= val; // Switch it on if checked
-                        // No change if indeterminate
+                                                                                          // No change if indeterminate
                     }
                     if (entityData.Flags != beforeFlags) changed = true;
                 }

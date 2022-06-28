@@ -45,7 +45,7 @@ namespace CBRE.Editor.Actions.MapObjects.Operations
                     Coordinate origin = solid.GetOrigin();
                     Coordinate current = obj.BoundingBox.Dimensions;
                     Coordinate target = current - (new Coordinate(_width, _width, _width) * 2); // Double the width to take from both sides
-                    // Ensure we don't have any invalid target sizes
+                                                                                                // Ensure we don't have any invalid target sizes
                     if (target.X < 1) target.X = 1;
                     if (target.Y < 1) target.Y = 1;
                     if (target.Z < 1) target.Z = 1;

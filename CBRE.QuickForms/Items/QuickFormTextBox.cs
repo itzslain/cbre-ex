@@ -25,7 +25,7 @@ namespace CBRE.QuickForms.Items
             Size(l, qf.LabelWidth);
             TextAlign(l);
             controls.Add(l);
-            TextBox t = new TextBox { Name = Name, Text = _defaultValue, Font = SystemFonts.MessageBoxFont};
+            TextBox t = new TextBox { Name = Name, Text = _defaultValue, Font = SystemFonts.MessageBoxFont };
             Anchor(t);
             Location(t, qf, false);
             Size(t, qf, qf.LabelWidth);

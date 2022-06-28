@@ -28,7 +28,7 @@ namespace CBRE.Updater
 
             Log($"Waiting until {"CBRE-EX".Pastel(Color.LimeGreen)} shuts down...", LogSeverity.MESSAGE);
 
-            while(true)
+            while (true)
             {
                 Process[] cbre = Process.GetProcessesByName(friendlyCbreProcess);
 
@@ -45,7 +45,7 @@ namespace CBRE.Updater
                 Directory.CreateDirectory("Temp");
 
                 Log($"Extracting {"Update.zip".Pastel(Color.LimeGreen)} to Temp directory...", LogSeverity.MESSAGE);
-                if(Directory.Exists("Temp")) Directory.Delete("Temp", true);
+                if (Directory.Exists("Temp")) Directory.Delete("Temp", true);
                 ZipFile.ExtractToDirectory("Update.zip", "Temp");
 
                 DirectoryInfo tempDir = new DirectoryInfo("Temp");

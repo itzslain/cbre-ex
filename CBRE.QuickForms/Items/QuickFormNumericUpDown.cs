@@ -41,7 +41,7 @@ namespace CBRE.QuickForms.Items
                 Increment = (_decimals > 0) ? (1m / (_decimals * 10m)) : (1),
                 Width = 80,
                 Value = _defaultValue,
-				Font = SystemFonts.MessageBoxFont
+                Font = SystemFonts.MessageBoxFont
             };
             Location(n, qf, false);
             n.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - n.Width, n.Location.Y);

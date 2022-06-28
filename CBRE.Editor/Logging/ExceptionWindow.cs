@@ -52,8 +52,8 @@ namespace CBRE.Editor.Logging
                 HeaderLabel.Text = $"Couldn't write error log: {e.Message}";
             }
 
-			FullError.SelectionLength = 0;
-		}
+            FullError.SelectionLength = 0;
+        }
 
         private void CancelButtonClicked(object sender, EventArgs e)
         {

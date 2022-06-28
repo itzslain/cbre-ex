@@ -41,6 +41,8 @@
 			this.ProgressLog = new System.Windows.Forms.RichTextBox();
 			this.export = new System.Windows.Forms.Button();
 			this.label6 = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label2
@@ -187,6 +189,7 @@
 			// ambientColorBox
 			// 
 			this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+			this.ambientColorBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.ambientColorBox.Location = new System.Drawing.Point(282, 99);
 			this.ambientColorBox.Name = "ambientColorBox";
 			this.ambientColorBox.Size = new System.Drawing.Size(42, 20);
@@ -195,16 +198,14 @@
 			// 
 			// ProgressLog
 			// 
-			this.ProgressLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.ProgressLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ProgressLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.ProgressLog.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProgressLog.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ProgressLog.HideSelection = false;
-			this.ProgressLog.Location = new System.Drawing.Point(12, 125);
+			this.ProgressLog.Location = new System.Drawing.Point(0, 0);
 			this.ProgressLog.Name = "ProgressLog";
 			this.ProgressLog.ReadOnly = true;
-			this.ProgressLog.Size = new System.Drawing.Size(670, 246);
+			this.ProgressLog.Size = new System.Drawing.Size(668, 242);
 			this.ProgressLog.TabIndex = 17;
 			this.ProgressLog.Text = "";
 			// 
@@ -231,14 +232,24 @@
 			this.label6.TabIndex = 19;
 			this.label6.Text = "=";
 			// 
+			// panel1
+			// 
+			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel1.Controls.Add(this.ProgressLog);
+			this.panel1.Location = new System.Drawing.Point(12, 126);
+			this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(670, 244);
+			this.panel1.TabIndex = 20;
+			// 
 			// ExportForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(694, 441);
+			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.export);
-			this.Controls.Add(this.ProgressLog);
 			this.Controls.Add(this.ambientColorBox);
 			this.Controls.Add(this.ProgressBar);
 			this.Controls.Add(this.cancel);
@@ -260,6 +271,7 @@
 			this.Text = "Export / Lightmap";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
 			this.Load += new System.EventHandler(this.ExportForm_Load);
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -283,5 +295,6 @@
         public System.Windows.Forms.RichTextBox ProgressLog;
         private System.Windows.Forms.Button export;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Panel panel1;
     }
 }

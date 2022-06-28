@@ -33,8 +33,8 @@ namespace CBRE.QuickForms.Items
                 Name = Name,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 DropDownStyle = ComboBoxStyle.DropDownList,
-				Font = SystemFonts.MessageBoxFont,
-				FlatStyle = FlatStyle.System
+                Font = SystemFonts.MessageBoxFont,
+                FlatStyle = FlatStyle.System
             };
             cb.Items.AddRange(_items.ToArray());
             cb.SelectedIndex = 0;

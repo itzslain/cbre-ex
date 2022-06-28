@@ -22,7 +22,7 @@ namespace CBRE.Editor.UI.Sidebar
             string help = "";
             if (ToolManager.ActiveTool != null) help = ToolManager.ActiveTool.GetContextualHelp();
             HelpTextBox.ResetFont();
-			HelpTextBox.Font = SystemFonts.MessageBoxFont;
+            HelpTextBox.Font = SystemFonts.MessageBoxFont;
             string rtf = ConvertSimpleMarkdownToRtf(help);
             HelpTextBox.Rtf = rtf;
             Size size = TextRenderer.MeasureText(HelpTextBox.Text, HelpTextBox.Font, HelpTextBox.Size, TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);

@@ -15,19 +15,19 @@ namespace CBRE.QuickForms
         /// <summary>
         /// Change the standard height of each item in the form.
         /// </summary>
-		public static int ItemHeight = 20;
+        public static int ItemHeight = 20;
 
         /// <summary>
         /// Change the standard padding between each item in the form.
         /// </summary>
-		public static int ItemPadding = 5;
+        public static int ItemPadding = 5;
 
         private readonly List<QuickFormItem> _items;
 
         /// <summary>
         /// The current Y offset of the form.
         /// </summary>
-	    public int CurrentOffset { get; private set; }
+        public int CurrentOffset { get; private set; }
 
         /// <summary>
         /// Get or set the width of item labels. This is not used 
@@ -41,7 +41,7 @@ namespace CBRE.QuickForms
         /// Create a form with the specified title.
         /// </summary>
         /// <param name="title">The title of the form</param>
-	    public QuickForm(string title)
+        public QuickForm(string title)
         {
             _items = new List<QuickFormItem>();
             LabelWidth = 100;
@@ -222,7 +222,7 @@ namespace CBRE.QuickForms
         /// </summary>
         /// <param name="name">The name of the control</param>
         /// <returns>The string value</returns>
-	    public string String(string name)
+        public string String(string name)
         {
             Control c = GetControl(name);
             if (c != null) return c.Text;
@@ -234,7 +234,7 @@ namespace CBRE.QuickForms
         /// </summary>
         /// <param name="name">The name of the control</param>
         /// <returns>The decimal value</returns>
-		public decimal Decimal(string name)
+        public decimal Decimal(string name)
         {
             Control c = GetControl(name);
             if (c != null) return ((NumericUpDown)c).Value;
@@ -246,7 +246,7 @@ namespace CBRE.QuickForms
         /// </summary>
         /// <param name="name">The name of the control</param>
         /// <returns>The boolean value</returns>
-		public bool Bool(string name)
+        public bool Bool(string name)
         {
             Control c = GetControl(name);
             if (c != null) return ((CheckBox)c).Checked;

@@ -622,7 +622,7 @@ namespace CBRE.Providers
         /// <param name="reader">The TextReader to read from</param>
         /// <param name="name">The structure's name</param>
         /// <returns>The parsed structure</returns>
-		private static GenericStructure ParseStructure(TextReader reader, string name)
+        private static GenericStructure ParseStructure(TextReader reader, string name)
         {
             string[] spl = name.SplitWithQuotes();
             GenericStructure gs = new GenericStructure(spl[0]);
@@ -653,7 +653,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="s">The string to test</param>
         /// <returns>True if this is a valid structure name, false otherwise</returns>
-	    private static bool ValidStructStartString(string s)
+        private static bool ValidStructStartString(string s)
         {
             if (string.IsNullOrEmpty(s)) return false;
             string[] split = s.SplitWithQuotes();
@@ -665,7 +665,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="s">The string to test</param>
         /// <returns>True if this is a valid property string, false otherwise</returns>
-		private static bool ValidStructPropertyString(string s)
+        private static bool ValidStructPropertyString(string s)
         {
             if (string.IsNullOrEmpty(s)) return false;
             string[] split = s.SplitWithQuotes();
@@ -677,7 +677,7 @@ namespace CBRE.Providers
         /// </summary>
         /// <param name="gs">The structure to add the property to</param>
         /// <param name="prop">The property string to parse</param>
-		private static void ParseProperty(GenericStructure gs, string prop)
+        private static void ParseProperty(GenericStructure gs, string prop)
         {
             string[] split = prop.SplitWithQuotes();
             gs.Properties.Add(new GenericStructureProperty(split[0], (split[1] ?? "").Replace('`', '"')));
