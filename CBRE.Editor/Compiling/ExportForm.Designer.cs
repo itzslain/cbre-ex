@@ -190,9 +190,9 @@
 			// 
 			this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
 			this.ambientColorBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.ambientColorBox.Location = new System.Drawing.Point(282, 99);
+			this.ambientColorBox.Location = new System.Drawing.Point(282, 101);
 			this.ambientColorBox.Name = "ambientColorBox";
-			this.ambientColorBox.Size = new System.Drawing.Size(42, 20);
+			this.ambientColorBox.Size = new System.Drawing.Size(42, 18);
 			this.ambientColorBox.TabIndex = 16;
 			this.ambientColorBox.Click += new System.EventHandler(this.ambientColorBox_Click);
 			// 
