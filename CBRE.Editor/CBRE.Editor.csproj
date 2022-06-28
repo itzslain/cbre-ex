@@ -519,6 +519,7 @@
     <Compile Include="UI\TransformDialog.Designer.cs">
       <DependentUpon>TransformDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\UpdaterClasses.cs" />
     <Compile Include="UI\UpdaterForm.cs">
       <SubType>Form</SubType>
     </Compile>

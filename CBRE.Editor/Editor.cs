@@ -30,8 +30,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Timers;
 using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
+using Timer = System.Timers.Timer;
 
 namespace CBRE.Editor
 {
@@ -40,20 +42,13 @@ namespace CBRE.Editor
 		private JumpList _jumpList;
 		public static Editor Instance { get; private set; }
 
-		private const string RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
+		private const string API_RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
+		private const string GIT_LATEST_RELEASE_URL = "https://github.com/AestheticalZ/cbre-ex/releases/latest";
 
-		private class UpdaterResponse
-		{
-			public class Asset
-			{
-				public string browser_download_url { get; set; }
-			}
-
-			public string html_url { get; set; }
-			public string tag_name { get; set; }
-			public string body { get; set; }
-			public List<Asset> assets { get; set; }
-		}
+		//HACK HACK HACK!!!
+		//Splash form doesnt close until the UI thread is freed, meaning that the updater's message box may block the splash screen from closing,
+		//and since the splash screen is always on top of everything, the messagebox is invisible.
+		private Timer UpdaterTimer;
 
 		public bool CaptureAltPresses { get; set; }
 
@@ -198,9 +193,18 @@ namespace CBRE.Editor
 
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
-			CheckForUpdates();
+			UpdaterTimer = new Timer();
+			UpdaterTimer.Elapsed += OnTimedEvent;
+			UpdaterTimer.Interval = 1500;
+			UpdaterTimer.AutoReset = false;
+
+			UpdaterTimer.Start();
 		}
 
+		private void OnTimedEvent(object source, ElapsedEventArgs e)
+		{
+			CheckForUpdates();
+		}
 
 		#region Updates
 		private Version GetCurrentVersion()
@@ -211,40 +215,58 @@ namespace CBRE.Editor
 
 		private void CheckForUpdates()
 		{
-			using (WebClient webClient = new WebClient())
+			using (WebClient Client = new WebClient())
 			{
 				try
 				{
-					Version parsedVersion;
+					Version ParsedNewVersion;
+					Version CurrentVersion = GetCurrentVersion();
 
-					webClient.Headers.Add("Accept", "application/vnd.github.v3+json");
-					webClient.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
+					//Github wants me to set a user agent, sure!
+					Client.Headers.Add("Accept", "application/vnd.github.v3+json");
+					Client.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
 
-					JsonSerializerSettings settings = new JsonSerializerSettings
+					JsonSerializerSettings DeserializeSettings = new JsonSerializerSettings
 					{
 						MissingMemberHandling = MissingMemberHandling.Ignore
 					};
 
-					UpdaterResponse apiResponse = JsonConvert.DeserializeObject<UpdaterResponse>(webClient.DownloadString(RELEASES_URL), settings);
+					UpdaterResponse Response = JsonConvert.DeserializeObject<UpdaterResponse>(Client.DownloadString(API_RELEASES_URL), DeserializeSettings);
 
-					if (!Version.TryParse(apiResponse.tag_name, out parsedVersion)) return;
-					if (apiResponse.assets.Count < 2) return;
+					//Version is invalid? Die
+					if (!Version.TryParse(Response.VersionTag, out ParsedNewVersion)) return;
 
-					string updatePackageUrl = apiResponse.assets.First().browser_download_url;
-					string checksumUrl = apiResponse.assets.Skip(1).First().browser_download_url;
+					ReleaseAsset PackageAsset = Response.Assets.FirstOrDefault(x => x.Filename.EndsWith(".zip"));
+					ReleaseAsset ChecksumAsset = Response.Assets.FirstOrDefault(x => x.Filename.EndsWith(".md5"));
 
-					if (!updatePackageUrl.EndsWith(".zip")) return;
-					if (!checksumUrl.EndsWith("CHECKSUM.txt")) return;
-
-					if (parsedVersion > GetCurrentVersion())
+					if (ParsedNewVersion > CurrentVersion)
 					{
-						UpdaterForm form = new UpdaterForm(parsedVersion, apiResponse.body, updatePackageUrl, checksumUrl);
-						form.Show();
+						//Missing required files? The update must have changed the structure!
+						if (PackageAsset == default(ReleaseAsset) || PackageAsset == null || ChecksumAsset == default(ReleaseAsset) || ChecksumAsset == null)
+						{
+							//hackiest shit in the planet
+							this.Invoke((Action)delegate
+							{
+								DialogResult Result = MessageBox.Show("The updater found an update, but it could not find the necessary files, meaning that the updater may have been updated.\n\n" +
+																"The updater is not designed to update itself, so you must download and update CBRE-EX yourself.\n\n" +
+																"Do you want to go to the latest GitHub release?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+								if (Result == DialogResult.Yes) Process.Start(GIT_LATEST_RELEASE_URL);
+							});
+
+							return;
+						}
+
+						this.Invoke((Action)delegate
+						{
+							UpdaterForm Form = new UpdaterForm(ParsedNewVersion, Response.Description, PackageAsset, ChecksumAsset);
+							Form.ShowDialog();
+						});
 					}
 				}
 				catch (Exception)
 				{
-					return; //Do nothing. Interrupting the user with an exception window for this would be dumb.
+					return; //Do nothing.
 				}
 			}
 		}

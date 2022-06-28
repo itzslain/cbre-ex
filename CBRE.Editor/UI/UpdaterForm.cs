@@ -9,112 +9,115 @@ using System.Windows.Forms;
 
 namespace CBRE.Editor.UI
 {
-    public partial class UpdaterForm : Form
-    {
-        private string DownloadUri;
-        private string ChecksumUri;
-        private string VersionString;
+	public partial class UpdaterForm : Form
+	{
+		private ReleaseAsset PackageAsset;
+		private ReleaseAsset ChecksumAsset;
+		private string VersionString;
 
-        public UpdaterForm(Version version, string changelog, string url, string checksumUrl)
-        {
-            InitializeComponent();
-            DownloadUri = url;
-            ChecksumUri = checksumUrl;
-            VersionString = version.ToString(2);
+		public UpdaterForm(Version Version, string Description, ReleaseAsset PackageAsset, ReleaseAsset ChecksumAsset)
+		{
+			InitializeComponent();
 
-            SHSTOCKICONINFO stockIconInfo = new SHSTOCKICONINFO();
-            stockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
-            SHGetStockIconInfo(SHSTOCKICONID.SIID_INFO, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SHELLICONSIZE, ref stockIconInfo);
+			this.PackageAsset = PackageAsset;
+			this.ChecksumAsset = ChecksumAsset;
+			VersionString = Version.ToString(2);
 
-            systemBitmap.Image = Icon.FromHandle(stockIconInfo.hIcon).ToBitmap();
+			SHSTOCKICONINFO StockIconInfo = new SHSTOCKICONINFO();
+			StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
+			SHGetStockIconInfo(SHSTOCKICONID.SIID_INFO, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
 
-            headerLabel.Text = headerLabel.Text.Replace("(version)", VersionString);
+			systemBitmap.Image = Icon.FromHandle(StockIconInfo.hIcon).ToBitmap();
 
-            changelogBox.Text = changelog;
-            changelogBox.BackColor = SystemColors.Window;
-            changelogBox.GotFocus += ChangelogGotFocus;
-        }
+			headerLabel.Text = headerLabel.Text.Replace("(version)", VersionString);
 
-        private void ChangelogGotFocus(object sender, EventArgs e)
-        {
-            HideCaret(changelogBox.Handle);
-        }
+			changelogBox.Text = Description;
+			changelogBox.BackColor = SystemColors.Window;
+		}
 
-        private void noButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+		private void noButton_Click(object sender, EventArgs e)
+		{
+			this.Close();
+		}
 
-        private async void yesButton_Click(object sender, EventArgs e)
-        {
-            string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
+		private async void yesButton_Click(object sender, EventArgs e)
+		{
+			string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
 
-            this.changelogBox.Select(0, 0);
-            this.ControlBox = false;
-            this.noButton.Enabled = false;
-            this.yesButton.Enabled = false;
+			this.changelogBox.Select(0, 0);
+			this.ControlBox = false;
+			this.noButton.Enabled = false;
+			this.yesButton.Enabled = false;
 
-            try
-            {
-                using (WebClient webClient = new WebClient())
-                {
-                    string downloadedChecksum = string.Empty;
+			try
+			{
+				using (WebClient Client = new WebClient())
+				{
+					string DownloadedChecksum = string.Empty;
 
-                    webClient.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
+					Client.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
 
-                    webClient.DownloadFile(new Uri(ChecksumUri), "CHECKSUM.txt");
-                    downloadedChecksum = File.ReadAllText("CHECKSUM.txt");
-                    if (string.IsNullOrEmpty(downloadedChecksum)) throw new Exception("The checksum file was empty.");
+					Client.DownloadFile(new Uri(ChecksumAsset.DownloadUrl), ChecksumAsset.Filename);
+					DownloadedChecksum = File.ReadAllText(ChecksumAsset.Filename);
 
-                    webClient.DownloadProgressChanged += (senderObj, eventArg) =>
-                    {
-                        downloadProgress.Value = eventArg.ProgressPercentage;
-                        statusLabel.Text = $"Status: Downloading {eventArg.ProgressPercentage}%";
-                    };
+					if (string.IsNullOrEmpty(DownloadedChecksum)) throw new Exception("The checksum file was empty.");
 
-                    await webClient.DownloadFileTaskAsync(new Uri(DownloadUri), "Update.zip");
+					Client.DownloadProgressChanged += (senderObj, eventArg) =>
+					{
+						downloadProgress.Value = eventArg.ProgressPercentage;
+						statusLabel.Text = $"Status: Downloading {eventArg.ProgressPercentage}%";
+					};
 
-                    statusLabel.Text = "Status: Verifying...";
+					await Client.DownloadFileTaskAsync(new Uri(PackageAsset.DownloadUrl), PackageAsset.Filename);
 
-                    using (MD5 md5 = MD5.Create())
-                    {
-                        using (FileStream stream = File.OpenRead("Update.zip"))
-                        {
-                            string convertedChecksum;
+					statusLabel.Text = "Status: Verifying...";
 
-                            byte[] hash = md5.ComputeHash(stream);
-                            convertedChecksum = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+					using (MD5 Hasher = MD5.Create())
+					{
+						using (FileStream Stream = File.OpenRead(PackageAsset.Filename))
+						{
+							string ConvertedChecksum;
 
-                            if (downloadedChecksum != convertedChecksum) throw new Exception("Verification failed. Update package is probably corrupted.");
-                        }
-                    }
+							byte[] Md5Hash = Hasher.ComputeHash(Stream);
+							ConvertedChecksum = BitConverter.ToString(Md5Hash).Replace("-", "").ToLowerInvariant();
 
-                    ProcessStartInfo updaterProcess = new ProcessStartInfo("CBRE.Updater.exe");
-                    updaterProcess.Arguments = $"{VersionString} {FixSpaces(CurrentFilename)}";
-                    updaterProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                    updaterProcess.UseShellExecute = true;
-                    Process.Start(updaterProcess);
+							if (DownloadedChecksum != ConvertedChecksum) throw new Exception("Verification failed. Update package is most probably corrupted.");
+						}
+					}
 
-                    Application.Exit();
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ControlBox = true;
-                this.noButton.Enabled = true;
-                this.yesButton.Enabled = true;
-                this.downloadProgress.Value = 0;
-                statusLabel.Text = "Status: Idle";
+					ProcessStartInfo updaterProcess = new ProcessStartInfo("CBRE.Updater.exe");
+					//Arg 0: New version
+					//Arg 1: CBRE-EX process name
+					//Arg 2: Checksum filename
+					//Arg 3: Package filename
+					updaterProcess.Arguments = $"{VersionString} {FixSpaces(CurrentFilename)} {ChecksumAsset.Filename} {PackageAsset.Filename}";
+					updaterProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+					updaterProcess.UseShellExecute = true;
+					Process.Start(updaterProcess);
 
-                MessageBox.Show("An error has ocurred while downloading and verifying the update package.\n" +
-                               $"{ex.Message}", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+					Application.Exit();
+				}
+			}
+			catch (Exception ex)
+			{
+				this.ControlBox = true;
+				this.noButton.Enabled = true;
+				this.yesButton.Enabled = true;
+				this.downloadProgress.Value = 0;
+				statusLabel.Text = "Status: Idle";
 
-        private string FixSpaces(string text)
-        {
-            if (text.Contains(" ")) return $"\"{text}\"";
-            else return text;
-        }
-    }
+				MessageBox.Show("An error has ocurred while downloading and verifying the update package:\n\n" +
+							   $"{ex.Message}", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+				if (File.Exists(PackageAsset.Filename)) File.Delete(PackageAsset.Filename);
+				if (File.Exists(ChecksumAsset.Filename)) File.Delete(ChecksumAsset.Filename);
+			}
+		}
+
+		private string FixSpaces(string Text)
+		{
+			if (Text.Contains(" ")) return $"\"{Text}\"";
+			else return Text;
+		}
+	}
 }

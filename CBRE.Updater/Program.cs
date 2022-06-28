@@ -8,126 +8,133 @@ using System.Threading;
 
 namespace CBRE.Updater
 {
-    public enum LogSeverity
-    {
-        MESSAGE,
-        WARNING,
-        ERROR
-    }
+	public enum LogSeverity
+	{
+		MESSAGE,
+		WARNING,
+		ERROR
+	}
 
-    public class Program
-    {
-        static void Main(string[] args)
-        {
-            string TargetDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
-            string friendlyCbreProcess = args[1].Replace(".exe", "");
+	public class Program
+	{
+		//Arg 0: New version
+		//Arg 1: CBRE-EX process name
+		//Arg 2: Checksum filename
+		//Arg 3: Package filename
+		static void Main(string[] args)
+		{
+			if (args.Length < 4) return;
 
-            Console.Title = "CBRE-EX Updater";
-            if (Environment.OSVersion.Version.Major < 10) ConsoleExtensions.Disable();
+			string TargetDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
 
-            Log($"Waiting until {"CBRE-EX".Pastel(Color.LimeGreen)} shuts down...", LogSeverity.MESSAGE);
+			string NewVersion = args[0];
+			string FriendlyCbreProcess = args[1].Replace(".exe", "");
+			string ChecksumFilename = args[2];
+			string PackageFilename = args[3];
 
-            while (true)
-            {
-                Process[] cbre = Process.GetProcessesByName(friendlyCbreProcess);
+			Console.Title = "CBRE-EX Updater";
+			if (Environment.OSVersion.Version.Major < 10) ConsoleExtensions.Disable();
 
-                if (cbre.Length > 0) Thread.Sleep(100);
-                else break;
-            }
+			Log($"Waiting until {"CBRE-EX".Pastel(Color.LimeGreen)} shuts down...", LogSeverity.MESSAGE);
 
-            Log($"Installing {"CBRE-EX".Pastel(Color.LimeGreen)} {$"v{args[0]}".Pastel(Color.Lime)}", LogSeverity.MESSAGE);
+			while (true)
+			{
+				Process[] CbreProcess = Process.GetProcessesByName(FriendlyCbreProcess);
 
-            try
-            {
-                if (!File.Exists("Update.zip")) throw new FileNotFoundException("The update package was not found. Did you execute this updater manually?");
+				if (CbreProcess.Length > 0) Thread.Sleep(100);
+				else break;
+			}
 
-                Directory.CreateDirectory("Temp");
+			Log($"Installing {"CBRE-EX".Pastel(Color.LimeGreen)} {$"v{NewVersion}".Pastel(Color.Lime)}", LogSeverity.MESSAGE);
 
-                Log($"Extracting {"Update.zip".Pastel(Color.LimeGreen)} to Temp directory...", LogSeverity.MESSAGE);
-                if (Directory.Exists("Temp")) Directory.Delete("Temp", true);
-                ZipFile.ExtractToDirectory("Update.zip", "Temp");
+			try
+			{
+				if (!File.Exists(PackageFilename)) throw new FileNotFoundException($"The update package was not found. Expected a file called \"{PackageFilename}\" in this directory.");
 
-                DirectoryInfo tempDir = new DirectoryInfo("Temp");
-                DirectoryInfo[] tempDirs = tempDir.GetDirectories();
+				Log($"Extracting {PackageFilename.Pastel(Color.LimeGreen)} to Temp directory...", LogSeverity.MESSAGE);
+				if (Directory.Exists("Temp")) Directory.Delete("Temp", true);
 
-                foreach (DirectoryInfo dir in tempDirs)
-                {
-                    if (dir.Name == "Entities" || dir.Name == "Error Logs") continue;
+				ZipFile.ExtractToDirectory(PackageFilename, "Temp");
 
-                    Log($"Copying updated directory \"{dir.Name.Pastel(Color.Lime)}\" to existing install...", LogSeverity.MESSAGE);
-                    CopyDirectory(dir.FullName, Path.Combine(TargetDirectory, dir.Name), true);
-                }
+				DirectoryInfo TempDir = new DirectoryInfo("Temp");
+				DirectoryInfo[] TempSubdirs = TempDir.GetDirectories();
 
-                FileInfo[] tempDirFiles = tempDir.GetFiles();
-                foreach (FileInfo file in tempDirFiles)
-                {
-                    if (file.Name == "Settings.vdf" || file.Name == CurrentFilename || file.Name == "Pastel.dll") continue;
+				foreach (DirectoryInfo Dir in TempSubdirs)
+				{
+					Log($"Copying updated directory \"{Dir.Name.Pastel(Color.Lime)}\" and its contents to existing install...", LogSeverity.MESSAGE);
+					CopyDirectory(Dir.FullName, Path.Combine(TargetDirectory, Dir.Name), true);
+				}
 
-                    Log($"Copying updated file \"{file.Name.Pastel(Color.Lime)}\" to existing install...", LogSeverity.MESSAGE);
-                    file.CopyTo(Path.Combine(TargetDirectory, file.Name), true);
-                }
+				FileInfo[] TempDirFiles = TempDir.GetFiles();
+				foreach (FileInfo File in TempDirFiles)
+				{
+					if (File.Name == CurrentFilename || File.Name == "Pastel.dll") continue;
 
-                Log($"Cleaning up leftover files...", LogSeverity.MESSAGE);
+					Log($"Copying updated file \"{File.Name.Pastel(Color.Lime)}\" to existing install...", LogSeverity.MESSAGE);
+					File.CopyTo(Path.Combine(TargetDirectory, File.Name), true);
+				}
 
-                Directory.Delete("Temp", true);
-                File.Delete("Update.zip");
-                File.Delete("CHECKSUM.txt");
+				Log($"Cleaning up left over files...", LogSeverity.MESSAGE);
 
-                Log($"Done! Starting CBRE-EX...", LogSeverity.MESSAGE);
+				Directory.Delete("Temp", true);
+				File.Delete(PackageFilename);
+				File.Delete(ChecksumFilename);
 
-                ProcessStartInfo editorProcess = new ProcessStartInfo(args[1]);
-                editorProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                editorProcess.UseShellExecute = true;
-                Process.Start(editorProcess);
+				Log($"Done! Starting CBRE-EX...", LogSeverity.MESSAGE);
 
-                Environment.Exit(0);
-            }
-            catch (Exception ex)
-            {
-                Log($"Error! {ex.Message.Pastel(Color.IndianRed)}", LogSeverity.ERROR);
+				ProcessStartInfo editorProcess = new ProcessStartInfo(args[1]);
+				editorProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				editorProcess.UseShellExecute = true;
+				Process.Start(editorProcess);
 
-                Thread.Sleep(Timeout.Infinite);
-            }
-        }
+				Environment.Exit(0);
+			}
+			catch (Exception ex)
+			{
+				Log($"Error! {ex.Message.Pastel(Color.IndianRed)}", LogSeverity.ERROR);
 
-        static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
-        {
-            DirectoryInfo dir = new DirectoryInfo(sourceDir);
-            DirectoryInfo[] dirs = dir.GetDirectories();
+				Thread.Sleep(Timeout.Infinite);
+			}
+		}
 
-            Directory.CreateDirectory(destinationDir);
+		static void CopyDirectory(string Source, string Destination, bool Recursive)
+		{
+			DirectoryInfo Dir = new DirectoryInfo(Source);
+			DirectoryInfo[] Subdirs = Dir.GetDirectories();
 
-            foreach (FileInfo file in dir.GetFiles())
-            {
-                string targetFilePath = Path.Combine(destinationDir, file.Name);
-                file.CopyTo(targetFilePath, true);
-            }
+			Directory.CreateDirectory(Destination);
 
-            if (recursive)
-            {
-                foreach (DirectoryInfo subDir in dirs)
-                {
-                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-                    CopyDirectory(subDir.FullName, newDestinationDir, true);
-                }
-            }
-        }
+			foreach (FileInfo File in Dir.GetFiles())
+			{
+				string TargetPath = Path.Combine(Destination, File.Name);
+				File.CopyTo(TargetPath, true);
+			}
 
-        static void Log(string message, LogSeverity severity)
-        {
-            switch (severity)
-            {
-                case LogSeverity.MESSAGE:
-                    Console.WriteLine($"[{"MSG".Pastel(Color.CadetBlue)}] {message}");
-                    break;
-                case LogSeverity.WARNING:
-                    Console.WriteLine($"[{"WRN".Pastel(Color.Yellow)}] {message}");
-                    break;
-                case LogSeverity.ERROR:
-                    Console.WriteLine($"[{"ERR".Pastel(Color.Red)}] {message}");
-                    break;
-            }
-        }
-    }
+			if (Recursive)
+			{
+				foreach (DirectoryInfo Subdir in Subdirs)
+				{
+					string TargetPath = Path.Combine(Destination, Subdir.Name);
+					CopyDirectory(Subdir.FullName, TargetPath, true);
+				}
+			}
+		}
+
+		static void Log(string Message, LogSeverity Severity)
+		{
+			switch (Severity)
+			{
+				case LogSeverity.MESSAGE:
+					Console.WriteLine($"[{"MSG".Pastel(Color.CadetBlue)}] {Message}");
+					break;
+				case LogSeverity.WARNING:
+					Console.WriteLine($"[{"WRN".Pastel(Color.Yellow)}] {Message}");
+					break;
+				case LogSeverity.ERROR:
+					Console.WriteLine($"[{"ERR".Pastel(Color.Red)}] {Message}");
+					break;
+			}
+		}
+	}
 }
