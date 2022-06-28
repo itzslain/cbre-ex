@@ -69,7 +69,7 @@ namespace CBRE.Updater
 				FileInfo[] TempDirFiles = TempDir.GetFiles();
 				foreach (FileInfo File in TempDirFiles)
 				{
-					if (File.Name == CurrentFilename || File.Name == "Pastel.dll") continue;
+					if (File.Name == CurrentFilename || File.Name == "Pastel.dll" || File.Name == Path.GetFileNameWithoutExtension(CurrentFilename) + ".pdb") continue;
 
 					Log($"Copying updated file \"{File.Name.Pastel(Color.Lime)}\" to existing install...", LogSeverity.MESSAGE);
 					File.CopyTo(Path.Combine(TargetDirectory, File.Name), true);
