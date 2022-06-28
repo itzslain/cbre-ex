@@ -469,7 +469,7 @@ namespace CBRE.Editor.Settings
                 BackColor = (Color)property.GetValue(null, null),
                 Height = 20,
                 Width = 50,
-                BorderStyle = BorderStyle.Fixed3D
+                BorderStyle = BorderStyle.FixedSingle
             };
             colour.Click += (s, e) =>
             {

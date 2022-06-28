@@ -158,10 +158,10 @@ namespace CBRE.Editor.Settings
 			this.tabDirectories = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.textureDirsDataGrid = new System.Windows.Forms.DataGridView();
+			this.modelDirsDataGrid = new System.Windows.Forms.DataGridView();
 			this.deleteButtons = new System.Windows.Forms.DataGridViewButtonColumn();
 			this.textureDirs = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.browseButtons = new System.Windows.Forms.DataGridViewButtonColumn();
-			this.modelDirsDataGrid = new System.Windows.Forms.DataGridView();
 			this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewButtonColumn2 = new System.Windows.Forms.DataGridViewButtonColumn();
@@ -413,7 +413,7 @@ namespace CBRE.Editor.Settings
 			this.btnCancelSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnCancelSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.btnCancelSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnCancelSettings.Location = new System.Drawing.Point(792, 412);
+			this.btnCancelSettings.Location = new System.Drawing.Point(792, 446);
 			this.btnCancelSettings.Name = "btnCancelSettings";
 			this.btnCancelSettings.Size = new System.Drawing.Size(75, 23);
 			this.btnCancelSettings.TabIndex = 1;
@@ -426,7 +426,7 @@ namespace CBRE.Editor.Settings
 			this.btnApplyAndCloseSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnApplyAndCloseSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.btnApplyAndCloseSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnApplyAndCloseSettings.Location = new System.Drawing.Point(682, 412);
+			this.btnApplyAndCloseSettings.Location = new System.Drawing.Point(682, 446);
 			this.btnApplyAndCloseSettings.Name = "btnApplyAndCloseSettings";
 			this.btnApplyAndCloseSettings.Size = new System.Drawing.Size(104, 23);
 			this.btnApplyAndCloseSettings.TabIndex = 1;
@@ -439,7 +439,7 @@ namespace CBRE.Editor.Settings
 			this.btnApplySettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnApplySettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.btnApplySettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnApplySettings.Location = new System.Drawing.Point(601, 412);
+			this.btnApplySettings.Location = new System.Drawing.Point(601, 446);
 			this.btnApplySettings.Name = "btnApplySettings";
 			this.btnApplySettings.Size = new System.Drawing.Size(75, 23);
 			this.btnApplySettings.TabIndex = 1;
@@ -459,6 +459,7 @@ namespace CBRE.Editor.Settings
 			// 
 			// tabHotkeys
 			// 
+			this.tabHotkeys.BackColor = System.Drawing.Color.Transparent;
 			this.tabHotkeys.Controls.Add(this.HotkeyResetButton);
 			this.tabHotkeys.Controls.Add(this.groupBox22);
 			this.tabHotkeys.Controls.Add(this.HotkeyReassignButton);
@@ -467,15 +468,14 @@ namespace CBRE.Editor.Settings
 			this.tabHotkeys.Location = new System.Drawing.Point(4, 24);
 			this.tabHotkeys.Name = "tabHotkeys";
 			this.tabHotkeys.Padding = new System.Windows.Forms.Padding(3);
-			this.tabHotkeys.Size = new System.Drawing.Size(847, 366);
+			this.tabHotkeys.Size = new System.Drawing.Size(847, 400);
 			this.tabHotkeys.TabIndex = 6;
 			this.tabHotkeys.Text = "Hotkeys";
-			this.tabHotkeys.UseVisualStyleBackColor = true;
 			// 
 			// HotkeyResetButton
 			// 
 			this.HotkeyResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.HotkeyResetButton.Location = new System.Drawing.Point(648, 480);
+			this.HotkeyResetButton.Location = new System.Drawing.Point(648, 514);
 			this.HotkeyResetButton.Name = "HotkeyResetButton";
 			this.HotkeyResetButton.Size = new System.Drawing.Size(118, 23);
 			this.HotkeyResetButton.TabIndex = 5;
@@ -491,7 +491,7 @@ namespace CBRE.Editor.Settings
 			this.groupBox22.Controls.Add(this.label25);
 			this.groupBox22.Controls.Add(this.label23);
 			this.groupBox22.Controls.Add(this.HotkeyCombination);
-			this.groupBox22.Location = new System.Drawing.Point(6, 453);
+			this.groupBox22.Location = new System.Drawing.Point(6, 487);
 			this.groupBox22.Name = "groupBox22";
 			this.groupBox22.Size = new System.Drawing.Size(437, 50);
 			this.groupBox22.TabIndex = 4;
@@ -546,7 +546,7 @@ namespace CBRE.Editor.Settings
 			// HotkeyReassignButton
 			// 
 			this.HotkeyReassignButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.HotkeyReassignButton.Location = new System.Drawing.Point(772, 453);
+			this.HotkeyReassignButton.Location = new System.Drawing.Point(772, 487);
 			this.HotkeyReassignButton.Name = "HotkeyReassignButton";
 			this.HotkeyReassignButton.Size = new System.Drawing.Size(69, 23);
 			this.HotkeyReassignButton.TabIndex = 3;
@@ -557,7 +557,7 @@ namespace CBRE.Editor.Settings
 			// HotkeyRemoveButton
 			// 
 			this.HotkeyRemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.HotkeyRemoveButton.Location = new System.Drawing.Point(772, 480);
+			this.HotkeyRemoveButton.Location = new System.Drawing.Point(772, 514);
 			this.HotkeyRemoveButton.Name = "HotkeyRemoveButton";
 			this.HotkeyRemoveButton.Size = new System.Drawing.Size(69, 23);
 			this.HotkeyRemoveButton.TabIndex = 3;
@@ -570,6 +570,7 @@ namespace CBRE.Editor.Settings
 			this.HotkeyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.HotkeyList.BackColor = System.Drawing.SystemColors.Control;
 			this.HotkeyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chAction,
             this.chDescription,
@@ -579,7 +580,7 @@ namespace CBRE.Editor.Settings
 			this.HotkeyList.Location = new System.Drawing.Point(6, 6);
 			this.HotkeyList.MultiSelect = false;
 			this.HotkeyList.Name = "HotkeyList";
-			this.HotkeyList.Size = new System.Drawing.Size(835, 441);
+			this.HotkeyList.Size = new System.Drawing.Size(835, 475);
 			this.HotkeyList.TabIndex = 0;
 			this.HotkeyList.UseCompatibleStateImageBehavior = false;
 			this.HotkeyList.View = System.Windows.Forms.View.Details;
@@ -601,16 +602,16 @@ namespace CBRE.Editor.Settings
 			// tab3DViews
 			// 
 			this.tab3DViews.AutoScroll = true;
+			this.tab3DViews.BackColor = System.Drawing.Color.Transparent;
 			this.tab3DViews.Controls.Add(this.groupBox12);
 			this.tab3DViews.Controls.Add(this.groupBox13);
 			this.tab3DViews.Controls.Add(this.groupBox14);
 			this.tab3DViews.Location = new System.Drawing.Point(4, 24);
 			this.tab3DViews.Name = "tab3DViews";
 			this.tab3DViews.Padding = new System.Windows.Forms.Padding(3);
-			this.tab3DViews.Size = new System.Drawing.Size(847, 366);
+			this.tab3DViews.Size = new System.Drawing.Size(847, 400);
 			this.tab3DViews.TabIndex = 4;
 			this.tab3DViews.Text = "3D Views";
-			this.tab3DViews.UseVisualStyleBackColor = true;
 			// 
 			// groupBox12
 			// 
@@ -627,19 +628,20 @@ namespace CBRE.Editor.Settings
 			// 
 			// label39
 			// 
-			this.label39.Location = new System.Drawing.Point(12, 46);
+			this.label39.Location = new System.Drawing.Point(12, 49);
 			this.label39.Name = "label39";
-			this.label39.Size = new System.Drawing.Size(74, 17);
+			this.label39.Size = new System.Drawing.Size(74, 23);
 			this.label39.TabIndex = 3;
-			this.label39.Text = "Background:";
+			this.label39.Text = "Background";
+			this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// ViewportBackgroundColour
 			// 
 			this.ViewportBackgroundColour.BackColor = System.Drawing.Color.Black;
-			this.ViewportBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.ViewportBackgroundColour.Location = new System.Drawing.Point(92, 46);
+			this.ViewportBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ViewportBackgroundColour.Location = new System.Drawing.Point(92, 49);
 			this.ViewportBackgroundColour.Name = "ViewportBackgroundColour";
-			this.ViewportBackgroundColour.Size = new System.Drawing.Size(51, 17);
+			this.ViewportBackgroundColour.Size = new System.Drawing.Size(51, 23);
 			this.ViewportBackgroundColour.TabIndex = 4;
 			// 
 			// CameraFOV
@@ -666,12 +668,12 @@ namespace CBRE.Editor.Settings
 			// 
 			// label29
 			// 
-			this.label29.AutoSize = true;
-			this.label29.Location = new System.Drawing.Point(12, 22);
+			this.label29.Location = new System.Drawing.Point(12, 20);
 			this.label29.Name = "label29";
-			this.label29.Size = new System.Drawing.Size(76, 15);
+			this.label29.Size = new System.Drawing.Size(74, 23);
 			this.label29.TabIndex = 0;
-			this.label29.Text = "Camera FOV:";
+			this.label29.Text = "Camera FOV";
+			this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupBox13
 			// 
@@ -708,7 +710,7 @@ namespace CBRE.Editor.Settings
 			// 
 			this.label43.Location = new System.Drawing.Point(240, 150);
 			this.label43.Name = "label43";
-			this.label43.Size = new System.Drawing.Size(161, 20);
+			this.label43.Size = new System.Drawing.Size(161, 23);
 			this.label43.TabIndex = 6;
 			this.label43.Text = "Mouse wheel move distance";
 			this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -716,7 +718,7 @@ namespace CBRE.Editor.Settings
 			// label31
 			// 
 			this.label31.AutoSize = true;
-			this.label31.Location = new System.Drawing.Point(399, 56);
+			this.label31.Location = new System.Drawing.Point(395, 56);
 			this.label31.Name = "label31";
 			this.label31.Size = new System.Drawing.Size(55, 15);
 			this.label31.TabIndex = 7;
@@ -731,7 +733,7 @@ namespace CBRE.Editor.Settings
             0,
             0,
             65536});
-			this.TimeToTopSpeedUpDown.Location = new System.Drawing.Point(392, 81);
+			this.TimeToTopSpeedUpDown.Location = new System.Drawing.Point(392, 78);
 			this.TimeToTopSpeedUpDown.Maximum = new decimal(new int[] {
             5,
             0,
@@ -754,7 +756,7 @@ namespace CBRE.Editor.Settings
             0,
             0,
             0});
-			this.ForwardSpeedUpDown.Location = new System.Drawing.Point(392, 33);
+			this.ForwardSpeedUpDown.Location = new System.Drawing.Point(392, 30);
 			this.ForwardSpeedUpDown.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -813,7 +815,7 @@ namespace CBRE.Editor.Settings
 			// TimeToTopSpeed
 			// 
 			this.TimeToTopSpeed.AutoSize = false;
-			this.TimeToTopSpeed.BackColor = System.Drawing.SystemColors.Window;
+			this.TimeToTopSpeed.BackColor = System.Drawing.SystemColors.Control;
 			this.TimeToTopSpeed.Location = new System.Drawing.Point(125, 68);
 			this.TimeToTopSpeed.Maximum = 50;
 			this.TimeToTopSpeed.Name = "TimeToTopSpeed";
@@ -845,7 +847,7 @@ namespace CBRE.Editor.Settings
 			// ForwardSpeed
 			// 
 			this.ForwardSpeed.AutoSize = false;
-			this.ForwardSpeed.BackColor = System.Drawing.SystemColors.ControlLightLight;
+			this.ForwardSpeed.BackColor = System.Drawing.SystemColors.Control;
 			this.ForwardSpeed.Location = new System.Drawing.Point(125, 20);
 			this.ForwardSpeed.Maximum = 5000;
 			this.ForwardSpeed.Minimum = 100;
@@ -891,7 +893,7 @@ namespace CBRE.Editor.Settings
             0,
             0,
             0});
-			this.DetailRenderDistanceUpDown.Location = new System.Drawing.Point(392, 134);
+			this.DetailRenderDistanceUpDown.Location = new System.Drawing.Point(392, 131);
 			this.DetailRenderDistanceUpDown.Maximum = new decimal(new int[] {
             30000,
             0,
@@ -989,7 +991,7 @@ namespace CBRE.Editor.Settings
 			// DetailRenderDistance
 			// 
 			this.DetailRenderDistance.AutoSize = false;
-			this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
+			this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Control;
 			this.DetailRenderDistance.Location = new System.Drawing.Point(138, 122);
 			this.DetailRenderDistance.Maximum = 30000;
 			this.DetailRenderDistance.Minimum = 200;
@@ -1004,7 +1006,7 @@ namespace CBRE.Editor.Settings
 			// ModelRenderDistance
 			// 
 			this.ModelRenderDistance.AutoSize = false;
-			this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
+			this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Control;
 			this.ModelRenderDistance.Location = new System.Drawing.Point(138, 67);
 			this.ModelRenderDistance.Maximum = 30000;
 			this.ModelRenderDistance.Minimum = 200;
@@ -1019,7 +1021,7 @@ namespace CBRE.Editor.Settings
 			// BackClippingPane
 			// 
 			this.BackClippingPane.AutoSize = false;
-			this.BackClippingPane.BackColor = System.Drawing.SystemColors.Window;
+			this.BackClippingPane.BackColor = System.Drawing.SystemColors.Control;
 			this.BackClippingPane.Location = new System.Drawing.Point(138, 20);
 			this.BackClippingPane.Maximum = 30000;
 			this.BackClippingPane.Minimum = 2000;
@@ -1034,6 +1036,7 @@ namespace CBRE.Editor.Settings
 			// tab2DViews
 			// 
 			this.tab2DViews.AutoScroll = true;
+			this.tab2DViews.BackColor = System.Drawing.Color.Transparent;
 			this.tab2DViews.Controls.Add(this.groupBox6);
 			this.tab2DViews.Controls.Add(this.groupBox3);
 			this.tab2DViews.Controls.Add(this.groupBox17);
@@ -1043,10 +1046,9 @@ namespace CBRE.Editor.Settings
 			this.tab2DViews.Location = new System.Drawing.Point(4, 24);
 			this.tab2DViews.Name = "tab2DViews";
 			this.tab2DViews.Padding = new System.Windows.Forms.Padding(3);
-			this.tab2DViews.Size = new System.Drawing.Size(847, 366);
+			this.tab2DViews.Size = new System.Drawing.Size(847, 400);
 			this.tab2DViews.TabIndex = 1;
 			this.tab2DViews.Text = "2D Views";
-			this.tab2DViews.UseVisualStyleBackColor = true;
 			// 
 			// groupBox6
 			// 
@@ -1141,10 +1143,10 @@ namespace CBRE.Editor.Settings
 			// GridHighlight2Colour
 			// 
 			this.GridHighlight2Colour.BackColor = System.Drawing.Color.DarkRed;
-			this.GridHighlight2Colour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.GridHighlight2Colour.Location = new System.Drawing.Point(94, 139);
+			this.GridHighlight2Colour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.GridHighlight2Colour.Location = new System.Drawing.Point(94, 168);
 			this.GridHighlight2Colour.Name = "GridHighlight2Colour";
-			this.GridHighlight2Colour.Size = new System.Drawing.Size(51, 17);
+			this.GridHighlight2Colour.Size = new System.Drawing.Size(51, 23);
 			this.GridHighlight2Colour.TabIndex = 2;
 			// 
 			// label30
@@ -1153,31 +1155,33 @@ namespace CBRE.Editor.Settings
 			this.label30.Name = "label30";
 			this.label30.Size = new System.Drawing.Size(94, 17);
 			this.label30.TabIndex = 1;
-			this.label30.Text = "Colour Presets:";
+			this.label30.Text = "Colour Presets";
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(14, 24);
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(17, 26);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(74, 17);
+			this.label6.Size = new System.Drawing.Size(71, 15);
 			this.label6.TabIndex = 1;
-			this.label6.Text = "Background:";
+			this.label6.Text = "Background";
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(14, 139);
+			this.label9.AutoSize = true;
+			this.label9.Location = new System.Drawing.Point(22, 171);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(74, 17);
+			this.label9.Size = new System.Drawing.Size(66, 15);
 			this.label9.TabIndex = 1;
-			this.label9.Text = "Highlight 2:";
+			this.label9.Text = "Highlight 2";
 			// 
 			// GridBackgroundColour
 			// 
 			this.GridBackgroundColour.BackColor = System.Drawing.Color.Black;
-			this.GridBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.GridBackgroundColour.Location = new System.Drawing.Point(94, 24);
+			this.GridBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.GridBackgroundColour.Location = new System.Drawing.Point(94, 23);
 			this.GridBackgroundColour.Name = "GridBackgroundColour";
-			this.GridBackgroundColour.Size = new System.Drawing.Size(51, 17);
+			this.GridBackgroundColour.Size = new System.Drawing.Size(51, 23);
 			this.GridBackgroundColour.TabIndex = 2;
 			// 
 			// GridHighlight2UnitNum
@@ -1193,7 +1197,7 @@ namespace CBRE.Editor.Settings
 			this.GridHighlight2UnitNum.Items.Add("128");
 			this.GridHighlight2UnitNum.Items.Add("64");
 			this.GridHighlight2UnitNum.Items.Add("32");
-			this.GridHighlight2UnitNum.Location = new System.Drawing.Point(265, 135);
+			this.GridHighlight2UnitNum.Location = new System.Drawing.Point(265, 169);
 			this.GridHighlight2UnitNum.Name = "GridHighlight2UnitNum";
 			this.GridHighlight2UnitNum.Size = new System.Drawing.Size(50, 23);
 			this.GridHighlight2UnitNum.TabIndex = 0;
@@ -1202,104 +1206,107 @@ namespace CBRE.Editor.Settings
 			// GridBoundaryColour
 			// 
 			this.GridBoundaryColour.BackColor = System.Drawing.Color.Red;
-			this.GridBoundaryColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.GridBoundaryColour.Location = new System.Drawing.Point(94, 93);
+			this.GridBoundaryColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.GridBoundaryColour.Location = new System.Drawing.Point(94, 110);
 			this.GridBoundaryColour.Name = "GridBoundaryColour";
-			this.GridBoundaryColour.Size = new System.Drawing.Size(51, 17);
+			this.GridBoundaryColour.Size = new System.Drawing.Size(51, 23);
 			this.GridBoundaryColour.TabIndex = 2;
 			// 
 			// GridZeroAxisColour
 			// 
 			this.GridZeroAxisColour.BackColor = System.Drawing.Color.Aqua;
-			this.GridZeroAxisColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.GridZeroAxisColour.Location = new System.Drawing.Point(94, 70);
+			this.GridZeroAxisColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.GridZeroAxisColour.Location = new System.Drawing.Point(94, 81);
 			this.GridZeroAxisColour.Name = "GridZeroAxisColour";
-			this.GridZeroAxisColour.Size = new System.Drawing.Size(51, 17);
+			this.GridZeroAxisColour.Size = new System.Drawing.Size(51, 23);
 			this.GridZeroAxisColour.TabIndex = 2;
 			// 
 			// label19
 			// 
-			this.label19.Location = new System.Drawing.Point(14, 93);
+			this.label19.AutoSize = true;
+			this.label19.Location = new System.Drawing.Point(22, 113);
 			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(74, 17);
+			this.label19.Size = new System.Drawing.Size(66, 15);
 			this.label19.TabIndex = 1;
-			this.label19.Text = "Boundaries:";
+			this.label19.Text = "Boundaries";
 			// 
 			// GridHighlight1On
 			// 
 			this.GridHighlight1On.Checked = true;
 			this.GridHighlight1On.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.GridHighlight1On.Location = new System.Drawing.Point(151, 114);
+			this.GridHighlight1On.Location = new System.Drawing.Point(151, 139);
 			this.GridHighlight1On.Name = "GridHighlight1On";
-			this.GridHighlight1On.Size = new System.Drawing.Size(108, 20);
+			this.GridHighlight1On.Size = new System.Drawing.Size(108, 23);
 			this.GridHighlight1On.TabIndex = 0;
 			this.GridHighlight1On.Text = "Highlight every";
 			this.GridHighlight1On.UseVisualStyleBackColor = true;
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(14, 70);
+			this.label10.AutoSize = true;
+			this.label10.Location = new System.Drawing.Point(29, 84);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(74, 17);
+			this.label10.Size = new System.Drawing.Size(59, 15);
 			this.label10.TabIndex = 1;
-			this.label10.Text = "Zero Axes:";
+			this.label10.Text = "Zero Axes";
 			// 
 			// GridHighlight2On
 			// 
 			this.GridHighlight2On.Checked = true;
 			this.GridHighlight2On.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.GridHighlight2On.Location = new System.Drawing.Point(151, 137);
+			this.GridHighlight2On.Location = new System.Drawing.Point(151, 168);
 			this.GridHighlight2On.Name = "GridHighlight2On";
-			this.GridHighlight2On.Size = new System.Drawing.Size(108, 20);
+			this.GridHighlight2On.Size = new System.Drawing.Size(108, 23);
 			this.GridHighlight2On.TabIndex = 0;
 			this.GridHighlight2On.Text = "Highlight every";
 			this.GridHighlight2On.UseVisualStyleBackColor = true;
 			// 
 			// label21
 			// 
-			this.label21.Location = new System.Drawing.Point(321, 139);
+			this.label21.Location = new System.Drawing.Point(321, 171);
 			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(53, 17);
+			this.label21.Size = new System.Drawing.Size(41, 17);
 			this.label21.TabIndex = 3;
 			this.label21.Text = "units";
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(321, 114);
+			this.label11.Location = new System.Drawing.Point(321, 139);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(53, 17);
+			this.label11.Size = new System.Drawing.Size(41, 17);
 			this.label11.TabIndex = 3;
 			this.label11.Text = "grid lines";
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(14, 47);
+			this.label7.AutoSize = true;
+			this.label7.Location = new System.Drawing.Point(59, 55);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(74, 17);
+			this.label7.Size = new System.Drawing.Size(29, 15);
 			this.label7.TabIndex = 1;
-			this.label7.Text = "Grid:";
+			this.label7.Text = "Grid";
 			// 
 			// GridHighlight1Colour
 			// 
 			this.GridHighlight1Colour.BackColor = System.Drawing.Color.White;
-			this.GridHighlight1Colour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.GridHighlight1Colour.Location = new System.Drawing.Point(94, 116);
+			this.GridHighlight1Colour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.GridHighlight1Colour.Location = new System.Drawing.Point(94, 139);
 			this.GridHighlight1Colour.Name = "GridHighlight1Colour";
-			this.GridHighlight1Colour.Size = new System.Drawing.Size(51, 17);
+			this.GridHighlight1Colour.Size = new System.Drawing.Size(51, 23);
 			this.GridHighlight1Colour.TabIndex = 2;
 			// 
 			// GridColour
 			// 
 			this.GridColour.BackColor = System.Drawing.Color.Gainsboro;
-			this.GridColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.GridColour.Location = new System.Drawing.Point(94, 47);
+			this.GridColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.GridColour.Location = new System.Drawing.Point(94, 52);
 			this.GridColour.Name = "GridColour";
-			this.GridColour.Size = new System.Drawing.Size(51, 17);
+			this.GridColour.Size = new System.Drawing.Size(51, 23);
 			this.GridColour.TabIndex = 2;
 			// 
 			// GridHighlight1Distance
 			// 
-			this.GridHighlight1Distance.Location = new System.Drawing.Point(265, 112);
+			this.GridHighlight1Distance.Location = new System.Drawing.Point(265, 137);
 			this.GridHighlight1Distance.Maximum = new decimal(new int[] {
             32,
             0,
@@ -1321,11 +1328,12 @@ namespace CBRE.Editor.Settings
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(14, 116);
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(22, 141);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(74, 17);
+			this.label8.Size = new System.Drawing.Size(66, 15);
 			this.label8.TabIndex = 1;
-			this.label8.Text = "Highlight 1:";
+			this.label8.Text = "Highlight 1";
 			// 
 			// groupBox17
 			// 
@@ -1387,9 +1395,9 @@ namespace CBRE.Editor.Settings
 			// 
 			this.ArrowKeysNudgeSelection.Checked = true;
 			this.ArrowKeysNudgeSelection.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.ArrowKeysNudgeSelection.Location = new System.Drawing.Point(10, 22);
+			this.ArrowKeysNudgeSelection.Location = new System.Drawing.Point(10, 20);
 			this.ArrowKeysNudgeSelection.Name = "ArrowKeysNudgeSelection";
-			this.ArrowKeysNudgeSelection.Size = new System.Drawing.Size(142, 24);
+			this.ArrowKeysNudgeSelection.Size = new System.Drawing.Size(144, 23);
 			this.ArrowKeysNudgeSelection.TabIndex = 0;
 			this.ArrowKeysNudgeSelection.Text = "Arrow keys nudge by";
 			this.ArrowKeysNudgeSelection.UseVisualStyleBackColor = true;
@@ -1416,11 +1424,12 @@ namespace CBRE.Editor.Settings
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(217, 22);
+			this.label2.Location = new System.Drawing.Point(217, 19);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(45, 18);
+			this.label2.Size = new System.Drawing.Size(75, 24);
 			this.label2.TabIndex = 3;
 			this.label2.Text = "unit(s)";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// NudgeUnits
 			// 
@@ -1504,11 +1513,11 @@ namespace CBRE.Editor.Settings
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(6, 19);
+			this.label3.Location = new System.Drawing.Point(6, 20);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(94, 20);
+			this.label3.Size = new System.Drawing.Size(94, 23);
 			this.label3.TabIndex = 4;
-			this.label3.Text = "Default grid size:";
+			this.label3.Text = "Default Grid Size";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// HideGridLimit
@@ -1578,23 +1587,24 @@ namespace CBRE.Editor.Settings
 			// 
 			// tabGeneral
 			// 
+			this.tabGeneral.BackColor = System.Drawing.Color.Transparent;
 			this.tabGeneral.Controls.Add(this.flowLayoutPanel1);
 			this.tabGeneral.Location = new System.Drawing.Point(4, 24);
 			this.tabGeneral.Name = "tabGeneral";
 			this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-			this.tabGeneral.Size = new System.Drawing.Size(847, 366);
+			this.tabGeneral.Size = new System.Drawing.Size(847, 400);
 			this.tabGeneral.TabIndex = 0;
 			this.tabGeneral.Text = "General";
-			this.tabGeneral.UseVisualStyleBackColor = true;
 			// 
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.AutoScroll = true;
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.flowLayoutPanel1.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(841, 360);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(841, 394);
 			this.flowLayoutPanel1.TabIndex = 6;
 			this.flowLayoutPanel1.WrapContents = false;
 			// 
@@ -1612,27 +1622,28 @@ namespace CBRE.Editor.Settings
 			this.tbcSettings.Location = new System.Drawing.Point(12, 12);
 			this.tbcSettings.Name = "tbcSettings";
 			this.tbcSettings.SelectedIndex = 0;
-			this.tbcSettings.Size = new System.Drawing.Size(855, 394);
+			this.tbcSettings.Size = new System.Drawing.Size(855, 428);
 			this.tbcSettings.TabIndex = 0;
 			this.tbcSettings.SelectedIndexChanged += new System.EventHandler(this.TabChanged);
 			// 
 			// tabDirectories
 			// 
+			this.tabDirectories.BackColor = System.Drawing.Color.Transparent;
 			this.tabDirectories.Controls.Add(this.tableLayoutPanel1);
 			this.tabDirectories.Location = new System.Drawing.Point(4, 24);
 			this.tabDirectories.Name = "tabDirectories";
-			this.tabDirectories.Size = new System.Drawing.Size(847, 366);
+			this.tabDirectories.Size = new System.Drawing.Size(847, 400);
 			this.tabDirectories.TabIndex = 7;
 			this.tabDirectories.Text = "Directories";
-			this.tabDirectories.UseVisualStyleBackColor = true;
 			// 
 			// tableLayoutPanel1
 			// 
 			this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
 			this.tableLayoutPanel1.ColumnCount = 1;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this.textureDirsDataGrid, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.modelDirsDataGrid, 0, 1);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
@@ -1640,7 +1651,7 @@ namespace CBRE.Editor.Settings
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(840, 359);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(840, 393);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// textureDirsDataGrid
@@ -1661,33 +1672,8 @@ namespace CBRE.Editor.Settings
 			this.textureDirsDataGrid.Location = new System.Drawing.Point(3, 3);
 			this.textureDirsDataGrid.Name = "textureDirsDataGrid";
 			this.textureDirsDataGrid.RowHeadersVisible = false;
-			this.textureDirsDataGrid.Size = new System.Drawing.Size(834, 173);
+			this.textureDirsDataGrid.Size = new System.Drawing.Size(834, 190);
 			this.textureDirsDataGrid.TabIndex = 0;
-			// 
-			// deleteButtons
-			// 
-			this.deleteButtons.HeaderText = "";
-			this.deleteButtons.MinimumWidth = 24;
-			this.deleteButtons.Name = "deleteButtons";
-			this.deleteButtons.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.deleteButtons.Width = 24;
-			// 
-			// textureDirs
-			// 
-			this.textureDirs.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.textureDirs.HeaderText = "Texture directories";
-			this.textureDirs.Name = "textureDirs";
-			this.textureDirs.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.textureDirs.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// browseButtons
-			// 
-			this.browseButtons.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.browseButtons.HeaderText = "";
-			this.browseButtons.MinimumWidth = 50;
-			this.browseButtons.Name = "browseButtons";
-			this.browseButtons.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.browseButtons.Width = 50;
 			// 
 			// modelDirsDataGrid
 			// 
@@ -1704,14 +1690,42 @@ namespace CBRE.Editor.Settings
             this.dataGridViewTextBoxColumn1,
             this.dataGridViewButtonColumn2});
 			this.modelDirsDataGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-			this.modelDirsDataGrid.Location = new System.Drawing.Point(3, 182);
+			this.modelDirsDataGrid.Location = new System.Drawing.Point(3, 199);
 			this.modelDirsDataGrid.Name = "modelDirsDataGrid";
 			this.modelDirsDataGrid.RowHeadersVisible = false;
-			this.modelDirsDataGrid.Size = new System.Drawing.Size(834, 174);
+			this.modelDirsDataGrid.Size = new System.Drawing.Size(834, 191);
 			this.modelDirsDataGrid.TabIndex = 1;
+			// 
+			// deleteButtons
+			// 
+			this.deleteButtons.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.deleteButtons.HeaderText = "";
+			this.deleteButtons.MinimumWidth = 24;
+			this.deleteButtons.Name = "deleteButtons";
+			this.deleteButtons.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.deleteButtons.Width = 24;
+			// 
+			// textureDirs
+			// 
+			this.textureDirs.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.textureDirs.HeaderText = "Texture Directories";
+			this.textureDirs.Name = "textureDirs";
+			this.textureDirs.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.textureDirs.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// browseButtons
+			// 
+			this.browseButtons.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.browseButtons.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.browseButtons.HeaderText = "";
+			this.browseButtons.MinimumWidth = 50;
+			this.browseButtons.Name = "browseButtons";
+			this.browseButtons.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.browseButtons.Width = 50;
 			// 
 			// dataGridViewButtonColumn1
 			// 
+			this.dataGridViewButtonColumn1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.dataGridViewButtonColumn1.HeaderText = "";
 			this.dataGridViewButtonColumn1.MinimumWidth = 24;
 			this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
@@ -1721,7 +1735,7 @@ namespace CBRE.Editor.Settings
 			// dataGridViewTextBoxColumn1
 			// 
 			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.dataGridViewTextBoxColumn1.HeaderText = "Model directories";
+			this.dataGridViewTextBoxColumn1.HeaderText = "Model Directories";
 			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
 			this.dataGridViewTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -1729,6 +1743,7 @@ namespace CBRE.Editor.Settings
 			// dataGridViewButtonColumn2
 			// 
 			this.dataGridViewButtonColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.dataGridViewButtonColumn2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.dataGridViewButtonColumn2.HeaderText = "";
 			this.dataGridViewButtonColumn2.MinimumWidth = 50;
 			this.dataGridViewButtonColumn2.Name = "dataGridViewButtonColumn2";
@@ -1739,12 +1754,11 @@ namespace CBRE.Editor.Settings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(879, 447);
+			this.ClientSize = new System.Drawing.Size(879, 481);
 			this.Controls.Add(this.btnApplySettings);
 			this.Controls.Add(this.btnApplyAndCloseSettings);
 			this.Controls.Add(this.btnCancelSettings);
 			this.Controls.Add(this.tbcSettings);
-			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(780, 480);
 			this.Name = "SettingsForm";
@@ -1765,7 +1779,6 @@ namespace CBRE.Editor.Settings
 			this.groupBox22.PerformLayout();
 			this.tab3DViews.ResumeLayout(false);
 			this.groupBox12.ResumeLayout(false);
-			this.groupBox12.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).EndInit();
 			this.groupBox13.ResumeLayout(false);
 			this.groupBox13.PerformLayout();
@@ -1785,6 +1798,7 @@ namespace CBRE.Editor.Settings
 			this.tab2DViews.ResumeLayout(false);
 			this.groupBox6.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.groupBox3.PerformLayout();
 			this.ColourPresetPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
 			this.groupBox17.ResumeLayout(false);
@@ -1922,13 +1936,13 @@ namespace CBRE.Editor.Settings
         private System.Windows.Forms.TabControl tbcSettings;
         private System.Windows.Forms.TabPage tabDirectories;
         private System.Windows.Forms.DataGridView modelDirsDataGrid;
-        private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.DataGridView textureDirsDataGrid;
         private System.Windows.Forms.DataGridViewButtonColumn deleteButtons;
         private System.Windows.Forms.DataGridViewTextBoxColumn textureDirs;
         private System.Windows.Forms.DataGridViewButtonColumn browseButtons;
+        private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn2;
     }
 }

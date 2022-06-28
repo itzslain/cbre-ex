@@ -61,7 +61,7 @@ namespace CBRE.Editor
         {
             PreventSimpleHotkeyPassthrough = false;
             InitializeComponent();
-            Instance = this;
+			Instance = this;
         }
 
         public void SelectTool(BaseTool t)

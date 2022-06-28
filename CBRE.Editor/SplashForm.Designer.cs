@@ -61,7 +61,7 @@
 			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.splitContainer1.IsSplitterFixed = true;
 			this.splitContainer1.Location = new System.Drawing.Point(3, 3);
 			this.splitContainer1.Name = "splitContainer1";
@@ -114,7 +114,7 @@
 			this.label2.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.label2.Location = new System.Drawing.Point(3, 111);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(322, 109);
+			this.label2.Size = new System.Drawing.Size(322, 111);
 			this.label2.TabIndex = 2;
 			this.label2.Text = "Containment Breach Room Editor - Extended\r\n\"omgggg it doesnt have model baking it" +
     " sucks as much as the original cbre :(((((\"";

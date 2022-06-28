@@ -33,17 +33,17 @@
 			this.FullError = new System.Windows.Forms.TextBox();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.copyButton = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
+			this.HeaderLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label4
 			// 
 			this.label4.AutoSize = true;
 			this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label4.Location = new System.Drawing.Point(12, 36);
+			this.label4.Location = new System.Drawing.Point(12, 39);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(72, 15);
-			this.label4.TabIndex = 2;
+			this.label4.TabIndex = 1;
 			this.label4.Text = ".NET Version";
 			// 
 			// FrameworkVersion
@@ -51,19 +51,19 @@
 			this.FrameworkVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.FrameworkVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.FrameworkVersion.Location = new System.Drawing.Point(135, 33);
+			this.FrameworkVersion.Location = new System.Drawing.Point(135, 36);
 			this.FrameworkVersion.Name = "FrameworkVersion";
 			this.FrameworkVersion.ReadOnly = true;
 			this.FrameworkVersion.Size = new System.Drawing.Size(677, 23);
-			this.FrameworkVersion.TabIndex = 3;
+			this.FrameworkVersion.TabIndex = 2;
 			// 
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(12, 66);
+			this.label5.Location = new System.Drawing.Point(12, 69);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(90, 13);
-			this.label5.TabIndex = 2;
+			this.label5.TabIndex = 3;
 			this.label5.Text = "Operating System";
 			// 
 			// OperatingSystem
@@ -71,19 +71,19 @@
 			this.OperatingSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.OperatingSystem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.OperatingSystem.Location = new System.Drawing.Point(135, 62);
+			this.OperatingSystem.Location = new System.Drawing.Point(135, 65);
 			this.OperatingSystem.Name = "OperatingSystem";
 			this.OperatingSystem.ReadOnly = true;
 			this.OperatingSystem.Size = new System.Drawing.Size(677, 23);
-			this.OperatingSystem.TabIndex = 3;
+			this.OperatingSystem.TabIndex = 4;
 			// 
 			// label6
 			// 
 			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(12, 95);
+			this.label6.Location = new System.Drawing.Point(12, 98);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(91, 13);
-			this.label6.TabIndex = 2;
+			this.label6.TabIndex = 5;
 			this.label6.Text = "CBRE-EX Version";
 			// 
 			// CBREVersion
@@ -91,19 +91,19 @@
 			this.CBREVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.CBREVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.CBREVersion.Location = new System.Drawing.Point(135, 91);
+			this.CBREVersion.Location = new System.Drawing.Point(135, 94);
 			this.CBREVersion.Name = "CBREVersion";
 			this.CBREVersion.ReadOnly = true;
 			this.CBREVersion.Size = new System.Drawing.Size(677, 23);
-			this.CBREVersion.TabIndex = 3;
+			this.CBREVersion.TabIndex = 6;
 			// 
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(12, 120);
+			this.label7.Location = new System.Drawing.Point(12, 123);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(94, 13);
-			this.label7.TabIndex = 2;
+			this.label7.TabIndex = 7;
 			this.label7.Text = "Full Error Message";
 			// 
 			// FullError
@@ -112,13 +112,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.FullError.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.FullError.Location = new System.Drawing.Point(135, 120);
+			this.FullError.Location = new System.Drawing.Point(135, 123);
 			this.FullError.Multiline = true;
 			this.FullError.Name = "FullError";
 			this.FullError.ReadOnly = true;
 			this.FullError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.FullError.Size = new System.Drawing.Size(677, 329);
-			this.FullError.TabIndex = 3;
+			this.FullError.Size = new System.Drawing.Size(677, 326);
+			this.FullError.TabIndex = 8;
 			// 
 			// cancelButton
 			// 
@@ -128,7 +128,7 @@
 			this.cancelButton.Location = new System.Drawing.Point(8, 426);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(121, 23);
-			this.cancelButton.TabIndex = 4;
+			this.cancelButton.TabIndex = 0;
 			this.cancelButton.Text = "Close";
 			this.cancelButton.UseVisualStyleBackColor = true;
 			this.cancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
@@ -141,29 +141,29 @@
 			this.copyButton.Location = new System.Drawing.Point(8, 397);
 			this.copyButton.Name = "copyButton";
 			this.copyButton.Size = new System.Drawing.Size(121, 23);
-			this.copyButton.TabIndex = 5;
+			this.copyButton.TabIndex = 10;
 			this.copyButton.Text = "Copy Error";
 			this.copyButton.UseVisualStyleBackColor = true;
 			this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
 			// 
-			// label2
+			// HeaderLabel
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(12, 12);
-			this.label2.Margin = new System.Windows.Forms.Padding(3);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(202, 15);
-			this.label2.TabIndex = 6;
-			this.label2.Text = "funny placeholder funny placeholder";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.HeaderLabel.AutoSize = true;
+			this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.HeaderLabel.Location = new System.Drawing.Point(12, 12);
+			this.HeaderLabel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 6);
+			this.HeaderLabel.Name = "HeaderLabel";
+			this.HeaderLabel.Size = new System.Drawing.Size(202, 15);
+			this.HeaderLabel.TabIndex = 11;
+			this.HeaderLabel.Text = "funny placeholder funny placeholder";
+			this.HeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// ExceptionWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(824, 461);
-			this.Controls.Add(this.label2);
+			this.Controls.Add(this.HeaderLabel);
 			this.Controls.Add(this.copyButton);
 			this.Controls.Add(this.cancelButton);
 			this.Controls.Add(this.FullError);
@@ -197,6 +197,6 @@
         private System.Windows.Forms.TextBox FullError;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button copyButton;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label HeaderLabel;
     }
 }

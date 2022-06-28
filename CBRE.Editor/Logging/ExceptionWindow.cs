@@ -18,17 +18,17 @@ namespace CBRE.Editor.Logging
             CBREVersion.Text = info.ApplicationVersion;
             FullError.Text = info.FullStackTrace;
 
-            FullError.ForeColor = Color.Black;
-            FullError.BackColor = Color.White;
+            FullError.ForeColor = SystemColors.WindowText;
+            FullError.BackColor = SystemColors.Control;
 
-            FrameworkVersion.ForeColor = Color.Black;
-            FrameworkVersion.BackColor = Color.White;
+            FrameworkVersion.ForeColor = SystemColors.WindowText;
+            FrameworkVersion.BackColor = SystemColors.Control;
 
-            CBREVersion.ForeColor = Color.Black;
-            CBREVersion.BackColor = Color.White;
+            CBREVersion.ForeColor = SystemColors.WindowText;
+            CBREVersion.BackColor = SystemColors.Control;
 
-            OperatingSystem.ForeColor = Color.Black;
-            OperatingSystem.BackColor = Color.White;
+            OperatingSystem.ForeColor = SystemColors.WindowText;
+            OperatingSystem.BackColor = SystemColors.Control;
 
             try
             {
@@ -45,13 +45,15 @@ namespace CBRE.Editor.Logging
                                      info.FullStackTrace;
                     sw.Write(content);
                 }
-                label2.Text = $"Details have been written to \"Error Logs/{fn}.txt\"";
+                HeaderLabel.Text = $"Details have been written to \"Error Logs/{fn}.txt\"";
             }
             catch (Exception e)
             {
-                label2.Text = $"Couldn't write error log: {e.Message}";
+                HeaderLabel.Text = $"Couldn't write error log: {e.Message}";
             }
-        }
+
+			FullError.SelectionLength = 0;
+		}
 
         private void CancelButtonClicked(object sender, EventArgs e)
         {

@@ -20,7 +20,7 @@ namespace CBRE.Editor
 		{
 			Control target = sender as Control;
 
-			ControlPaint.DrawBorder3D(e.Graphics, target.ClientRectangle, Border3DStyle.Raised);
+			ControlPaint.DrawBorder3D(e.Graphics, target.ClientRectangle, Border3DStyle.Flat);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace CBRE.Editor.Logging
 {
@@ -86,7 +87,7 @@ namespace CBRE.Editor.Logging
             RuntimeVersion = System.Environment.Version.ToString();
             Date = DateTime.Now;
             InformationMessage = info;
-            ApplicationVersion = FileVersionInfo.GetVersionInfo(typeof(Logger).Assembly.Location).FileVersion;
+            ApplicationVersion = Assembly.GetAssembly(typeof(Editor)).GetName().Version.ToString(2);
             OperatingSystem = FriendlyOSName();
 
             List<Exception> list = new List<Exception>();

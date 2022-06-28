@@ -154,7 +154,7 @@ namespace CBRE.Editor.Menu
             //Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) { Image = Resources.Menu_NewWindow });
             //Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) { Image = Resources.Menu_WindowSettings });
 
-            Add("Help", new SimpleMenuBuilder("About CBRE-EX", EditorMediator.About));
+            Add("Help", new SimpleMenuBuilder("About CBRE-EX", EditorMediator.About) { Image = Resources.Menu_ShowInformation});
         }
 
         public static void UpdateRecentFilesMenu()
