@@ -37,9 +37,9 @@ namespace CBRE.Editor
 			MainForm = (Form)Activator.CreateInstance(_formType);
 		}
 
-		protected override void OnCreateSplashScreen()
-		{
-			SplashScreen = new SplashForm();
-		}
+		//protected override void OnCreateSplashScreen()
+		//{
+		//	SplashScreen = new SplashForm();
+		//}
 	}
 }
