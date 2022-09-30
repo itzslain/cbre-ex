@@ -14,6 +14,7 @@ namespace CBRE.SMFConverter
             if (!args.Any())
             {
                 Log("No input files defined! Just drag and drop files onto CBRE.SMFConverter.exe", ConsoleColor.Red);
+                Log("Press any key to exit...");
             }
             else
             {
@@ -58,7 +59,7 @@ namespace CBRE.SMFConverter
                     }
                 }
 
-                Log("Done! Press any key to continue", ConsoleColor.Cyan);
+                Log("Done! Press any key to exit...", ConsoleColor.Cyan);
             }
             Console.ReadKey();
         }
