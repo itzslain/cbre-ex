@@ -9,6 +9,8 @@ This is a fork of CBRE that adds a couple of QOL features.
 The Editor is licensed under the GNU General Public License, version 2.0.  
 All other components are licensed under the GNU Lesser General Public License, version 2.1, unless otherwise stated.
 
+Editor sidebar icons are taken from Sledge, which is licensed under BSD-3.
+
 ## External Repositories
 
 You can find the source code for Sledge at https://github.com/LogicAndTrick/sledge  
