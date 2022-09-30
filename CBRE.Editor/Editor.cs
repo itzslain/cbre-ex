@@ -227,33 +227,27 @@ namespace CBRE.Editor
 					if (ParsedNewVersion > CurrentVersion)
 					{
 						//Missing required files? The update must have changed the structure!
-						if (PackageAsset == default(ReleaseAsset) || PackageAsset == null || ChecksumAsset == default(ReleaseAsset) || ChecksumAsset == null)
+						if (PackageAsset == default(ReleaseAsset) || ChecksumAsset == default(ReleaseAsset))
 						{
-							//hackiest shit in the planet
-							this.Invoke((Action)delegate
-							{
-								DialogResult Result = MessageBox.Show("The updater found an update, but it could not find the necessary files, meaning that the updater may have been updated.\n\n" +
-																"The updater is not designed to update itself, so you must download and update CBRE-EX yourself.\n\n" +
-																"Do you want to go to the latest GitHub release?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            DialogResult Result = MessageBox.Show("There is a new update available, but the required files are missing. This may mean that you need to update CBRE-EX manually.\n\n" +
+                                                                  "Do you want to open the latest GitHub release?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-								if (Result == DialogResult.Yes) Process.Start(GIT_LATEST_RELEASE_URL);
-							});
+                            if (Result == DialogResult.Yes) Process.Start(GIT_LATEST_RELEASE_URL);
 
-							return;
+                            return;
 						}
 
-						this.Invoke((Action)delegate
-						{
-							UpdaterForm Form = new UpdaterForm(ParsedNewVersion, Response.Description, PackageAsset, ChecksumAsset);
-							Form.ShowDialog();
-						});
-					}
+                        UpdaterForm Form = new UpdaterForm(ParsedNewVersion, Response.Description, PackageAsset, ChecksumAsset);
+                        Form.ShowDialog();
+                    }
                     else
                     {
 						//Kinda ugly maybe?
                         if (!notFromMenu)
+                        {
                             MessageBox.Show("There are no updates available.", "Information", MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
+                        }
                     }
 				}
 				catch (Exception)
