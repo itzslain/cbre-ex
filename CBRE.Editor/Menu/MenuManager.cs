@@ -53,7 +53,6 @@ namespace CBRE.Editor.Menu
             Add("File", new SimpleMenuBuilder("Close", HotkeysMediator.FileClose) { IsVisible = mapOpen, Image = Resources.Menu_Close, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Save", HotkeysMediator.FileSave) { IsVisible = mapOpen, Image = Resources.Menu_Save, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Save As...", HotkeysMediator.FileSaveAs) { Image = Resources.Menu_SaveAs, IsVisible = mapOpen });
-            //Add("File", new SimpleMenuBuilder("Export...", HotkeysMediator.FileExport) { Image = Resources.Menu_Export, IsVisible = mapOpen });
             Add("File", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Export / Lightmap", HotkeysMediator.FileCompile) { Image = Resources.Menu_ExportRmesh, IsVisible = mapOpen, ShowInToolStrip = true });
             Add("File", new RecentFilesMenu());
@@ -151,9 +150,8 @@ namespace CBRE.Editor.Menu
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings) { Image = Resources.Menu_Options, ShowInToolStrip = true });
 
-            //Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) { Image = Resources.Menu_NewWindow });
-            //Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) { Image = Resources.Menu_WindowSettings });
-
+            Add("Help", new SimpleMenuBuilder("Check For Updates...", EditorMediator.CheckForUpdates) { Image = Resources.Menu_Update });
+            Add("Help", new MenuSplitter { IsVisible = mapOpen });
             Add("Help", new SimpleMenuBuilder("About CBRE-EX", EditorMediator.About) { Image = Resources.Menu_ShowInformation });
         }
 

@@ -45,11 +45,6 @@ namespace CBRE.Editor
 		private const string API_RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
 		private const string GIT_LATEST_RELEASE_URL = "https://github.com/AestheticalZ/cbre-ex/releases/latest";
 
-		//HACK HACK HACK!!!
-		//Splash form doesnt close until the UI thread is freed, meaning that the updater's message box may block the splash screen from closing,
-		//and since the splash screen is always on top of everything, the messagebox is invisible.
-		private Timer UpdaterTimer;
-
 		public bool CaptureAltPresses { get; set; }
 
 		public Editor()
@@ -193,18 +188,8 @@ namespace CBRE.Editor
 
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
-			UpdaterTimer = new Timer();
-			UpdaterTimer.Elapsed += OnTimedEvent;
-			UpdaterTimer.Interval = 1500;
-			UpdaterTimer.AutoReset = false;
-
-			UpdaterTimer.Start();
-		}
-
-		private void OnTimedEvent(object source, ElapsedEventArgs e)
-		{
-			CheckForUpdates();
-		}
+            CheckForUpdates(true);
+        }
 
 		#region Updates
 		private Version GetCurrentVersion()
@@ -213,7 +198,7 @@ namespace CBRE.Editor
 			return info;
 		}
 
-		private void CheckForUpdates()
+		private void CheckForUpdates(bool notFromMenu)
 		{
 			using (WebClient Client = new WebClient())
 			{
@@ -263,6 +248,13 @@ namespace CBRE.Editor
 							Form.ShowDialog();
 						});
 					}
+                    else
+                    {
+						//Kinda ugly maybe?
+                        if (!notFromMenu)
+                            MessageBox.Show("There are no updates available.", "Information", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                    }
 				}
 				catch (Exception)
 				{
