@@ -38,8 +38,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.GitHubLink = new System.Windows.Forms.LinkLabel();
             this.label3 = new System.Windows.Forms.Label();
-            this.OriginalLink = new System.Windows.Forms.LinkLabel();
-            this.GPLLink = new System.Windows.Forms.LinkLabel();
+            this.LicenseLink = new System.Windows.Forms.LinkLabel();
+            this.ExtraLicenseLink = new System.Windows.Forms.LinkLabel();
             this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -89,11 +89,11 @@
             // DescriptionLabel
             // 
             this.DescriptionLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DescriptionLabel.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
             this.DescriptionLabel.Location = new System.Drawing.Point(318, 86);
             this.DescriptionLabel.Name = "DescriptionLabel";
             this.DescriptionLabel.Size = new System.Drawing.Size(555, 147);
             this.DescriptionLabel.TabIndex = 14;
-            this.DescriptionLabel.TabStop = true;
             this.DescriptionLabel.Text = resources.GetString("DescriptionLabel.Text");
             this.DescriptionLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
@@ -105,8 +105,8 @@
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.GitHubLink, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.OriginalLink, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.GPLLink, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.LicenseLink, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.ExtraLicenseLink, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(318, 236);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -157,33 +157,33 @@
             this.label3.Text = "License:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // OriginalLink
+            // LicenseLink
             // 
-            this.OriginalLink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.LicenseLink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OriginalLink.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OriginalLink.Location = new System.Drawing.Point(203, 25);
-            this.OriginalLink.Name = "OriginalLink";
-            this.OriginalLink.Size = new System.Drawing.Size(349, 25);
-            this.OriginalLink.TabIndex = 3;
-            this.OriginalLink.TabStop = true;
-            this.OriginalLink.Text = "https://github.com/AestheticalZ/cbre-ex/blob/main/LICENSE";
-            this.OriginalLink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.LicenseLink.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LicenseLink.Location = new System.Drawing.Point(203, 25);
+            this.LicenseLink.Name = "LicenseLink";
+            this.LicenseLink.Size = new System.Drawing.Size(349, 25);
+            this.LicenseLink.TabIndex = 3;
+            this.LicenseLink.TabStop = true;
+            this.LicenseLink.Text = "https://github.com/AestheticalZ/cbre-ex/blob/main/LICENSE";
+            this.LicenseLink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // GPLLink
+            // ExtraLicenseLink
             // 
-            this.GPLLink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ExtraLicenseLink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GPLLink.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GPLLink.Location = new System.Drawing.Point(203, 50);
-            this.GPLLink.Name = "GPLLink";
-            this.GPLLink.Size = new System.Drawing.Size(349, 26);
-            this.GPLLink.TabIndex = 4;
-            this.GPLLink.TabStop = true;
-            this.GPLLink.Text = "https://github.com/AestheticalZ/cbre-ex#licensing";
-            this.GPLLink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ExtraLicenseLink.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExtraLicenseLink.Location = new System.Drawing.Point(203, 50);
+            this.ExtraLicenseLink.Name = "ExtraLicenseLink";
+            this.ExtraLicenseLink.Size = new System.Drawing.Size(349, 26);
+            this.ExtraLicenseLink.TabIndex = 4;
+            this.ExtraLicenseLink.TabStop = true;
+            this.ExtraLicenseLink.Text = "https://github.com/AestheticalZ/cbre-ex#licensing";
+            this.ExtraLicenseLink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label4
             // 
@@ -233,8 +233,8 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.LinkLabel GitHubLink;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.LinkLabel OriginalLink;
-		private System.Windows.Forms.LinkLabel GPLLink;
+		private System.Windows.Forms.LinkLabel LicenseLink;
+		private System.Windows.Forms.LinkLabel ExtraLicenseLink;
 		private System.Windows.Forms.Label label4;
 	}
 }
