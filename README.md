@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="256" height="256" src="cbre-ex.svg">
+  <img width="256" height="256" src="Branding/cbre-ex.svg">
   <h1>CBRE-EX</h1>
   
   ![Lines of code](https://img.shields.io/tokei/lines/github/aestheticalz/cbre-ex?label=Lines%20Of%20Code&style=flat-square)
