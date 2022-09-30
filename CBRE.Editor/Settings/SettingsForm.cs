@@ -507,6 +507,9 @@ namespace CBRE.Editor.Settings
 
         private void SettingsFormLoad(object sender, EventArgs e)
         {
+            AddHeading("General Settings");
+            AddSetting(() => CBRE.Settings.General.CheckUpdatesOnStartup, "Check for updates on startup");
+
             AddHeading("Object Creation");
             AddSetting(() => CBRE.Settings.Select.SwitchToSelectAfterCreation, "Switch to selection tool after brush creation");
             AddSetting(() => CBRE.Settings.Select.SwitchToSelectAfterEntity, "Switch to selection tool after entity creation");

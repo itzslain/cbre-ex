@@ -61,6 +61,7 @@
     <Compile Include="Directories.cs" />
     <Compile Include="DoubleClick3DAction.cs" />
     <Compile Include="FavouriteTextureFolder.cs" />
+    <Compile Include="General.cs" />
     <Compile Include="HotkeyDefinition.cs" />
     <Compile Include="HotkeyImplementation.cs" />
     <Compile Include="Hotkeys.cs" />

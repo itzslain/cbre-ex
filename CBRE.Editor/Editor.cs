@@ -188,7 +188,7 @@ namespace CBRE.Editor
 
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
-            CheckForUpdates(true);
+            if (CBRE.Settings.General.CheckUpdatesOnStartup) CheckForUpdates(true);
         }
 
 		#region Updates
