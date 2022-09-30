@@ -6,7 +6,7 @@ using CBRE.Providers.Model;
 using CBRE.Settings;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace CBRE.Editor.Extensions
 {
@@ -90,10 +90,10 @@ namespace CBRE.Editor.Extensions
                 try
                 {
 #endif
-                    ModelReference mr = ModelProvider.CreateModelReference(file);
-                    SetModel(e, mr);
-                    cache.Add(model, mr);
-                    return true;
+                ModelReference mr = ModelProvider.CreateModelReference(file);
+                SetModel(e, mr);
+                cache.Add(model, mr);
+                return true;
 #if !DEBUG
                 }
                 catch (Exception exception)
@@ -116,7 +116,9 @@ namespace CBRE.Editor.Extensions
 
         private static string GetModelName(Entity entity)
         {
-            if (entity.ClassName == "model")
+            bool usesModelRendering = entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
+
+            if (entity.ClassName == "model" || usesModelRendering)
             {
                 return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
             }

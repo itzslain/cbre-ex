@@ -2,6 +2,7 @@
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Providers.Texture;
+using CBRE.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +35,14 @@ namespace CBRE.Editor.Extensions
             foreach (MapObject child in mo.GetChildren()) updatedChildren |= UpdateSprites(document, child);
 
             Entity e = mo as Entity;
-            if (e == null || !ShouldHaveSprite(e))
+            if (e == null || !ShouldHaveSprite(e, document))
             {
                 bool has = e != null && HasSprite(e);
-                if (has) UnsetSprite(e);
+                // HACK: literal horror, please forgive me Bill Gates.
+                bool usesModels = e != null && e.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
+
+                if (has || usesModels) UnsetSprite(e);
+
                 return updatedChildren || has;
             }
 
@@ -55,16 +60,23 @@ namespace CBRE.Editor.Extensions
             return true;
         }
 
-        private static bool ShouldHaveSprite(Entity entity)
+        private static bool ShouldHaveSprite(Entity entity, Document document)
         {
+            string modelFile = entity.EntityData.GetPropertyValue("file");
+            string modelPath = Directories.GetModelPath(modelFile);
+
+            if (!string.IsNullOrEmpty(modelFile) && modelPath != null) return false;
+
             return GetSpriteName(entity) != null;
         }
 
         private static string GetSpriteName(Entity entity)
         {
             if (entity.GameData == null) return null;
+
             DataStructures.GameData.Behaviour spr = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.OrdinalIgnoreCase))
                 ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "iconsprite", StringComparison.OrdinalIgnoreCase));
+
             if (spr == null) return null;
 
             // First see if the studio behaviour forces a model...
@@ -99,8 +111,13 @@ namespace CBRE.Editor.Extensions
 
         private static void UnsetSprite(Entity entity)
         {
-            entity.MetaData.Unset(SpriteMetaKey);
-            entity.MetaData.Unset(SpriteBoundingBoxMetaKey);
+            // HACK: HACK HACK HACK!!!!
+            if (entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") == null)
+            {
+                entity.MetaData.Unset(SpriteMetaKey);
+                entity.MetaData.Unset(SpriteBoundingBoxMetaKey);
+            }
+
             entity.MetaData.Unset("RotateBoundingBox");
             entity.UpdateBoundingBox();
         }

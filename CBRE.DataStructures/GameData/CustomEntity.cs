@@ -7,6 +7,7 @@ namespace CBRE.DataStructures.GameData
         public string Name { get; set; }
         public string Description { get; set; }
         public string Sprite { get; set; }
+        public bool UseModelRendering { get; set; }
         public List<CustomEntityProperty> Properties { get; set; }
     }
 

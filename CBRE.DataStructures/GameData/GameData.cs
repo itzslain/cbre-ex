@@ -44,7 +44,10 @@ namespace CBRE.DataStructures.GameData
 
                     gameDataObj.Properties.Add(actualProperty);
                 }
-                gameDataObj.Behaviours.Add(new Behaviour("sprite", customEntity.Sprite));
+
+                if(!string.IsNullOrWhiteSpace(customEntity.Sprite)) gameDataObj.Behaviours.Add(new Behaviour("sprite", customEntity.Sprite));
+                if(customEntity.UseModelRendering) gameDataObj.Behaviours.Add(new Behaviour("useModels"));
+
                 Classes.Add(gameDataObj);
             }
 
