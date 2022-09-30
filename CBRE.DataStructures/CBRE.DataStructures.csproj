@@ -63,7 +63,7 @@
   <ItemGroup>
     <Compile Include="GameData\AutoVisgroup.cs" />
     <Compile Include="GameData\AutoVisgroupSection.cs" />
-    <Compile Include="GameData\JsonGameDataObj.cs" />
+    <Compile Include="GameData\CustomEntity.cs" />
     <Compile Include="Geometric\Box.cs" />
     <Compile Include="Geometric\BoxF.cs" />
     <Compile Include="Geometric\Cloud.cs" />

@@ -25,23 +25,26 @@ namespace CBRE.DataStructures.GameData
             foreach (string jsonFile in jsonFiles)
             {
                 string jsonContent = File.ReadAllText(jsonFile);
-                JsonGameDataObj gDataObj = JsonConvert.DeserializeObject<JsonGameDataObj>(jsonContent);
+                CustomEntity customEntity = JsonConvert.DeserializeObject<CustomEntity>(jsonContent);
 
-                GameDataObject gameDataObj = new GameDataObject(gDataObj.Name, gDataObj.Description, ClassType.Point, true);
+                if (customEntity == null) continue;
 
-                foreach (JsonGDProperty property in gDataObj.Properties)
+                GameDataObject gameDataObj = new GameDataObject(customEntity.Name, customEntity.Description, ClassType.Point, true);
+
+                foreach (CustomEntityProperty customProperty in customEntity.Properties)
                 {
-                    if (!Enum.TryParse(property.Type, out VariableType varType)) continue;
+                    if (!Enum.TryParse(customProperty.Type, out VariableType varType)) continue;
 
-                    Property actualProperty = new Property(property.Name, varType)
+                    Property actualProperty = new Property(customProperty.Name, varType)
                     {
-                        ShortDescription = property.ShortDescription,
-                        DefaultValue = property.DefaultValue
+                        ShortDescription = customProperty.SmartEditName,
+                        DefaultValue = customProperty.DefaultValue,
+                        Description = customProperty.HelpText
                     };
 
                     gameDataObj.Properties.Add(actualProperty);
                 }
-                gameDataObj.Behaviours.Add(new Behaviour("sprite", gDataObj.Sprite));
+                gameDataObj.Behaviours.Add(new Behaviour("sprite", customEntity.Sprite));
                 Classes.Add(gameDataObj);
             }
 
