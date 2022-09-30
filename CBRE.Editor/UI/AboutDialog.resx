@@ -120,8 +120,7 @@
   <data name="DescriptionLabel.Text" xml:space="preserve">
     <value>A fork of CBRE by AestheticalZ that adds new QOL features.
 
-It is licensed under the GPL v2.0. All of the other components
-are licensed under the LGPL v2.1 unless otherwise stated.
+Licensed under the GPL v2.0. All of the other components are licensed under the LGPL v2.1 unless otherwise stated. Editor sidebar icons are licensed under BSD-3.
 
 Based on Sledge by Daniel Walder
 logic-and-trick.com
