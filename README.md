@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="CBRE.Editor/Resources/CBRE_Icon.png">
+  <img width="384" height="384" src="cbre-ex.svg">
   <h1>CBRE-EX</h1>
   
   ![Lines of code](https://img.shields.io/tokei/lines/github/aestheticalz/cbre-ex?label=Lines%20Of%20Code&style=flat-square)
@@ -10,16 +10,23 @@
   ![GitHub Repo stars](https://img.shields.io/github/stars/aestheticalz/cbre-ex?label=Stargazers&style=flat-square)
 </div>
 
-omgggg it doesnt have model baking it sucks as much as the original cbre :(((((
+> OMGGGG!!!!! IT DOESNT HAVE MODEL BAKING YET WHAAAAT????? THIS SUCKS!!!
 
-This is a fork of CBRE that adds a couple of QOL features.
+CBRE-EX is a fork of CBRE that adds a bunch of quality-of-life features.
 
-<div align="center"><h2>Licensing</h2></div>
+<div align="center"><h2>Download</h2></div>
+
+You can grab the latest release from the Releases tab manually, or click [here](https://github.com/AestheticalZ/cbre-ex/releases/) instead.
+
+CBRE-EX has an automatic updater, so this is probably the only time you will need to visit this page!
+
+<div align="center"><h2>License Information</h2></div>
 
 The Editor is licensed under the GNU General Public License, version 2.0.  
 All other components are licensed under the GNU Lesser General Public License, version 2.1, unless otherwise stated.
 
-Editor sidebar icons are taken from Sledge, which is licensed under BSD-3.
+Editor sidebar icons are taken from Sledge, which is licensed under BSD-3.   
+Editor logo is a modified version of the SCP Wiki logo, which is licensed under the CC-BY-SA 3.0 license.
 
 <div align="center"><h2>External Repositories</h2></div>
 
