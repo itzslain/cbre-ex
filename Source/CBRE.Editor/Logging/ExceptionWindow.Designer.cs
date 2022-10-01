@@ -25,22 +25,22 @@
         private void InitializeComponent()
         {
 	        this.label4 = new System.Windows.Forms.Label();
-	        this.ProcessorName = new System.Windows.Forms.TextBox();
 	        this.label5 = new System.Windows.Forms.Label();
-	        this.OperatingSystem = new System.Windows.Forms.TextBox();
+	        this.OperatingSystem = new CBRE.UI.ReadOnlyTextBox();
 	        this.label6 = new System.Windows.Forms.Label();
-	        this.CBREVersion = new System.Windows.Forms.TextBox();
+	        this.CBREVersion = new CBRE.UI.ReadOnlyTextBox();
 	        this.label7 = new System.Windows.Forms.Label();
-	        this.FullError = new System.Windows.Forms.TextBox();
+	        this.FullError = new CBRE.UI.ReadOnlyTextBox();
 	        this.cancelButton = new System.Windows.Forms.Button();
 	        this.copyButton = new System.Windows.Forms.Button();
 	        this.HeaderLabel = new System.Windows.Forms.Label();
 	        this.systemBitmap = new System.Windows.Forms.PictureBox();
-	        this.AvailableMemory = new System.Windows.Forms.TextBox();
+	        this.AvailableMemory = new CBRE.UI.ReadOnlyTextBox();
 	        this.label1 = new System.Windows.Forms.Label();
-	        this.RuntimeVersion = new System.Windows.Forms.TextBox();
+	        this.RuntimeVersion = new CBRE.UI.ReadOnlyTextBox();
 	        this.label2 = new System.Windows.Forms.Label();
 	        this.reportButton = new System.Windows.Forms.Button();
+	        this.ProcessorName = new CBRE.UI.ReadOnlyTextBox();
 	        ((System.ComponentModel.ISupportInitialize)(this.systemBitmap)).BeginInit();
 	        this.SuspendLayout();
 	        // 
@@ -53,17 +53,6 @@
 	        this.label4.Size = new System.Drawing.Size(99, 15);
 	        this.label4.TabIndex = 1;
 	        this.label4.Text = "System Processor";
-	        // 
-	        // ProcessorName
-	        // 
-	        this.ProcessorName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-	        this.ProcessorName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-	        this.ProcessorName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-	        this.ProcessorName.Location = new System.Drawing.Point(117, 53);
-	        this.ProcessorName.Name = "ProcessorName";
-	        this.ProcessorName.ReadOnly = true;
-	        this.ProcessorName.Size = new System.Drawing.Size(665, 23);
-	        this.ProcessorName.TabIndex = 2;
 	        // 
 	        // label5
 	        // 
@@ -78,6 +67,7 @@
 	        // OperatingSystem
 	        // 
 	        this.OperatingSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+	        this.OperatingSystem.BackColor = System.Drawing.SystemColors.Window;
 	        this.OperatingSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.OperatingSystem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 	        this.OperatingSystem.Location = new System.Drawing.Point(117, 140);
@@ -99,6 +89,7 @@
 	        // CBREVersion
 	        // 
 	        this.CBREVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+	        this.CBREVersion.BackColor = System.Drawing.SystemColors.Window;
 	        this.CBREVersion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.CBREVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 	        this.CBREVersion.Location = new System.Drawing.Point(117, 169);
@@ -120,6 +111,7 @@
 	        // FullError
 	        // 
 	        this.FullError.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+	        this.FullError.BackColor = System.Drawing.SystemColors.Window;
 	        this.FullError.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.FullError.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 	        this.FullError.Location = new System.Drawing.Point(117, 198);
@@ -180,6 +172,7 @@
 	        // AvailableMemory
 	        // 
 	        this.AvailableMemory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+	        this.AvailableMemory.BackColor = System.Drawing.SystemColors.Window;
 	        this.AvailableMemory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.AvailableMemory.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 	        this.AvailableMemory.Location = new System.Drawing.Point(117, 82);
@@ -201,6 +194,7 @@
 	        // RuntimeVersion
 	        // 
 	        this.RuntimeVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+	        this.RuntimeVersion.BackColor = System.Drawing.SystemColors.Window;
 	        this.RuntimeVersion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.RuntimeVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 	        this.RuntimeVersion.Location = new System.Drawing.Point(117, 111);
@@ -232,11 +226,23 @@
 	        this.reportButton.UseVisualStyleBackColor = true;
 	        this.reportButton.Click += new System.EventHandler(this.reportButton_Click);
 	        // 
+	        // ProcessorName
+	        // 
+	        this.ProcessorName.BackColor = System.Drawing.SystemColors.Window;
+	        this.ProcessorName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+	        this.ProcessorName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+	        this.ProcessorName.Location = new System.Drawing.Point(117, 53);
+	        this.ProcessorName.Name = "ProcessorName";
+	        this.ProcessorName.ReadOnly = true;
+	        this.ProcessorName.Size = new System.Drawing.Size(665, 23);
+	        this.ProcessorName.TabIndex = 2;
+	        // 
 	        // ExceptionWindow
 	        // 
 	        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 	        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 	        this.ClientSize = new System.Drawing.Size(794, 491);
+	        this.Controls.Add(this.ProcessorName);
 	        this.Controls.Add(this.reportButton);
 	        this.Controls.Add(this.label2);
 	        this.Controls.Add(this.RuntimeVersion);
@@ -252,7 +258,6 @@
 	        this.Controls.Add(this.label6);
 	        this.Controls.Add(this.OperatingSystem);
 	        this.Controls.Add(this.label5);
-	        this.Controls.Add(this.ProcessorName);
 	        this.Controls.Add(this.label4);
 	        this.MaximizeBox = false;
 	        this.MinimizeBox = false;
@@ -266,25 +271,26 @@
 	        this.PerformLayout();
         }
 
+        private CBRE.UI.ReadOnlyTextBox ProcessorName;
+
         private System.Windows.Forms.Button reportButton;
 
-        private System.Windows.Forms.TextBox RuntimeVersion;
+        private CBRE.UI.ReadOnlyTextBox RuntimeVersion;
         private System.Windows.Forms.Label label2;
 
-        private System.Windows.Forms.TextBox AvailableMemory;
+        private CBRE.UI.ReadOnlyTextBox AvailableMemory;
         private System.Windows.Forms.Label label1;
 
         private System.Windows.Forms.PictureBox systemBitmap;
 
         #endregion
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox ProcessorName;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox OperatingSystem;
+        private CBRE.UI.ReadOnlyTextBox OperatingSystem;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox CBREVersion;
+        private CBRE.UI.ReadOnlyTextBox CBREVersion;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox FullError;
+        private CBRE.UI.ReadOnlyTextBox FullError;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button copyButton;
         private System.Windows.Forms.Label HeaderLabel;

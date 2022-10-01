@@ -68,11 +68,11 @@ namespace CBRE.Editor.Logging
                 {
                     sw.Write(LogText);
                 }
-                HeaderLabel.Text += $"Details have been written to \"Logs\\Exceptions\\{fn}.txt\"";
+                HeaderLabel.Text += $"Information has been written to \"Logs\\Exceptions\\{fn}.txt\".";
             }
             catch (Exception e)
             {
-                HeaderLabel.Text += $"Couldn't write error log: {e.Message}";
+                HeaderLabel.Text += $"Couldn't write error log: {e.Message}.";
             }
 
             FullError.SelectionLength = 0;
