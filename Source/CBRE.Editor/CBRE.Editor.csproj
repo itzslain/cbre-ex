@@ -540,9 +540,6 @@
     <Compile Include="UI\UpdaterForm.Designer.cs">
       <DependentUpon>UpdaterForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\UpdaterFormNative.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="UI\ViewportContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>

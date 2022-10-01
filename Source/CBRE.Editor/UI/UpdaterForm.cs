@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using CBRE.UI.Native;
 
 namespace CBRE.Editor.UI
 {
@@ -23,9 +24,9 @@ namespace CBRE.Editor.UI
 			this.ChecksumAsset = ChecksumAsset;
 			VersionString = Version.ToString(3);
 
-			SHSTOCKICONINFO StockIconInfo = new SHSTOCKICONINFO();
-			StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
-			SHGetStockIconInfo(SHSTOCKICONID.SIID_INFO, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
+			NativeIcons.SHSTOCKICONINFO StockIconInfo = new NativeIcons.SHSTOCKICONINFO();
+			StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(NativeIcons.SHSTOCKICONINFO));
+			NativeIcons.SHGetStockIconInfo(NativeIcons.SHSTOCKICONID.SIID_INFO, NativeIcons.SHGSI.SHGSI_ICON | NativeIcons.SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
 
 			systemBitmap.Image = Icon.FromHandle(StockIconInfo.hIcon).ToBitmap();
 

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
-namespace CBRE.Editor.UI
+namespace CBRE.UI.Native
 {
-    public partial class UpdaterForm : Form
+    public class NativeIcons
     {
-        public const int MAX_PATH = 260;
+        private const int MAX_PATH = 260;
 
         [Flags]
         public enum SHGSI : uint
@@ -20,6 +19,7 @@ namespace CBRE.Editor.UI
             SHGSI_SMALLICON = 0x000000001,
             SHGSI_SHELLICONSIZE = 0x000000004
         }
+        
         public enum SHSTOCKICONID : uint
         {
             SIID_DOCNOASSOC = 0,          //Blank document icon (Document of a type with no associated application).
