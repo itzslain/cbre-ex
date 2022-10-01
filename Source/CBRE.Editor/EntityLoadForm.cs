@@ -39,11 +39,11 @@ namespace CBRE.Editor
                     streamWriter.Write(content);
                 }
 
-                logLabel.Text = $"Details have been written to \"Error Logs\\Entities\\{filename}\"";
+                logLabel.Text += $"Details have been written to \"Error Logs\\Entities\\{filename}\"";
             }
             catch (Exception ex)
             {
-                logLabel.Text = $"Could not write error log: {ex.Message}";
+                logLabel.Text += $"Could not write error log: {ex.Message}";
             }
         }
 
