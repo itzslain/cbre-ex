@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using CBRE.Common.Mediator;
 using CBRE.UI.Native;
 
 namespace CBRE.Editor.Logging
@@ -10,12 +11,27 @@ namespace CBRE.Editor.Logging
     public partial class ExceptionWindow : Form
     {
         public ExceptionInfo ExceptionInfo { get; set; }
+        private string LogText { get; set; }
 
         public ExceptionWindow(ExceptionInfo info)
         {
             ExceptionInfo = info;
+            
+            LogText = "CBRE-EX has encountered an error it couldn't recover from. Details are found below.\n" +
+                      "-----------------------------------------------------------------------------------\n" +
+                      $"System Processor: {info.ProcessorName}\n" +
+                      $"Available Memory: {info.AvailableMemory}\n" +
+                      $".NET Version: {info.RuntimeVersion}\n" +
+                      $"Operating System: {info.OperatingSystem}\n" +
+                      $"CBRE-EX Version: {info.ApplicationVersion}\n" +
+                      "-----------------------------------ERROR MESSAGE-----------------------------------\n" +
+                      info.FullStackTrace;
+            
             InitializeComponent();
-            FrameworkVersion.Text = info.RuntimeVersion;
+            
+            ProcessorName.Text = info.ProcessorName;
+            AvailableMemory.Text = info.AvailableMemory;
+            RuntimeVersion.Text = info.RuntimeVersion;
             OperatingSystem.Text = info.OperatingSystem;
             CBREVersion.Text = info.ApplicationVersion;
             FullError.Text = info.FullStackTrace;
@@ -23,8 +39,14 @@ namespace CBRE.Editor.Logging
             FullError.ForeColor = SystemColors.WindowText;
             FullError.BackColor = SystemColors.Control;
 
-            FrameworkVersion.ForeColor = SystemColors.WindowText;
-            FrameworkVersion.BackColor = SystemColors.Control;
+            ProcessorName.ForeColor = SystemColors.WindowText;
+            ProcessorName.BackColor = SystemColors.Control;
+            
+            AvailableMemory.ForeColor = SystemColors.WindowText;
+            AvailableMemory.BackColor = SystemColors.Control;
+            
+            RuntimeVersion.ForeColor = SystemColors.WindowText;
+            RuntimeVersion.BackColor = SystemColors.Control;
 
             CBREVersion.ForeColor = SystemColors.WindowText;
             CBREVersion.BackColor = SystemColors.Control;
@@ -37,21 +59,14 @@ namespace CBRE.Editor.Logging
             NativeIcons.SHGetStockIconInfo(NativeIcons.SHSTOCKICONID.SIID_ERROR, NativeIcons.SHGSI.SHGSI_ICON | NativeIcons.SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
 
             systemBitmap.Image = Icon.FromHandle(StockIconInfo.hIcon).ToBitmap();
-
+            
             try
             {
                 Directory.CreateDirectory("Logs\\Exceptions");
                 string fn = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
                 using (StreamWriter sw = new StreamWriter($"Logs\\Exceptions\\{fn}.txt"))
                 {
-                    string content = "CBRE-EX has encountered an error. Details are found below.\n" +
-                                     "-----------------------------------------------------------\n" +
-                                     $".NET Version: {info.RuntimeVersion}\n" +
-                                     $"Operating System: {info.OperatingSystem}\n" +
-                                     $"CBRE-EX Version: {info.ApplicationVersion}\n" +
-                                     "-----------------------ERROR MESSAGE-----------------------\n" +
-                                     info.FullStackTrace;
-                    sw.Write(content);
+                    sw.Write(LogText);
                 }
                 HeaderLabel.Text += $"Details have been written to \"Logs\\Exceptions\\{fn}.txt\"";
             }
@@ -70,7 +85,12 @@ namespace CBRE.Editor.Logging
 
         private void copyButton_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Clipboard.SetText(FullError.Text);
+            System.Windows.Forms.Clipboard.SetText(LogText);
+        }
+
+        private void reportButton_Click(object sender, EventArgs e)
+        {
+            Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/AestheticalZ/cbre-ex/issues/new?assignees=AestheticalZ&labels=bug&template=bug_report.md&title=");
         }
     }
 }

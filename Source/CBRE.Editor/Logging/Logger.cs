@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.VisualBasic.Devices;
+using Microsoft.Win32;
 
 namespace CBRE.Editor.Logging
 {
@@ -22,6 +24,8 @@ namespace CBRE.Editor.Logging
         public string RuntimeVersion { get; set; }
         public string OperatingSystem { get; set; }
         public string ApplicationVersion { get; set; }
+        public string ProcessorName { get; set; }
+        public string AvailableMemory { get; set; }
         public DateTime Date { get; set; }
         public string InformationMessage { get; set; }
         public string UserEnteredInformation { get; set; }
@@ -88,6 +92,21 @@ namespace CBRE.Editor.Logging
             InformationMessage = info;
             ApplicationVersion = Assembly.GetAssembly(typeof(Editor)).GetName().Version.ToString(3);
             OperatingSystem = FriendlyOSName();
+
+            try
+            {
+                using (RegistryKey Key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0\"))
+                {
+                    ProcessorName = Key.GetValue("ProcessorNameString").ToString().Trim();
+                }
+
+                AvailableMemory = new ComputerInfo().AvailablePhysicalMemory / 1000000 + "MB";
+            }
+            catch (Exception e)
+            {
+                ProcessorName = "Unknown Processor";
+                AvailableMemory = "Unknown";
+            }
 
             List<Exception> list = new List<Exception>();
             do
