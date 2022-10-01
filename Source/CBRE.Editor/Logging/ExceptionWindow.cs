@@ -3,7 +3,6 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using CBRE.Editor.UI;
 
 // TODO: Fix this cancer
 using static CBRE.Editor.UI.UpdaterForm;
@@ -43,9 +42,9 @@ namespace CBRE.Editor.Logging
 
             try
             {
-                Directory.CreateDirectory("Error Logs\\Exceptions");
+                Directory.CreateDirectory("Logs\\Exceptions");
                 string fn = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
-                using (StreamWriter sw = new StreamWriter($"Error Logs\\Exceptions\\{fn}.txt"))
+                using (StreamWriter sw = new StreamWriter($"Logs\\Exceptions\\{fn}.txt"))
                 {
                     string content = "CBRE-EX has encountered an error. Details are found below.\n" +
                                      "-----------------------------------------------------------\n" +
@@ -56,7 +55,7 @@ namespace CBRE.Editor.Logging
                                      info.FullStackTrace;
                     sw.Write(content);
                 }
-                HeaderLabel.Text += $"Details have been written to \"Error Logs\\Exceptions\\{fn}.txt\"";
+                HeaderLabel.Text += $"Details have been written to \"Logs\\Exceptions\\{fn}.txt\"";
             }
             catch (Exception e)
             {

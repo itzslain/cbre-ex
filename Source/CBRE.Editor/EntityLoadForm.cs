@@ -28,10 +28,10 @@ namespace CBRE.Editor
 
             try
             {
-                Directory.CreateDirectory("Error Logs\\Entities");
+                Directory.CreateDirectory("Logs\\Entities");
                 string filename = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss") + ".txt";
 
-                using (StreamWriter streamWriter = new StreamWriter($"Error Logs\\Entities\\{filename}"))
+                using (StreamWriter streamWriter = new StreamWriter($"Logs\\Entities\\{filename}"))
                 {
                     string content = "CBRE-EX has encountered errors when loading custom entities. Details can be found below.\n" +
                                      "----------------------------------------------------------------------------------------\n" +
@@ -39,7 +39,7 @@ namespace CBRE.Editor
                     streamWriter.Write(content);
                 }
 
-                logLabel.Text += $"Details have been written to \"Error Logs\\Entities\\{filename}\"";
+                logLabel.Text += $"Details have been written to \"Logs\\Entities\\{filename}\"";
             }
             catch (Exception ex)
             {
