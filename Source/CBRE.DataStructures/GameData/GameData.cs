@@ -15,25 +15,67 @@ namespace CBRE.DataStructures.GameData
         public List<string> MaterialExclusions { get; private set; }
         public List<AutoVisgroupSection> AutoVisgroups { get; private set; }
 
+        public List<string> CustomEntityErrors { get; private set; }
+
         public GameData()
         {
             MapSizeHigh = 16384;
             MapSizeLow = -16384;
             Classes = new List<GameDataObject>();
 
+            CustomEntityErrors = new List<string>();
+
             IEnumerable<string> jsonFiles = Directory.EnumerateFiles("Entities", "*.json");
             foreach (string jsonFile in jsonFiles)
             {
-                string jsonContent = File.ReadAllText(jsonFile);
-                CustomEntity customEntity = JsonConvert.DeserializeObject<CustomEntity>(jsonContent);
+                string jsonFilename = Path.GetFileName(jsonFile);
+                CustomEntity customEntity;
 
-                if (customEntity == null) continue;
+                try
+                {
+                    string jsonContent = File.ReadAllText(jsonFile);
+                    customEntity = JsonConvert.DeserializeObject<CustomEntity>(jsonContent);
+
+                    if (customEntity == null)
+                    {
+                        CustomEntityErrors.Add($"[{jsonFilename}] Could not deserialize into valid custom entity. Skipping.");
+                        continue;
+                    }
+                }
+                catch (Exception)
+                {
+                    CustomEntityErrors.Add($"[{jsonFilename}] Could not deserialize into valid custom entity. Skipping.");
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(customEntity.Name))
+                {
+                    CustomEntityErrors.Add($"[{jsonFilename}] Entity class has no valid name. Skipping.");
+
+                    continue;
+                }
+                if (Classes.Any(x => x.Name == customEntity.Name))
+                {
+                    CustomEntityErrors.Add($"[{jsonFilename}] Entity class with name \"{customEntity.Name}\" already exists. Skipping.");
+
+                    continue;
+                }
 
                 GameDataObject gameDataObj = new GameDataObject(customEntity.Name, customEntity.Description, ClassType.Point, true);
-
                 foreach (CustomEntityProperty customProperty in customEntity.Properties)
                 {
-                    if (!Enum.TryParse(customProperty.Type, out VariableType varType)) continue;
+                    if (string.IsNullOrEmpty(customProperty.Name))
+                    {
+                        CustomEntityErrors.Add($"[{jsonFilename}] Property has no valid name. Skipping property.");
+
+                        continue;
+                    }
+                    if (!Enum.TryParse(customProperty.Type, out VariableType varType))
+                    {
+                        CustomEntityErrors.Add($"[{jsonFilename}] Could not read type of property \"{customProperty.Name}\". Skipping property.");
+
+                        continue;
+                    }
 
                     Property actualProperty = new Property(customProperty.Name, varType)
                     {

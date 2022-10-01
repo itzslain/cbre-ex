@@ -87,6 +87,12 @@ namespace CBRE.Editor.Documents
 
             GameData = new GameData();
 
+            if (GameData.CustomEntityErrors.Count > 0)
+            {
+                EntityLoadForm ErrorForm = new EntityLoadForm(GameData.CustomEntityErrors);
+                ErrorForm.ShowDialog();
+            }
+
             if (game.OverrideMapSize)
             {
                 GameData.MapSizeLow = game.OverrideMapSizeLow;

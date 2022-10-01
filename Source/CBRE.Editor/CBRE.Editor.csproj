@@ -224,6 +224,12 @@
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="EntityLoadForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EntityLoadForm.Designer.cs">
+      <DependentUpon>EntityLoadForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\PasteSpecialGrouping.cs" />
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Enums\TransformType.cs" />
@@ -633,6 +639,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EntityLoadForm.resx">
+      <DependentUpon>EntityLoadForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logging\ExceptionWindow.resx">
       <DependentUpon>ExceptionWindow.cs</DependentUpon>

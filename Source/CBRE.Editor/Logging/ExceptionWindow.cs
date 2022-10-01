@@ -32,9 +32,9 @@ namespace CBRE.Editor.Logging
 
             try
             {
-                Directory.CreateDirectory("Error Logs");
+                Directory.CreateDirectory("Error Logs\\Exceptions");
                 string fn = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
-                using (StreamWriter sw = new StreamWriter($"Error Logs\\{fn}.txt"))
+                using (StreamWriter sw = new StreamWriter($"Error Logs\\Exceptions\\{fn}.txt"))
                 {
                     string content = "CBRE-EX has encountered an error. Details are found below.\n" +
                                      "-----------------------------------------------------------\n" +
@@ -45,7 +45,7 @@ namespace CBRE.Editor.Logging
                                      info.FullStackTrace;
                     sw.Write(content);
                 }
-                HeaderLabel.Text = $"Details have been written to \"Error Logs/{fn}.txt\"";
+                HeaderLabel.Text = $"Details have been written to \"Error Logs\\Exceptions\\{fn}.txt\"";
             }
             catch (Exception e)
             {
