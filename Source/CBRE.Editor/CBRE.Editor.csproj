@@ -750,7 +750,7 @@
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <None Include="Entities\EntityGuide.url">
+    <None Include="Entities\Entity Guide.url">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
