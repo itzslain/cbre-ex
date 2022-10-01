@@ -10,7 +10,7 @@ namespace CBRE.Editor.UI
 		{
 			InitializeComponent();
 
-			VersionLabel.Text = "Version " + Assembly.GetAssembly(typeof(Editor)).GetName().Version.ToString(2);
+			VersionLabel.Text = "Version " + Assembly.GetAssembly(typeof(Editor)).GetName().Version.ToString(3);
 
 			GitHubLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, GitHubLink.Text);
 			LicenseLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, LicenseLink.Text);

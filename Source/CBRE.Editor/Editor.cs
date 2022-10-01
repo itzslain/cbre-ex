@@ -189,7 +189,7 @@ namespace CBRE.Editor
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
             if (CBRE.Settings.General.CheckUpdatesOnStartup) CheckForUpdates(true);
-        }
+		}
 
 		#region Updates
 		private Version GetCurrentVersion()
@@ -558,7 +558,7 @@ namespace CBRE.Editor
 		private static readonly Version Version = Assembly.GetEntryAssembly().GetName().Version;
 
 		private string titleStart
-			=> $"CBRE-EX v{Version.ToString(2)}";
+			=> $"CBRE-EX v{Version.ToString(3)}";
 
 		private void UpdateTitle()
 		{

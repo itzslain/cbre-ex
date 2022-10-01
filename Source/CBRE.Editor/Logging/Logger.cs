@@ -86,7 +86,7 @@ namespace CBRE.Editor.Logging
             RuntimeVersion = System.Environment.Version.ToString();
             Date = DateTime.Now;
             InformationMessage = info;
-            ApplicationVersion = Assembly.GetAssembly(typeof(Editor)).GetName().Version.ToString(2);
+            ApplicationVersion = Assembly.GetAssembly(typeof(Editor)).GetName().Version.ToString(3);
             OperatingSystem = FriendlyOSName();
 
             List<Exception> list = new List<Exception>();

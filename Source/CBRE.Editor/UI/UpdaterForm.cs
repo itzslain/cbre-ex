@@ -21,7 +21,7 @@ namespace CBRE.Editor.UI
 
 			this.PackageAsset = PackageAsset;
 			this.ChecksumAsset = ChecksumAsset;
-			VersionString = Version.ToString(2);
+			VersionString = Version.ToString(3);
 
 			SHSTOCKICONINFO StockIconInfo = new SHSTOCKICONINFO();
 			StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));

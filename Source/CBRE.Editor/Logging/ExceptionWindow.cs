@@ -35,7 +35,7 @@ namespace CBRE.Editor.Logging
             OperatingSystem.ForeColor = SystemColors.WindowText;
             OperatingSystem.BackColor = SystemColors.Control;
             
-            SHSTOCKICONINFO StockIconInfo = new UpdaterForm.SHSTOCKICONINFO();
+            SHSTOCKICONINFO StockIconInfo = new SHSTOCKICONINFO();
             StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
             SHGetStockIconInfo(SHSTOCKICONID.SIID_ERROR, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
 
