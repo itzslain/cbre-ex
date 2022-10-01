@@ -30,7 +30,7 @@ possible types.
 {
   "Name": "template",
   "Description": "Template item description.",
-  "Sprite": "sprites/floppo",
+  "Sprite": "sprites/mysprite",
   "UseModelRendering": true,
   "Properties": [
     {
