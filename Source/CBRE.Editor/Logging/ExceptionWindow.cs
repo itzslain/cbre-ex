@@ -3,9 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
-// TODO: Fix this cancer
-using static CBRE.Editor.UI.UpdaterForm;
+using CBRE.UI.Native;
 
 namespace CBRE.Editor.Logging
 {
@@ -34,9 +32,9 @@ namespace CBRE.Editor.Logging
             OperatingSystem.ForeColor = SystemColors.WindowText;
             OperatingSystem.BackColor = SystemColors.Control;
             
-            SHSTOCKICONINFO StockIconInfo = new SHSTOCKICONINFO();
-            StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
-            SHGetStockIconInfo(SHSTOCKICONID.SIID_ERROR, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
+            NativeIcons.SHSTOCKICONINFO StockIconInfo = new NativeIcons.SHSTOCKICONINFO();
+            StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(NativeIcons.SHSTOCKICONINFO));
+            NativeIcons.SHGetStockIconInfo(NativeIcons.SHSTOCKICONID.SIID_ERROR, NativeIcons.SHGSI.SHGSI_ICON | NativeIcons.SHGSI.SHGSI_SHELLICONSIZE, ref StockIconInfo);
 
             systemBitmap.Image = Icon.FromHandle(StockIconInfo.hIcon).ToBitmap();
 
