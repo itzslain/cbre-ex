@@ -27,6 +27,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using CBRE.Editor.Logging;
 using Path = System.IO.Path;
 
 namespace CBRE.Editor.Documents
@@ -89,7 +90,7 @@ namespace CBRE.Editor.Documents
 
             if (GameData.CustomEntityErrors.Count > 0)
             {
-                EntityLoadForm ErrorForm = new EntityLoadForm(GameData.CustomEntityErrors);
+                EntityErrorWindow ErrorForm = new EntityErrorWindow(GameData.CustomEntityErrors);
                 ErrorForm.ShowDialog();
             }
 

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CBRE.UI.Native;
 
-namespace CBRE.Editor
+namespace CBRE.Editor.Logging
 {
-    public partial class EntityLoadForm : Form
+    public partial class EntityErrorWindow : Form
     {
-        public EntityLoadForm(List<string> Errors)
+        public EntityErrorWindow(List<string> Errors)
         {
             InitializeComponent();
 

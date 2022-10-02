@@ -1,6 +1,6 @@
-﻿namespace CBRE.Editor
+﻿namespace CBRE.Editor.Logging
 {
-    partial class EntityLoadForm
+    partial class EntityErrorWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -104,7 +104,7 @@
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.logLabel);
             this.MinimumSize = new System.Drawing.Size(460, 490);
-            this.Name = "EntityLoadForm";
+            this.Name = "EntityErrorWindow";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Custom Entity Errors";

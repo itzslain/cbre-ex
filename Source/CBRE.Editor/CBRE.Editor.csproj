@@ -215,12 +215,6 @@
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
-    <Compile Include="EntityLoadForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EntityLoadForm.Designer.cs">
-      <DependentUpon>EntityLoadForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Enums\PasteSpecialGrouping.cs" />
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Enums\TransformType.cs" />
@@ -230,6 +224,12 @@
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="Extensions\DecalExtensions.cs" />
     <Compile Include="History\HistoryStack.cs" />
+    <Compile Include="Logging\EntityErrorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Logging\EntityErrorWindow.Designer.cs">
+      <DependentUpon>EntityErrorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Logging\ExceptionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -628,8 +628,8 @@
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EntityLoadForm.resx">
-      <DependentUpon>EntityLoadForm.cs</DependentUpon>
+    <EmbeddedResource Include="Logging\EntityErrorWindow.resx">
+      <DependentUpon>EntityErrorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logging\ExceptionWindow.resx">
       <DependentUpon>ExceptionWindow.cs</DependentUpon>
