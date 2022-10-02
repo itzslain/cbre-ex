@@ -32,7 +32,7 @@
             this.okButton = new System.Windows.Forms.Button();
             this.systemBitmap = new System.Windows.Forms.PictureBox();
             this.copyButton = new System.Windows.Forms.Button();
-            this.errorTextBox = new System.Windows.Forms.TextBox();
+            this.errorTextBox = new CBRE.UI.ReadOnlyTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.systemBitmap)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,11 +50,12 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.okButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.okButton.Location = new System.Drawing.Point(357, 443);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 2;
+            this.okButton.TabIndex = 0;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -71,6 +72,7 @@
             // copyButton
             // 
             this.copyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.copyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.copyButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.copyButton.Location = new System.Drawing.Point(12, 443);
             this.copyButton.Name = "copyButton";
@@ -90,10 +92,10 @@
             this.errorTextBox.ReadOnly = true;
             this.errorTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.errorTextBox.Size = new System.Drawing.Size(420, 381);
-            this.errorTextBox.TabIndex = 5;
+            this.errorTextBox.TabIndex = 2;
             this.errorTextBox.TabStop = false;
             // 
-            // EntityLoadForm
+            // EntityErrorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -120,6 +122,6 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.PictureBox systemBitmap;
         private System.Windows.Forms.Button copyButton;
-        private System.Windows.Forms.TextBox errorTextBox;
+        private CBRE.UI.ReadOnlyTextBox errorTextBox;
     }
 }
