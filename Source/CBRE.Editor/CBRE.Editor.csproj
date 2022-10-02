@@ -802,9 +802,9 @@
     </None>
     <None Include="Resources\Menu_HideEntitySprites.png" />
     <None Include="Resources\Menu_HideMapOrigin.png" />
-    <None Include="Resources\Settings.ico" />
     <None Include="Resources\Options.ico" />
     <None Include="Resources\Lightmapper.ico" />
+    <Content Include="Resources\Menu_GitHub.png" />
     <Content Include="Sprites\screen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -848,7 +848,6 @@
     <Content Include="Resources\Menu_Hollow.png" />
     <Content Include="Resources\Menu_IgnoreGrouping.png" />
     <Content Include="Resources\Menu_LargerGrid.png" />
-    <Content Include="Resources\Menu_LoadPointfile.png" />
     <Content Include="Resources\Menu_MapProperties.png" />
     <Content Include="Resources\Menu_New.png" />
     <Content Include="Resources\Menu_NewWindow.png" />
@@ -857,7 +856,6 @@
     <Content Include="Resources\Menu_Options.png" />
     <Content Include="Resources\Menu_Paste.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />
-    <Content Include="Resources\Menu_QuickLoadPointfile.png" />
     <Content Include="Resources\Menu_Redo.png" />
     <Content Include="Resources\Menu_ReplaceTextures.png" />
     <Content Include="Resources\Menu_Run.png" />
@@ -882,16 +880,11 @@
     <Content Include="Resources\Menu_Transform.png" />
     <Content Include="Resources\Menu_Undo.png" />
     <Content Include="Resources\Menu_Ungroup.png" />
-    <Content Include="Resources\Menu_UnloadPointfile.png" />
     <Content Include="Resources\Menu_Update.png" />
     <Content Include="Resources\Menu_Website.png" />
-    <None Include="Resources\Sledge.ico" />
-    <None Include="Resources\Sledge_Large.png" />
     <Content Include="Resources\Menu_WindowSettings.png" />
     <Content Include="Resources\Tool_Brush.png" />
     <Content Include="Resources\Tool_Clip.png" />
-    <Content Include="Resources\Tool_Cordon.png" />
-    <Content Include="Resources\Tool_Decal.png" />
     <Content Include="Resources\Tool_Entity.png" />
     <Content Include="Resources\Tool_Rotate.png" />
     <Content Include="Resources\Tool_Skew.png" />
