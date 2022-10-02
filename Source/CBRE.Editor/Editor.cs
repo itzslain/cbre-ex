@@ -45,6 +45,8 @@ namespace CBRE.Editor
 		private const string API_RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
 		private const string GIT_LATEST_RELEASE_URL = "https://github.com/AestheticalZ/cbre-ex/releases/latest";
 
+		public const string GITHUB_REPORT_BUG_URL = "https://github.com/AestheticalZ/cbre-ex/issues/new?assignees=AestheticalZ&labels=bug&template=bug_report.md&title=";
+
 		public bool CaptureAltPresses { get; set; }
 
 		public Editor()
