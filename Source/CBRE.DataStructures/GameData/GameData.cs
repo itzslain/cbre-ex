@@ -125,6 +125,7 @@ namespace CBRE.DataStructures.GameData
             modelDataObj.Properties.Add(new Property("file", VariableType.String) { ShortDescription = "File", DefaultValue = "" });
             modelDataObj.Properties.Add(new Property("angles", VariableType.Vector) { ShortDescription = "Rotation", DefaultValue = "0 0 0" });
             modelDataObj.Properties.Add(new Property("scale", VariableType.Vector) { ShortDescription = "Scale", DefaultValue = "1 1 1" });
+            modelDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/model"));
             Classes.Add(modelDataObj);
 
             GameDataObject screenDataObj = new GameDataObject("screen", "Savescreen.", ClassType.Point);

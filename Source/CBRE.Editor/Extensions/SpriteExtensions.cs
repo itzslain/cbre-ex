@@ -39,7 +39,8 @@ namespace CBRE.Editor.Extensions
             {
                 bool has = e != null && HasSprite(e);
                 // HACK: literal horror, please forgive me Bill Gates.
-                bool usesModels = e != null && e.GameData != null && e.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
+                bool usesModels = e != null && e.GameData != null &&
+                                  (e.GameData.Behaviours.Any(x => x.Name == "useModels") || e.ClassName == "model");
 
                 if (has || usesModels) UnsetSprite(e);
 
@@ -105,7 +106,7 @@ namespace CBRE.Editor.Extensions
         private static void UnsetSprite(Entity entity)
         {
             // HACK: HACK HACK HACK!!!!
-            if (entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") == null)
+            if (!entity.GameData.Behaviours.Any(x => x.Name == "useModels") && entity.ClassName != "model")
             {
                 entity.MetaData.Unset(SpriteMetaKey);
                 entity.MetaData.Unset(SpriteBoundingBoxMetaKey);
