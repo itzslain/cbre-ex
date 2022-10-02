@@ -39,7 +39,7 @@ namespace CBRE.Editor.Extensions
             {
                 bool has = e != null && HasSprite(e);
                 // HACK: literal horror, please forgive me Bill Gates.
-                bool usesModels = e != null && e.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
+                bool usesModels = e != null && e.GameData != null && e.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
 
                 if (has || usesModels) UnsetSprite(e);
 

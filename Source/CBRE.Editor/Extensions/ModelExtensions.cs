@@ -117,6 +117,8 @@ namespace CBRE.Editor.Extensions
 
         private static string GetModelName(Entity entity)
         {
+            if (entity.GameData == null) return null;
+            
             bool usesModelRendering = entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
 
             if (entity.ClassName == "model" || usesModelRendering)
