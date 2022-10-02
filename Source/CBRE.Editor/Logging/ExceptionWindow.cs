@@ -72,7 +72,7 @@ namespace CBRE.Editor.Logging
 
         private void reportButton_Click(object sender, EventArgs e)
         {
-            Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/AestheticalZ/cbre-ex/issues/new?assignees=AestheticalZ&labels=bug&template=bug_report.md&title=");
+            Mediator.Publish(EditorMediator.OpenWebsite, Editor.GITHUB_REPORT_BUG_URL);
         }
     }
 }
