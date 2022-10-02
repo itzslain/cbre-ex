@@ -35,24 +35,6 @@ namespace CBRE.Editor.Logging
             OperatingSystem.Text = info.OperatingSystem;
             CBREVersion.Text = info.ApplicationVersion;
             FullError.Text = info.FullStackTrace;
-
-            FullError.ForeColor = SystemColors.WindowText;
-            FullError.BackColor = SystemColors.Control;
-
-            ProcessorName.ForeColor = SystemColors.WindowText;
-            ProcessorName.BackColor = SystemColors.Control;
-            
-            AvailableMemory.ForeColor = SystemColors.WindowText;
-            AvailableMemory.BackColor = SystemColors.Control;
-            
-            RuntimeVersion.ForeColor = SystemColors.WindowText;
-            RuntimeVersion.BackColor = SystemColors.Control;
-
-            CBREVersion.ForeColor = SystemColors.WindowText;
-            CBREVersion.BackColor = SystemColors.Control;
-
-            OperatingSystem.ForeColor = SystemColors.WindowText;
-            OperatingSystem.BackColor = SystemColors.Control;
             
             NativeIcons.SHSTOCKICONINFO StockIconInfo = new NativeIcons.SHSTOCKICONINFO();
             StockIconInfo.cbSize = (UInt32)Marshal.SizeOf(typeof(NativeIcons.SHSTOCKICONINFO));
