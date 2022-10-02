@@ -22,6 +22,10 @@ namespace CBRE.Editor.UI
 
 			this.PackageAsset = PackageAsset;
 			this.ChecksumAsset = ChecksumAsset;
+
+			// HACK: microsoft's version class is stupid as fuck.
+			if (Version.Build == -1) Version = new Version(Version.Major, Version.Minor, 0);
+			
 			VersionString = Version.ToString(3);
 
 			NativeIcons.SHSTOCKICONINFO StockIconInfo = new NativeIcons.SHSTOCKICONINFO();
@@ -33,7 +37,6 @@ namespace CBRE.Editor.UI
 			headerLabel.Text = headerLabel.Text.Replace("(version)", VersionString);
 
 			changelogBox.Text = Description;
-			changelogBox.BackColor = SystemColors.Window;
 		}
 
 		private void noButton_Click(object sender, EventArgs e)
