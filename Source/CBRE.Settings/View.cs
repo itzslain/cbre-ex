@@ -1,7 +1,22 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
+using System.Drawing;
 
 namespace CBRE.Settings
 {
+    public enum AntiAliasingOption
+    {
+        [Description("No anti-aliasing")]
+        None = 0,
+        [Description("2 samples")]
+        TwoSamples = 2,
+        [Description("4 samples")]
+        FourSamples = 4,
+        [Description("8 samples")]
+        EightSamples = 8,
+        [Description("16 samples")]
+        SixteenSamples = 16
+    }
+    
     public class View
     {
         public static bool SingleInstance { get; set; }
@@ -44,6 +59,7 @@ namespace CBRE.Settings
         public static bool GloballyDisableTransparency { get; set; }
         public static bool DisableModelRendering { get; set; }
         public static bool DisableSpriteRendering { get; set; }
+        public static AntiAliasingOption ViewportAntiAliasing { get; set; }
 
         static View()
         {
@@ -88,6 +104,8 @@ namespace CBRE.Settings
             GloballyDisableTransparency = false;
             DisableModelRendering = false;
             DisableSpriteRendering = false;
+
+            ViewportAntiAliasing = AntiAliasingOption.FourSamples;
         }
     }
 }

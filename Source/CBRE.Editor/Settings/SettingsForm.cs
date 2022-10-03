@@ -528,6 +528,7 @@ namespace CBRE.Editor.Settings
             AddSetting(() => CBRE.Settings.Select.ApplyTextureImmediately, "Apply texture immediately after browsing in the texture application tool");
 
             AddHeading("Rendering");
+            AddSetting(() => CBRE.Settings.View.ViewportAntiAliasing, "Viewport anti-alising");
             AddSetting(() => CBRE.Settings.View.DisableToolTextureTransparency, "Disable tool texture transparency");
             AddSetting(() => CBRE.Settings.View.GloballyDisableTransparency, "Disable transparent textures globally");
             AddSetting(() => CBRE.Settings.View.DisableModelRendering, "Disable model rendering");

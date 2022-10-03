@@ -80,7 +80,8 @@ namespace CBRE.UI
             }
         }
 
-        protected ViewportBase() : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24))
+        protected ViewportBase() : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24,
+            0, (int)Settings.View.ViewportAntiAliasing))
         {
             RenderContext = new RenderContext();
             Listeners = new List<IViewportEventListener>();
@@ -89,7 +90,8 @@ namespace CBRE.UI
             UpdateTimer.Tick += (sender, e) => UpdateFrame();
         }
 
-        protected ViewportBase(RenderContext context) : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24))
+        protected ViewportBase(RenderContext context) : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24,
+            0, (int)Settings.View.ViewportAntiAliasing))
         {
             RenderContext = context;
             Listeners = new List<IViewportEventListener>();

@@ -106,6 +106,10 @@
       <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
       <Name>CBRE.Providers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CBRE.Settings\CBRE.Settings.csproj">
+      <Project>{a79ff02f-3eaa-4ff1-a060-2e2ffe983ef3}</Project>
+      <Name>CBRE.Settings</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
