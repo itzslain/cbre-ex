@@ -121,7 +121,7 @@ namespace CBRE.Editor.Extensions
             
             bool usesModelRendering = entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null;
 
-            if (entity.ClassName == "model" || usesModelRendering)
+            if (usesModelRendering)
             {
                 return System.IO.Path.GetFileNameWithoutExtension(entity.EntityData.GetPropertyValue("file"));
             }
