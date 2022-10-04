@@ -99,7 +99,7 @@ namespace CBRE.Editor.UI
 					updaterProcess.UseShellExecute = true;
 					Process.Start(updaterProcess);
 
-					Application.Exit();
+					Editor.Instance.Close();
 				}
 			}
 			catch (Exception ex)
