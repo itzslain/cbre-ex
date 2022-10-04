@@ -21,8 +21,8 @@ namespace CBRE.Editor.Logging
                       "-----------------------------------------------------------------------------------\n" +
                       $"System Processor: {info.ProcessorName}\n" +
                       $"Available Memory: {info.AvailableMemory}\n" +
-                      $".NET Version: {info.RuntimeVersion}\n" +
                       $"Operating System: {info.OperatingSystem}\n" +
+                      $".NET Version: {info.RuntimeVersion}\n" +
                       $"CBRE-EX Version: {info.ApplicationVersion}\n" +
                       "-----------------------------------ERROR MESSAGE-----------------------------------\n" +
                       info.FullStackTrace;

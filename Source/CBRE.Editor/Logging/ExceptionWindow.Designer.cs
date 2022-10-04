@@ -58,7 +58,7 @@
 	        // 
 	        this.label5.AutoSize = true;
 	        this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-	        this.label5.Location = new System.Drawing.Point(10, 143);
+	        this.label5.Location = new System.Drawing.Point(10, 113);
 	        this.label5.Name = "label5";
 	        this.label5.Size = new System.Drawing.Size(101, 15);
 	        this.label5.TabIndex = 3;
@@ -70,7 +70,7 @@
 	        this.OperatingSystem.BackColor = System.Drawing.SystemColors.Window;
 	        this.OperatingSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.OperatingSystem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-	        this.OperatingSystem.Location = new System.Drawing.Point(117, 140);
+	        this.OperatingSystem.Location = new System.Drawing.Point(117, 111);
 	        this.OperatingSystem.Name = "OperatingSystem";
 	        this.OperatingSystem.ReadOnly = true;
 	        this.OperatingSystem.Size = new System.Drawing.Size(665, 23);
@@ -197,7 +197,7 @@
 	        this.RuntimeVersion.BackColor = System.Drawing.SystemColors.Window;
 	        this.RuntimeVersion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 	        this.RuntimeVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-	        this.RuntimeVersion.Location = new System.Drawing.Point(117, 111);
+	        this.RuntimeVersion.Location = new System.Drawing.Point(117, 140);
 	        this.RuntimeVersion.Name = "RuntimeVersion";
 	        this.RuntimeVersion.ReadOnly = true;
 	        this.RuntimeVersion.Size = new System.Drawing.Size(665, 23);
@@ -207,7 +207,7 @@
 	        // 
 	        this.label2.AutoSize = true;
 	        this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-	        this.label2.Location = new System.Drawing.Point(39, 114);
+	        this.label2.Location = new System.Drawing.Point(39, 142);
 	        this.label2.Name = "label2";
 	        this.label2.Size = new System.Drawing.Size(72, 15);
 	        this.label2.TabIndex = 16;
