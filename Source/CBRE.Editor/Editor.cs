@@ -30,10 +30,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Timers;
 using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
-using Timer = System.Timers.Timer;
 
 namespace CBRE.Editor
 {
