@@ -87,8 +87,7 @@ namespace CBRE.Editor.Documents
             }
 
             GameData = new GameData();
-
-            if (GameData.CustomEntityErrors.Count > 0)
+            if (GameData.CustomEntityErrors.Count > 0 && Editor.Instance.ShowEntityErrorForm)
             {
                 EntityErrorWindow ErrorForm = new EntityErrorWindow(GameData.CustomEntityErrors);
                 ErrorForm.ShowDialog();

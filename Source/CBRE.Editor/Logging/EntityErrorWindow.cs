@@ -47,6 +47,8 @@ namespace CBRE.Editor.Logging
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            if (dontShowAgainCheckbox.Checked) Editor.Instance.ShowEntityErrorForm = false;
+            
             this.Close();
         }
 

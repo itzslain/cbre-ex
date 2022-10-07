@@ -48,6 +48,7 @@ namespace CBRE.Editor
 		public const string GITHUB_REPORT_BUG_URL = "https://github.com/AestheticalZ/cbre-ex/issues/new?assignees=AestheticalZ&labels=bug&template=bug_report.md&title=";
 
 		public bool CaptureAltPresses { get; set; }
+		public bool ShowEntityErrorForm = true;
 
 		public Editor()
 		{
