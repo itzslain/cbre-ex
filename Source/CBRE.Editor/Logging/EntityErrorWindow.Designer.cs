@@ -86,6 +86,7 @@
             // 
             this.errorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.errorTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.errorTextBox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.errorTextBox.Location = new System.Drawing.Point(12, 56);
             this.errorTextBox.Multiline = true;
             this.errorTextBox.Name = "errorTextBox";
