@@ -14,6 +14,8 @@
         public static float AmbientNormalX { get; set; }
         public static float AmbientNormalY { get; set; }
         public static float AmbientNormalZ { get; set; }
+        
+        public static bool ViewAfterExport { get; set; }
 
         static LightmapConfig()
         {
@@ -29,6 +31,8 @@
             AmbientNormalX = 1.0f;
             AmbientNormalY = 2.0f;
             AmbientNormalZ = 3.0f;
+
+            ViewAfterExport = false;
         }
     }
 }

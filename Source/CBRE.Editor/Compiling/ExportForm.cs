@@ -1,6 +1,7 @@
 ﻿using CBRE.Editor.Documents;
 using CBRE.Settings;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -18,11 +19,8 @@ namespace CBRE.Editor.Compiling
         {
             InitializeComponent();
             exportForm = this;
-        }
 
-        private void label6_Click(object sender, EventArgs e)
-        {
-
+            viewAfterCheckbox.Checked = LightmapConfig.ViewAfterExport;
         }
 
         private void textureDims_LostFocus(object sender, EventArgs e)
@@ -70,7 +68,7 @@ namespace CBRE.Editor.Compiling
             ProgressLog.Text = "Rendering lightmap";
             ProgressBar.Enabled = true;
 
-            actionThread = new Thread(() => { PerformAction(false); }) { CurrentCulture = CultureInfo.InvariantCulture };
+            actionThread = new Thread(() => { PerformAction(false, LightmapConfig.ViewAfterExport); }) { CurrentCulture = CultureInfo.InvariantCulture };
             actionThread.Start();
         }
 
@@ -95,7 +93,7 @@ namespace CBRE.Editor.Compiling
                     ProgressLog.Text = "Exporting to " + save.FileName;
                     ProgressBar.Enabled = true;
 
-                    actionThread = new Thread(() => { PerformAction(true); }) { CurrentCulture = CultureInfo.InvariantCulture };
+                    actionThread = new Thread(() => { PerformAction(true, LightmapConfig.ViewAfterExport); }) { CurrentCulture = CultureInfo.InvariantCulture };
                     actionThread.Start();
                 }
             }
@@ -192,6 +190,11 @@ namespace CBRE.Editor.Compiling
                 }
             }
         }
+        
+        private void viewAfterCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            LightmapConfig.ViewAfterExport = viewAfterCheckbox.Checked;
+        }
 
         private void SetCancelEnabled(bool enabled)
         {
@@ -208,13 +211,14 @@ namespace CBRE.Editor.Compiling
                 render.Enabled = !enabled;
                 export.Enabled = !enabled;
                 cancel.Enabled = enabled;
+                viewAfterCheckbox.Enabled = !enabled;
 
                 ProgressBar.Enabled = enabled;
             }));
         }
 
         Thread actionThread = null;
-        private void PerformAction(bool export)
+        private void PerformAction(bool export, bool viewAfterwards)
         {
             try
             {
@@ -241,6 +245,16 @@ namespace CBRE.Editor.Compiling
                     else
                     {
                         throw new Exception($"Unknown file extension ({extension})");
+                    }
+
+                    if (viewAfterwards)
+                    {
+                        string fullOutputPath = System.IO.Path.GetFullPath(SaveFileName);
+                        
+                        //explorer.exe /select,"path"
+                        string explorerArguments = string.Format("/select,\"{0}\"", fullOutputPath);
+
+                        Process.Start("explorer.exe", explorerArguments);
                     }
                 }
                 else
