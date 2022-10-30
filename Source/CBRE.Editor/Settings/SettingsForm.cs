@@ -509,6 +509,7 @@ namespace CBRE.Editor.Settings
         {
             AddHeading("General Settings");
             AddSetting(() => CBRE.Settings.General.CheckUpdatesOnStartup, "Check for updates on startup");
+            AddSetting(() => CBRE.Settings.General.EnableDiscordPresence, "Enable Discord rich presence");
 
             AddHeading("Object Creation");
             AddSetting(() => CBRE.Settings.Select.SwitchToSelectAfterCreation, "Switch to selection tool after brush creation");

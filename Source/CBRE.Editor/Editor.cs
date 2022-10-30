@@ -38,6 +38,8 @@ namespace CBRE.Editor
 	public partial class Editor : HotkeyForm, IMediatorListener
 	{
 		private JumpList _jumpList;
+		private DiscordManager _DiscordManager;
+		
 		public static Editor Instance { get; private set; }
 
 		private const string API_RELEASES_URL = "https://api.github.com/repos/AestheticalZ/cbre-ex/releases/latest";
@@ -190,6 +192,21 @@ namespace CBRE.Editor
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
             if (CBRE.Settings.General.CheckUpdatesOnStartup) CheckForUpdates(true);
+            
+            ToggleDiscord(CBRE.Settings.General.EnableDiscordPresence);
+		}
+
+		public void ToggleDiscord(bool Enabled)
+		{
+			if (Enabled)
+			{
+				if (_DiscordManager == null) _DiscordManager = new DiscordManager();
+			}
+			else if (_DiscordManager != null)
+			{
+				_DiscordManager.Dispose();
+				_DiscordManager = null;
+			}
 		}
 
 		#region Updates
@@ -463,6 +480,8 @@ namespace CBRE.Editor
 			}
 			ViewportManager.RefreshClearColour(Instance.DocumentTabs.TabPages.Count == 0);
 			TextureHelper.EnableTransparency = !CBRE.Settings.View.GloballyDisableTransparency;
+			
+			Editor.Instance.ToggleDiscord(CBRE.Settings.General.EnableDiscordPresence);
 		}
 
 		private void Exit()

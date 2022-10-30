@@ -211,6 +211,7 @@
     <Compile Include="Compiling\ExportForm.Designer.cs">
       <DependentUpon>ExportForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DiscordManager.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
@@ -952,6 +953,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.1.1.14" />
     <PackageReference Include="LargeAddressAware" Version="1.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="WindowsAPICodePack" Version="1.1.3" />
