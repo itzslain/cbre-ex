@@ -261,7 +261,6 @@ namespace CBRE.Editor.Rendering.Renderers
                 _array.RenderTransparent(context.Context, x =>
                 {
                     _mapObject3DShader.IsTextured = x.Texture != null && opts.Textured;
-                    _mapObject3DShader.SqrtAlpha = !x.IsToolTexture;
                 }, location, lookAt);
                 _mapObject3DShader.Unbind();
             }

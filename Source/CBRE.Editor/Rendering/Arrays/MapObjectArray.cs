@@ -83,15 +83,8 @@ namespace CBRE.Editor.Rendering.Arrays
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();
                 textureCallback(tex);
-                GL.DepthMask(false);
-                if (!tex.IsToolTexture)
-                {
-                    GL.Disable(OpenTK.Graphics.OpenGL.EnableCap.CullFace);
-                }
                 //program.Set("isTextured", tex.Texture != null);
                 Render(context, PrimitiveType.Triangles, subset);
-                GL.DepthMask(true);
-                GL.Enable(OpenTK.Graphics.OpenGL.EnableCap.CullFace);
             }
         }
 
