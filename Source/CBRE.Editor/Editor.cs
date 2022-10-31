@@ -234,6 +234,8 @@ namespace CBRE.Editor
 						MissingMemberHandling = MissingMemberHandling.Ignore
 					};
 
+					ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
 					UpdaterResponse Response = JsonConvert.DeserializeObject<UpdaterResponse>(Client.DownloadString(API_RELEASES_URL), DeserializeSettings);
 
 					//Version is invalid? Die
