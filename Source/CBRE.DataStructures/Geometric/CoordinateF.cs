@@ -121,7 +121,7 @@ namespace CBRE.DataStructures.Geometric
         public CoordinateF Normalise()
         {
             float len = VectorMagnitude();
-            return Math.Abs(len - 0) < 0.0001 ? new CoordinateF(0, 0, 0) : new CoordinateF(X / len, Y / len, Z / len);
+            return Math.Abs(len) < 0.0001 ? CoordinateF.Zero : new CoordinateF(X / len, Y / len, Z / len);
         }
 
         public CoordinateF Absolute()
@@ -156,7 +156,7 @@ namespace CBRE.DataStructures.Geometric
 
         public static CoordinateF operator /(CoordinateF c, float f)
         {
-            return Math.Abs(f - 0) < 0.0001f ? new CoordinateF(0, 0, 0) : new CoordinateF(c.X / f, c.Y / f, c.Z / f);
+            return Math.Abs(f - 0) < 0.0001f ? CoordinateF.Zero : new CoordinateF(c.X / f, c.Y / f, c.Z / f);
         }
 
         public static CoordinateF operator *(CoordinateF c, float f)
@@ -176,9 +176,9 @@ namespace CBRE.DataStructures.Geometric
 
         public CoordinateF ComponentDivide(CoordinateF c)
         {
-            if (Math.Abs(c.X - 0) < 0.0001) c.X = 1;
-            if (Math.Abs(c.Y - 0) < 0.0001) c.Y = 1;
-            if (Math.Abs(c.Z - 0) < 0.0001) c.Z = 1;
+            if (Math.Abs(c.X) < 0.0001) c.X = 1;
+            if (Math.Abs(c.Y) < 0.0001) c.Y = 1;
+            if (Math.Abs(c.Z) < 0.0001) c.Z = 1;
             return new CoordinateF(X / c.X, Y / c.Y, Z / c.Z);
         }
 

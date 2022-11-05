@@ -192,7 +192,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 int i1 = i;
                 int i2 = (i + 1) % coordinates.Count;
 
-                CoordinateF lineMiddle = (coordinates[i1] + coordinates[i2]) * 0.5f;
+                CoordinateF lineMiddle = (coordinates[i1] + coordinates[i2]) / 2f;
                 CoordinateF middleToCenter = centerPoint - lineMiddle;
                 CoordinateF v = coordinates[i1] - coordinates[i2];
                 CoordinateF lineNormal = face.Plane.Normal.Cross(v);
@@ -202,7 +202,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     lineNormal = -lineNormal;
                 }
 
-                if (lineNormal.Dot(intersect - lineMiddle) < 0.0f) return null;
+                if (lineNormal.Dot(intersect - lineMiddle) < 0) return null;
             }
             return intersect;
         }
