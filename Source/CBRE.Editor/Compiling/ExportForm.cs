@@ -1,6 +1,7 @@
 ﻿using CBRE.Editor.Documents;
 using CBRE.Settings;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -14,6 +15,15 @@ namespace CBRE.Editor.Compiling
     {
         public Document Document;
         public static Form exportForm;
+        
+        private readonly List<string> _GenericExtensions = new List<string>()
+        {
+            ".fbx",
+            ".obj",
+            ".dae",
+            ".stl",
+            ".ply"
+        };
 
         public ExportForm()
         {
@@ -216,7 +226,7 @@ namespace CBRE.Editor.Compiling
                 ProgressBar.Enabled = enabled;
             }));
         }
-
+        
         Thread actionThread = null;
         private void PerformAction(bool export, bool viewAfterwards)
         {
@@ -234,11 +244,7 @@ namespace CBRE.Editor.Compiling
                     {
                         RMeshExport.SaveToFile(SaveFileName, Document, this);
                     }
-                    else if (extension.Equals(".fbx", StringComparison.OrdinalIgnoreCase) ||
-                          extension.Equals(".obj", StringComparison.OrdinalIgnoreCase) ||
-                          extension.Equals(".dae", StringComparison.OrdinalIgnoreCase) ||
-                          extension.Equals(".stl", StringComparison.OrdinalIgnoreCase) ||
-                          extension.Equals(".ply", StringComparison.OrdinalIgnoreCase))
+                    else if (_GenericExtensions.Contains(extension.ToLower()))
                     {
                         GenericExport.SaveToFile(SaveFileName, Document, this, extension.Substring(1));
                     }
