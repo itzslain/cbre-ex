@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CBRE.Common.Extensions;
 
 namespace CBRE.Editor.Compiling
 {
@@ -73,7 +74,7 @@ namespace CBRE.Editor.Compiling
 
             IEnumerable<Entity> screens = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "screen").OfType<Entity>();
 
-            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>().Where(x => x.GameData.IsCustom == true);
+            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>().Where(x => x.GameData.IsCustom);
 
             FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
@@ -268,7 +269,7 @@ namespace CBRE.Editor.Compiling
                 br.Write((Int32)0);
             }
 
-            br.Write((Int32)(lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count()
+            br.Write((lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count()
                 + customEntities.Count()));
 
             foreach (Light light in lights)
@@ -291,13 +292,13 @@ namespace CBRE.Editor.Compiling
                 br.Write(light.Intensity);
             }
 
-            foreach (Waypoint wp in waypoints)
+            foreach (Waypoint waypoint in waypoints)
             {
                 br.WriteB3DString("waypoint");
 
-                br.Write(wp.Location.X);
-                br.Write(wp.Location.Z);
-                br.Write(wp.Location.Y);
+                br.Write(waypoint.Location.X);
+                br.Write(waypoint.Location.Z);
+                br.Write(waypoint.Location.Y);
             }
 
             foreach (Entity soundEmitter in soundEmitters)
@@ -350,20 +351,20 @@ namespace CBRE.Editor.Compiling
                 br.WriteB3DString(screen.EntityData.GetPropertyValue("imgpath"));
             }
 
-            foreach (Entity cEnt in customEntities)
+            foreach (Entity customEntity in customEntities)
             {
-                br.WriteB3DString(cEnt.ClassName);
+                br.WriteB3DString(customEntity.ClassName);
 
                 //Write position
-                br.Write((float)cEnt.Origin.X);
-                br.Write((float)cEnt.Origin.Z);
-                br.Write((float)cEnt.Origin.Y);
+                br.Write((float)customEntity.Origin.X);
+                br.Write((float)customEntity.Origin.Z);
+                br.Write((float)customEntity.Origin.Y);
 
-                int indx = 0;
-                foreach (DataStructures.GameData.Property propt in cEnt.GameData.Properties.Where(x => x.Name != "position"))
+                int index = 0;
+                foreach (DataStructures.GameData.Property property in customEntity.GameData.Properties.Where(x => x.Name != "position"))
                 {
-                    WriteCEntityProperty(propt, indx, ref br, cEnt);
-                    indx++;
+                    WriteCustomEntityProperty(property, index, ref br, customEntity);
+                    index++;
                 }
             }
 
@@ -375,38 +376,47 @@ namespace CBRE.Editor.Compiling
         }
 
         //If juan sees this he would probably crush my neck
-        private static void WriteCEntityProperty(DataStructures.GameData.Property property, int index, ref BinaryWriter br, Entity entity)
+        private static void WriteCustomEntityProperty(DataStructures.GameData.Property property, int index, ref BinaryWriter br, Entity entity)
         {
+            Property mapProperty = entity.EntityData.Properties[index];
+            
             switch (property.VariableType)
             {
-                case DataStructures.GameData.VariableType.Integer:
                 case DataStructures.GameData.VariableType.Bool:
-                    br.Write(int.Parse(entity.EntityData.Properties[index].Value));
+                    br.Write(mapProperty.Value.ToBool());
+                    
                     break;
-
+                case DataStructures.GameData.VariableType.Integer:
+                    br.Write(int.Parse(mapProperty.Value));
+                    
+                    break;
                 case DataStructures.GameData.VariableType.Color255:
                     Coordinate colorCoord = entity.EntityData.GetPropertyCoordinate(property.Name);
                     string color = colorCoord.X + " " + colorCoord.Y + " " + colorCoord.Z;
+                    
                     br.Write(color.Length);
+                    
                     for (int i = 0; i < color.Length; i++)
                     {
                         br.Write((byte)color[i]);
                     }
+                    
                     break;
-
                 case DataStructures.GameData.VariableType.Float:
-                    br.Write(float.Parse(entity.EntityData.Properties[index].Value));
+                    br.Write(float.Parse(mapProperty.Value));
+                    
                     break;
-
                 case DataStructures.GameData.VariableType.String:
-                    br.WriteB3DString(entity.EntityData.Properties[index].Value);
+                    br.WriteB3DString(mapProperty.Value);
+                    
                     break;
-
                 case DataStructures.GameData.VariableType.Vector:
                     Coordinate coord = entity.EntityData.GetPropertyCoordinate(property.Name);
+                    
                     br.Write((float)coord.X);
                     br.Write((float)coord.Y);
                     br.Write((float)coord.Z);
+                    
                     break;
             }
         }

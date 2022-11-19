@@ -40,5 +40,12 @@ namespace CBRE.Common.Extensions
             }
             return result.ToArray();
         }
+        
+        public static bool ToBool(this string Value)
+        {
+            string lowercaseValue = Value.ToLower();
+
+            return lowercaseValue == "1" || lowercaseValue == "yes" || lowercaseValue == "true";
+        }
     }
 }
