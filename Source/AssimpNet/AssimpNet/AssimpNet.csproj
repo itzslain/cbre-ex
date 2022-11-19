@@ -27,6 +27,10 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="WindowsAPICodePack" Version="7.0.1" />
+  </ItemGroup>
+
   <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
     <Exec Command="&quot;$(ProjectDir)..\AssimpNet.Interop.Generator\bin\$(Configuration)\$(TargetFramework)\AssimpNet.Interop.Generator.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot;" />
   </Target>
