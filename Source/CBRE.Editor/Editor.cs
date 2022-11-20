@@ -242,7 +242,7 @@ namespace CBRE.Editor
 					if (!Version.TryParse(Response.VersionTag, out ParsedNewVersion)) return;
 
 					ReleaseAsset PackageAsset = Response.Assets.FirstOrDefault(x => x.Filename.EndsWith(".zip"));
-					ReleaseAsset ChecksumAsset = Response.Assets.FirstOrDefault(x => x.Filename.EndsWith(".md5"));
+					ReleaseAsset ChecksumAsset = Response.Assets.FirstOrDefault(x => x.Filename.EndsWith(".sha256"));
 
 					if (ParsedNewVersion > CurrentVersion)
 					{

@@ -76,14 +76,14 @@ namespace CBRE.Editor.UI
 
 					statusLabel.Text = "Status: Verifying...";
 
-					using (MD5 Hasher = MD5.Create())
+					using (SHA256 Hasher = SHA256.Create())
 					{
 						using (FileStream Stream = File.OpenRead(PackageAsset.Filename))
 						{
 							string ConvertedChecksum;
 
-							byte[] Md5Hash = Hasher.ComputeHash(Stream);
-							ConvertedChecksum = BitConverter.ToString(Md5Hash).Replace("-", "").ToLowerInvariant();
+							byte[] Sha256Hash = Hasher.ComputeHash(Stream);
+							ConvertedChecksum = BitConverter.ToString(Sha256Hash).Replace("-", "").ToLowerInvariant();
 
 							if (DownloadedChecksum != ConvertedChecksum) throw new Exception("Verification failed. Update package is most probably corrupted.");
 						}
