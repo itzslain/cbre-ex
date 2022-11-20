@@ -591,7 +591,6 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ViewportManager.cs" />
-    <Compile Include="UI\UpdateReleaseDetails.cs" />
     <Compile Include="UI\Layout\ViewportWindow.cs">
       <SubType>Form</SubType>
     </Compile>
