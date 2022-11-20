@@ -360,11 +360,11 @@ namespace CBRE.Editor.Compiling
                 br.Write((float)customEntity.Origin.Z);
                 br.Write((float)customEntity.Origin.Y);
 
-                int index = 0;
-                foreach (DataStructures.GameData.Property property in customEntity.GameData.Properties.Where(x => x.Name != "position"))
+                IEnumerable<DataStructures.GameData.Property> customEntityProperties = customEntity.GameData.Properties.Where(x => x.Name != "position");
+
+                foreach (DataStructures.GameData.Property customEntityProperty in customEntityProperties)
                 {
-                    WriteCustomEntityProperty(property, index, ref br, customEntity);
-                    index++;
+                    WriteCustomEntityProperty(customEntityProperty, ref br, customEntity);
                 }
             }
 
@@ -376,46 +376,51 @@ namespace CBRE.Editor.Compiling
         }
 
         //If juan sees this he would probably crush my neck
-        private static void WriteCustomEntityProperty(DataStructures.GameData.Property property, int index, ref BinaryWriter br, Entity entity)
+        private static void WriteCustomEntityProperty(DataStructures.GameData.Property property, ref BinaryWriter binaryWriter, Entity entity)
         {
-            Property mapProperty = entity.EntityData.Properties[index];
+            Property mapProperty = entity.EntityData.Properties.FirstOrDefault(x => x.Key == property.Name);
+
+            if (mapProperty == default(Property))
+                throw new Exception($"A property with the key \"{property.Name}\" was not found in the EntityData for the custom entity of type \"{entity.ClassName}\" at " +
+                                    $"position ({entity.Origin.X}, {entity.Origin.Y}, {entity.Origin.Z}). " +
+                                    $"Make sure the custom entity's properties match it's JSON file definition.");
             
             switch (property.VariableType)
             {
                 case DataStructures.GameData.VariableType.Bool:
-                    br.Write(mapProperty.Value.ToBool());
+                    binaryWriter.Write(mapProperty.Value.ToBool());
                     
                     break;
                 case DataStructures.GameData.VariableType.Integer:
-                    br.Write(int.Parse(mapProperty.Value));
+                    binaryWriter.Write(int.Parse(mapProperty.Value));
                     
                     break;
                 case DataStructures.GameData.VariableType.Color255:
                     Coordinate colorCoord = entity.EntityData.GetPropertyCoordinate(property.Name);
                     string color = colorCoord.X + " " + colorCoord.Y + " " + colorCoord.Z;
                     
-                    br.Write(color.Length);
+                    binaryWriter.Write(color.Length);
                     
                     for (int i = 0; i < color.Length; i++)
                     {
-                        br.Write((byte)color[i]);
+                        binaryWriter.Write((byte)color[i]);
                     }
                     
                     break;
                 case DataStructures.GameData.VariableType.Float:
-                    br.Write(float.Parse(mapProperty.Value));
+                    binaryWriter.Write(float.Parse(mapProperty.Value));
                     
                     break;
                 case DataStructures.GameData.VariableType.String:
-                    br.WriteB3DString(mapProperty.Value);
+                    binaryWriter.WriteB3DString(mapProperty.Value);
                     
                     break;
                 case DataStructures.GameData.VariableType.Vector:
                     Coordinate coord = entity.EntityData.GetPropertyCoordinate(property.Name);
                     
-                    br.Write((float)coord.X);
-                    br.Write((float)coord.Y);
-                    br.Write((float)coord.Z);
+                    binaryWriter.Write((float)coord.X);
+                    binaryWriter.Write((float)coord.Y);
+                    binaryWriter.Write((float)coord.Z);
                     
                     break;
             }
