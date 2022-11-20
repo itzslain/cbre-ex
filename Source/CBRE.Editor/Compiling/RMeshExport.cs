@@ -66,7 +66,8 @@ namespace CBRE.Editor.Compiling
             Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
 
-            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "waypoint").OfType<Entity>().Select(x => new Waypoint(x)).ToList();
+            List<Waypoint> waypoints = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "waypoint").OfType<Entity>()
+                .Select(x => new Waypoint(x)).ToList();
 
             IEnumerable<Entity> soundEmitters = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "soundemitter").OfType<Entity>();
 
@@ -74,7 +75,8 @@ namespace CBRE.Editor.Compiling
 
             IEnumerable<Entity> screens = map.WorldSpawn.Find(x => x.ClassName != null && x.ClassName.ToLower() == "screen").OfType<Entity>();
 
-            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>().Where(x => x.GameData.IsCustom);
+            IEnumerable<Entity> customEntities = map.WorldSpawn.Find(x => x.ClassName != null).OfType<Entity>()
+                .Where(x => x.GameData != null && x.GameData.IsCustom);
 
             FileStream stream = new FileStream(filepath + "/" + filename, FileMode.Create);
             BinaryWriter br = new BinaryWriter(stream);
