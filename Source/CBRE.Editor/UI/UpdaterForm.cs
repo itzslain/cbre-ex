@@ -38,7 +38,7 @@ namespace CBRE.Editor.UI
 
 			headerLabel.Text = headerLabel.Text.Replace("(version)", VersionString);
 
-			changelogBox.Text = Description;
+			changelogBox.Text = Description.Trim();
 		}
 
 		private void noButton_Click(object sender, EventArgs e)
