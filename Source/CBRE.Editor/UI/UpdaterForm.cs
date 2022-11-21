@@ -98,9 +98,8 @@ namespace CBRE.Editor.UI
 					ProcessStartInfo updaterProcess = new ProcessStartInfo("CBRE.Updater.exe");
 					//Arg 0: New version
 					//Arg 1: CBRE-EX process name
-					//Arg 2: Checksum filename
-					//Arg 3: Package filename
-					updaterProcess.Arguments = $"{VersionString} {FixSpaces(CurrentFilename)} {ChecksumAsset.Filename} {PackageAsset.Filename}";
+					//Arg 2: Package filename
+					updaterProcess.Arguments = $"{VersionString} {FixSpaces(CurrentFilename)} {PackageAsset.Filename}";
 					updaterProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 					updaterProcess.UseShellExecute = true;
 					Process.Start(updaterProcess);

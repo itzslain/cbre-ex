@@ -19,19 +19,17 @@ namespace CBRE.Updater
 	{
 		//Arg 0: New version
 		//Arg 1: CBRE-EX process name
-		//Arg 2: Checksum filename
-		//Arg 3: Package filename
+		//Arg 2: Package filename
 		static void Main(string[] args)
 		{
-			if (args.Length < 4) return;
+			if (args.Length < 3) return;
 
 			string TargetDirectory = AppDomain.CurrentDomain.BaseDirectory;
 			string CurrentFilename = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
 
 			string NewVersion = args[0];
 			string FriendlyCbreProcess = args[1].Replace(".exe", "");
-			string ChecksumFilename = args[2];
-			string PackageFilename = args[3];
+			string PackageFilename = args[2];
 
 			Console.Title = "CBRE-EX Updater";
 			if (Environment.OSVersion.Version.Major < 10) ConsoleExtensions.Disable();
@@ -79,7 +77,6 @@ namespace CBRE.Updater
 
 				Directory.Delete("Temp", true);
 				File.Delete(PackageFilename);
-				File.Delete(ChecksumFilename);
 
 				Log($"Done! Starting CBRE-EX...", LogSeverity.MESSAGE);
 
