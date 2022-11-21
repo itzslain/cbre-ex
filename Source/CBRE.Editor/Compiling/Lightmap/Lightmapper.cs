@@ -7,6 +7,7 @@ using CBRE.Settings;
 using CBRE.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using ThreadState = System.Threading.ThreadState;
 
 namespace CBRE.Editor.Compiling.Lightmap
 {
@@ -253,7 +255,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine($"Lightmapper Threads: {UsableThreadCount} threads");
+            Debug.WriteLine($"Lightmapper Threads: {UsableThreadCount} threads");
 
             int faceNum = 0;
             UpdateProgress(exportForm, "Started calculating brightness levels...", 0.05f);
