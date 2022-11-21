@@ -2,10 +2,12 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using CBRE.Common.Extensions;
 using CBRE.UI.Native;
 
 namespace CBRE.Editor.UI
@@ -55,24 +57,28 @@ namespace CBRE.Editor.UI
 
 			try
 			{
-				using (WebClient Client = new WebClient())
+				using (HttpClient Client = new HttpClient())
 				{
-					string DownloadedChecksum = string.Empty;
+					Client.DefaultRequestHeaders.Add("User-Agent", "AestheticalZ/cbre-ex");
+					
+					string DownloadedChecksum = await Client.GetStringAsync(ChecksumAsset.DownloadUrl);
 
-					Client.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
+					if (string.IsNullOrWhiteSpace(DownloadedChecksum)) throw new Exception("The checksum file was empty.");
 
-					Client.DownloadFile(new Uri(ChecksumAsset.DownloadUrl), ChecksumAsset.Filename);
-					DownloadedChecksum = File.ReadAllText(ChecksumAsset.Filename);
+					Progress<float> fileProgress = new Progress<float>();
 
-					if (string.IsNullOrEmpty(DownloadedChecksum)) throw new Exception("The checksum file was empty.");
-
-					Client.DownloadProgressChanged += (senderObj, eventArg) =>
+					fileProgress.ProgressChanged += (senderObj, progress) =>
 					{
-						downloadProgress.Value = eventArg.ProgressPercentage;
-						statusLabel.Text = $"Status: Downloading {eventArg.ProgressPercentage}%";
+						int roundedProgress = (int)Math.Round(progress);
+
+						downloadProgress.Value = roundedProgress;
+						statusLabel.Text = $"Status: Downloading {roundedProgress}%";
 					};
 
-					await Client.DownloadFileTaskAsync(new Uri(PackageAsset.DownloadUrl), PackageAsset.Filename);
+					using (FileStream fileStream = File.Create(PackageAsset.Filename))
+					{
+						await Client.DownloadDataAsync(PackageAsset.DownloadUrl, fileStream, fileProgress);
+					}
 
 					statusLabel.Text = "Status: Verifying...";
 

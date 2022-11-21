@@ -29,7 +29,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LayoutSettings = CBRE.Editor.UI.Layout.LayoutSettings;
 
@@ -191,9 +193,9 @@ namespace CBRE.Editor
 
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
-            if (CBRE.Settings.General.CheckUpdatesOnStartup) CheckForUpdates(true);
-            
-            ToggleDiscord(CBRE.Settings.General.EnableDiscordPresence);
+			if (CBRE.Settings.General.CheckUpdatesOnStartup) CheckForUpdates(true);
+			
+			ToggleDiscord(CBRE.Settings.General.EnableDiscordPresence);
 		}
 
 		public void ToggleDiscord(bool Enabled)
@@ -218,7 +220,7 @@ namespace CBRE.Editor
 
 		private void CheckForUpdates(bool notFromMenu)
 		{
-			using (WebClient Client = new WebClient())
+			using (HttpClient Client = new HttpClient())
 			{
 				try
 				{
@@ -226,8 +228,8 @@ namespace CBRE.Editor
 					Version CurrentVersion = GetCurrentVersion();
 
 					//Github wants me to set a user agent, sure!
-					Client.Headers.Add("Accept", "application/vnd.github.v3+json");
-					Client.Headers.Add("User-Agent", "AestheticalZ/cbre-ex");
+					Client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
+					Client.DefaultRequestHeaders.Add("User-Agent", "AestheticalZ/cbre-ex");
 
 					JsonSerializerSettings DeserializeSettings = new JsonSerializerSettings
 					{
@@ -236,7 +238,9 @@ namespace CBRE.Editor
 
 					ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
-					UpdaterResponse Response = JsonConvert.DeserializeObject<UpdaterResponse>(Client.DownloadString(API_RELEASES_URL), DeserializeSettings);
+					string ServerResponse = Task.Run(() => Client.GetStringAsync(API_RELEASES_URL)).Result;
+
+					UpdaterResponse Response = JsonConvert.DeserializeObject<UpdaterResponse>(ServerResponse, DeserializeSettings);
 
 					//Version is invalid? Die
 					if (!Version.TryParse(Response.VersionTag, out ParsedNewVersion)) return;
@@ -249,26 +253,26 @@ namespace CBRE.Editor
 						//Missing required files? The update must have changed the structure!
 						if (PackageAsset == default(ReleaseAsset) || ChecksumAsset == default(ReleaseAsset))
 						{
-                            DialogResult Result = MessageBox.Show("There is a new update available, but the required files are missing. This may mean that you need to update CBRE-EX manually.\n\n" +
-                                                                  "Do you want to open the latest GitHub release?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+							DialogResult Result = MessageBox.Show("There is a new update available, but the required files are missing. This may mean that you need to update CBRE-EX manually.\n\n" +
+																  "Do you want to open the latest GitHub release?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                            if (Result == DialogResult.Yes) Process.Start(GIT_LATEST_RELEASE_URL);
+							if (Result == DialogResult.Yes) Process.Start(GIT_LATEST_RELEASE_URL);
 
-                            return;
+							return;
 						}
 
-                        UpdaterForm Form = new UpdaterForm(ParsedNewVersion, Response.Description, PackageAsset, ChecksumAsset);
-                        Form.ShowDialog();
-                    }
-                    else
-                    {
+						UpdaterForm Form = new UpdaterForm(ParsedNewVersion, Response.Description, PackageAsset, ChecksumAsset);
+						Form.ShowDialog();
+					}
+					else
+					{
 						//Kinda ugly maybe?
-                        if (!notFromMenu)
-                        {
-                            MessageBox.Show("There are no updates available.", "Information", MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                        }
-                    }
+						if (!notFromMenu)
+						{
+							MessageBox.Show("There are no updates available.", "Information", MessageBoxButtons.OK,
+								MessageBoxIcon.Information);
+						}
+					}
 				}
 				catch (Exception)
 				{
