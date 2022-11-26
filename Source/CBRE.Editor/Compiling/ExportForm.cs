@@ -29,8 +29,6 @@ namespace CBRE.Editor.Compiling
         {
             InitializeComponent();
             exportForm = this;
-
-            viewAfterCheckbox.Checked = LightmapConfig.ViewAfterExport;
         }
 
         private void textureDims_LostFocus(object sender, EventArgs e)
@@ -75,6 +73,20 @@ namespace CBRE.Editor.Compiling
         private string SaveFileName = "";
         private void render_Click(object sender, EventArgs e)
         {
+            if (LightmapConfig.BakeModelShadows)
+            {
+                DialogResult result = MessageBox.Show("Baking model shadows will SEVERELY impact lightmapping performance, " +
+                                                      "especially if there are lots of models in your room.\n" +
+                                                      "It's recommended to leave it off unless you're exporting the room.\n" +
+                                                      "Are you sure you want to continue?",
+                    "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
             ProgressLog.Text = "Rendering lightmap";
             ProgressBar.Enabled = true;
 
@@ -84,6 +96,20 @@ namespace CBRE.Editor.Compiling
 
         private void export_Click(object sender, EventArgs e)
         {
+            if (LightmapConfig.BakeModelShadows)
+            {
+                DialogResult result = MessageBox.Show("Baking model shadows will SEVERELY impact lightmapping performance, " +
+                                                      "especially if there are lots of models in your room.\n" +
+                                                      "It's recommended to leave it off unless you're exporting the room.\n" +
+                                                      "Are you sure you want to continue?",
+                    "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
             using (SaveFileDialog save = new SaveFileDialog())
             {
                 string filter = "";
@@ -206,6 +232,11 @@ namespace CBRE.Editor.Compiling
             LightmapConfig.ViewAfterExport = viewAfterCheckbox.Checked;
         }
 
+        private void modelBakeYes_CheckedChanged(object sender, EventArgs e)
+        {
+            LightmapConfig.BakeModelShadows = modelBakeYes.Checked;
+        }
+
         private void SetCancelEnabled(bool enabled)
         {
             Invoke((MethodInvoker)(() =>
@@ -217,6 +248,9 @@ namespace CBRE.Editor.Compiling
                 ambientRed.Enabled = !enabled;
                 ambientGreen.Enabled = !enabled;
                 ambientBlue.Enabled = !enabled;
+
+                modelBakeYes.Enabled = !enabled;
+                modelBakeNo.Enabled = !enabled;
 
                 render.Enabled = !enabled;
                 export.Enabled = !enabled;
@@ -328,6 +362,13 @@ namespace CBRE.Editor.Compiling
             downscaleFactor.Text = LightmapConfig.DownscaleFactor.ToString();
 
             blurRadius.Text = LightmapConfig.BlurRadius.ToString();
+
+            viewAfterCheckbox.Checked = LightmapConfig.ViewAfterExport;
+
+            if (LightmapConfig.BakeModelShadows)
+            {
+                modelBakeYes.Checked = true;
+            }
         }
     }
 }

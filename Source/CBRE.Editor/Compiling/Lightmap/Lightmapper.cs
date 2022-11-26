@@ -180,73 +180,76 @@ namespace CBRE.Editor.Compiling.Lightmap
                 }
             }
 
-            map.UpdateModels(document);
-
-            Dictionary<string, ModelReference> modelReferences = document.GetMemory<Dictionary<string, ModelReference>>("ModelCache");
-
-            foreach (Entity model in modelEntities)
+            if (LightmapConfig.BakeModelShadows)
             {
-                Coordinate euler = model.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
-                Coordinate scale = model.EntityData.GetPropertyCoordinate("scale", Coordinate.One);
-                Matrix modelMatrix = Matrix.Translation(model.Origin)
-                                  * Matrix.RotationX(DMath.DegreesToRadians(euler.X))
-                                  * Matrix.RotationY(DMath.DegreesToRadians(euler.Z))
-                                  * Matrix.RotationZ(DMath.DegreesToRadians(-euler.Y))
-                                  * Matrix.Scale(scale.XZY());
+                map.UpdateModels(document);
 
-                string modelValue = model.EntityData.GetPropertyValue("file");
+                Dictionary<string, ModelReference> modelReferences = document.GetMemory<Dictionary<string, ModelReference>>("ModelCache");
 
-                if (!modelReferences.ContainsKey(modelValue)) continue;
-
-                ModelReference modelReference = modelReferences[modelValue];
-
-                List<MatrixF> modelTransforms = modelReference.Model.GetTransforms();
-                IEnumerable<IGrouping<int, Mesh>> meshGroups = modelReference.Model.GetActiveMeshes().GroupBy(x => x.SkinRef);
-
-                foreach (IGrouping<int, Mesh> meshGroup in meshGroups)
+                foreach (Entity model in modelEntities)
                 {
-                    Texture texture = modelReference.Model.Textures[meshGroup.Key];
+                    Coordinate euler = model.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                    Coordinate scale = model.EntityData.GetPropertyCoordinate("scale", Coordinate.One);
+                    Matrix modelMatrix = Matrix.Translation(model.Origin)
+                                      * Matrix.RotationX(DMath.DegreesToRadians(euler.X))
+                                      * Matrix.RotationY(DMath.DegreesToRadians(euler.Z))
+                                      * Matrix.RotationZ(DMath.DegreesToRadians(-euler.Y))
+                                      * Matrix.Scale(scale.XZY());
 
-                    foreach (Mesh mesh in meshGroup)
+                    string modelValue = model.EntityData.GetPropertyValue("file");
+
+                    if (!modelReferences.ContainsKey(modelValue)) continue;
+
+                    ModelReference modelReference = modelReferences[modelValue];
+
+                    List<MatrixF> modelTransforms = modelReference.Model.GetTransforms();
+                    IEnumerable<IGrouping<int, Mesh>> meshGroups = modelReference.Model.GetActiveMeshes().GroupBy(x => x.SkinRef);
+
+                    foreach (IGrouping<int, Mesh> meshGroup in meshGroups)
                     {
-                        Face tFace = new Face(0);
+                        Texture texture = modelReference.Model.Textures[meshGroup.Key];
 
-                        tFace.Texture.Name = System.IO.Path.GetFileNameWithoutExtension(texture.Name);
-                        tFace.Texture.Texture = texture.TextureObject;
-                        tFace.Plane = new Plane(Coordinate.UnitY, 1.0m);
-                        tFace.BoundingBox = Box.Empty;
-
-                        Face mFace = tFace.Clone();
-
-                        IEnumerable<Vertex> vertices = mesh.Vertices.Select(x => new Vertex(new Coordinate(x.Location *
-                            modelTransforms[x.BoneWeightings.First().Bone.BoneIndex]) * modelMatrix, mFace)
+                        foreach (Mesh mesh in meshGroup)
                         {
-                            TextureU = (decimal)x.TextureU,
-                            TextureV = (decimal)x.TextureV
-                        });
+                            Face tFace = new Face(0);
 
-                        for (int i = 0; i < mesh.Vertices.Count; i += 3)
-                        {
-                            tFace.Vertices.Clear();
-                            tFace.Vertices.Add(vertices.ElementAt(i));
-                            tFace.Vertices.Add(vertices.ElementAt(i + 1));
-                            tFace.Vertices.Add(vertices.ElementAt(i + 2));
+                            tFace.Texture.Name = System.IO.Path.GetFileNameWithoutExtension(texture.Name);
+                            tFace.Texture.Texture = texture.TextureObject;
+                            tFace.Plane = new Plane(Coordinate.UnitY, 1.0m);
+                            tFace.BoundingBox = Box.Empty;
 
-                            tFace.Plane = new Plane(tFace.Vertices[0].Location, tFace.Vertices[1].Location, tFace.Vertices[2].Location);
-                            tFace.Vertices.ForEach(v =>
+                            Face mFace = tFace.Clone();
+
+                            IEnumerable<Vertex> vertices = mesh.Vertices.Select(x => new Vertex(new Coordinate(x.Location *
+                                modelTransforms[x.BoneWeightings.First().Bone.BoneIndex]) * modelMatrix, mFace)
                             {
-                                v.LMU = -500.0f; 
-                                v.LMV = -500.0f;
+                                TextureU = (decimal)x.TextureU,
+                                TextureV = (decimal)x.TextureV
                             });
 
-                            tFace.UpdateBoundingBox();
+                            for (int i = 0; i < mesh.Vertices.Count; i += 3)
+                            {
+                                tFace.Vertices.Clear();
+                                tFace.Vertices.Add(vertices.ElementAt(i));
+                                tFace.Vertices.Add(vertices.ElementAt(i + 1));
+                                tFace.Vertices.Add(vertices.ElementAt(i + 2));
 
-                            LMFace lmFace = new LMFace(tFace.Clone(), null);
+                                tFace.Plane = new Plane(tFace.Vertices[0].Location, tFace.Vertices[1].Location, tFace.Vertices[2].Location);
+                                tFace.Vertices.ForEach(v =>
+                                {
+                                    v.LMU = -500.0f;
+                                    v.LMV = -500.0f;
+                                });
 
-                            lmFace.CastsShadows = true;
-                            lmFace.UpdateBoundingBox();
+                                tFace.UpdateBoundingBox();
 
-                            exclusiveBlockers.Add(lmFace);
+                                LMFace lmFace = new LMFace(tFace.Clone(), null);
+
+                                lmFace.CastsShadows = true;
+                                lmFace.UpdateBoundingBox();
+
+                                exclusiveBlockers.Add(lmFace);
+                            }
                         }
                     }
                 }

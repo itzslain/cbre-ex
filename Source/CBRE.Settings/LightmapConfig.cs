@@ -16,6 +16,7 @@
         public static float AmbientNormalZ { get; set; }
         
         public static bool ViewAfterExport { get; set; }
+        public static bool BakeModelShadows { get; set; }
 
         static LightmapConfig()
         {
@@ -33,6 +34,7 @@
             AmbientNormalZ = 3.0f;
 
             ViewAfterExport = false;
+            BakeModelShadows = false;
         }
     }
 }
