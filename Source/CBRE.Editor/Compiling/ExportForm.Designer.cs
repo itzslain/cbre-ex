@@ -44,57 +44,57 @@
             this.label1 = new System.Windows.Forms.Label();
             this.modelBakeYes = new System.Windows.Forms.RadioButton();
             this.modelBakeNo = new System.Windows.Forms.RadioButton();
-            this.textureDims = new CBRE.UI.UnitedNumericUpDown();
-            this.downscaleFactor = new CBRE.UI.UnitedNumericUpDown();
-            this.blurRadius = new CBRE.UI.UnitedNumericUpDown();
-            this.threadCount = new CBRE.UI.UnitedNumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
+            this.threadCount = new CBRE.UI.UnitedNumericUpDown();
+            this.blurRadius = new CBRE.UI.UnitedNumericUpDown();
+            this.downscaleFactor = new CBRE.UI.UnitedNumericUpDown();
+            this.textureDims = new CBRE.UI.UnitedNumericUpDown();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.textureDims)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textureDims)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(22, 15);
+            this.label2.Location = new System.Drawing.Point(21, 15);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 15);
+            this.label2.Size = new System.Drawing.Size(110, 15);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Texture dimensions";
+            this.label2.Text = "Texture Dimensions";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(33, 44);
+            this.label3.Location = new System.Drawing.Point(31, 44);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 15);
+            this.label3.Size = new System.Drawing.Size(100, 15);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Downscale factor";
+            this.label3.Text = "Downscale Factor";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(68, 73);
+            this.label4.Location = new System.Drawing.Point(65, 73);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(63, 15);
+            this.label4.Size = new System.Drawing.Size(66, 15);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Blur radius";
+            this.label4.Text = "Blur Radius";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(48, 132);
+            this.label5.Location = new System.Drawing.Point(46, 132);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(83, 15);
+            this.label5.Size = new System.Drawing.Size(85, 15);
             this.label5.TabIndex = 7;
-            this.label5.Text = "Ambient color";
+            this.label5.Text = "Ambient Color";
             // 
             // ambientRed
             // 
@@ -275,6 +275,93 @@
             this.modelBakeNo.Text = "No";
             this.modelBakeNo.UseVisualStyleBackColor = true;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(26, 102);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(105, 15);
+            this.label7.TabIndex = 24;
+            this.label7.Text = "Max Thread Count";
+            // 
+            // threadCount
+            // 
+            this.threadCount.AddSpace = true;
+            this.threadCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.threadCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.threadCount.Location = new System.Drawing.Point(137, 100);
+            this.threadCount.Maximum = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+            this.threadCount.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.threadCount.Name = "threadCount";
+            this.threadCount.SetCaretAtEnd = false;
+            this.threadCount.Size = new System.Drawing.Size(479, 23);
+            this.threadCount.TabIndex = 7;
+            this.threadCount.UnitText = "threads";
+            this.threadCount.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.threadCount.ValueChanged += new System.EventHandler(this.threadCount_ValueChanged);
+            // 
+            // blurRadius
+            // 
+            this.blurRadius.AddSpace = false;
+            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.blurRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.blurRadius.Location = new System.Drawing.Point(137, 71);
+            this.blurRadius.Maximum = new decimal(new int[] {
+            150,
+            0,
+            0,
+            0});
+            this.blurRadius.Name = "blurRadius";
+            this.blurRadius.SetCaretAtEnd = false;
+            this.blurRadius.Size = new System.Drawing.Size(479, 23);
+            this.blurRadius.TabIndex = 6;
+            this.blurRadius.UnitText = "px";
+            this.blurRadius.ValueChanged += new System.EventHandler(this.blurRadius_ValueChanged);
+            // 
+            // downscaleFactor
+            // 
+            this.downscaleFactor.AddSpace = false;
+            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.downscaleFactor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.downscaleFactor.Location = new System.Drawing.Point(137, 42);
+            this.downscaleFactor.Maximum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.downscaleFactor.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.downscaleFactor.Name = "downscaleFactor";
+            this.downscaleFactor.SetCaretAtEnd = false;
+            this.downscaleFactor.Size = new System.Drawing.Size(479, 23);
+            this.downscaleFactor.TabIndex = 5;
+            this.downscaleFactor.UnitText = "x";
+            this.downscaleFactor.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.downscaleFactor.ValueChanged += new System.EventHandler(this.downscaleFactor_ValueChanged);
+            // 
             // textureDims
             // 
             this.textureDims.AddSpace = false;
@@ -308,93 +395,6 @@
             0,
             0});
             this.textureDims.ValueChanged += new System.EventHandler(this.textureDims_ValueChanged);
-            // 
-            // downscaleFactor
-            // 
-            this.downscaleFactor.AddSpace = false;
-            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.downscaleFactor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.downscaleFactor.Location = new System.Drawing.Point(137, 42);
-            this.downscaleFactor.Maximum = new decimal(new int[] {
-            128,
-            0,
-            0,
-            0});
-            this.downscaleFactor.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.downscaleFactor.Name = "downscaleFactor";
-            this.downscaleFactor.SetCaretAtEnd = false;
-            this.downscaleFactor.Size = new System.Drawing.Size(479, 23);
-            this.downscaleFactor.TabIndex = 5;
-            this.downscaleFactor.UnitText = "x";
-            this.downscaleFactor.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.downscaleFactor.ValueChanged += new System.EventHandler(this.downscaleFactor_ValueChanged);
-            // 
-            // blurRadius
-            // 
-            this.blurRadius.AddSpace = false;
-            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.blurRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.blurRadius.Location = new System.Drawing.Point(137, 71);
-            this.blurRadius.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.blurRadius.Name = "blurRadius";
-            this.blurRadius.SetCaretAtEnd = false;
-            this.blurRadius.Size = new System.Drawing.Size(479, 23);
-            this.blurRadius.TabIndex = 6;
-            this.blurRadius.UnitText = "px";
-            this.blurRadius.ValueChanged += new System.EventHandler(this.blurRadius_ValueChanged);
-            // 
-            // threadCount
-            // 
-            this.threadCount.AddSpace = true;
-            this.threadCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.threadCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.threadCount.Location = new System.Drawing.Point(137, 100);
-            this.threadCount.Maximum = new decimal(new int[] {
-            256,
-            0,
-            0,
-            0});
-            this.threadCount.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.threadCount.Name = "threadCount";
-            this.threadCount.SetCaretAtEnd = false;
-            this.threadCount.Size = new System.Drawing.Size(479, 23);
-            this.threadCount.TabIndex = 7;
-            this.threadCount.UnitText = "threads";
-            this.threadCount.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.threadCount.ValueChanged += new System.EventHandler(this.threadCount_ValueChanged);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(26, 102);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(105, 15);
-            this.label7.TabIndex = 24;
-            this.label7.Text = "Max Thread Count";
             // 
             // ExportForm
             // 
@@ -432,10 +432,10 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
             this.Load += new System.EventHandler(this.ExportForm_Load);
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.textureDims)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textureDims)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
