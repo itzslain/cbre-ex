@@ -46,6 +46,11 @@ namespace CBRE.Editor.Compiling
             LightmapConfig.DownscaleFactor = (int) downscaleFactor.Value;
         }
 
+        private void threadCount_ValueChanged(object sender, EventArgs e)
+        {
+            LightmapConfig.MaxThreadCount = (int)threadCount.Value;
+        }
+
         private string SaveFileName = "";
         private void render_Click(object sender, EventArgs e)
         {
@@ -220,6 +225,7 @@ namespace CBRE.Editor.Compiling
                 textureDims.Enabled = !enabled;
                 downscaleFactor.Enabled = !enabled;
                 blurRadius.Enabled = !enabled;
+                threadCount.Enabled = !enabled;
 
                 ambientRed.Enabled = !enabled;
                 ambientGreen.Enabled = !enabled;
@@ -338,6 +344,8 @@ namespace CBRE.Editor.Compiling
             downscaleFactor.Value = (decimal)LightmapConfig.DownscaleFactor;
 
             blurRadius.Value = LightmapConfig.BlurRadius;
+
+            threadCount.Value = LightmapConfig.MaxThreadCount;
 
             viewAfterCheckbox.Checked = LightmapConfig.ViewAfterExport;
 

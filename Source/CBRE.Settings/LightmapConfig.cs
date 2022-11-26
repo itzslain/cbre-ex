@@ -1,4 +1,6 @@
-﻿namespace CBRE.Settings
+﻿using System;
+
+namespace CBRE.Settings
 {
     public class LightmapConfig
     {
@@ -6,6 +8,7 @@
         public static int PlaneMargin { get; set; }
         public static int TextureDims { get; set; }
         public static int BlurRadius { get; set; }
+        public static int MaxThreadCount { get; set; }
 
         public static int AmbientColorR { get; set; }
         public static int AmbientColorG { get; set; }
@@ -24,6 +27,8 @@
             PlaneMargin = 1;
             TextureDims = 512;
             BlurRadius = 2;
+
+            MaxThreadCount = Math.Min(256, Math.Max(Environment.ProcessorCount, 2));
 
             AmbientColorR = 30;
             AmbientColorG = 30;

@@ -38,7 +38,6 @@ namespace CBRE.Editor.Compiling.Lightmap
         }
 
         public static List<Thread> FaceRenderThreads { get; private set; }
-        private static int UsableThreadCount = System.Environment.ProcessorCount;
         private static List<LMThreadException> threadExceptions;
 
         private static void UpdateProgress(ExportForm exportForm, string msg, float progress)
@@ -337,13 +336,12 @@ namespace CBRE.Editor.Compiling.Lightmap
                 }
             }
 
-            Debug.WriteLine($"Lightmapper Threads: {UsableThreadCount} threads");
-
             int faceNum = 0;
+            UpdateProgress(exportForm, $"Using {LightmapConfig.MaxThreadCount} threads to render", 0.05f);
             UpdateProgress(exportForm, "Started calculating brightness levels...", 0.05f);
             while (FaceRenderThreads.Count > 0)
             {
-                for (int i = 0; i < UsableThreadCount; i++)
+                for (int i = 0; i < LightmapConfig.MaxThreadCount; i++)
                 {
                     if (i >= FaceRenderThreads.Count) break;
                     if (FaceRenderThreads[i].ThreadState == ThreadState.Unstarted)

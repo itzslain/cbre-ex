@@ -47,10 +47,13 @@
             this.textureDims = new CBRE.UI.UnitedNumericUpDown();
             this.downscaleFactor = new CBRE.UI.UnitedNumericUpDown();
             this.blurRadius = new CBRE.UI.UnitedNumericUpDown();
+            this.threadCount = new CBRE.UI.UnitedNumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textureDims)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
@@ -87,7 +90,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(48, 102);
+            this.label5.Location = new System.Drawing.Point(48, 132);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(83, 15);
             this.label5.TabIndex = 7;
@@ -96,7 +99,7 @@
             // ambientRed
             // 
             this.ambientRed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.ambientRed.Location = new System.Drawing.Point(137, 100);
+            this.ambientRed.Location = new System.Drawing.Point(137, 129);
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
@@ -106,7 +109,7 @@
             // ambientGreen
             // 
             this.ambientGreen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ambientGreen.Location = new System.Drawing.Point(184, 100);
+            this.ambientGreen.Location = new System.Drawing.Point(184, 129);
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
@@ -116,7 +119,7 @@
             // ambientBlue
             // 
             this.ambientBlue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.ambientBlue.Location = new System.Drawing.Point(231, 100);
+            this.ambientBlue.Location = new System.Drawing.Point(231, 129);
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
@@ -128,7 +131,7 @@
             this.render.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.render.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.render.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.render.Location = new System.Drawing.Point(12, 406);
+            this.render.Location = new System.Drawing.Point(12, 413);
             this.render.Name = "render";
             this.render.Size = new System.Drawing.Size(75, 23);
             this.render.TabIndex = 13;
@@ -142,7 +145,7 @@
             this.cancel.Enabled = false;
             this.cancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancel.Location = new System.Drawing.Point(541, 406);
+            this.cancel.Location = new System.Drawing.Point(541, 413);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 16;
@@ -155,7 +158,7 @@
             this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressBar.Enabled = false;
-            this.ProgressBar.Location = new System.Drawing.Point(12, 377);
+            this.ProgressBar.Location = new System.Drawing.Point(12, 384);
             this.ProgressBar.Maximum = 10000;
             this.ProgressBar.Name = "ProgressBar";
             this.ProgressBar.Size = new System.Drawing.Size(604, 23);
@@ -165,7 +168,7 @@
             // 
             this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.ambientColorBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ambientColorBox.Location = new System.Drawing.Point(298, 102);
+            this.ambientColorBox.Location = new System.Drawing.Point(298, 131);
             this.ambientColorBox.Name = "ambientColorBox";
             this.ambientColorBox.Size = new System.Drawing.Size(42, 18);
             this.ambientColorBox.TabIndex = 16;
@@ -181,7 +184,7 @@
             this.ProgressLog.Location = new System.Drawing.Point(0, 0);
             this.ProgressLog.Name = "ProgressLog";
             this.ProgressLog.ReadOnly = true;
-            this.ProgressLog.Size = new System.Drawing.Size(602, 210);
+            this.ProgressLog.Size = new System.Drawing.Size(602, 188);
             this.ProgressLog.TabIndex = 17;
             this.ProgressLog.Text = "";
             // 
@@ -190,7 +193,7 @@
             this.export.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.export.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.export.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.export.Location = new System.Drawing.Point(93, 406);
+            this.export.Location = new System.Drawing.Point(93, 413);
             this.export.Name = "export";
             this.export.Size = new System.Drawing.Size(75, 23);
             this.export.TabIndex = 14;
@@ -202,7 +205,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(278, 103);
+            this.label6.Location = new System.Drawing.Point(278, 132);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(14, 13);
             this.label6.TabIndex = 19;
@@ -215,10 +218,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.ProgressLog);
-            this.panel1.Location = new System.Drawing.Point(12, 158);
+            this.panel1.Location = new System.Drawing.Point(12, 187);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(604, 212);
+            this.panel1.Size = new System.Drawing.Size(604, 190);
             this.panel1.TabIndex = 20;
             // 
             // viewAfterCheckbox
@@ -226,7 +229,7 @@
             this.viewAfterCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.viewAfterCheckbox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.viewAfterCheckbox.Location = new System.Drawing.Point(174, 407);
+            this.viewAfterCheckbox.Location = new System.Drawing.Point(174, 414);
             this.viewAfterCheckbox.Name = "viewAfterCheckbox";
             this.viewAfterCheckbox.Size = new System.Drawing.Size(361, 23);
             this.viewAfterCheckbox.TabIndex = 15;
@@ -238,7 +241,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 131);
+            this.label1.Location = new System.Drawing.Point(12, 160);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(119, 15);
             this.label1.TabIndex = 22;
@@ -248,7 +251,7 @@
             // 
             this.modelBakeYes.AutoSize = true;
             this.modelBakeYes.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.modelBakeYes.Location = new System.Drawing.Point(137, 129);
+            this.modelBakeYes.Location = new System.Drawing.Point(137, 158);
             this.modelBakeYes.Margin = new System.Windows.Forms.Padding(3, 3, 3, 6);
             this.modelBakeYes.Name = "modelBakeYes";
             this.modelBakeYes.Size = new System.Drawing.Size(42, 19);
@@ -263,7 +266,7 @@
             this.modelBakeNo.AutoSize = true;
             this.modelBakeNo.Checked = true;
             this.modelBakeNo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.modelBakeNo.Location = new System.Drawing.Point(185, 129);
+            this.modelBakeNo.Location = new System.Drawing.Point(185, 158);
             this.modelBakeNo.Margin = new System.Windows.Forms.Padding(3, 3, 3, 6);
             this.modelBakeNo.Name = "modelBakeNo";
             this.modelBakeNo.Size = new System.Drawing.Size(41, 19);
@@ -275,6 +278,8 @@
             // textureDims
             // 
             this.textureDims.AddSpace = false;
+            this.textureDims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textureDims.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textureDims.Increment = new decimal(new int[] {
             32,
@@ -307,6 +312,8 @@
             // downscaleFactor
             // 
             this.downscaleFactor.AddSpace = false;
+            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.downscaleFactor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.downscaleFactor.Location = new System.Drawing.Point(137, 42);
             this.downscaleFactor.Maximum = new decimal(new int[] {
@@ -334,6 +341,8 @@
             // blurRadius
             // 
             this.blurRadius.AddSpace = false;
+            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.blurRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.blurRadius.Location = new System.Drawing.Point(137, 71);
             this.blurRadius.Maximum = new decimal(new int[] {
@@ -348,11 +357,52 @@
             this.blurRadius.UnitText = "px";
             this.blurRadius.ValueChanged += new System.EventHandler(this.blurRadius_ValueChanged);
             // 
+            // threadCount
+            // 
+            this.threadCount.AddSpace = true;
+            this.threadCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.threadCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.threadCount.Location = new System.Drawing.Point(137, 100);
+            this.threadCount.Maximum = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+            this.threadCount.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.threadCount.Name = "threadCount";
+            this.threadCount.SetCaretAtEnd = false;
+            this.threadCount.Size = new System.Drawing.Size(479, 23);
+            this.threadCount.TabIndex = 7;
+            this.threadCount.UnitText = "threads";
+            this.threadCount.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.threadCount.ValueChanged += new System.EventHandler(this.threadCount_ValueChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(26, 102);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(105, 15);
+            this.label7.TabIndex = 24;
+            this.label7.Text = "Max Thread Count";
+            // 
             // ExportForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(628, 441);
+            this.ClientSize = new System.Drawing.Size(628, 448);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.threadCount);
             this.Controls.Add(this.blurRadius);
             this.Controls.Add(this.downscaleFactor);
             this.Controls.Add(this.textureDims);
@@ -385,6 +435,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.textureDims)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -414,5 +465,7 @@
         private CBRE.UI.UnitedNumericUpDown textureDims;
         private CBRE.UI.UnitedNumericUpDown downscaleFactor;
         private CBRE.UI.UnitedNumericUpDown blurRadius;
+        private CBRE.UI.UnitedNumericUpDown threadCount;
+        private System.Windows.Forms.Label label7;
     }
 }
