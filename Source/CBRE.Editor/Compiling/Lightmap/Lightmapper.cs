@@ -15,6 +15,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using CBRE.DataStructures.Models;
+using CBRE.Editor.Extensions;
+using CBRE.Extensions;
+using CBRE.Providers.Model;
 using ThreadState = System.Threading.ThreadState;
 
 namespace CBRE.Editor.Compiling.Lightmap
@@ -152,6 +156,9 @@ namespace CBRE.Editor.Compiling.Lightmap
             faces = new List<LMFace>();
             List<Light> lightEntities = new List<Light>();
 
+            IEnumerable<Entity> modelEntities = map.WorldSpawn
+                .Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
+
             threadExceptions = new List<LMThreadException>();
 
             List<LightmapGroup> lmGroups = new List<LightmapGroup>();
@@ -170,6 +177,78 @@ namespace CBRE.Editor.Compiling.Lightmap
                     LMFace face = new LMFace(tface, solid);
                     if (tface.Texture.Name.ToLowerInvariant() != "tooltextures/block_light") continue;
                     exclusiveBlockers.Add(face);
+                }
+            }
+
+            map.UpdateModels(document);
+
+            Dictionary<string, ModelReference> modelReferences = document.GetMemory<Dictionary<string, ModelReference>>("ModelCache");
+
+            foreach (Entity model in modelEntities)
+            {
+                Coordinate euler = model.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                Coordinate scale = model.EntityData.GetPropertyCoordinate("scale", Coordinate.One);
+                Matrix modelMatrix = Matrix.Translation(model.Origin)
+                                  * Matrix.RotationX(DMath.DegreesToRadians(euler.X))
+                                  * Matrix.RotationY(DMath.DegreesToRadians(euler.Z))
+                                  * Matrix.RotationZ(DMath.DegreesToRadians(-euler.Y))
+                                  * Matrix.Scale(scale.XZY());
+
+                string modelValue = model.EntityData.GetPropertyValue("file");
+
+                if (!modelReferences.ContainsKey(modelValue)) continue;
+
+                ModelReference modelReference = modelReferences[modelValue];
+
+                List<MatrixF> modelTransforms = modelReference.Model.GetTransforms();
+                IEnumerable<IGrouping<int, Mesh>> meshGroups = modelReference.Model.GetActiveMeshes().GroupBy(x => x.SkinRef);
+
+                foreach (IGrouping<int, Mesh> meshGroup in meshGroups)
+                {
+                    Texture texture = modelReference.Model.Textures[meshGroup.Key];
+
+                    foreach (Mesh mesh in meshGroup)
+                    {
+                        Face tFace = new Face(0);
+
+                        tFace.Texture.Name = System.IO.Path.GetFileNameWithoutExtension(texture.Name);
+                        tFace.Texture.Texture = texture.TextureObject;
+                        tFace.Plane = new Plane(Coordinate.UnitY, 1.0m);
+                        tFace.BoundingBox = Box.Empty;
+
+                        Face mFace = tFace.Clone();
+
+                        IEnumerable<Vertex> vertices = mesh.Vertices.Select(x => new Vertex(new Coordinate(x.Location *
+                            modelTransforms[x.BoneWeightings.First().Bone.BoneIndex]) * modelMatrix, mFace)
+                        {
+                            TextureU = (decimal)x.TextureU,
+                            TextureV = (decimal)x.TextureV
+                        });
+
+                        for (int i = 0; i < mesh.Vertices.Count; i += 3)
+                        {
+                            tFace.Vertices.Clear();
+                            tFace.Vertices.Add(vertices.ElementAt(i));
+                            tFace.Vertices.Add(vertices.ElementAt(i + 1));
+                            tFace.Vertices.Add(vertices.ElementAt(i + 2));
+
+                            tFace.Plane = new Plane(tFace.Vertices[0].Location, tFace.Vertices[1].Location, tFace.Vertices[2].Location);
+                            tFace.Vertices.ForEach(v =>
+                            {
+                                v.LMU = -500.0f; 
+                                v.LMV = -500.0f;
+                            });
+
+                            tFace.UpdateBoundingBox();
+
+                            LMFace lmFace = new LMFace(tFace.Clone(), null);
+
+                            lmFace.CastsShadows = true;
+                            lmFace.UpdateBoundingBox();
+
+                            exclusiveBlockers.Add(lmFace);
+                        }
+                    }
                 }
             }
 
