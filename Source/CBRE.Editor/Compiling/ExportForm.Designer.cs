@@ -28,9 +28,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.textureDims = new System.Windows.Forms.TextBox();
-            this.downscaleFactor = new System.Windows.Forms.TextBox();
-            this.blurRadius = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.ambientRed = new System.Windows.Forms.TextBox();
             this.ambientGreen = new System.Windows.Forms.TextBox();
@@ -47,7 +44,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.modelBakeYes = new System.Windows.Forms.RadioButton();
             this.modelBakeNo = new System.Windows.Forms.RadioButton();
+            this.textureDims = new CBRE.UI.UnitedNumericUpDown();
+            this.downscaleFactor = new CBRE.UI.UnitedNumericUpDown();
+            this.blurRadius = new CBRE.UI.UnitedNumericUpDown();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textureDims)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
@@ -80,39 +83,6 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "Blur radius";
             // 
-            // textureDims
-            // 
-            this.textureDims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textureDims.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textureDims.Location = new System.Drawing.Point(137, 12);
-            this.textureDims.Name = "textureDims";
-            this.textureDims.Size = new System.Drawing.Size(478, 23);
-            this.textureDims.TabIndex = 4;
-            this.textureDims.LostFocus += new System.EventHandler(this.textureDims_LostFocus);
-            // 
-            // downscaleFactor
-            // 
-            this.downscaleFactor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.downscaleFactor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.downscaleFactor.Location = new System.Drawing.Point(137, 41);
-            this.downscaleFactor.Name = "downscaleFactor";
-            this.downscaleFactor.Size = new System.Drawing.Size(478, 23);
-            this.downscaleFactor.TabIndex = 5;
-            this.downscaleFactor.LostFocus += new System.EventHandler(this.downscaleFactor_LostFocus);
-            // 
-            // blurRadius
-            // 
-            this.blurRadius.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.blurRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.blurRadius.Location = new System.Drawing.Point(137, 70);
-            this.blurRadius.Name = "blurRadius";
-            this.blurRadius.Size = new System.Drawing.Size(478, 23);
-            this.blurRadius.TabIndex = 6;
-            this.blurRadius.LostFocus += new System.EventHandler(this.blurRadius_LostFocus);
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -126,7 +96,7 @@
             // ambientRed
             // 
             this.ambientRed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.ambientRed.Location = new System.Drawing.Point(137, 99);
+            this.ambientRed.Location = new System.Drawing.Point(137, 100);
             this.ambientRed.Name = "ambientRed";
             this.ambientRed.Size = new System.Drawing.Size(41, 20);
             this.ambientRed.TabIndex = 8;
@@ -136,7 +106,7 @@
             // ambientGreen
             // 
             this.ambientGreen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ambientGreen.Location = new System.Drawing.Point(184, 99);
+            this.ambientGreen.Location = new System.Drawing.Point(184, 100);
             this.ambientGreen.Name = "ambientGreen";
             this.ambientGreen.Size = new System.Drawing.Size(41, 20);
             this.ambientGreen.TabIndex = 9;
@@ -146,7 +116,7 @@
             // ambientBlue
             // 
             this.ambientBlue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.ambientBlue.Location = new System.Drawing.Point(231, 99);
+            this.ambientBlue.Location = new System.Drawing.Point(231, 100);
             this.ambientBlue.Name = "ambientBlue";
             this.ambientBlue.Size = new System.Drawing.Size(41, 20);
             this.ambientBlue.TabIndex = 10;
@@ -195,7 +165,7 @@
             // 
             this.ambientColorBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.ambientColorBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ambientColorBox.Location = new System.Drawing.Point(298, 101);
+            this.ambientColorBox.Location = new System.Drawing.Point(298, 102);
             this.ambientColorBox.Name = "ambientColorBox";
             this.ambientColorBox.Size = new System.Drawing.Size(42, 18);
             this.ambientColorBox.TabIndex = 16;
@@ -211,7 +181,7 @@
             this.ProgressLog.Location = new System.Drawing.Point(0, 0);
             this.ProgressLog.Name = "ProgressLog";
             this.ProgressLog.ReadOnly = true;
-            this.ProgressLog.Size = new System.Drawing.Size(602, 212);
+            this.ProgressLog.Size = new System.Drawing.Size(602, 210);
             this.ProgressLog.TabIndex = 17;
             this.ProgressLog.Text = "";
             // 
@@ -245,10 +215,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.ProgressLog);
-            this.panel1.Location = new System.Drawing.Point(12, 156);
+            this.panel1.Location = new System.Drawing.Point(12, 158);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(604, 214);
+            this.panel1.Size = new System.Drawing.Size(604, 212);
             this.panel1.TabIndex = 20;
             // 
             // viewAfterCheckbox
@@ -268,7 +238,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 130);
+            this.label1.Location = new System.Drawing.Point(12, 131);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(119, 15);
             this.label1.TabIndex = 22;
@@ -278,7 +248,7 @@
             // 
             this.modelBakeYes.AutoSize = true;
             this.modelBakeYes.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.modelBakeYes.Location = new System.Drawing.Point(137, 128);
+            this.modelBakeYes.Location = new System.Drawing.Point(137, 129);
             this.modelBakeYes.Margin = new System.Windows.Forms.Padding(3, 3, 3, 6);
             this.modelBakeYes.Name = "modelBakeYes";
             this.modelBakeYes.Size = new System.Drawing.Size(42, 19);
@@ -293,7 +263,7 @@
             this.modelBakeNo.AutoSize = true;
             this.modelBakeNo.Checked = true;
             this.modelBakeNo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.modelBakeNo.Location = new System.Drawing.Point(185, 128);
+            this.modelBakeNo.Location = new System.Drawing.Point(185, 129);
             this.modelBakeNo.Margin = new System.Windows.Forms.Padding(3, 3, 3, 6);
             this.modelBakeNo.Name = "modelBakeNo";
             this.modelBakeNo.Size = new System.Drawing.Size(41, 19);
@@ -302,11 +272,90 @@
             this.modelBakeNo.Text = "No";
             this.modelBakeNo.UseVisualStyleBackColor = true;
             // 
+            // textureDims
+            // 
+            this.textureDims.AddSpace = false;
+            this.textureDims.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textureDims.Increment = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.textureDims.Location = new System.Drawing.Point(137, 13);
+            this.textureDims.Maximum = new decimal(new int[] {
+            4096,
+            0,
+            0,
+            0});
+            this.textureDims.Minimum = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.textureDims.Name = "textureDims";
+            this.textureDims.SetCaretAtEnd = false;
+            this.textureDims.Size = new System.Drawing.Size(479, 23);
+            this.textureDims.TabIndex = 4;
+            this.textureDims.UnitText = "px";
+            this.textureDims.Value = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.textureDims.ValueChanged += new System.EventHandler(this.textureDims_ValueChanged);
+            // 
+            // downscaleFactor
+            // 
+            this.downscaleFactor.AddSpace = false;
+            this.downscaleFactor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.downscaleFactor.Location = new System.Drawing.Point(137, 42);
+            this.downscaleFactor.Maximum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.downscaleFactor.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.downscaleFactor.Name = "downscaleFactor";
+            this.downscaleFactor.SetCaretAtEnd = false;
+            this.downscaleFactor.Size = new System.Drawing.Size(479, 23);
+            this.downscaleFactor.TabIndex = 5;
+            this.downscaleFactor.UnitText = "x";
+            this.downscaleFactor.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.downscaleFactor.ValueChanged += new System.EventHandler(this.downscaleFactor_ValueChanged);
+            // 
+            // blurRadius
+            // 
+            this.blurRadius.AddSpace = false;
+            this.blurRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.blurRadius.Location = new System.Drawing.Point(137, 71);
+            this.blurRadius.Maximum = new decimal(new int[] {
+            150,
+            0,
+            0,
+            0});
+            this.blurRadius.Name = "blurRadius";
+            this.blurRadius.SetCaretAtEnd = false;
+            this.blurRadius.Size = new System.Drawing.Size(479, 23);
+            this.blurRadius.TabIndex = 6;
+            this.blurRadius.UnitText = "px";
+            this.blurRadius.ValueChanged += new System.EventHandler(this.blurRadius_ValueChanged);
+            // 
             // ExportForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(628, 441);
+            this.Controls.Add(this.blurRadius);
+            this.Controls.Add(this.downscaleFactor);
+            this.Controls.Add(this.textureDims);
             this.Controls.Add(this.modelBakeNo);
             this.Controls.Add(this.modelBakeYes);
             this.Controls.Add(this.label1);
@@ -322,9 +371,6 @@
             this.Controls.Add(this.ambientGreen);
             this.Controls.Add(this.ambientRed);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.blurRadius);
-            this.Controls.Add(this.downscaleFactor);
-            this.Controls.Add(this.textureDims);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -336,6 +382,9 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
             this.Load += new System.EventHandler(this.ExportForm_Load);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.textureDims)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.downscaleFactor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.blurRadius)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -347,9 +396,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textureDims;
-        private System.Windows.Forms.TextBox downscaleFactor;
-        private System.Windows.Forms.TextBox blurRadius;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox ambientRed;
         private System.Windows.Forms.TextBox ambientGreen;
@@ -365,5 +411,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton modelBakeYes;
         private System.Windows.Forms.RadioButton modelBakeNo;
+        private CBRE.UI.UnitedNumericUpDown textureDims;
+        private CBRE.UI.UnitedNumericUpDown downscaleFactor;
+        private CBRE.UI.UnitedNumericUpDown blurRadius;
     }
 }

@@ -31,43 +31,19 @@ namespace CBRE.Editor.Compiling
             exportForm = this;
         }
 
-        private void textureDims_LostFocus(object sender, EventArgs e)
+        private void textureDims_ValueChanged(object sender, EventArgs e)
         {
-            int dims = -1; int.TryParse(((TextBox)sender).Text, out dims);
-            if (dims >= 512 && dims <= 4096)
-            {
-                LightmapConfig.TextureDims = dims;
-            }
-            else
-            {
-                ((TextBox)sender).Text = LightmapConfig.TextureDims.ToString();
-            }
+            LightmapConfig.TextureDims = (int)textureDims.Value;
         }
 
-        private void downscaleFactor_LostFocus(object sender, EventArgs e)
+        private void blurRadius_ValueChanged(object sender, EventArgs e)
         {
-            float factor = -1; float.TryParse(((TextBox)sender).Text, out factor);
-            if (factor >= 1 && factor <= 128)
-            {
-                LightmapConfig.DownscaleFactor = factor;
-            }
-            else
-            {
-                ((TextBox)sender).Text = LightmapConfig.DownscaleFactor.ToString();
-            }
+            LightmapConfig.BlurRadius = (int)blurRadius.Value;
         }
 
-        private void blurRadius_LostFocus(object sender, EventArgs e)
+        private void downscaleFactor_ValueChanged(object sender, EventArgs e)
         {
-            int radius = -1; int.TryParse(((TextBox)sender).Text, out radius);
-            if (radius >= 0 && radius <= 150)
-            {
-                LightmapConfig.BlurRadius = radius;
-            }
-            else
-            {
-                ((TextBox)sender).Text = LightmapConfig.BlurRadius.ToString();
-            }
+            LightmapConfig.DownscaleFactor = (int) downscaleFactor.Value;
         }
 
         private string SaveFileName = "";
@@ -357,11 +333,11 @@ namespace CBRE.Editor.Compiling
 
             ambientColorBox.BackColor = Color.FromArgb(LightmapConfig.AmbientColorR, LightmapConfig.AmbientColorG, LightmapConfig.AmbientColorB);
 
-            textureDims.Text = LightmapConfig.TextureDims.ToString();
+            textureDims.Value = LightmapConfig.TextureDims;
 
-            downscaleFactor.Text = LightmapConfig.DownscaleFactor.ToString();
+            downscaleFactor.Value = (decimal)LightmapConfig.DownscaleFactor;
 
-            blurRadius.Text = LightmapConfig.BlurRadius.ToString();
+            blurRadius.Value = LightmapConfig.BlurRadius;
 
             viewAfterCheckbox.Checked = LightmapConfig.ViewAfterExport;
 

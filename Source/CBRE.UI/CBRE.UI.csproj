@@ -79,6 +79,9 @@
     <Compile Include="ReadOnlyTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UnitedNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Viewport2D.cs">
       <SubType>UserControl</SubType>
     </Compile>
