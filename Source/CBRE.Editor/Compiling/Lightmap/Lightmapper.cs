@@ -164,10 +164,15 @@ namespace CBRE.Editor.Compiling.Lightmap
             List<LMFace> exclusiveBlockers = new List<LMFace>();
 
             //get faces
-            UpdateProgress(exportForm, "Determining UV coordinates...", 0);
+            UpdateProgress(exportForm, "Finding faces and determining UV coordinates...", 0);
             LMFace.FindFacesAndGroups(map, out faces, out lmGroups);
 
             if (!lmGroups.Any()) { throw new Exception("No lightmap groups!"); }
+
+            int blockerCount = 0;
+            int modelBlockerCount = 0;
+
+            UpdateProgress(exportForm, "Finding light blocker brushes...", 0.02f);
 
             foreach (Solid solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
             {
@@ -175,12 +180,15 @@ namespace CBRE.Editor.Compiling.Lightmap
                 {
                     LMFace face = new LMFace(tface, solid);
                     if (tface.Texture.Name.ToLowerInvariant() != "tooltextures/block_light") continue;
+                    blockerCount++;
                     exclusiveBlockers.Add(face);
                 }
             }
 
             if (LightmapConfig.BakeModelShadows)
             {
+                UpdateProgress(exportForm, "Finding model faces...", 0.03f);
+
                 map.UpdateModels(document);
 
                 Dictionary<string, ModelReference> modelReferences = document.GetMemory<Dictionary<string, ModelReference>>("ModelCache");
@@ -247,6 +255,8 @@ namespace CBRE.Editor.Compiling.Lightmap
                                 lmFace.CastsShadows = true;
                                 lmFace.UpdateBoundingBox();
 
+                                modelBlockerCount++;
+
                                 exclusiveBlockers.Add(lmFace);
                             }
                         }
@@ -269,6 +279,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                 }
             }
 
+            UpdateProgress(exportForm, "Sorting lightmap groups...", 0.03f);
             //put the faces into the bitmap
             lmGroups.Sort((x, y) =>
             {
@@ -291,6 +302,7 @@ namespace CBRE.Editor.Compiling.Lightmap
 
             FaceRenderThreads = new List<Thread>();
 
+            UpdateProgress(exportForm, "Finding light entities...", 0.04f);
             Light.FindLights(map, out lightEntities);
 
             List<LMFace> allBlockers = lmGroups.Select(q => q.Faces).SelectMany(q => q).Where(f => f.CastsShadows).Union(exclusiveBlockers).ToList();
@@ -337,7 +349,16 @@ namespace CBRE.Editor.Compiling.Lightmap
             }
 
             int faceNum = 0;
-            UpdateProgress(exportForm, $"Using {LightmapConfig.MaxThreadCount} threads to render", 0.05f);
+
+            if (LightmapConfig.BakeModelShadows)
+            {
+                UpdateProgress(exportForm, $"Found {blockerCount + modelBlockerCount} blockers, {blockerCount} which are from brushes, and {modelBlockerCount} from models", 0.05f);
+            }
+            else
+            {
+                UpdateProgress(exportForm, $"Found {blockerCount} blockers from brushes.", 0.05f);
+            }
+            
             UpdateProgress(exportForm, "Started calculating brightness levels...", 0.05f);
             while (FaceRenderThreads.Count > 0)
             {
