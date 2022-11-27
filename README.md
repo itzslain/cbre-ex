@@ -10,9 +10,8 @@
   ![GitHub Repo stars](https://img.shields.io/github/stars/aestheticalz/cbre-ex?label=Stargazers&style=flat-square)
 </div>
 
-> OMGGGG!!!!! IT DOESNT HAVE MODEL BAKING YET WHAAAAT????? THIS SUCKS!!!
-
-CBRE-EX is a fork of CBRE that adds a bunch of quality-of-life features.
+CBRE-EX is a fork of CBRE that adds a bunch of quality-of-life features, and the long-awaited model baking.  
+It was created because the development of the original CBRE has ceased completely.
 
 <div align="center"><h2>Download</h2></div>
 
@@ -25,10 +24,10 @@ CBRE-EX has an automatic updater, so this is probably the only time you will nee
 The Editor is licensed under the GNU General Public License, version 2.0.  
 All other components are licensed under the GNU Lesser General Public License, version 2.1, unless otherwise stated.
 
-Editor sidebar icons are taken from Sledge, which is licensed under BSD-3.   
-Editor logo is a modified version of the SCP Wiki logo, which is licensed under the CC-BY-SA 3.0 license.
+Editor sidebar icons are taken from **Sledge**, which is licensed under BSD-3.   
+Editor logo is a modified version of **The SCP Foundation** Wiki logo, which is licensed under the CC-BY-SA 3.0 license.
 
 <div align="center"><h2>External Repositories</h2></div>
 
-You can find the source code for Sledge at https://github.com/LogicAndTrick/sledge  
-You can find the source code of the original CBRE at https://github.com/SCP-CBN/cbre
+You can find the source code for **Sledge** at https://github.com/LogicAndTrick/sledge  
+You can find the source code of the **original CBRE** at https://github.com/SCP-CBN/cbre
