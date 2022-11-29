@@ -200,7 +200,7 @@ namespace CBRE.Editor.Compiling.Lightmap
                     Matrix modelMatrix = Matrix.Translation(model.Origin)
                                       * Matrix.RotationX(DMath.DegreesToRadians(euler.X))
                                       * Matrix.RotationY(DMath.DegreesToRadians(euler.Z))
-                                      * Matrix.RotationZ(DMath.DegreesToRadians(-euler.Y))
+                                      * Matrix.RotationZ(DMath.DegreesToRadians(euler.Y))
                                       * Matrix.Scale(scale.XZY());
 
                     string modelValue = model.EntityData.GetPropertyValue("file");
