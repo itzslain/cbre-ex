@@ -227,19 +227,19 @@ namespace CBRE.Editor.Compiling.Lightmap
 
                             Face mFace = tFace.Clone();
 
-                            IEnumerable<Vertex> vertices = mesh.Vertices.Select(x => new Vertex(new Coordinate(x.Location *
-                                modelTransforms[x.BoneWeightings.First().Bone.BoneIndex]) * modelMatrix, mFace)
+                            List<Vertex> vertices = mesh.Vertices.Select(x => new Vertex(new Coordinate(x.Location *
+                                                                                                        modelTransforms[x.BoneWeightings.First().Bone.BoneIndex]) * modelMatrix, mFace)
                             {
                                 TextureU = (decimal)x.TextureU,
                                 TextureV = (decimal)x.TextureV
-                            });
+                            }).ToList();
 
                             for (int i = 0; i < mesh.Vertices.Count; i += 3)
                             {
                                 tFace.Vertices.Clear();
-                                tFace.Vertices.Add(vertices.ElementAt(i));
-                                tFace.Vertices.Add(vertices.ElementAt(i + 1));
-                                tFace.Vertices.Add(vertices.ElementAt(i + 2));
+                                tFace.Vertices.Add(vertices[i]);
+                                tFace.Vertices.Add(vertices[i + 1]);
+                                tFace.Vertices.Add(vertices[i + 2]);
 
                                 tFace.Plane = new Plane(tFace.Vertices[0].Location, tFace.Vertices[1].Location, tFace.Vertices[2].Location);
                                 tFace.Vertices.ForEach(v =>
