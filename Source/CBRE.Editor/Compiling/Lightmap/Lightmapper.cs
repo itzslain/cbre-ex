@@ -19,6 +19,7 @@ using CBRE.DataStructures.Models;
 using CBRE.Editor.Extensions;
 using CBRE.Extensions;
 using CBRE.Providers.Model;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using ThreadState = System.Threading.ThreadState;
 
 namespace CBRE.Editor.Compiling.Lightmap
@@ -58,6 +59,14 @@ namespace CBRE.Editor.Compiling.Lightmap
                 exportForm.ProgressLog.Invoke((MethodInvoker)(() => exportForm.ProgressLog.AppendText("\n" + msg)));
             }
             exportForm.ProgressBar.Invoke((MethodInvoker)(() => exportForm.ProgressBar.Value = (int)(progress * 10000)));
+            exportForm.ProgressBar.Invoke((MethodInvoker) (() =>
+                TaskbarManager.Instance.SetProgressValue((int)(progress * 10000), 10000)));
+
+            if (progress == 1.0f)
+            {
+                exportForm.ProgressBar.Invoke((MethodInvoker)(() => TaskbarManager.Instance.SetProgressValue(0, 10000)));
+                exportForm.ProgressBar.Invoke((MethodInvoker)(() => TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, exportForm.Handle)));
+            }
         }
 
 

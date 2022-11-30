@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace CBRE.Editor.Compiling
 {
@@ -294,6 +295,8 @@ namespace CBRE.Editor.Compiling
 
                 ProgressLog.Invoke((MethodInvoker)(() => ProgressLog.AppendText("\nCancelled by the user")));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
+                ProgressBar.Invoke((MethodInvoker)(() => TaskbarManager.Instance.SetProgressValue(0, 10000)));
+                ProgressBar.Invoke((MethodInvoker)(() => TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, this.Handle)));
             }
             catch (Exception e)
             {
@@ -306,6 +309,8 @@ namespace CBRE.Editor.Compiling
                     ProgressLog.SelectionColor = ProgressLog.ForeColor;
                 }));
                 ProgressBar.Invoke((MethodInvoker)(() => ProgressBar.Value = 0));
+                ProgressBar.Invoke((MethodInvoker)(() => TaskbarManager.Instance.SetProgressValue(0, 10000)));
+                ProgressBar.Invoke((MethodInvoker)(() => TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, this.Handle)));
             }
             finally
             {
