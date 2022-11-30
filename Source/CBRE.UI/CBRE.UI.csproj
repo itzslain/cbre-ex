@@ -54,10 +54,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.Compatibility, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenTK.Compatibility.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK.GLControl, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.GLControl.dll</HintPath>
@@ -66,10 +62,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FrameInfo.cs" />
@@ -108,10 +100,6 @@
     <ProjectReference Include="..\CBRE.Graphics\CBRE.Graphics.csproj">
       <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
       <Name>CBRE.Graphics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CBRE.Providers\CBRE.Providers.csproj">
-      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
-      <Name>CBRE.Providers</Name>
     </ProjectReference>
     <ProjectReference Include="..\CBRE.Settings\CBRE.Settings.csproj">
       <Project>{a79ff02f-3eaa-4ff1-a060-2e2ffe983ef3}</Project>

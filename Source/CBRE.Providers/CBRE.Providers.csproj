@@ -47,18 +47,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=0.9.9.3, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameData\FgdProvider.cs" />
@@ -107,10 +98,6 @@
     <ProjectReference Include="..\CBRE.Graphics\CBRE.Graphics.csproj">
       <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
       <Name>CBRE.Graphics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CBRE.Packages\CBRE.Packages.csproj">
-      <Project>{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}</Project>
-      <Name>CBRE.Packages</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
