@@ -14,7 +14,6 @@ namespace CBRE.Editor.Compiling
     public partial class ExportForm : Form
     {
         public Document Document;
-        public static Form exportForm;
         
         private readonly List<string> _GenericExtensions = new List<string>()
         {
@@ -28,7 +27,6 @@ namespace CBRE.Editor.Compiling
         public ExportForm()
         {
             InitializeComponent();
-            exportForm = this;
         }
 
         private void textureDims_ValueChanged(object sender, EventArgs e)
