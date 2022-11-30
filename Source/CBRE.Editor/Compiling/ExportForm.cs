@@ -6,8 +6,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using CBRE.UI.Native;
 using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace CBRE.Editor.Compiling
@@ -315,6 +317,18 @@ namespace CBRE.Editor.Compiling
             finally
             {
                 SetCancelEnabled(false);
+                ProgressBar.Invoke((MethodInvoker) (() =>
+                {
+                    FlashWindow.FLASHWINFO flashInfo = new FlashWindow.FLASHWINFO();
+
+                    flashInfo.cbSize = (uint)Marshal.SizeOf(flashInfo);
+                    flashInfo.hwnd = this.Handle;
+                    flashInfo.dwFlags = FlashWindow.FLASHFLAGS.FLASHW_TRAY | FlashWindow.FLASHFLAGS.FLASHW_TIMERNOFG;
+                    flashInfo.uCount = UInt32.MaxValue;
+                    flashInfo.dwTimeout = 0;
+
+                    FlashWindow.FlashWindowEx(ref flashInfo);
+                }));
             }
         }
 

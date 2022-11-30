@@ -75,6 +75,7 @@
     <Compile Include="FrameInfo.cs" />
     <Compile Include="IViewport2DEventListener.cs" />
     <Compile Include="KeyboardState.cs" />
+    <Compile Include="Native\FlashWindow.cs" />
     <Compile Include="Native\NativeIcons.cs" />
     <Compile Include="ReadOnlyTextBox.cs">
       <SubType>Component</SubType>
