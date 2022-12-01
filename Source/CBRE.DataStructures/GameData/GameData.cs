@@ -88,7 +88,17 @@ namespace CBRE.DataStructures.GameData
                 }
 
                 if(!string.IsNullOrWhiteSpace(customEntity.Sprite)) gameDataObj.Behaviours.Add(new Behaviour("sprite", customEntity.Sprite));
-                if(customEntity.UseModelRendering) gameDataObj.Behaviours.Add(new Behaviour("useModels"));
+                if (customEntity.UseModelRendering)
+                {
+                    if (!customEntity.Properties.Any(x => x.Name == "file"))
+                    {
+                        CustomEntityErrors.Add($"[{jsonFilename}] UseModelRendering is set to true, but the required \"file\" property is missing. It will not use models.");
+                    }
+                    else
+                    {
+                        gameDataObj.Behaviours.Add(new Behaviour("useModels"));
+                    }
+                }
 
                 Classes.Add(gameDataObj);
             }
