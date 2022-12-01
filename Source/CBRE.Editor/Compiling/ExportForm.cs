@@ -32,6 +32,18 @@ namespace CBRE.Editor.Compiling
             InitializeComponent();
         }
 
+        private DialogResult ShowPerformanceWarning()
+        {
+            DialogResult result = MessageBox.Show("Baking model shadows will SEVERELY impact lightmapping performance, " +
+                                                  "especially if there are lots of models in your room.\n" +
+                                                  "It's recommended to leave it off unless you're exporting the room.\n\n" +
+                                                  "Are you sure you want to continue?\n\n" +
+                                                  "This warning can be turned off in Settings.",
+                "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            return result;
+        }
+
         private void textureDims_ValueChanged(object sender, EventArgs e)
         {
             LightmapConfig.TextureDims = (int)textureDims.Value;
@@ -55,13 +67,9 @@ namespace CBRE.Editor.Compiling
         private string SaveFileName = "";
         private void render_Click(object sender, EventArgs e)
         {
-            if (LightmapConfig.BakeModelShadows)
+            if (LightmapConfig.BakeModelShadows && CBRE.Settings.Exporting.ShowModelBakingWarning)
             {
-                DialogResult result = MessageBox.Show("Baking model shadows will SEVERELY impact lightmapping performance, " +
-                                                      "especially if there are lots of models in your room.\n" +
-                                                      "It's recommended to leave it off unless you're exporting the room.\n" +
-                                                      "Are you sure you want to continue?",
-                    "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = ShowPerformanceWarning();
 
                 if (result == DialogResult.No)
                 {
@@ -78,13 +86,9 @@ namespace CBRE.Editor.Compiling
 
         private void export_Click(object sender, EventArgs e)
         {
-            if (LightmapConfig.BakeModelShadows)
+            if (LightmapConfig.BakeModelShadows && CBRE.Settings.Exporting.ShowModelBakingWarning)
             {
-                DialogResult result = MessageBox.Show("Baking model shadows will SEVERELY impact lightmapping performance, " +
-                                                      "especially if there are lots of models in your room.\n" +
-                                                      "It's recommended to leave it off unless you're exporting the room.\n" +
-                                                      "Are you sure you want to continue?",
-                    "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = ShowPerformanceWarning();
 
                 if (result == DialogResult.No)
                 {

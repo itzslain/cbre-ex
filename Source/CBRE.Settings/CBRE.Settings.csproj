@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Directories.cs" />
     <Compile Include="DoubleClick3DAction.cs" />
+    <Compile Include="Exporting.cs" />
     <Compile Include="FavouriteTextureFolder.cs" />
     <Compile Include="General.cs" />
     <Compile Include="HotkeyDefinition.cs" />
