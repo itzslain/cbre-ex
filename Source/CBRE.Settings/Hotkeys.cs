@@ -25,7 +25,7 @@ namespace CBRE.Settings
                                     new HotkeyDefinition("Open File", "Open an existing map", HotkeysMediator.FileOpen, "Ctrl+O"),
                                     new HotkeyDefinition("Save File", "Save the currently opened map", HotkeysMediator.FileSave, "Ctrl+S"),
                                     new HotkeyDefinition("Save File As...", "Save the currently opened map", HotkeysMediator.FileSaveAs, "Ctrl+Alt+S"),
-                                    new HotkeyDefinition("Compile Map", "Compile the currently opened map", HotkeysMediator.FileCompile, "F9"),
+                                    new HotkeyDefinition("Export Map", "Export or lightmap the currently opened map", HotkeysMediator.FileCompile, "F9"),
 
                                     new HotkeyDefinition("Increase Grid Size", "Increase the current grid size", HotkeysMediator.GridIncrease, "]"),
                                     new HotkeyDefinition("Decrease Grid Size", "Decrease the current grid size", HotkeysMediator.GridDecrease, "["),
@@ -84,10 +84,8 @@ namespace CBRE.Settings
                                     new HotkeyDefinition("Entity Tool", "Switch to the entity tool", HotkeysMediator.SwitchTool, HotkeyTool.Entity, "Shift+E"),
                                     new HotkeyDefinition("Brush Tool", "Switch to the brush tool", HotkeysMediator.SwitchTool, HotkeyTool.Brush, "Shift+B"),
                                     new HotkeyDefinition("Texture Tool", "Switch to the texture application tool", HotkeysMediator.SwitchTool, HotkeyTool.Texture, "Shift+A"),
-                                    new HotkeyDefinition("Decal Tool", "Switch to the decal tool", HotkeysMediator.SwitchTool, HotkeyTool.Decal, "Shift+D"),
                                     new HotkeyDefinition("Clip Tool", "Switch to the clipping tool", HotkeysMediator.SwitchTool, HotkeyTool.Clip, "Shift+X"),
                                     new HotkeyDefinition("Vertex Manipulation Tool", "Switch to the vertex manipulation tool", HotkeysMediator.SwitchTool, HotkeyTool.VM, "Shift+V"),
-                                    new HotkeyDefinition("Cordon Tool", "Switch to the cordon tool", HotkeysMediator.SwitchTool, HotkeyTool.Cordon, "Shift+K"),
 
                                     new HotkeyDefinition("Apply Current Texture", "Apply the current texture to the selection.", HotkeysMediator.ApplyCurrentTextureToSelection, "Shift+T"),
 
