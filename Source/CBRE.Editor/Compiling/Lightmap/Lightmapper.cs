@@ -165,7 +165,8 @@ namespace CBRE.Editor.Compiling.Lightmap
             List<Light> lightEntities = new List<Light>();
 
             IEnumerable<Entity> modelEntities = map.WorldSpawn
-                .Find(x => x.ClassName != null && x.ClassName.ToLower() == "model").OfType<Entity>();
+                .Find(x => x.ClassName != null).OfType<Entity>()
+                .Where(y => y.GameData.Behaviours.FirstOrDefault(x => x.Name == "useModels") != null);
 
             threadExceptions = new List<LMThreadException>();
 
