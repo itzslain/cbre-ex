@@ -215,6 +215,7 @@ namespace CBRE.Editor.Compiling.Lightmap
 
                     string modelValue = model.EntityData.GetPropertyValue("file");
 
+                    if (string.IsNullOrWhiteSpace(modelValue)) continue;
                     if (!modelReferences.ContainsKey(modelValue)) continue;
 
                     ModelReference modelReference = modelReferences[modelValue];
