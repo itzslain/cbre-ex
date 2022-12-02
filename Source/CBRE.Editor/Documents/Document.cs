@@ -116,7 +116,7 @@ namespace CBRE.Editor.Documents
             if (allEntities.Any(x => x.GameData == null))
             {
                 MessageBox.Show("CBRE-EX has found some unknown entities in this map file.\n" +
-                                "They will not be exported, and they will appear as a pink cube in the 3D viewport.\n" +
+                                "They will not be exported, and they will appear as a small colored cube in the 3D viewport.\n" +
                                 "Please, ask the creator of this map for the appropriate JSON files for this map.", 
                     "Warning!", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
