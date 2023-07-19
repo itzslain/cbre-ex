@@ -5,7 +5,7 @@ updates:
     directory: "/Source/CBRE.Common"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -19,7 +19,7 @@ updates:
     directory: "/Source/CBRE.DataStructures"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -33,7 +33,7 @@ updates:
     directory: "/Source/CBRE.Editor"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -47,7 +47,7 @@ updates:
     directory: "/Source/CBRE.FileSystem"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -61,7 +61,7 @@ updates:
     directory: "/Source/CBRE.Graphics"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -75,7 +75,7 @@ updates:
     directory: "/Source/CBRE.Packages"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -89,7 +89,7 @@ updates:
     directory: "/Source/CBRE.Providers"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -103,7 +103,7 @@ updates:
     directory: "/Source/CBRE.QuickForms"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -117,7 +117,7 @@ updates:
     directory: "/Source/CBRE.SMFConverter"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -131,7 +131,7 @@ updates:
     directory: "/Source/CBRE.Settings"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -145,7 +145,7 @@ updates:
     directory: "/Source/CBRE.UI"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -159,7 +159,7 @@ updates:
     directory: "/Source/CBRE.Updater"
     schedule:
       interval: "daily"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
       - "enhancement"
@@ -167,4 +167,3 @@ updates:
       - "analogfeelings"
     reviewers:
       - "analogfeelings"
-
