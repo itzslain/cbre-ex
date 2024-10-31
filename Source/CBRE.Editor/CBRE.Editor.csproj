@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -925,9 +925,17 @@
       <Project>{a79ff02f-3eaa-4ff1-a060-2e2ffe983ef3}</Project>
       <Name>CBRE.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CBRE.SMFConverter\CBRE.SMFConverter.csproj">
+      <Project>{e4242c98-6ae0-487b-86b2-031867444865}</Project>
+      <Name>CBRE.SMFConverter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CBRE.UI\CBRE.UI.csproj">
       <Project>{abbee97f-b5a6-4ed6-8d8f-6d4091fb9d44}</Project>
       <Name>CBRE.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CBRE.Updater\CBRE.Updater.csproj">
+      <Project>{5d01022f-a383-4e5b-80ac-1ed2f8a1b9c7}</Project>
+      <Name>CBRE.Updater</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
