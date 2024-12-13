@@ -289,12 +289,6 @@
     <Compile Include="Settings\FileTypeRegistration.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="SledgeCursors.cs" />
-    <Compile Include="SplashForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SplashForm.Designer.cs">
-      <DependentUpon>SplashForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\BaseBoxTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\BrushTool.cs" />
@@ -620,9 +614,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SplashForm.resx">
-      <DependentUpon>SplashForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\SelectTool\SelectToolSidebarPanel.resx">
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>

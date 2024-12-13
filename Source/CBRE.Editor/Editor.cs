@@ -193,7 +193,22 @@ namespace CBRE.Editor
 
 			ViewportManager.RefreshClearColour(DocumentTabs.TabPages.Count == 0);
 
-			if (CBRE.Settings.General.CheckUpdatesOnStartup) CheckForUpdates(true);
+			// Update the updater.
+			if(Directory.Exists("Temp"))
+			{
+				string[] files = Directory.GetFiles("Temp");
+
+				if(files.Length > 0)
+				{
+					foreach(string file in files)
+						File.Copy(file, "./" + System.IO.Path.GetFileName(file), true);
+
+					Directory.Delete("Temp", true);
+				}
+			}
+
+			if (CBRE.Settings.General.CheckUpdatesOnStartup) 
+				CheckForUpdates(true);
 			
 			ToggleDiscord(CBRE.Settings.General.EnableDiscordPresence);
 		}
