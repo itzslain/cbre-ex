@@ -21,11 +21,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssimpNet" Version="4.1.0" />
+    <ProjectReference Include="..\AssimpNet\AssimpNet\AssimpNet.csproj" />
+    <ProjectReference Include="..\CBRE.Packages\CBRE.Packages.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CBRE.Packages\CBRE.Packages.csproj" />
+    <None Update="Assimp64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
